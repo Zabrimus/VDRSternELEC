@@ -1,0 +1,20 @@
+diff -ru8bBwd a/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk b/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk
+--- a/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk	2022-08-17 07:42:28.664348436 +0200
++++ b/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk	2022-08-11 18:32:52.984642479 +0200
+@@ -67,14 +67,16 @@
+     sed -e 's/CONFIG_VIDEO_VIVID=m/# CONFIG_VIDEO_VIVID is not set/g' -i $PKG_BUILD/v4l/.config
+     sed -e 's/CONFIG_VIDEO_TVP514X=m/# CONFIG_VIDEO_TVP514X is not set/g' -i $PKG_BUILD/v4l/.config
+     sed -e 's/CONFIG_VIDEO_TVP7002=m/# CONFIG_VIDEO_TVP7002 is not set/g' -i $PKG_BUILD/v4l/.config
+     sed -e 's/CONFIG_VIDEO_CADENCE_CSI2RX=m/# CONFIG_VIDEO_CADENCE_CSI2RX is not set/g' -i $PKG_BUILD/v4l/.config
+     sed -e 's/CONFIG_VIDEO_CADENCE_CSI2TX=m/# CONFIG_VIDEO_CADENCE_CSI2TX is not set/g' -i $PKG_BUILD/v4l/.config
+     sed -e 's/# CONFIG_MEDIA_TUNER_TDA18250 is not set/CONFIG_MEDIA_TUNER_TDA18250=m/g' -i $PKG_BUILD/v4l/.config
+   fi
+
++  sed -e 's/CONFIG_DVB_DEMUX_SECTION_LOSS_LOG=y/# CONFIG_DVB_DEMUX_SECTION_LOSS_LOG is not set/g' -i $PKG_BUILD/v4l/.config
++
+   kernel_make VER=$KERNEL_VER SRCDIR=$(kernel_path)
+ }
+
+ makeinstall_target() {
+   install_driver_addon_files "$PKG_BUILD/v4l/"
+ }

@@ -1,0 +1,41 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2017-03-18 17:44:09.046195793 +0100
++++ b/Makefile	2022-04-26 08:44:10.568485823 +0200
+@@ -14,17 +14,17 @@
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).h | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ CFGDIR = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR = /tmp
+ 
+ ### Uncomment if you use graphtft
+ #DEFINES += -DUSE_GRAPHTFT
+@@ -154,17 +154,17 @@
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-contrib: 
+ 	@mkdir -p $(DESTDIR)$(CFGDIR)
+ 	@cp -n contrib/*.mpg $(DESTDIR)$(CFGDIR)
+ 
+ install: install-lib install-i18n install-contrib
+ 
+ dist: clean

@@ -1,0 +1,41 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-04-24 17:17:14.000000000 +0200
++++ b/Makefile	2022-04-26 13:17:30.990859953 +0200
+@@ -12,17 +12,17 @@
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+@@ -100,17 +100,17 @@
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ dist: $(I18Npo) clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a * $(TMPDIR)/$(ARCHIVE)
+ 	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)

@@ -1,0 +1,77 @@
+diff -ru8bBw a/lib/db.h b/lib/db.h
+--- a/lib/db.h	2022-01-04 06:54:16.000000000 +0100
++++ b/lib/db.h	2022-07-31 13:20:04.875025930 +0200
+@@ -272,16 +272,20 @@
+             nullValue = 0;
+          }
+          else
+          {
+             tell(0, "Setting invalid field format for '%s'", field->getName());
+          }
+       }
+ 
++      void setValue(int64_t value) {
++          setBigintValue(value);
++      }
++
+       void setBigintValue(int64_t value)
+       {
+          if (field->getFormat() == ffInt || field->getFormat() == ffUInt)
+          {
+             if (numValue != value)
+                changed++;
+ 
+             numValue = value;
+@@ -648,24 +652,26 @@
+       virtual cDbFieldDef* getFieldByDbName(const char* dbname) { return tableDef->getFieldByDbName(dbname); }
+       virtual int fieldCount()                                  { return tableDef->fieldCount(); }
+ 
+       void setValue(cDbFieldDef* f, const char* value,
+                     int size = 0)                           { dbValues[f->getIndex()].setValue(value, size); }
+       void setValue(cDbFieldDef* f, int value)              { dbValues[f->getIndex()].setValue(value); }
+       void setValue(cDbFieldDef* f, long value)             { dbValues[f->getIndex()].setValue(value); }
+       void setValue(cDbFieldDef* f, double value)           { dbValues[f->getIndex()].setValue(value); }
++      void setValue(cDbFieldDef* f, int64_t value)          { setBigintValue(f, value); }
+       void setBigintValue(cDbFieldDef* f, int64_t value)    { dbValues[f->getIndex()].setBigintValue(value); }
+       void setCharValue(cDbFieldDef* f, char value)         { dbValues[f->getIndex()].setCharValue(value); }
+ 
+       void setValue(const char* n, const char* value,
+                     int size = 0)                           { GET_FIELD(n); dbValues[f->getIndex()].setValue(value, size); }
+       void setValue(const char* n, int value)               { GET_FIELD(n); dbValues[f->getIndex()].setValue(value); }
+       void setValue(const char* n, long value)              { GET_FIELD(n); dbValues[f->getIndex()].setValue(value); }
+       void setValue(const char* n, double value)            { GET_FIELD(n); dbValues[f->getIndex()].setValue(value); }
++      void setValue(const char* n, int64_t value)           { setBigintValue(n, value); }
+       void setBigintValue(const char* n, int64_t value)     { GET_FIELD(n); dbValues[f->getIndex()].setBigintValue(value); }
+       void setCharValue(const char* n, char value)          { GET_FIELD(n); dbValues[f->getIndex()].setCharValue(value); }
+ 
+       int hasValue(cDbFieldDef* f, const char* value) const { return dbValues[f->getIndex()].hasValue(value); }
+       int hasCharValue(cDbFieldDef* f, char  value)   const { return dbValues[f->getIndex()].hasCharValue(value); }
+       int hasValue(cDbFieldDef* f, long value)        const { return dbValues[f->getIndex()].hasValue(value); }
+       int hasValue(cDbFieldDef* f, double value)      const { return dbValues[f->getIndex()].hasValue(value); }
+ 
+@@ -1114,23 +1120,25 @@
+       void clear()                                                    { row->clear(); }
+       void clearChanged()                                             { row->clearChanged(); }
+       int getChanges()                                                { return row->getChanges(); }
+       std::string getChangedFields()                                  { return row->getChangedFields(); }
+       void setValue(cDbFieldDef* f, const char* value, int size = 0)  { row->setValue(f, value, size); }
+       void setValue(cDbFieldDef* f, int value)                        { row->setValue(f, value); }
+       void setValue(cDbFieldDef* f, long value)                       { row->setValue(f, value); }
+       void setValue(cDbFieldDef* f, double value)                     { row->setValue(f, value); }
++      void setValue(cDbFieldDef* f, int64_t value)                    { setBigintValue(f, value); }
+       void setBigintValue(cDbFieldDef* f, int64_t value)              { row->setBigintValue(f, value); }
+       void setCharValue(cDbFieldDef* f, char value)                   { row->setCharValue(f, value); }
+ 
+       void setValue(const char* n, const char* value, int size = 0)   { row->setValue(n, value, size); }
+       void setValue(const char* n, int value)                         { row->setValue(n, value); }
+       void setValue(const char* n, long value)                        { row->setValue(n, value); }
+       void setValue(const char* n, double value)                      { row->setValue(n, value); }
++      void setValue(const char* n, int64_t value)                     { setBigintValue(n, value); }
+       void setBigintValue(const char* n, int64_t value)               { row->setBigintValue(n, value); }
+       void setCharValue(const char* n, char value)                    { row->setCharValue(n, value); }
+ 
+       void copyValues(cDbRow* r, int types = ftData);
+ 
+       int hasValue(cDbFieldDef* f, const char* value)                 { return row->hasValue(f, value); }
+       int hasCharValue(cDbFieldDef* f, char value)                    { return row->hasCharValue(f, value); }
+       int hasValue(cDbFieldDef* f, long value)                        { return row->hasValue(f, value); }

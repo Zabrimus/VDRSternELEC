@@ -1,0 +1,41 @@
+diff -u8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-05-19 13:41:19.000000000 +0200
++++ b/Makefile	2022-03-25 18:13:02.762699245 +0100
+@@ -18,17 +18,17 @@
+ 
+ VERSION = 0.14.6
+ 
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr 2>/dev/null || pkg-config --variable=$(1) ../../../vdr.pc 2>/dev/null))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ CFGDIR  = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The SQLITE compile options:
+ 
+@@ -162,17 +162,17 @@
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS) $(SQLITE_OBJS)
+ 	@echo "LINK $@"
+ 	@$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(SQLITE_OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-conf:
+ 	install -Dm644 $(PLUGIN)/allowed_hosts.conf $(DESTDIR)$(CFGDIR)/allowed_hosts.conf
+ 	install -Dm644 $(PLUGIN)/$(PLUGIN).conf $(DESTDIR)$(CFGDIR)/$(PLUGIN).conf
+ 
+ install: install-lib
+ 
+ dist: $(I18Npo) clean

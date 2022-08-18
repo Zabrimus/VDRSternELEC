@@ -1,0 +1,10 @@
+# one of BRANCH, TAG or REVISION is mandatory
+DISTRO=LibreELEC.tv
+BRANCH=
+TAG=10.0.2
+REVISION=
+
+# Build settings
+PROJECT=Amlogic
+DEVICE=AMLGX
+ARCH=arm

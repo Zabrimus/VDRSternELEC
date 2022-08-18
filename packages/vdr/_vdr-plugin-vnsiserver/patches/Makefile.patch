@@ -1,0 +1,22 @@
+diff -ur8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-01-21 17:12:47.000000000 +0100
++++ b/Makefile	2022-03-25 18:59:34.455421414 +0100
+@@ -121,17 +121,17 @@
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ dist: $(I18Npo) clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a * $(TMPDIR)/$(ARCHIVE)
+ 	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)

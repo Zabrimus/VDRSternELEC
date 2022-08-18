@@ -1,0 +1,81 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-01-23 11:48:27.000000000 +0100
++++ b/Makefile	2022-04-15 08:37:26.370856701 +0200
+@@ -12,35 +12,35 @@
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The C++ compiler and options:
+ 
+ CXX      ?= g++
+ CXXFLAGS ?= -O2 -Wall -Woverloaded-virtual -fPIC
++CXXFLAGS += ${CUSTOM_CFLAGS}
+ 
+ ### The directory environment:
+-
+ DVBDIR = ../../../../DVB
+-VDRDIR = ../../..
+-LIBDIR = ../../lib
++VDRDIR ?= ../../..
++LIBDIR ?= ../../lib
+ TMPDIR = /tmp
+-
++PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr))
+ ### Allow user defined options to overwrite defaults:
+ 
+ -include $(VDRDIR)/Make.config
+ 
+ ### The version number of VDR (taken from VDR's "config.h"):
+ 
+ VDRVERSION = $(shell grep 'define VDRVERSION ' $(VDRDIR)/config.h | awk '{ print $$3 }' | sed -e 's/"//g')
+ 
+ ### The version number of VDR's plugin API (taken from VDR's "config.h"):
+ 
+-APIVERSION = $(shell sed -ne '/define APIVERSION/s/^.*"\(.*\)".*$$/\1/p' $(VDRDIR)/config.h)
++APIVERSION = $(call PKGCFG,apiversion)
+ 
+ ### The name of the distribution archive:
+ 
+ ARCHIVE = $(PLUGIN)-$(VERSION)
+ PACKAGE = vdr-$(ARCHIVE)
+ 
+ ### The name of the shared object file:
+ 
+@@ -55,16 +55,17 @@
+ 
+ ### The object files (add further files here):
+ 
+ OBJS = $(PLUGIN).o setup.o ac3audio.o ac3modes.o msgthread.o
+ 
+ ### The main target:
+ 
+ all: $(SOFILE)
++	echo "APIVERSION=$(APIVERSION)"
+ 
+ 
+ ### Implicit rules:
+ 
+ %.o: %.c
+ 	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) $<
+ 
+ # Dependencies:
+@@ -79,17 +80,17 @@
+ ### Targets:
+ 
+ #all: libvdr-$(PLUGIN).so
+ 
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ #install: install-lib install-i18n
+ install: install-lib
+ 
+ #libvdr-$(PLUGIN).so: $(OBJS)
+ #	$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@
+ ##	@cp $@ $(LIBDIR)/$@.$(VDRVERSION)
+ #	@cp --remove-destination $@ $(LIBDIR)/$@.$(APIVERSION)

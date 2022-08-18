@@ -1,0 +1,33 @@
+From d18801636ec9b5bed6db305cbefdbd636e524beb Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Tue, 2 Aug 2022 12:35:56 +0200
+Subject: [PATCH] fix tnt 3.0 build
+
+---
+ Makefile | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 02a7271..118816b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -38,16 +38,9 @@ APIVERSION := $(call PKGCFG,apiversion)
+ include global.mk
+
+ ### Determine tntnet and cxxtools versions:
+-TNTNET-CONFIG := $(shell which tntnet-config 2>/dev/null)
+-ifeq ($(TNTNET-CONFIG),)
+ TNTVERSION = $(shell pkg-config --modversion tntnet | sed -e's/\.//g' | sed -e's/pre.*//g' | awk '/^..$$/ { print $$1."000"} /^...$$/ { print $$1."00"} /^....$$/ { print $$1."0" } /^.....$$/ { print $$1 }')
+ CXXFLAGS  += $(shell pkg-config --cflags tntnet)
+ LIBS      += $(shell pkg-config --libs tntnet)
+-else
+-TNTVERSION = $(shell tntnet-config --version | sed -e's/\.//g' | sed -e's/pre.*//g' | awk '/^..$$/ { print $$1."000"} /^...$$/ { print $$1."00"} /^....$$/ { print $$1."0" } /^.....$$/ { print $$1 }')
+-CXXFLAGS  += $(shell tntnet-config --cxxflags)
+-LIBS      += $(shell tntnet-config --libs)
+-endif
+
+ # $(info $$TNTVERSION is [${TNTVERSION}])
+
+--
+2.30.2
+

@@ -1,0 +1,27 @@
+#!/bin/sh
+
+usage() {
+  cat << EOF >&2
+Usage: $PROGNAME [-d <hostname>] [-p port] <command>
+-d  : destination hostname (default: localhost)
+-p  : SVDRP port number (default: 6419)
+EOF
+  exit 1
+}
+
+PORT=6419
+HOSTNAME=localhost
+
+while [ "$#" -gt 0 ]; do
+    case $1 in
+        -d) shift; HOSTNAME=$1; shift ;;
+        -p) shift; PORT=$1; shift ;;
+        -h) usage; exit ;;
+        *)  break 1 ;;
+    esac
+done
+
+nc ${HOSTNAME} ${PORT} <<eof
+$@
+quit
+eof

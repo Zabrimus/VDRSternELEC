@@ -1,0 +1,41 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2017-03-18 17:44:31.879177626 +0100
++++ b/Makefile	2022-04-26 08:28:12.391316124 +0200
+@@ -12,17 +12,17 @@
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).h | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ CFGDIR = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+@@ -96,17 +96,17 @@
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-conf:
+ 	@mkdir -p $(DESTDIR)$(CFGDIR)
+ 	@cp -n examples/externalplayer.conf $(DESTDIR)$(CFGDIR)
+ 
+ install: install-lib install-i18n install-conf
+ 
+ dist: clean

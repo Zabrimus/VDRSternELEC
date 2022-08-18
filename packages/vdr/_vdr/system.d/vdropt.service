@@ -1,0 +1,18 @@
+[Unit]
+Description=VDR Client
+Requires=network-online.target graphical.target
+After=network-online.target graphical.target
+Conflicts=kodi.service
+
+[Service]
+ExecStart=XXBINDIRXX/start_vdr.sh
+Restart=always
+RestartSec=2
+StartLimitInterval=0
+TimeoutStartSec=30
+TimeoutStopSec=30
+LimitNOFILE=16384
+
+[Install]
+WantedBy=vdropt.target
+

@@ -1,0 +1,41 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-04-24 16:58:16.000000000 +0200
++++ b/Makefile	2022-04-26 08:00:24.154102684 +0200
+@@ -12,17 +12,17 @@
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ PLGCONFDIR = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+@@ -107,17 +107,17 @@
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-conf:
+ 	@mkdir -p $(DESTDIR)$(PLGCONFDIR)
+ 	@if [ ! -f $(DESTDIR)$(PLGCONFDIR)/override.conf ]; then cp conf/override.conf $(DESTDIR)$(PLGCONFDIR); fi;
+ 
+ install: install-lib install-i18n install-conf
+ 
+ dist: $(I18Npo) clean

@@ -1,0 +1,143 @@
+diff -ur8bBw a/client/Makefile b/client/Makefile
+--- a/client/Makefile	2022-01-22 17:07:53.000000000 +0100
++++ b/client/Makefile	2022-03-25 18:56:39.127109647 +0100
+@@ -42,42 +42,42 @@
+ 
+ -include $(DEPFILE)
+ 
+ ### Internationalization (I18N):
+ 
+ PODIR     = po
+ I18Npo    = $(wildcard $(PODIR)/*.po)
+ I18Nmo    = $(addsuffix .mo, $(foreach file, $(I18Npo), $(basename $(file))))
+-I18Nmsgs  = $(addprefix $(DESTDIR)$(LOCDIR)/, $(addsuffix /LC_MESSAGES/vdr-$(PLUGIN).mo, $(notdir $(foreach file, $(I18Npo), $(basename $(file))))))
++I18Nmsgs  = $(addprefix $(LOCDIR)/, $(addsuffix /LC_MESSAGES/vdr-$(PLUGIN).mo, $(notdir $(foreach file, $(I18Npo), $(basename $(file))))))
+ I18Npot   = $(PODIR)/$(PLUGIN).pot
+ 
+ %.mo: %.po
+ 	msgfmt -c -o $@ $<
+ 
+ $(I18Npot): $(CLIENTOBJS:%.o=%.c)
+ 	xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --package-name=vdr-$(PLUGIN) --package-version=$(VERSION) --msgid-bugs-address='<vdrdev@schmirler.de>' -o $@ `ls $^`
+ 
+ %.po: $(I18Npot)
+ 	msgmerge -U --no-wrap --no-location --backup=none -q -N $@ $<
+ 	@touch $@
+ 
+-$(I18Nmsgs): $(DESTDIR)$(LOCDIR)/%/LC_MESSAGES/vdr-$(PLUGIN).mo: $(PODIR)/%.mo
++$(I18Nmsgs): $(LOCDIR)/%/LC_MESSAGES/vdr-$(PLUGIN).mo: $(PODIR)/%.mo
+ 	install -D -m644 $< $@
+ 
+ .PHONY: i18n
+ i18n: $(I18Nmo) $(I18Npot)
+ 
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(CLIENTOBJS) $(COMMONOBJS) ../tools/sockettools.a
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $^ -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ clean:
+ 	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot
+ 	@-rm -f $(COMMONOBJS) $(CLIENTOBJS) $(DEPFILE) *.so *.tgz core* *~
+diff -ur8bBw a/Makefile b/Makefile
+--- a/Makefile	2022-01-22 17:07:53.000000000 +0100
++++ b/Makefile	2022-03-25 18:53:35.218780571 +0100
+@@ -12,18 +12,18 @@
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'const char \*VERSION *=' common.c | awk '{ print $$5 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
+-LOCDIR = $(call PKGCFG,locdir)
++LIBDIR ?= $(call PKGCFG,libdir)
++LOCDIR ?= $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+ export CXXFLAGS = $(call PKGCFG,cxxflags)
+@@ -33,17 +33,18 @@
+ APIVERSION = $(call PKGCFG,apiversion)
+ 
+ ### Allow user defined options to overwrite defaults:
+ 
+ -include $(PLGCFG)
+ 
+ ### export all vars for sub-makes, using absolute paths
+ LIBDIR := $(shell cd $(LIBDIR) >/dev/null 2>&1 && pwd)
+-LOCDIR := $(shell cd $(LOCDIR) >/dev/null 2>&1 && pwd)
++#LOCDIR := $(shell cd $(LOCDIR) >/dev/null 2>&1 && pwd)
++LOCDIR := ${LOCDIR}
+ export
+ unexport PLUGIN
+ 
+ ### The name of the distribution archive:
+ 
+ ARCHIVE = $(PLUGIN)-$(VERSION)
+ PACKAGE = vdr-$(ARCHIVE)
+ 
+diff -ur8bBw a/server/Makefile b/server/Makefile
+--- a/server/Makefile	2022-01-22 17:07:53.000000000 +0100
++++ b/server/Makefile	2022-03-25 18:57:15.503174473 +0100
+@@ -47,43 +47,43 @@
+ 
+ -include $(DEPFILE)
+ 
+ ### Internationalization (I18N):
+ 
+ PODIR     = po
+ I18Npo    = $(wildcard $(PODIR)/*.po)
+ I18Nmo    = $(addsuffix .mo, $(foreach file, $(I18Npo), $(basename $(file))))
+-I18Nmsgs  = $(addprefix $(DESTDIR)$(LOCDIR)/, $(addsuffix /LC_MESSAGES/vdr-$(PLUGIN).mo, $(notdir $(foreach file, $(I18Npo), $(basename $(file))))))
++I18Nmsgs  = $(addprefix $(LOCDIR)/, $(addsuffix /LC_MESSAGES/vdr-$(PLUGIN).mo, $(notdir $(foreach file, $(I18Npo), $(basename $(file))))))
+ I18Npot   = $(PODIR)/$(PLUGIN).pot
+ 
+ %.mo: %.po
+ 	msgfmt -c -o $@ $<
+ 
+ $(I18Npot): $(SERVEROBJS:%.o=%.c)
+ 	xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --package-name=vdr-$(PLUGIN) --package-version=$(VERSION) --msgid-bugs-address='<vdrdev@schmirler.de>' -o $@ `ls $^`
+ 
+ %.po: $(I18Npot)
+ 	msgmerge -U --no-wrap --no-location --backup=none -q -N $@ $<
+ 	@touch $@
+ 
+-$(I18Nmsgs): $(DESTDIR)$(LOCDIR)/%/LC_MESSAGES/vdr-$(PLUGIN).mo: $(PODIR)/%.mo
++$(I18Nmsgs): $(LOCDIR)/%/LC_MESSAGES/vdr-$(PLUGIN).mo: $(PODIR)/%.mo
+ 	install -D -m644 $< $@
+ 
+ .PHONY: i18n
+ i18n: $(I18Nmo) $(I18Npot)
+ 
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(SERVEROBJS) $(COMMONOBJS) \
+ 	../tools/sockettools.a ../remux/remux.a ../libdvbmpeg/libdvbmpegtools.a
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $^ -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ clean:
+ 	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot
+ 	@-rm -f $(COMMONOBJS) $(SERVEROBJS) $(DEPFILE) *.so *.tgz core* *~

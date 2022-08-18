@@ -1,0 +1,41 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2019-10-27 15:50:01.000000000 +0100
++++ b/Makefile	2022-04-26 09:05:34.693343912 +0200
+@@ -12,17 +12,17 @@
+ 
+ VERSION = $(shell grep 'static const char VERSION\[\] *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ GITTAG  = $(shell git describe --always 2>/dev/null)
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+@@ -116,17 +116,17 @@
+ 
+ $(SOFILE): $(OBJS)
+ 	@echo LD $@
+ 	$(Q)$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@
+ 	$(Q)$(STRIP) $@
+ 
+ install-lib: $(SOFILE)
+ 	@echo IN $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
+-	$(Q)install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	$(Q)install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ dist: $(I18Npo) clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a * $(TMPDIR)/$(ARCHIVE)
+ 	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)

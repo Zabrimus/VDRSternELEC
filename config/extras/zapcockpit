@@ -1,0 +1,10 @@
+# Plugins/Patches
+
+# vdr-plugin-easyvdr (y/n)
+EASYVDR=n
+
+# vdr-plugin-dynamite (y/n)
+DYNAMITE=n
+
+# zapcockpit patch (y/n)
+ZAPCOCKPIT=y

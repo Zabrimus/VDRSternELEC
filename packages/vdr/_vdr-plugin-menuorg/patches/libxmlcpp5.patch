@@ -1,0 +1,208 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2022-05-27 12:35:29.949392282 +0200
++++ b/Makefile	2022-05-27 12:36:56.257534072 +0200
+@@ -10,17 +10,17 @@
+ 			grep -v GIT | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ GIT_REV = $(shell git describe --always 2>/dev/null)
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+@@ -40,21 +40,18 @@
+ PACKAGE = vdr-$(ARCHIVE)
+ 
+ ### The name of the shared object file:
+ 
+ SOFILE = libvdr-$(PLUGIN).so
+ 
+ ### Includes and Defines (add further entries here):
+ 
+-INCLUDES += `pkg-config libxml++-2.6 --cflags`
+-INCLUDES += `pkg-config glibmm-2.4 --cflags`
+-
+-LIBS +=  `pkg-config libxml++-2.6 --libs`
+-LIBS +=  `pkg-config glibmm-2.4 --libs`
++INCLUDES += `pkg-config libxml++-5.0 --cflags`
++LIBS +=  `pkg-config libxml++-5.0 --libs`
+ 
+ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"' \
+ 	$(if $(GIT_REV), -DGIT_REV='"$(GIT_REV)"')
+ 
+ ### The source files (add further files here):
+ 
+ -include sources.mk
+ 
+@@ -107,17 +104,17 @@
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ dist: $(I18Npo) clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a * $(TMPDIR)/$(ARCHIVE)
+ 	@tar czf $(PACKAGE).tar.gz -C $(TMPDIR) --exclude .gitignore --exclude debian --exclude .git $(ARCHIVE)
+diff -ru8bBw a/src/MenuConfigurationRepository.cpp b/src/MenuConfigurationRepository.cpp
+--- a/src/MenuConfigurationRepository.cpp	2022-05-27 12:35:29.949392282 +0200
++++ b/src/MenuConfigurationRepository.cpp	2022-05-27 12:38:27.953686474 +0200
+@@ -22,17 +22,16 @@
+  */
+ 
+ #include "MenuConfigurationRepository.h"
+ #include <exception>
+ #include <iostream>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <libxml++/libxml++.h>
+-#include <glibmm/convert.h>
+ #include "SystemMenuNode.h"
+ #include "SubMenuNode.h"
+ #include "PluginMenuNode.h"
+ #include "CommandMenuNode.h"
+ #include "SeparatorMenuNode.h"
+ #include <vdr/plugin.h>
+ #include <algorithm>
+ #include <cstddef>
+@@ -134,18 +133,18 @@
+     {
+         return fileState.st_mtim.tv_sec;
+     }
+     return 0;
+ }
+ 
+ void MenuConfigurationRepository::CreateMenuTree(const Element* menuRoot, SubMenuNode* menuNode)
+ {
+-    Node::NodeList children = menuRoot->get_children();
+-    for (Node::NodeList::iterator i = children.begin(); i != children.end(); i++)
++    auto children = menuRoot->get_children();
++    for (auto i = children.begin(); i != children.end(); i++)
+     {
+         const Element* childElement = dynamic_cast<const Element*>(*i);
+ 
+         if (childElement)
+         {
+             string type = childElement->get_name();
+             string name = GetAttributeValue(childElement, "name", "");
+ 
+@@ -187,30 +186,18 @@
+         if (find(_configuredPlugins.begin(), _configuredPlugins.end(), plugin->Name()) == _configuredPlugins.end())
+         {
+             menuNode->AddChild(new PluginMenuNode(plugin->Name(), ""));
+         }
+         i++;
+     }
+ }
+ 
+-string MenuConfigurationRepository::UnicodeToLocaleOrIso8859(Glib::ustring unicodeString)
+-{
+-    try
+-    {
+-        return Glib::locale_from_utf8(unicodeString);
+-    }
+-    catch (Glib::ConvertError)
+-    {
+-        return Glib::convert_with_fallback(unicodeString, "ISO8859-15", "UTF-8");
+-    }
+-}
+-
+ string MenuConfigurationRepository::GetTitle(const Element* node, string defaultValue)
+ {
+     return GetAttributeValue(node, "title", defaultValue);
+ }
+ 
+ string MenuConfigurationRepository::GetAttributeValue(const Element* node, string name, string defaultValue)
+ {
+     const Attribute* attribute = node->get_attribute(name);
+-    return attribute ? (string) UnicodeToLocaleOrIso8859(attribute->get_value()) : defaultValue;
++    return attribute ? attribute->get_value() : defaultValue;
+ }
+diff -ru8bBw a/src/MenuConfigurationRepository.h b/src/MenuConfigurationRepository.h
+--- a/src/MenuConfigurationRepository.h	2022-05-27 12:35:29.949392282 +0200
++++ b/src/MenuConfigurationRepository.h	2022-05-26 17:59:51.695001048 +0200
+@@ -21,17 +21,16 @@
+  *
+  */
+ 
+ #ifndef ___MENUCONFIGURARION_H
+ #define ___MENUCONFIGURATION_H
+ 
+ #include <string>
+ #include <vector>
+-#include <glibmm/ustring.h>
+ 
+ namespace xmlpp { class Element; }
+ class MenuNode;
+ class SubMenuNode;
+ 
+ class MenuConfigurationRepository
+ {
+     private:
+@@ -47,14 +46,13 @@
+         SubMenuNode* Load(bool appendUnconfiguredPlugins);
+         void Reset();
+ 
+     private:
+         bool ConfigFileHasBeenChange();
+         time_t CurrentConfigFileModificationTime();
+         void CreateMenuTree(const xmlpp::Element* menuRoot, SubMenuNode* menuNode);
+         void AppendUnconfiguredPlugins(SubMenuNode* menuNode);
+-        std::string UnicodeToLocaleOrIso8859(Glib::ustring unicodeString);
+         std::string GetTitle(const xmlpp::Element* node, std::string defaultValue);
+         std::string GetAttributeValue(const xmlpp::Element* node, std::string name, std::string defaultValue);
+ };
+ 
+ #endif 
+diff -ru8bBw a/src/MenuOrgPlugin.h b/src/MenuOrgPlugin.h
+--- a/src/MenuOrgPlugin.h	2022-05-27 12:35:29.953392291 +0200
++++ b/src/MenuOrgPlugin.h	2022-05-27 12:28:17.212737239 +0200
+@@ -49,11 +49,9 @@
+         virtual bool ProcessArgs(int argc, char* argv[]);
+         virtual bool Initialize(void);
+         virtual const char* MainMenuEntry(void);
+         virtual cMenuSetupPage *SetupMenu(void);
+         virtual bool SetupParse(const char* Name, const char* Value);
+         virtual bool Service(const char* Id, void* Data = NULL);
+ };
+ 
+-extern "C" void* VDRPluginCreator();
+-
+ #endif
+diff -ru8bBw a/src/PluginCreator.cpp b/src/PluginCreator.cpp
+--- a/src/PluginCreator.cpp	2022-05-27 12:35:29.953392291 +0200
++++ b/src/PluginCreator.cpp	2022-05-27 12:40:35.953899162 +0200
+@@ -18,13 +18,9 @@
+  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+  *
+  * $Id$
+  *
+  */
+ 
+ #include "MenuOrgPlugin.h"
+ 
+-extern "C" void *VDRPluginCreator()
+-{
+-    MenuOrgPlugin* plugin = new MenuOrgPlugin();
+-    return plugin;
+-}
++VDRPLUGINCREATOR(MenuOrgPlugin); // Don't touch this!

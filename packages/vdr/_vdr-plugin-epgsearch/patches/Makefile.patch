@@ -1,0 +1,56 @@
+diff -u8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-05-25 20:37:46.000000000 +0200
++++ b/Makefile	2022-03-25 17:48:05.320781811 +0100
+@@ -64,17 +64,17 @@
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ 
+ PKG_CONFIG ?= pkg-config
+ 
+ #PKGCFG   = $(if $(VDRDIR),$(shell $(PKG_CONFIG) --variable=$(1) $(VDRDIR)/vdr.pc),$(shell $(PKG_CONFIG) --variable=$(1) vdr || $(PKG_CONFIG) --variable=$(1) ../../../vdr.pc))
+ PKGCFG   = $(if $(VDRDIR),$(shell $(PKG_CONFIG) --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." $(PKG_CONFIG) --variable=$(1) vdr))
+  
+-LIBDIR   = $(call PKGCFG,libdir)
++LIBDIR   ?= $(call PKGCFG,libdir)
+ LOCDIR   = $(call PKGCFG,locdir)
+ MANDIR   = $(call PKGCFG,mandir)
+ CONFDIR  = $(call PKGCFG,configdir)
+ BINDIR   = $(call PKGCFG,bindir)
+ #
+ TMPDIR ?= /tmp
+ 
+ PLGCFG = $(call PKGCFG,plgcfg)
+@@ -289,29 +289,29 @@
+ 	ln -sf ./doc/de/epgsearch.1.txt README.DE
+ 	@rm -f $(DEPFILE_stmp)
+ 	@date > $(DEPFILE_stmp)
+ 
+ docs: $(DEPFILE_stmp)
+ 
+ install-$(PLUGIN): libvdr-$(PLUGIN).so
+ 	@echo IN $@
+-	$(Q)install -D libvdr-$(PLUGIN).so $(DESTDIR)$(LIBDIR)/libvdr-$(PLUGIN).so.$(APIVERSION)
++	$(Q)install -D libvdr-$(PLUGIN).so $(LIBDIR)/libvdr-$(PLUGIN).so.$(APIVERSION)
+ 
+ install-$(PLUGIN2): libvdr-$(PLUGIN2).so
+ 	@echo IN $@
+-	$(Q)install -D libvdr-$(PLUGIN2).so $(DESTDIR)$(LIBDIR)/libvdr-$(PLUGIN2).so.$(APIVERSION)
++	$(Q)install -D libvdr-$(PLUGIN2).so $(LIBDIR)/libvdr-$(PLUGIN2).so.$(APIVERSION)
+ 
+ install-$(PLUGIN3): libvdr-$(PLUGIN3).so
+ 	@echo IN $@
+-	$(Q)install -D libvdr-$(PLUGIN3).so $(DESTDIR)$(LIBDIR)/libvdr-$(PLUGIN3).so.$(APIVERSION)
++	$(Q)install -D libvdr-$(PLUGIN3).so $(LIBDIR)/libvdr-$(PLUGIN3).so.$(APIVERSION)
+ 
+ install-$(PLUGIN4): libvdr-$(PLUGIN4).so
+ 	@echo IN $@
+-	$(Q)install -D libvdr-$(PLUGIN4).so $(DESTDIR)$(LIBDIR)/libvdr-$(PLUGIN4).so.$(APIVERSION)
++	$(Q)install -D libvdr-$(PLUGIN4).so $(LIBDIR)/libvdr-$(PLUGIN4).so.$(APIVERSION)
+ 
+ install-conf:
+ 	mkdir -p $(DESTDIR)$(CONFDIR)/plugins/$(PLUGIN)/conf.d
+ 	cp -n conf/* $(DESTDIR)$(CONFDIR)/plugins/$(PLUGIN)
+ 
+ install-doc:
+ 	mkdir -p $(DESTDIR)$(MANDIR)/man1
+ 	mkdir -p $(DESTDIR)$(MANDIR)/man4

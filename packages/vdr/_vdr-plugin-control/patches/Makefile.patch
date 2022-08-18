@@ -1,0 +1,41 @@
+diff -u8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-04-14 11:05:25.000000000 +0200
++++ b/Makefile	2022-04-12 06:50:33.741080835 +0200
+@@ -10,17 +10,17 @@
+ #*******************************************************************************
+ 
+ 
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ 
+ 
+ 
+@@ -115,17 +115,17 @@
+ #*******************************************************************************
+ # TARGETS.
+ #*******************************************************************************
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@
+ 
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ 
+ install: install-lib install-i18n
+ 
+ 
+ 
+ dist: $(I18Npo) clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)

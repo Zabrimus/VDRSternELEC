@@ -1,0 +1,176 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2022-02-02 10:56:43.000000000 +0100
++++ b/Makefile	2022-04-01 17:18:03.523717925 +0200
+@@ -310,17 +310,17 @@
+ 	@gzip -c vdr.1 > $(DESTDIR)$(MANDIR)/man1/vdr.1.gz
+ 	@gzip -c vdr.5 > $(DESTDIR)$(MANDIR)/man5/vdr.5.gz
+ 	@gzip -c svdrpsend.1 > $(DESTDIR)$(MANDIR)/man1/svdrpsend.1.gz
+ 
+ # Plugins:
+ 
+ install-plugins: plugins
+ 	@-for i in `ls $(PLUGINDIR)/src | grep -v '[^a-z0-9]'`; do\
+-	      $(MAKE) --no-print-directory -C "$(PLUGINDIR)/src/$$i" VDRDIR=$(CWD) DESTDIR=$(DESTDIR) install;\
++	      $(MAKE) --no-print-directory -C "$(PLUGINDIR)/src/$$i" VDRDIR=$(CWD) DESTDIR=$(DESTDIR) LIBDIR=$(LIBDIR) install;\
+ 	      done
+ 	@if [ -d $(PLUGINDIR)/lib ] ; then\
+ 	    for i in `find $(PLUGINDIR)/lib -name 'lib*-*.so.$(APIVERSION)'`; do\
+ 	        install -D $$i $(DESTDIR)$(LIBDIR);\
+ 	        done;\
+ 	    fi
+ 
+ # Includes:
+diff -ru8bBw a/PLUGINS/src/epgtableid0/Makefile b/PLUGINS/src/epgtableid0/Makefile
+--- a/PLUGINS/src/epgtableid0/Makefile	2022-02-02 10:56:43.000000000 +0100
++++ b/PLUGINS/src/epgtableid0/Makefile	2022-04-01 17:26:36.348191198 +0200
+@@ -13,17 +13,17 @@
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKG_CONFIG ?= pkg-config
+ PKGCFG = $(if $(VDRDIR),$(shell $(PKG_CONFIG) --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." $(PKG_CONFIG) --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+ export CXXFLAGS = $(call PKGCFG,cxxflags)
+diff -ru8bBw a/PLUGINS/src/hello/Makefile b/PLUGINS/src/hello/Makefile
+--- a/PLUGINS/src/hello/Makefile	2022-02-02 10:56:43.000000000 +0100
++++ b/PLUGINS/src/hello/Makefile	2022-04-01 17:16:30.207655338 +0200
+@@ -13,17 +13,17 @@
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKG_CONFIG ?= pkg-config
+ PKGCFG = $(if $(VDRDIR),$(shell $(PKG_CONFIG) --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." $(PKG_CONFIG) --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+diff -ru8bBw a/PLUGINS/src/osddemo/Makefile b/PLUGINS/src/osddemo/Makefile
+--- a/PLUGINS/src/osddemo/Makefile	2022-02-02 10:56:43.000000000 +0100
++++ b/PLUGINS/src/osddemo/Makefile	2022-04-01 17:16:36.771659728 +0200
+@@ -13,17 +13,17 @@
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKG_CONFIG ?= pkg-config
+ PKGCFG = $(if $(VDRDIR),$(shell $(PKG_CONFIG) --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." $(PKG_CONFIG) --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+ export CXXFLAGS = $(call PKGCFG,cxxflags)
+diff -ru8bBw a/PLUGINS/src/pictures/Makefile b/PLUGINS/src/pictures/Makefile
+--- a/PLUGINS/src/pictures/Makefile	2022-02-02 10:56:43.000000000 +0100
++++ b/PLUGINS/src/pictures/Makefile	2022-04-01 17:16:45.059665265 +0200
+@@ -13,17 +13,17 @@
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKG_CONFIG ?= pkg-config
+ PKGCFG = $(if $(VDRDIR),$(shell $(PKG_CONFIG) --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." $(PKG_CONFIG) --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+diff -ru8bBw a/PLUGINS/src/servicedemo/Makefile b/PLUGINS/src/servicedemo/Makefile
+--- a/PLUGINS/src/servicedemo/Makefile	2022-02-02 10:56:43.000000000 +0100
++++ b/PLUGINS/src/servicedemo/Makefile	2022-04-01 17:16:52.315670126 +0200
+@@ -14,17 +14,17 @@
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN1).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKG_CONFIG ?= pkg-config
+ PKGCFG = $(if $(VDRDIR),$(shell $(PKG_CONFIG) --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." $(PKG_CONFIG) --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+ export CXXFLAGS = $(call PKGCFG,cxxflags)
+diff -ru8bBw a/PLUGINS/src/status/Makefile b/PLUGINS/src/status/Makefile
+--- a/PLUGINS/src/status/Makefile	2022-02-02 10:56:43.000000000 +0100
++++ b/PLUGINS/src/status/Makefile	2022-04-01 17:17:04.799678500 +0200
+@@ -13,17 +13,17 @@
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKG_CONFIG ?= pkg-config
+ PKGCFG = $(if $(VDRDIR),$(shell $(PKG_CONFIG) --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." $(PKG_CONFIG) --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+ export CXXFLAGS = $(call PKGCFG,cxxflags)
+diff -ru8bBw a/PLUGINS/src/svdrpdemo/Makefile b/PLUGINS/src/svdrpdemo/Makefile
+--- a/PLUGINS/src/svdrpdemo/Makefile	2022-02-02 10:56:43.000000000 +0100
++++ b/PLUGINS/src/svdrpdemo/Makefile	2022-04-01 17:17:10.451682290 +0200
+@@ -13,17 +13,17 @@
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKG_CONFIG ?= pkg-config
+ PKGCFG = $(if $(VDRDIR),$(shell $(PKG_CONFIG) --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." $(PKG_CONFIG) --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+ export CXXFLAGS = $(call PKGCFG,cxxflags)

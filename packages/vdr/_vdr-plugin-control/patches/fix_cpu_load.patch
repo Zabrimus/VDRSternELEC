@@ -1,0 +1,86 @@
+diff -ru8bBw a/keyboard.c b/keyboard.c
+--- a/keyboard.c	2022-05-26 08:12:40.495575310 +0200
++++ b/keyboard.c	2022-05-26 11:16:19.753966898 +0200
+@@ -70,17 +70,17 @@
+   { kfDel,    0x000000001B5B337EULL },
+   { kfNone,   0x0000000000000000ULL },
+ };
+ 
+ /*******************************************************************************
+  * cCtrlKeyboard
+  ******************************************************************************/
+ 
+-cCtrlKeyboard::cCtrlKeyboard(const char* name) : cKbdRemote() {
++cCtrlKeyboard::cCtrlKeyboard(const char* name) : cRemote("KBD") {
+   mName = name;
+   debug_plugin("'%s' = %p", mName.c_str(), this);
+ }
+ 
+ cCtrlKeyboard::~cCtrlKeyboard() {
+   debug_plugin("'%s' = %p", mName.c_str(), this);
+ }
+ 
+diff -ru8bBw a/keyboard.h b/keyboard.h
+--- a/keyboard.h	2022-05-26 08:12:40.495575310 +0200
++++ b/keyboard.h	2022-05-26 11:16:31.057992398 +0200
+@@ -7,17 +7,17 @@
+ #define _CTRLKEYBOARD_H_
+ 
+ #include <vdr/remote.h>
+ #include <vdr/thread.h>
+ 
+ /*******************************************************************************
+  * cCtrlKeyboard
+  ******************************************************************************/
+-class cCtrlKeyboard : public cKbdRemote  {
++class cCtrlKeyboard : public cRemote  {
+ private:
+   std::string mName;
+ public:
+   cCtrlKeyboard(const char* name);
+   virtual ~cCtrlKeyboard();
+   bool Put(uint64_t Command);
+   static int MapCodeToFunc(uint64_t Code);
+   uint64_t MapFuncToCode(int Func);
+diff -ru8bBw a/telnet.c b/telnet.c
+--- a/telnet.c	2022-05-26 08:12:40.495575310 +0200
++++ b/telnet.c	2022-05-26 11:17:17.194096342 +0200
+@@ -397,19 +397,16 @@
+      }
+ 
+   debug_telnet("unknown telnet option %c", Option);
+   return sNotSupported;
+ }
+ 
+ 
+ void cCtrlGateway::Action() {
+-  /* NOTE: DO NOT DESTROY 'kbd', VDR ITSELF DESTROYS IT.
+-   * Otherwise double free on exit of vdr.
+-   */
+   cCtrlKeyboard* kbd = new cCtrlKeyboard("cCtrlKeyboard");
+   cOsdState osdstate(this, "cOsdState");
+ 
+   debug_plugin("thread started");
+   do {
+      debug_plugin("starting stack");
+      telnet_Init();
+      socket_Send(greeting, sizeof(greeting) - 1);
+@@ -474,16 +472,18 @@
+                  } //Command
+               break;
+               }
+            } //while mActive & i < sizeof(Command)
+         } // if (socket_Poll(100))
+      } // while mActive
+   } while(0);
+ 
++  Remotes.Del(kbd, true);
++
+   debug_plugin("gateway thread ended (pid=%d)", getpid());
+ }
+ 
+ bool cCtrlGateway::SendMsg(const char* Msg) {
+   return (socket_Send((const unsigned char*) Msg, strlen(Msg)) >= 0);
+ }
+ 
+ void cCtrlGateway::Close() {

@@ -1,0 +1,42 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2022-03-24 20:51:56.000000000 +0100
++++ b/Makefile	2022-04-12 18:48:41.221788985 +0200
+@@ -9,17 +9,17 @@
+ VERSION = $(shell grep 'static const char \*VERSION *=' version.h | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ GITTAG  = $(shell git describe --always 2>/dev/null)
+ $(shell GITVERSION=`git rev-parse --short HEAD 2> /dev/null`; if [ "$$GITVERSION" ]; then sed "s/\";/ ($$GITVERSION)\";/" version.dist > version.h; else cp version.dist version.h; fi)
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ CFGDIR = $(call PKGCFG,configdir)
+ #
+ TMPDIR ?= /tmp
+ DIRS = command plugin
+ 
+ ### The compiler options:
+diff -ru8bBw a/plugin/Makefile b/plugin/Makefile
+--- a/plugin/Makefile	2022-03-24 20:51:56.000000000 +0100
++++ b/plugin/Makefile	2022-04-12 18:51:15.214066501 +0200
+@@ -112,15 +112,15 @@
+ 
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ clean:
+ 	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot
+ 	@-rm -f $(OBJS) $(DEPFILE) *.so *.tgz core* *~

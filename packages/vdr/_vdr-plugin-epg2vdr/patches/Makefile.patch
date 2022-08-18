@@ -1,0 +1,166 @@
+diff -ru8bBw a/lib/Makefile b/lib/Makefile
+--- a/lib/Makefile	2022-02-12 09:49:54.000000000 +0100
++++ b/lib/Makefile	2022-04-17 19:35:02.331089189 +0200
+@@ -21,17 +21,17 @@
+ ifdef USECURL
+    LIBOBJS += curl.o configuration.o thread.o
+ endif
+ 
+ CFLAGS += $(shell pkg-config --cflags uuid)
+ CFLAGS += $(shell pkg-config --cflags zlib)
+ 
+ BASELIBS += -lrt
+-BASELIBS += $(shell $(SQLCFG) --libs_r)
++BASELIBS += $(shell pkg-config --libs libmariadb)
+ BASELIBS += $(shell pkg-config --libs uuid)
+ BASELIBS += $(shell pkg-config --libs zlib)
+ BASELIBS += $(PYTHON_LIBS)
+ BASELIBS += $(shell pkg-config --libs tinyxml2)
+ 
+ ifdef USECURL
+    BASELIBS += -lcurl
+ endif
+@@ -48,17 +48,17 @@
+    BASELIBS += $(shell xml2-config --libs) $(shell xslt-config --libs)
+ endif
+ 
+ ifdef SYSD_NOTIFY
+    BASELIBS  += $(shell pkg-config --libs libsystemd-daemon)
+    CFLAGS += $(shell pkg-config --cflags libsystemd-daemon)
+ endif
+ 
+-CFLAGS += $(shell $(SQLCFG) --include)
++CFLAGS += $(shell pkg-config --cflags libmariadb)
+ DEFINES += $(USES)
+ 
+ all: lib $(TEST) $(DEMO)
+ lib: $(LIBTARGET).a
+ 
+ $(LIBTARGET).a : $(LIBOBJS)
+ 	@echo Building Lib ...
+ 	$(doLib) $@ $(LIBOBJS)
+diff -ru8bBw a/Make.config b/Make.config
+--- a/Make.config	2022-02-12 09:49:54.000000000 +0100
++++ b/Make.config	2022-04-17 19:26:06.678107397 +0200
+@@ -30,35 +30,35 @@
+ 
+ # set python interpreter
+ 
+ PYTHON ?= python
+ 
+ ifdef USE_CLANG
+   CC = clang++
+ else
+-  CC = g++
++  CC = $(CXX)
+ endif
+ 
+ doCompile = $(CC) -c $(CFLAGS) $(DEFINES)
+ doLink    = $(CC) $(LFLAGS)
+ doLib     = ar -rs
+ 
+ USEPYTHON = 1
+ USEEPGS   = 1
+ 
+ ifdef USEPYTHON
+   ifeq ($(shell $(PYTHON) -c 'from __future__ import print_function; import sys; sys.exit(0) if sys.version_info[:2] < (3,8) else print(1)'), 1)
+-    PYTHON_LIBS = $(shell $(PYTHON)-config --libs --embed)
++    PYTHON_LIBS = $(shell pkg-config --libs python3-embed)
+   else
+-    PYTHON_LIBS = $(shell $(PYTHON)-config --libs)
++    PYTHON_LIBS = $(shell pkg-config --libs python3)
+   endif
+   LIBS += $(PYTHON_LIBS)
+   BASELIBS += $(PYTHON_LIBS)
+-  CXXFLAGS += $(shell $(PYTHON)-config --includes)
++  CXXFLAGS += $(shell pkg-config --cflags python3)
+ endif
+ 
+ USES = -DVDR_PLUGIN -DUSEUUID -DUSEMD5 -DUSEJSON -DUSEGUNZIP -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
+ 
+ ifdef DEBUG
+   CXXFLAGS += -ggdb -O0
+ endif
+ 
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2022-02-12 09:49:54.000000000 +0100
++++ b/Makefile	2022-04-17 19:37:46.771393123 +0200
+@@ -18,17 +18,17 @@
+ BRANCH      = $(shell git rev-parse --abbrev-ref HEAD)
+ GIT_REV = $(shell git describe --always 2>/dev/null)
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+ 
+-LIBDIR   = $(call PKGCFG,libdir)
++LIBDIR   ?= $(call PKGCFG,libdir)
+ LOCDIR   = $(call PKGCFG,locdir)
+ PLGCFG   = $(call PKGCFG,plgcfg)
+ CONFDEST = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
+ 
+ # autodetect related plugins
+ 
+ ifeq (exists, $(shell test -e ../graphtftng && echo exists))
+    WITH_GTFT = 1
+@@ -65,19 +65,19 @@
+        timer.o recording.o recinfofile.o \
+        status.o ttools.o svdrpclient.o \
+        menu.o menusched.o menutimers.o menudone.o menusearchtimer.o
+ 
+ LIBS += $(HLIB)
+ LIBS += -lrt -larchive -lcrypto
+ LIBS += $(shell pkg-config --libs uuid)
+ LIBS += $(shell pkg-config --libs tinyxml2)
+-LIBS += $(shell $(SQLCFG) --libs_r)
++LIBS += $(shell pkg-config --libs libmariadb)
+ ifdef USEPYTHON
+-  CFLAGS += $(shell $(PYTHON)-config --includes)
++  CFLAGS += $(shell pkg-config --cflags python3)
+   LIBS += $(PYTHON_LIBS)
+ endif
+ LIBS += $(shell pkg-config --libs jansson)
+ 
+ EPG2VDR_DATA_DIR = "/var/cache/vdr"
+ 
+ ifdef WITH_GTFT
+ 	DEFINES += -DWITH_GTFT
+@@ -101,17 +101,17 @@
+ PACKAGE = vdr-$(ARCHIVE)
+ 
+ ### The name of the shared object file:
+ 
+ SOFILE = libvdr-$(PLUGIN).so
+ 
+ ### Includes and Defines (add further entries here):
+ 
+-INCLUDES += $(shell $(SQLCFG) --include)
++INCLUDES += $(shell pkg-config --cflags libmariadb)
+ 
+ DEFINES += -DEPG2VDR -DLOG_PREFIX='"$(PLUGIN): "' $(USES)
+ 
+ ifdef GIT_REV
+    DEFINES += -DGIT_REV='"$(GIT_REV)"'
+ endif
+ 
+ ### The main target:
+@@ -162,17 +162,17 @@
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): hlib $(OBJS)
+ 	$(CC) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D -m644 $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D -m644 $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n install-config
+ 
+ install-config:
+ 	if ! test -d $(DESTDIR)$(CONFDEST); then \
+ 	   mkdir -p $(DESTDIR)$(CONFDEST); \
+ 	   chmod a+rx $(DESTDIR)$(CONFDEST); \
+ 	fi

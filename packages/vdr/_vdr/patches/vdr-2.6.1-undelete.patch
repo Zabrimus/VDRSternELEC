@@ -1,0 +1,692 @@
+diff -ru8bBw a/config.c b/config.c
+--- a/config.c	2022-02-02 10:56:43.000000000 +0100
++++ b/config.c	2022-07-16 12:45:43.080187928 +0200
+@@ -428,16 +428,18 @@
+   UseSubtitle = 1;
+   UseVps = 0;
+   VpsMargin = 120;
+   RecordingDirs = 1;
+   FoldersInTimerMenu = 1;
+   AlwaysSortFoldersFirst = 1;
+   DefaultSortModeRec = rsmTime;
+   RecSortingDirection = rsdAscending;
++  UndeleteTimeOut = 0;
++  ButtonFirst = 0;
+   NumberKeysForChars = 1;
+   ColorKey0 = 0;
+   ColorKey1 = 1;
+   ColorKey2 = 2;
+   ColorKey3 = 3;
+   VideoDisplayFormat = 1;
+   VideoFormat = 0;
+   UpdateChannels = 5;
+@@ -656,16 +658,18 @@
+   else if (!strcasecmp(Name, "UseSubtitle"))         UseSubtitle        = atoi(Value);
+   else if (!strcasecmp(Name, "UseVps"))              UseVps             = atoi(Value);
+   else if (!strcasecmp(Name, "VpsMargin"))           VpsMargin          = atoi(Value);
+   else if (!strcasecmp(Name, "RecordingDirs"))       RecordingDirs      = atoi(Value);
+   else if (!strcasecmp(Name, "FoldersInTimerMenu"))  FoldersInTimerMenu = atoi(Value);
+   else if (!strcasecmp(Name, "AlwaysSortFoldersFirst")) AlwaysSortFoldersFirst = atoi(Value);
+   else if (!strcasecmp(Name, "RecSortingDirection")) RecSortingDirection= atoi(Value);
+   else if (!strcasecmp(Name, "DefaultSortModeRec"))  DefaultSortModeRec = atoi(Value);
++  else if (!strcasecmp(Name, "UndeleteTimeOut"))     UndeleteTimeOut    = atoi(Value);
++  else if (!strcasecmp(Name, "ButtonFirst"))         ButtonFirst        = atoi(Value);
+   else if (!strcasecmp(Name, "NumberKeysForChars"))  NumberKeysForChars = atoi(Value);
+   else if (!strcasecmp(Name, "ColorKey0"))           ColorKey0          = atoi(Value);
+   else if (!strcasecmp(Name, "ColorKey1"))           ColorKey1          = atoi(Value);
+   else if (!strcasecmp(Name, "ColorKey2"))           ColorKey2          = atoi(Value);
+   else if (!strcasecmp(Name, "ColorKey3"))           ColorKey3          = atoi(Value);
+   else if (!strcasecmp(Name, "VideoDisplayFormat"))  VideoDisplayFormat = atoi(Value);
+   else if (!strcasecmp(Name, "VideoFormat"))         VideoFormat        = atoi(Value);
+   else if (!strcasecmp(Name, "UpdateChannels"))      UpdateChannels     = atoi(Value);
+@@ -788,16 +792,18 @@
+   Store("UseSubtitle",        UseSubtitle);
+   Store("UseVps",             UseVps);
+   Store("VpsMargin",          VpsMargin);
+   Store("RecordingDirs",      RecordingDirs);
+   Store("FoldersInTimerMenu", FoldersInTimerMenu);
+   Store("AlwaysSortFoldersFirst", AlwaysSortFoldersFirst);
+   Store("RecSortingDirection",RecSortingDirection);
+   Store("DefaultSortModeRec", DefaultSortModeRec);
++  Store("UndeleteTimeOut",    UndeleteTimeOut);
++  Store("ButtonFirst",        ButtonFirst);
+   Store("NumberKeysForChars", NumberKeysForChars);
+   Store("ColorKey0",          ColorKey0);
+   Store("ColorKey1",          ColorKey1);
+   Store("ColorKey2",          ColorKey2);
+   Store("ColorKey3",          ColorKey3);
+   Store("VideoDisplayFormat", VideoDisplayFormat);
+   Store("VideoFormat",        VideoFormat);
+   Store("UpdateChannels",     UpdateChannels);
+diff -ru8bBw a/config.h b/config.h
+--- a/config.h	2022-02-02 10:56:43.000000000 +0100
++++ b/config.h	2022-07-16 12:45:43.080187928 +0200
+@@ -309,16 +309,18 @@
+   int UseSubtitle;
+   int UseVps;
+   int VpsMargin;
+   int RecordingDirs;
+   int FoldersInTimerMenu;
+   int AlwaysSortFoldersFirst;
+   int DefaultSortModeRec;
+   int RecSortingDirection;
++  int UndeleteTimeOut;
++  int ButtonFirst;
+   int NumberKeysForChars;
+   int ColorKey0, ColorKey1, ColorKey2, ColorKey3;
+   int VideoDisplayFormat;
+   int VideoFormat;
+   int UpdateChannels;
+   int UseDolbyDigital;
+   int ChannelInfoPos;
+   int ChannelInfoTime;
+diff -ru8bBw a/menu.c b/menu.c
+--- a/menu.c	2022-02-02 10:56:43.000000000 +0100
++++ b/menu.c	2022-07-16 12:48:57.223284307 +0200
+@@ -2895,39 +2895,44 @@
+ // --- cMenuRecording --------------------------------------------------------
+ 
+ class cMenuRecording : public cOsdMenu {
+ private:
+   const cRecording *recording;
+   cString originalFileName;
+   cStateKey recordingsStateKey;
+   bool withButtons;
++  bool deletedRecording;
+   bool RefreshRecording(void);
+ public:
+-  cMenuRecording(const cRecording *Recording, bool WithButtons = false);
++  cMenuRecording(const cRecording *Recording, bool WithButtons = false, bool DeletedRecording = false);
+   virtual void Display(void);
+   virtual eOSState ProcessKey(eKeys Key);
+ };
+ 
+-cMenuRecording::cMenuRecording(const cRecording *Recording, bool WithButtons)
++cMenuRecording::cMenuRecording(const cRecording *Recording, bool WithButtons, bool DeletedRecording)
+ :cOsdMenu(tr("Recording info"))
+ {
+   SetMenuCategory(mcRecordingInfo);
+   if (cRecordings::GetRecordingsRead(recordingsStateKey)) // initializes recordingsStateKey, so we don't call Display() unnecessarily
+      recordingsStateKey.Remove();
+   recording = Recording;
+   originalFileName = recording->FileName();
+   withButtons = WithButtons;
++  deletedRecording = DeletedRecording;
+   if (withButtons)
++     if (deletedRecording)
++        SetHelp(tr("Button$RECORDINGS"), NULL, NULL, tr("Button$Back"));
++     else
+      SetHelp(tr("Button$Play"), tr("Button$Rewind"), NULL, tr("Button$Edit"));
+ }
+ 
+ bool cMenuRecording::RefreshRecording(void)
+ {
+-  if (const cRecordings *Recordings = cRecordings::GetRecordingsRead(recordingsStateKey)) {
++  if (const cRecordings *Recordings = deletedRecording ? cRecordings::GetDeletedRecordingsRead(recordingsStateKey) : cRecordings::GetRecordingsRead(recordingsStateKey)) {
+      if ((recording = Recordings->GetByName(originalFileName)) != NULL)
+         Display();
+      else {
+         recordingsStateKey.Remove();
+         Skins.Message(mtWarning, tr("Recording vanished!"));
+         return false;
+         }
+      recordingsStateKey.Remove();
+@@ -2968,25 +2973,38 @@
+     case kInfo:   return osBack;
+     default: break;
+     }
+ 
+   eOSState state = cOsdMenu::ProcessKey(Key);
+ 
+   if (state == osUnknown) {
+      switch (Key) {
+-       case kRed:    if (withButtons)
+-                        Key = kOk; // will play the recording, even if recording commands are defined
+-       case kGreen:  if (!withButtons)
++       case kRed:    if (withButtons) {
++                        if (!deletedRecording)
++                           Key = kOk;
++                        cRemote::Put(Key, true); // will play the recording, even if recording commands are defined
++                        return osBack;
++                        }
++                     break;
++       case kGreen:  if (withButtons) {
++                        if (deletedRecording)
++                           state = osContinue;
++                        else {
++                           state = osBack;
++                           cRemote::Put(Key, true); // continue with osBack to close the info menu and process the key
++                           }
++                        return state;
++                        }
+                         break;
+-                     cRemote::Put(Key, true);
+-                     // continue with osBack to close the info menu and process the key
++       case kYellow: return osContinue;
+        case kOk:     return osBack;
+        case kBlue:   if (withButtons)
+-                        return AddSubMenu(new cMenuRecordingEdit(recording));
++                        return deletedRecording ? osBack
++                                                : AddSubMenu(new cMenuRecordingEdit(recording));
+                      break;
+        default: break;
+        }
+      }
+   return state;
+ }
+ 
+ // --- cMenuRecordingItem ----------------------------------------------------
+@@ -3044,24 +3062,27 @@
+      DisplayMenu->SetItem(Text(), Index, Current, Selectable);
+ }
+ 
+ // --- cMenuRecordings -------------------------------------------------------
+ 
+ cString cMenuRecordings::path;
+ cString cMenuRecordings::fileName;
+ 
+-cMenuRecordings::cMenuRecordings(const char *Base, int Level, bool OpenSubMenus, const cRecordingFilter *Filter)
+-:cOsdMenu(Base ? Base : tr("Recordings"), 9, 6, 6)
++cMenuRecordings::cMenuRecordings(const char *Base, int Level, bool OpenSubMenus, const cRecordingFilter *Filter, bool DelRecMenu)
++:cOsdMenu(Base ? Base : DelRecMenu ? tr("Deleted Recordings") : tr("Recordings"), 9, 6, 6)
+ {
+   SetMenuCategory(mcRecording);
+   base = Base ? strdup(Base) : NULL;
+   level = Setup.RecordingDirs ? Level : -1;
+   filter = Filter;
+   helpKeys = -1;
++  timeOut = 0;
++  delRecMenu = DelRecMenu;
++  deletedRec = false;
+   Display(); // this keeps the higher level menus from showing up briefly when pressing 'Back' during replay
+   Set();
+   if (Current() < 0)
+      SetCurrent(First());
+   else if (OpenSubMenus && (cReplayControl::LastReplayed() || *path || *fileName)) {
+      if (!*path || Level < strcountchr(path, FOLDERDELIMCHAR)) {
+         if (Open(true))
+            return;
+@@ -3073,48 +3094,65 @@
+ 
+ cMenuRecordings::~cMenuRecordings()
+ {
+   if (cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current())) {
+      if (!ri->IsDirectory())
+         SetRecording(ri->Recording()->FileName());
+      }
+   free(base);
++  LOCK_RECORDINGS_WRITE;
+ }
+ 
+ void cMenuRecordings::SetHelpKeys(void)
+ {
+   cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current());
+   int NewHelpKeys = 0;
++  bool DeletedRec = false;
++  bool commands = false;
+   if (ri) {
+      if (ri->IsDirectory())
+         NewHelpKeys = 1;
+-     else
++     else {
++        commands = RecordingCommands.Count() ? true : false;
+         NewHelpKeys = 2;
+      }
+-  if (NewHelpKeys != helpKeys) {
++     }
++  {
++  LOCK_DELETEDRECORDINGS_READ;
++  if (!commands || !Setup.UndeleteTimeOut || (!Setup.ButtonFirst && timeOut < Setup.UndeleteTimeOut) || (Setup.ButtonFirst && timeOut >= Setup.UndeleteTimeOut))
++     DeletedRec = DeletedRecordings->Count() ? true : false;
++  }
++  if (delRecMenu)
+      switch (NewHelpKeys) {
+        case 0: SetHelp(NULL); break;
+-       case 1: SetHelp(tr("Button$Open"), NULL, NULL, tr("Button$Edit")); break;
+-       case 2: SetHelp(RecordingCommands.Count() ? tr("Commands") : tr("Button$Play"), tr("Button$Rewind"), tr("Button$Delete"), tr("Button$Info"));
++       case 1: SetHelp(tr("Button$RECORDINGS")); break;
++       case 2: SetHelp(tr("Button$RECORDINGS"), tr("Button$Undelete"), tr("Button$Destroy"),  tr("Button$Info"));
++     }
++  else if (NewHelpKeys != helpKeys || DeletedRec != deletedRec) {
++     switch (NewHelpKeys) {
++       case 0: SetHelp(NULL); break;
++       case 1: SetHelp(DeletedRec ? tr("Button$UNDELETE") : tr("Button$Open"), NULL, NULL, tr("Button$Edit")); break;
++       case 2: SetHelp(DeletedRec ? tr("Button$UNDELETE") : RecordingCommands.Count() ? tr("Commands") : tr("Button$Play"), tr("Button$Rewind"), tr("Button$Delete"), tr("Button$Info"));
+        default: ;
+        }
+      helpKeys = NewHelpKeys;
++     deletedRec = DeletedRec;
+      }
+ }
+ 
+ void cMenuRecordings::Set(bool Refresh)
+ {
+-  if (cRecordings::GetRecordingsRead(recordingsStateKey)) {
++  if (delRecMenu ? cRecordings::GetDeletedRecordingsRead(recordingsStateKey) : cRecordings::GetRecordingsRead(recordingsStateKey)) {
+      recordingsStateKey.Remove();
+-     cRecordings *Recordings = cRecordings::GetRecordingsWrite(recordingsStateKey); // write access is necessary for sorting!
++     cRecordings *Recordings = delRecMenu ? cRecordings::GetDeletedRecordingsWrite(recordingsStateKey) : cRecordings::GetRecordingsWrite(recordingsStateKey); // write access is necessary for sorting!
+      const char *CurrentRecording = NULL;
+      if (cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current()))
+         CurrentRecording = ri->Recording()->FileName();
+-     if (!CurrentRecording)
++     if (!CurrentRecording && !delRecMenu)
+         CurrentRecording = *fileName ? *fileName : cReplayControl::LastReplayed();
+      int current = Current();
+      Clear();
+      GetRecordingsSortMode(DirectoryName());
+      Recordings->Sort();
+      cMenuRecordingItem *CurrentItem = NULL;
+      cMenuRecordingItem *LastItem = NULL;
+      for (const cRecording *Recording = Recordings->First(); Recording; Recording = Recordings->Next(Recording)) {
+@@ -3186,17 +3224,17 @@
+   cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current());
+   if (ri && ri->IsDirectory() && (!*path || strcountchr(path, FOLDERDELIMCHAR) > 0)) {
+      const char *t = ri->Name();
+      cString buffer;
+      if (base) {
+         buffer = cString::sprintf("%s%c%s", base, FOLDERDELIMCHAR, t);
+         t = buffer;
+         }
+-     AddSubMenu(new cMenuRecordings(t, level + 1, OpenSubMenus, filter));
++     AddSubMenu(new cMenuRecordings(t, level + 1, OpenSubMenus, filter, delRecMenu));
+      return true;
+      }
+   return false;
+ }
+ 
+ eOSState cMenuRecordings::Play(void)
+ {
+   cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current());
+@@ -3319,25 +3357,102 @@
+         else
+            Skins.Message(mtError, tr("Error while deleting recording!"));
+         recordingsStateKey.Remove();
+         }
+      }
+   return osContinue;
+ }
+ 
++eOSState cMenuRecordings::Undelete(void)
++{
++#define RECEXT       ".rec"
++#define DELEXT       ".del"
++  if (HasSubMenu() || Count() == 0)
++     return osContinue;
++  if (cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current())) {
++     if (ri->IsDirectory())
++        return osContinue;
++     else {
++        if (Interface->Confirm(tr("Restore recording?"))) {
++           cRecording *Recording = ((cRecording *)ri->Recording());
++           if (Recording) {
++              if (Recording->Undelete()) {
++                 cOsdMenu::Del(Current());
++                 if (cRecordings *DeletedRecordings = cRecordings::GetDeletedRecordingsWrite(recordingsStateKey)) { // write access is necessary for sorting!
++                    DeletedRecordings->Del(Recording);
++                    recordingsStateKey.Remove(true);
++                    char *NewName = strdup(Recording->FileName());
++                    char *ext = strrchr(NewName, '.');
++                    if (ext && strcmp(ext, DELEXT) == 0) {
++                       strncpy(ext, RECEXT, strlen(ext));
++                       LOCK_RECORDINGS_WRITE;
++                       Recordings->AddByName(NewName);
++                       cVideoDiskUsage::ForceCheck();
++                       }
++                    }
++                 else
++                    Skins.Message(mtError, tr("Error while restoring recording!"));
++                 Display();
++                 if (!Count())
++                    return osUserRecEmpty;
++                 return osUserRecRemoved;
++                 }
++              else
++                 Skins.Message(mtError, tr("Error while restoring recording!"));
++              }
++           }
++        }
++     }
++  return osContinue;
++}
++
++eOSState cMenuRecordings::Erase(void)
++{
++  dsyslog ("%s %s %d\n", __FILE__, __func__,  __LINE__);
++  if (HasSubMenu() || Count() == 0)
++     return osContinue;
++  if (cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current())) {
++     if (ri->IsDirectory())
++        return osContinue;
++     else {
++        if (Interface->Confirm(tr("Delete recording?"))) {
++           cRecording *recording = ((cRecording *)ri->Recording());
++           if (recording) {
++              if (recording->Remove()) {
++                 cOsdMenu::Del(Current());
++                 if (cRecordings *DeletedRecordings = cRecordings::GetDeletedRecordingsWrite(recordingsStateKey)) { // write access is necessary for sorting!
++                    DeletedRecordings->Del(recording);
++                    recordingsStateKey.Remove(true);
++                    }
++                 else
++                    Skins.Message(mtError, tr("Error while removing recording!"));
++                 Display();
++                 if (!Count())
++                    return osUserRecEmpty;
++                 return osUserRecRemoved;
++                 }
++              else
++                 Skins.Message(mtError, tr("Error while removing recording!"));
++              }
++           }
++        }
++     }
++  return osContinue;
++}
++
+ eOSState cMenuRecordings::Info(void)
+ {
+   if (HasSubMenu() || Count() == 0)
+      return osContinue;
+   if (cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current())) {
+      if (ri->IsDirectory())
+         return AddSubMenu(new cMenuPathEdit(cString(ri->Recording()->Name(), strchrn(ri->Recording()->Name(), FOLDERDELIMCHAR, ri->Level() + 1))));
+      else
+-        return AddSubMenu(new cMenuRecording(ri->Recording(), true));
++        return AddSubMenu(new cMenuRecording(ri->Recording(), true, delRecMenu));
+      }
+   return osContinue;
+ }
+ 
+ eOSState cMenuRecordings::Commands(eKeys Key)
+ {
+   if (HasSubMenu() || Count() == 0)
+      return osContinue;
+@@ -3367,24 +3482,25 @@
+ eOSState cMenuRecordings::ProcessKey(eKeys Key)
+ {
+   eOSState state = cOsdMenu::ProcessKey(Key);
+ 
+   if (state == osUnknown) {
+      switch (Key) {
+        case kPlayPause:
+        case kPlay:
+-       case kOk:     return Play();
+-       case kRed:    return (helpKeys > 1 && RecordingCommands.Count()) ? Commands() : Play();
+-       case kGreen:  return Rewind();
+-       case kYellow: return Delete();
++       case kOk:     if (delRecMenu) {Open(); return osContinue;} else return Play();
++       case kRed:    if (delRecMenu) {CloseSubMenu(false); delRecMenu = false; if (base) return state; else return osBack;}
++                     else return deletedRec ? AddSubMenu(new cMenuRecordings(NULL, 0, false, NULL, true)) : (helpKeys > 1 && RecordingCommands.Count()) ? Commands() : Play();
++       case kGreen:  return delRecMenu ? Undelete() : Rewind();
++       case kYellow: return delRecMenu ? Erase() : Delete();
+        case kInfo:
+        case kBlue:   return Info();
+        case k0:      return Sort();
+-       case k1...k9: return Commands(Key);
++       case k1...k9: return delRecMenu ? osContinue : Commands(Key);
+        default: break;
+        }
+      }
+   else if (state == osUserRecRenamed) {
+      // a recording was renamed (within the same folder), so let's refresh the menu
+      CloseSubMenu(false); // this is the cMenuRecordingEdit/cMenuPathEdit
+      path = NULL;
+      fileName = NULL;
+@@ -3412,26 +3528,39 @@
+         }
+      // no state change here, this report goes upstream!
+      }
+   else if (state == osUserRecEmpty) {
+      // a subfolder became empty, so let's go back up
+      CloseSubMenu(false); // this is the now empty submenu
+      cOsdMenu::Del(Current()); // the menu entry of the now empty subfolder
+      Set(); // in case a recording was moved into a new subfolder of this folder
+-     if (base && !Count()) // base: don't go up beyond the top level Recordings menu
++     if ((base || delRecMenu) && !Count()) // base: don't go up beyond the top level Recordings menu
+         return state;
+      Display();
+      state = osContinue;
+      }
+   if (!HasSubMenu()) {
+      Set(true);
+-     if (Key != kNone)
++     if (Key != kNone) {
++        timeOut = 0;
+         SetHelpKeys();
+      }
++     if (!delRecMenu && Setup.UndeleteTimeOut) {
++        int delRecordings;
++        {
++        LOCK_DELETEDRECORDINGS_READ;
++        delRecordings = DeletedRecordings->Count();
++        }
++        if (delRecordings && timeOut < Setup.UndeleteTimeOut) {
++           timeOut++;
++           SetHelpKeys();
++           }
++        }
++     }
+   return state;
+ }
+ 
+ // --- cMenuSetupBase --------------------------------------------------------
+ 
+ class cMenuSetupBase : public cMenuSetupPage {
+ protected:
+   cSetup data;
+@@ -3455,16 +3584,17 @@
+ // --- cMenuSetupOSD ---------------------------------------------------------
+ 
+ class cMenuSetupOSD : public cMenuSetupBase {
+ private:
+   const char *useSmallFontTexts[3];
+   const char *recSortModeTexts[2];
+   const char *recSortDirTexts[2];
+   const char *keyColorTexts[4];
++  const char *buttonFirst[2];
+   int osdLanguageIndex;
+   int numSkins;
+   int originalSkinIndex;
+   int skinIndex;
+   const char **skinDescriptions;
+   cThemes themes;
+   int originalThemeIndex;
+   int themeIndex;
+@@ -3510,16 +3640,18 @@
+       skinDescriptions[Skin->Index()] = Skin->Description();
+   useSmallFontTexts[0] = tr("never");
+   useSmallFontTexts[1] = tr("skin dependent");
+   useSmallFontTexts[2] = tr("always");
+   recSortModeTexts[0] = tr("by name");
+   recSortModeTexts[1] = tr("by time");
+   recSortDirTexts[0] = tr("ascending");
+   recSortDirTexts[1] = tr("descending");
++  buttonFirst[0] = tr("Button$UNDELETE");
++  buttonFirst[1] = tr("Key$Commands");
+   keyColorTexts[0] = tr("Key$Red");
+   keyColorTexts[1] = tr("Key$Green");
+   keyColorTexts[2] = tr("Key$Yellow");
+   keyColorTexts[3] = tr("Key$Blue");
+   Clear();
+   SetSection(tr("OSD"));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Language"),               &osdLanguageIndex, I18nNumLanguagesWithLocale(), &I18nLanguages()->At(0)));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Skin"),                   &skinIndex, numSkins, skinDescriptions));
+@@ -3545,16 +3677,19 @@
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Scroll pages"),           &data.MenuScrollPage));
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Scroll wraps"),           &data.MenuScrollWrap));
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Menu key closes"),        &data.MenuKeyCloses));
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Recording directories"),  &data.RecordingDirs));
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Folders in timer menu"),  &data.FoldersInTimerMenu));
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Always sort folders first"), &data.AlwaysSortFoldersFirst));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Default sort mode for recordings"), &data.DefaultSortModeRec, 2, recSortModeTexts));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Sorting direction for recordings"), &data.RecSortingDirection, 2, recSortDirTexts));
++  Add(new cMenuEditIntItem( tr("Setup.OSD$Red button UNDELETE timeout (s)"), &data.UndeleteTimeOut, 0, 10, tr("off")));
++  if (data.UndeleteTimeOut)
++  Add(new cMenuEditStraItem(tr("Setup.OSD$Displayed first (UNDELETE or Commands)"), &data.ButtonFirst, 2, buttonFirst));
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Number keys for characters"), &data.NumberKeysForChars));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Color key 0"),            &data.ColorKey0, 4, keyColorTexts));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Color key 1"),            &data.ColorKey1, 4, keyColorTexts));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Color key 2"),            &data.ColorKey2, 4, keyColorTexts));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Color key 3"),            &data.ColorKey3, 4, keyColorTexts));
+   SetCurrent(Get(current));
+   Display();
+ }
+@@ -3594,22 +3729,23 @@
+      if (data.AlwaysSortFoldersFirst != Setup.AlwaysSortFoldersFirst || data.RecordingDirs != Setup.RecordingDirs || data.RecSortingDirection != Setup.RecSortingDirection) {
+         LOCK_RECORDINGS_WRITE;
+         Recordings->ClearSortNames();
+         }
+      }
+ 
+   int oldSkinIndex = skinIndex;
+   int oldOsdLanguageIndex = osdLanguageIndex;
++  int oldUndeleteTimeOut = data.UndeleteTimeOut;
+   eOSState state = cMenuSetupBase::ProcessKey(Key);
+ 
+   if (ModifiedAppearance)
+      cOsdProvider::UpdateOsdSize(true);
+ 
+-  if (osdLanguageIndex != oldOsdLanguageIndex || skinIndex != oldSkinIndex) {
++  if (osdLanguageIndex != oldOsdLanguageIndex || skinIndex != oldSkinIndex || data.UndeleteTimeOut != oldUndeleteTimeOut) {
+      strn0cpy(data.OSDLanguage, I18nLocale(osdLanguageIndex), sizeof(data.OSDLanguage));
+      int OriginalOSDLanguage = I18nCurrentLanguage();
+      I18nSetLanguage(osdLanguageIndex);
+ 
+      cSkin *Skin = Skins.Get(skinIndex);
+      if (Skin) {
+         char *d = themes.NumThemes() ? strdup(themes.Descriptions()[themeIndex]) : NULL;
+         themes.Load(Skin->Name());
+diff -ru8bBw a/menu.h b/menu.h
+--- a/menu.h	2022-02-02 10:56:43.000000000 +0100
++++ b/menu.h	2022-07-16 12:45:43.084187910 +0200
+@@ -208,32 +208,37 @@
+ class cMenuRecordingItem;
+ 
+ class cMenuRecordings : public cOsdMenu {
+ private:
+   char *base;
+   int level;
+   cStateKey recordingsStateKey;
+   int helpKeys;
++  int timeOut;
++  bool delRecMenu;
++  bool deletedRec;
+   const cRecordingFilter *filter;
+   static cString path;
+   static cString fileName;
+   void SetHelpKeys(void);
+   void Set(bool Refresh = false);
+   bool Open(bool OpenSubMenus = false);
+   eOSState Play(void);
+   eOSState Rewind(void);
+   eOSState Delete(void);
++  eOSState Undelete(void);
++  eOSState Erase(void);
+   eOSState Info(void);
+   eOSState Sort(void);
+   eOSState Commands(eKeys Key = kNone);
+ protected:
+   cString DirectoryName(void);
+ public:
+-  cMenuRecordings(const char *Base = NULL, int Level = 0, bool OpenSubMenus = false, const cRecordingFilter *Filter = NULL);
++  cMenuRecordings(const char *Base = NULL, int Level = 0, bool OpenSubMenus = false, const cRecordingFilter *Filter = NULL, bool DelRecMenu = false);
+   ~cMenuRecordings();
+   virtual eOSState ProcessKey(eKeys Key);
+   static void SetPath(const char *Path);
+   static void SetRecording(const char *FileName);
+   };
+ 
+ class cRecordControl {
+ private:
+diff -ru8bBw a/po/de_DE.po b/po/de_DE.po
+--- a/po/de_DE.po	2022-02-02 10:56:43.000000000 +0100
++++ b/po/de_DE.po	2022-07-16 12:45:43.084187910 +0200
+@@ -855,37 +855,64 @@
+ msgstr "Fehler beim Ändern der Priorität bzw. Lebensdauer!"
+ 
+ msgid "Error while changing folder/name!"
+ msgstr "Fehler beim Ändern des Ordners bzw. Namens!"
+ 
+ msgid "Recording info"
+ msgstr "Aufzeichnung"
+ 
++msgid "Button$RECORDINGS"
++msgstr "AUFNAHMEN"
++
++msgid "Button$Back"
++msgstr "Zurück"
++
+ msgid "Button$Play"
+ msgstr "Wiedergabe"
+ 
+ msgid "Button$Rewind"
+ msgstr "Anfang"
+ 
++msgid "Deleted Recordings"
++msgstr "gelöschte Aufnahmen"
++
+ msgid "Recordings"
+ msgstr "Aufzeichnungen"
+ 
++msgid "Button$Undelete"
++msgstr "Wiederherstellen"
++
++msgid "Button$Destroy"
++msgstr "Löschen"
++
++msgid "Button$UNDELETE"
++msgstr ""
++
+ msgid "Commands"
+ msgstr "Befehle"
+ 
+ msgid "Delete recording?"
+ msgstr "Aufzeichnung löschen?"
+ 
+ msgid "Recording is being edited - really delete?"
+ msgstr "Aufzeichnung wird bearbeitet - trotzdem löschen?"
+ 
+ msgid "Error while deleting recording!"
+ msgstr "Fehler beim Löschen der Aufzeichnung!"
+ 
++msgid "Restore recording?"
++msgstr "Aufnahme wiederherstellen?"
++
++msgid "Error while restoring recording!"
++msgstr "Fehler bei der Wiederherstellung der Aufnahme!"
++
++msgid "Error while removing recording!"
++msgstr "Fehler beim Löschen der Aufnahme!"
++
+ msgid "Recording commands"
+ msgstr "Befehle für Aufzeichnungen"
+ 
+ msgid "never"
+ msgstr "nie"
+ 
+ msgid "skin dependent"
+ msgstr "je nach Oberfläche"
+@@ -993,16 +1020,22 @@
+ msgstr "Verzeichnisse immer zuerst einsortieren"
+ 
+ msgid "Setup.OSD$Default sort mode for recordings"
+ msgstr "Standard Sortierreihenfolge für Aufnahmen"
+ 
+ msgid "Setup.OSD$Sorting direction for recordings"
+ msgstr "Sortierreihenfolge für Aufnahmen"
+ 
++msgid "Setup.OSD$Red button UNDELETE timeout (s)"
++msgstr ""
++
++msgid "Setup.OSD$Displayed first (UNDELETE or Commands)"
++msgstr "Wird zuerst angezeigt (UNDELETE oder Befehle)"
++
+ msgid "Setup.OSD$Number keys for characters"
+ msgstr "Nummerntasten für Zeichen"
+ 
+ msgid "Setup.OSD$Color key 0"
+ msgstr "Farbtaste 0"
+ 
+ msgid "Setup.OSD$Color key 1"
+ msgstr "Farbtaste 1"

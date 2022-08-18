@@ -1,0 +1,65 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2020-07-03 14:36:36.000000000 +0200
++++ b/Makefile	2022-04-17 16:41:08.144011004 +0200
+@@ -20,17 +20,17 @@
+ ### The version number of this plugin (taken from the main source file):
+ VERSION = $(shell grep 'static constexpr const char\* s_version *= ' easyvdr.cpp | awk '{ print $$7 }' | sed -e 's/[";]//g')
+ 
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+@@ -47,17 +47,17 @@
+ ### The name of the distribution archive:
+ 
+ ARCHIVE = $(PLUGIN)-$(VERSION)
+ PACKAGE = vdr-$(ARCHIVE)
+ 
+ ### The name of the shared object file:
+ 
+ SOFILE = libvdr-$(PLUGIN).so
+-CMDFILE = $(PLUGIN)ctl-$(APIVERSION)
++CMDFILE = $(PLUGIN)ctl
+ 
+ 
+ ### Includes and Defines (add further entries here):
+ 
+ INCLUDES += -I.
+ 
+ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"' -DAPIVERSION='"$(APIVERSION)"'
+ #DEFINES += -DDEBUG
+@@ -117,20 +117,21 @@
+ cmd: $(CMDOBJS)
+ 	$(CXX) $(CXXFLAGS) $(CMDOBJS) -o $(CMDFILE)
+ 
+ $(SOFILE): $(OBJS)
+ 	@echo LD $@
+ 	$(Q)$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-cmd: cmd
+-	cp $(CMDFILE) /usr/local/bin
++	mkdir -p $(DESTDIR)$(call PKGCFG,bindir)
++	cp $(CMDFILE) $(DESTDIR)$(call PKGCFG,bindir)
+ 
+ install: install-lib install-i18n install-cmd
+ 
+ test:
+ 	@echo \"$(VERSION)\"
+ 
+ dist: $(I18Npo) clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)

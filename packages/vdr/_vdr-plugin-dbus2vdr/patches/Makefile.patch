@@ -1,0 +1,41 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-11-30 14:12:50.000000000 +0100
++++ b/Makefile	2022-05-31 16:00:46.507206127 +0200
+@@ -12,17 +12,17 @@
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR = ?$(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ CONFDIR = $(call PKGCFG,configdir)
+ PLGCONFDIR = $(CONFDIR)/plugins/$(PLUGIN)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+@@ -107,17 +107,17 @@
+ 
+ shutdown-wrapper: $(SWOBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(SWOBJS) -ljpeg -lrt -pthread -o $@
+ 
+ $(SOFILE): $(OBJS) shutdown-wrapper
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LDADD) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-cfg: shutdown-wrapper
+ 	mkdir -p $(DESTDIR)/etc/init
+ 	mkdir -p $(DESTDIR)/etc/dbus-1/system.d
+ 	mkdir -p $(DESTDIR)$(PLGCONFDIR)
+ 	cp -pn etc/dbus2vdr.conf $(DESTDIR)/etc/init/dbus2vdr.conf
+ 	cp -pn etc/de.tvdr.vdr.conf $(DESTDIR)/etc/dbus-1/system.d/de.tvdr.vdr.conf
+ 	cp -pn etc/network.conf $(DESTDIR)$(PLGCONFDIR)/network.conf

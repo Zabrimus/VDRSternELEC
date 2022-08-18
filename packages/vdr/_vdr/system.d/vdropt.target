@@ -1,0 +1,9 @@
+[Unit]
+Description=VDR Interface
+Requires=multi-user.target graphical.target network-online.target
+After=network-online.target graphical.target
+Conflicts=rescue.target
+AllowIsolate=yes
+
+[Install]
+Alias=vdropt.target

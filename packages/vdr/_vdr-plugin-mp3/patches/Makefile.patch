@@ -1,0 +1,200 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-05-25 15:27:50.000000000 +0200
++++ b/Makefile	2022-04-27 09:32:33.393807441 +0200
+@@ -18,54 +18,54 @@
+ # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ # Or, point your browser to http://www.gnu.org/copyleft/gpl.html
+ 
+ # You can change the compile options here or create a Make.config
+ # in the VDR directory an set them there.
+ 
+ ### uncomment one of these lines, if you don't want one of the plugins
+ #WITHOUT_MP3=1
+-#WITHOUT_MPLAYER=1
++WITHOUT_MPLAYER=1
+ 
+ ### uncomment the following line, if you don't have libsndfile installed
+ #WITHOUT_LIBSNDFILE=1
+ 
+ ### uncomment the following line, if you don't have libvorbisfile installed
+ #WITHOUT_LIBVORBISFILE=1
+ 
+ ### uncomment the following line, if you want OSS sound output
+ #WITH_OSS_OUTPUT=1
+ 
+ ### uncomment the following line, if you want to include debug symbols
+ #DBG=1
+ 
+ ### The C++ compiler and options:
+-CXX      ?= g++
+-CXXFLAGS ?= -O2 -fPIC -Wall -Woverloaded-virtual
++CXX      ?= ${CXX}
++CXXFLAGS += -O2 -fPIC -Wall -Woverloaded-virtual
+ 
+ ###############################################
+ ###############################################
+ #
+ # no user configurable options below this point
+ #
+ ###############################################
+ ###############################################
+ 
+ ### The directory environment:
+ 
+-VDRDIR = ../../..
+-LIBDIR = ../../lib
++VDRDIR ?= ../../..
++LIBDIR ?= ../../lib
+ TMPDIR = /tmp
+ 
+ # The official name of this plugin.
+ # This name will be used in the '-P...' option of VDR to load the plugin.
+ # By default the main source file also carries this name.
+ #
+ PLUGIN  = mp3
+-PLUGIN2 = mplayer
++#PLUGIN2 = mplayer
+ 
+ ### Allow user defined options to overwrite defaults:
+ 
+ -include $(VDRDIR)/Make.config
+ -include Make.config
+ 
+ ### The version number of this plugin:
+ 
+@@ -121,89 +121,89 @@
+ endif
+ ifdef WITH_OSS_OUTPUT
+   DEFINES += -DWITH_OSS
+ endif
+ ifdef BROKEN_PCM
+   DEFINES += -DBROKEN_PCM
+ endif
+ 
+-OBJS2    = $(PLUGIN2).o $(COM_OBJS)\
+-            setup-mplayer.o player-mplayer.o
+-LIBS2    = 
++#OBJS2    = $(PLUGIN2).o $(COM_OBJS)\
++#            setup-mplayer.o player-mplayer.o
++#LIBS2    =
+ 
+ ifdef DBG
+   CXXFLAGS += -g
+ endif
+ 
+-ifneq ($(shell if test $(APIVERSNUM) -ge 010703; then echo "*"; fi),)
++#ifneq ($(shell if test $(APIVERSNUM) -ge 010703; then echo "*"; fi),)
+   DEFINES += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
+-endif
++#endif
+ 
+ ### Internationalization (I18N):
+ 
+ PODIR     = po
+ I18Npot   = $(PODIR)/mp3-mplayer.pot
+ I18Npots  := $(notdir $(foreach file, $(wildcard $(PODIR)/*.po), $(basename $(file))))
+ ifeq ($(strip $(APIVERSION)),1.5.7)
+   I18Nmo  = $(PLUGIN).mo
+-  I18Nmo2 = $(PLUGIN2).mo
++  #I18Nmo2 = $(PLUGIN2).mo
+ else
+   I18Nmo  = vdr-$(PLUGIN).mo
+-  I18Nmo2 = vdr-$(PLUGIN2).mo
++  #18Nmo2 = vdr-$(PLUGIN2).mo
+ endif
+ LOCALEDIR = $(VDRDIR)/locale
+ I18Nmsgs  := $(addprefix $(LOCALEDIR)/,$(addsuffix /LC_MESSAGES/$(I18Nmo),$(I18Npots)))
+-I18Nmsgs2 := $(addprefix $(LOCALEDIR)/,$(addsuffix /LC_MESSAGES/$(I18Nmo2),$(I18Npots)))
++#I18Nmsgs2 := $(addprefix $(LOCALEDIR)/,$(addsuffix /LC_MESSAGES/$(I18Nmo2),$(I18Npots)))
+ 
+ HASLOCALE = $(shell grep -l 'I18N_DEFAULT_LOCALE' $(VDRDIR)/include/vdr/i18n.h)
+ ifeq ($(strip $(HASLOCALE)),)
+   COM_OBJS += i18n.o
+ endif
+ 
+ ### Targets:
+ 
+ ifndef WITHOUT_MP3
+   ALL += libvdr-$(PLUGIN).so
+   ifneq ($(strip $(HASLOCALE)),)
+     ALL += i18n-$(PLUGIN)
+   endif
+ endif
+-ifndef WITHOUT_MPLAYER
+-  ALL += libvdr-$(PLUGIN2).so
+-  ifneq ($(strip $(HASLOCALE)),)
+-    ALL += i18n-$(PLUGIN2)
+-  endif
+-endif
++#ifndef WITHOUT_MPLAYER
++#  ALL += libvdr-$(PLUGIN2).so
++#  ifneq ($(strip $(HASLOCALE)),)
++#    ALL += i18n-$(PLUGIN2)
++#  endif
++#endif
+ 
+ all: $(ALL)
+-.PHONY: i18n-$(PLUGIN) i18n-$(PLUGIN2)
++.PHONY: i18n-$(PLUGIN) #i18n-$(PLUGIN2)
+ 
+ # Dependencies:
+ 
+ MAKEDEP = g++ -MM -MG
+ DEPFILE = .dependencies
+-DEPFILES = $(subst i18n.c,,$(subst version.c,,$(OBJS:%.o=%.c) $(OBJS2:%.o=%.c)))
++DEPFILES = $(subst i18n.c,,$(subst version.c,,$(OBJS:%.o=%.c) #$(OBJS2:%.o=%.c)))
+ $(DEPFILE): Makefile $(DEPFILES) $(wildcard *.h)
+ 	@$(MAKEDEP) $(DEFINES) $(INCLUDES) $(DEPFILES) > $@
+ 
+ -include $(DEPFILE)
+ 
+ # Rules
+ 
+ %.o: %.c
+-	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) $<
++	$(CXX) $(CXXFLAGS) -fPIC -c $(DEFINES) $(INCLUDES) $<
+ 
+ libvdr-$(PLUGIN).so: $(OBJS)
+ 	$(CXX) $(CXXFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 	@cp $@ $(LIBDIR)/$@.$(APIVERSION)
+ 
+-libvdr-$(PLUGIN2).so: $(OBJS2)
+-	$(CXX) $(CXXFLAGS) -shared $(OBJS2) $(LIBS2) -o $@
+-	@cp $@ $(LIBDIR)/$@.$(APIVERSION)
++#libvdr-$(PLUGIN2).so: $(OBJS2)
++#	$(CXX) $(CXXFLAGS) -shared $(OBJS2) $(LIBS2) -o $@
++#	@cp $@ $(LIBDIR)/$@.$(APIVERSION)
+ 
+ $(I18Npot): $(shell grep -rl '\(tr\|trNOOP\)(\".*\")' *.c )
+ 	xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --msgid-bugs-address='<s.huelswitt@gmx.de>' -o $@ $^
+ 
+ %.po: $(I18Npot)
+ 	msgmerge -U --no-wrap --no-location --backup=none -q $@ $<
+ 	@touch $@
+ 
+@@ -211,21 +211,21 @@
+ 	msgfmt -c -o $@ $<
+ 
+ $(I18Nmsgs): $(LOCALEDIR)/%/LC_MESSAGES/$(I18Nmo): $(PODIR)/%.mo
+ 	@mkdir -p $(dir $@)
+ 	cp $< $@
+ 
+ i18n-$(PLUGIN): $(I18Nmsgs)
+ 
+-$(I18Nmsgs2): $(LOCALEDIR)/%/LC_MESSAGES/$(I18Nmo2): $(PODIR)/%.mo
+-	@mkdir -p $(dir $@)
+-	cp $< $@
++#$(I18Nmsgs2): $(LOCALEDIR)/%/LC_MESSAGES/$(I18Nmo2): $(PODIR)/%.mo
++#	@mkdir -p $(dir $@)
++#	cp $< $@
+ 
+-i18n-$(PLUGIN2): $(I18Nmsgs2)
++#i18n-$(PLUGIN2): $(I18Nmsgs2)
+ 
+ i18n.c: $(PODIR)/*.po i18n-template.c po2i18n.pl
+ 	perl ./po2i18n.pl <i18n-template.c >i18n.c
+ 
+ version.c: FORCE
+ 	@echo >$@.new "/* this file will be overwritten without warning */"; \
+ 	 echo >>$@.new 'const char *PluginVersion =' '"'$(VERSION)'";'; \
+ 	 diff $@.new $@ >$@.diff 2>&1; \

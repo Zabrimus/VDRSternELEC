@@ -1,0 +1,22 @@
+diff -ru8 a/zaphistorychannel.h b/zaphistorychannel.h
+--- a/zaphistorychannel.h	2015-12-09 20:09:19.000000000 +0100
++++ b/zaphistorychannel.h	2022-07-29 21:20:07.061242986 +0200
+@@ -24,17 +24,17 @@
+ 	int historyPos;
+     public:
+ 	cZapHistoryChannel();
+ 	
+ 	const cChannel *GetChannel();
+ 	tChannelID GetChannelID();
+ 	void SetChannelID(tChannelID id);
+ 		
+-	long GetWatchTime();
++	time_t GetWatchTime();
+ 	long GetZapCount();
+ 	int GetHistoryPos();
+ 		
+ 	void IncreaseZapCount();
+ 	void AddWatchTime( time_t t );
+ 	void SetHistoryPos(int p);
+ 	
+ 	bool Parse(char *s);

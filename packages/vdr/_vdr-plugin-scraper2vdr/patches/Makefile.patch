@@ -1,0 +1,171 @@
+diff -ru8bBw a/lib/Makefile b/lib/Makefile
+--- a/lib/Makefile	2022-01-04 06:54:16.000000000 +0100
++++ b/lib/Makefile	2022-04-27 13:51:27.555058842 +0200
+@@ -18,49 +18,49 @@
+    LIBOBJS += imgtools.o
+ endif
+ 
+ ifdef USECURL
+    LIBOBJS += curl.o configuration.o thread.o
+ endif
+ 
+ BASELIBS = -lrt -lz -luuid
+-BASELIBS += $(shell $(SQLCFG) --libs_r)
++BASELIBS += $(shell pkg-config --libs libmariadb)
+ 
+ ifdef USECURL
+    BASELIBS += -lcurl
+ endif
+ 
+ ifdef USEEPGS
+ 	LIBOBJS += searchtimer.o
+ endif
+ 
+ ifdef USEPYTHON
+-	BASELIBS += $(shell python-config --libs)
++	BASELIBS += $(shell pkg-config --libs python3)
+    LIBOBJS += python.o
+ endif
+ 
+ ifdef USELIBXML
+    BASELIBS += $(shell xml2-config --libs) $(shell xslt-config --libs)
+ endif
+ 
+ ifdef SYSD_NOTIFY
+    BASELIBS  += $(shell pkg-config --libs libsystemd-daemon)
+ 	CFLAGS += $(shell pkg-config --cflags libsystemd-daemon)
+ endif
+ 
+ ifdef DEBUG
+   CFLAGS += -ggdb -O0
+ endif
+ 
+-CFLAGS += $(shell $(SQLCFG) --include)
++CFLAGS += $(shell pkg-config --cflags libmariadb)
+ DEFINES += $(USES)
+ 
+ ifdef USEPYTHON
+-	CFLAGS += $(shell python-config --includes)
++	CFLAGS += $(shell pkg-config --cflags python3)
+ endif
+ 
+ all: lib $(TEST) $(DEMO)
+ lib: $(LIBTARGET).a
+ 
+ $(LIBTARGET).a : $(LIBOBJS)
+ 	@echo Building Lib ...
+ 	$(doLib) $@ $(LIBOBJS)
+diff -ru8bBw a/Make.config b/Make.config
+--- a/Make.config	2022-01-04 06:54:16.000000000 +0100
++++ b/Make.config	2022-04-27 13:51:27.555058842 +0200
+@@ -14,17 +14,17 @@
+ # internals
+ 
+ SQLCFG = mariadb_config
+ 
+ ifdef MYSQL
+   SQLCFG = mysql_config
+ endif
+ 
+-CC        = g++
++CC        = $(CXX)
+ doCompile = $(CC) -c $(CFLAGS) $(DEFINES)
+ doLink    = $(CC) $(LFLAGS)
+ doLib     = ar -rs
+ 
+ TMPDIR = /tmp
+ 
+ USES = -DVDR_PLUGIN -DUSEUUID -DUSEMD5
+ 
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2022-01-04 06:54:16.000000000 +0100
++++ b/Makefile	2022-04-27 13:52:03.563085109 +0200
+@@ -1,16 +1,16 @@
+ #
+ # Makefile for a Video Disk Recorder plugin
+ #
+ # $Id$
+ 
+ # External image lib to use: imagemagick, graphicsmagick
+ 
+-IMAGELIB = imagemagick
++IMAGELIB = graphicsmagick
+ 
+ PLUGIN = scraper2vdr
+ HLIB   = -L./lib -lhorchi
+ HISTFILE  = "HISTORY.h"
+ 
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'define _VERSION ' $(HISTFILE) | awk '{ print $$3 }' | sed -e 's/[";]//g')
+@@ -20,17 +20,17 @@
+ LASTTAG     = $(shell git describe --tags --abbrev=0)
+ BRANCH      = $(shell git rev-parse --abbrev-ref HEAD)
+ GIT_REV = $(shell git describe --always 2>/dev/null)
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ CONFDEST = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
+ 
+ SQLCFG = mariadb_config
+ 
+ ifdef MYSQL
+   SQLCFG = mysql_config
+@@ -47,30 +47,30 @@
+ ### The version number of VDR's plugin API:
+ 
+ APIVERSION = $(call PKGCFG,apiversion)
+ 
+ ### Allow user defined options to overwrite defaults:
+ 
+ -include $(PLGCFG)
+ 
+-LIBS = $(HLIB) $(shell $(SQLCFG) --libs_r) -luuid -lcrypto
++LIBS = $(HLIB) $(shell pkg-config --libs libmariadb) -luuid -lcrypto
+ 
+ ### The name of the distribution archive:
+ 
+ ARCHIVE = $(PLUGIN)-$(VERSION)
+ PACKAGE = vdr-$(ARCHIVE)
+ 
+ ### The name of the shared object file:
+ 
+ SOFILE = libvdr-$(PLUGIN).so
+ 
+ ### Includes and Defines (add further entries here):
+ 
+-INCLUDES += $(shell $(SQLCFG) --include)
++INCLUDES += $(shell pkg-config --cflags libmariadb)
+ 
+ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"' -DLOG_PREFIX='"$(PLUGIN): "'
+ DEFINES += -DVDR_PLUGIN -DUSEUUID -DUSEMD5
+ 
+ ifdef GIT_REV
+    DEFINES += -DGIT_REV='"$(GIT_REV)"'
+ endif
+ 
+@@ -134,17 +134,17 @@
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): hlib $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D -m644 $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D -m644 $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n install-config
+ 
+ install-config:
+ 	if ! test -d $(DESTDIR)$(CONFDEST); then \
+ 	   mkdir -p $(DESTDIR)$(CONFDEST); \
+ 	   chmod a+rx $(DESTDIR)$(CONFDEST); \
+ 	fi

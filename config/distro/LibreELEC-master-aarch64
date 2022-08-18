@@ -1,0 +1,10 @@
+# one of BRANCH, TAG or REVISION is mandatory
+DISTRO=LibreELEC.tv
+BRANCH=master
+TAG=
+REVISION=
+
+# Build settings
+PROJECT=Amlogic
+DEVICE=AMLGX
+ARCH=aarch64

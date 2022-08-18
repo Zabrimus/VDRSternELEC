@@ -1,0 +1,88 @@
+diff -ru8bBw a/libskindesignerapi/Makefile b/libskindesignerapi/Makefile
+--- a/libskindesignerapi/Makefile	2022-02-09 13:55:34.000000000 +0100
++++ b/libskindesignerapi/Makefile	2022-04-02 13:21:20.930656649 +0200
+@@ -65,19 +65,20 @@
+ 	@echo "Description: skindesigner API Library" >> $@
+ 	@echo "Version: $(VERSION)" >> $@
+ 	@echo "Cflags: -I$(INCDIR)" >> $@
+ 	@echo "Libs: -L$(LIBDIR) -l$(NAME)" >> $@
+ 
+ # install targets
+ 
+ install-lib: $(TARGET_LIB)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^
++	install -D $^ $(LIBDIR)/$^
+ 	if [ -z "$(DESTDIR)" ] ; then ldconfig; fi
+-	cd $(DESTDIR)$(LIBDIR) ; if [ ! -e $(LIBNAME).so ] ; then ln -s $(TARGET_LIB) $(LIBNAME).so; fi
++	cd $(LIBDIR) ; if [ ! -e $(LIBNAME).so ] ; then ln -s $(TARGET_LIB) $(LIBNAME).so; fi
++	cd $(LIBDIR) ; if [ ! -e $(LIBNAME).so.0 ] ; then ln -s $(TARGET_LIB) $(LIBNAME).so.0; fi
+ 
+ install-includes:
+ 	@mkdir -p $(DESTDIR)$(INCDIR)/$(LIBNAME)
+ 	@cp -pLR *.h $(DESTDIR)$(INCDIR)/$(LIBNAME)
+ 
+ install-pc: $(LIBNAME).pc
+ 	if [ -n "$(PCDIR)" ] ; then\
+ 	  mkdir -p $(DESTDIR)$(PCDIR) ;\
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2022-02-09 13:55:34.000000000 +0100
++++ b/Makefile	2022-04-02 13:56:35.656914838 +0200
+@@ -12,21 +12,21 @@
+ 
+ ### The version number of this plugin (taken from the main source file):
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --silence-errors --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --silence-errors --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG  = $(call PKGCFG,plgcfg)
+ VDRCONFDIR = $(call PKGCFG,configdir)
+-PLGRESDIR = $(call PKGCFG,resdir)/plugins/$(PLUGIN)
++PLGRESDIR ?= $(call PKGCFG,resdir)/plugins/$(PLUGIN)
+ TMPDIR ?= /tmp
+ SKINDESIGNER_SCRIPTDIR ?= $(LIBDIR)/$(PLUGIN)/scripts
+ 
+ ### The compiler options:
+ export CFLAGS   = $(call PKGCFG,cflags)
+ export CXXFLAGS = $(call PKGCFG,cxxflags)
+ CXXFLAGS += -std=c++11
+ ### Allow user defined options to overwrite defaults:
+@@ -183,27 +183,27 @@
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	@echo LD $@
+ 	$(Q)$(CXX) $(CXXFLAGS) -std=c++11  $(LDFLAGS) -shared $(OBJS) $(LIBS) $(SUB_LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+ 	@echo IN $@
+-	$(Q)install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	$(Q)install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-themes:
+-	mkdir -p $(DESTDIR)$(VDRCONFDIR)/themes
+-	cp themes/* $(DESTDIR)$(VDRCONFDIR)/themes
++	mkdir -p $(PLGRESDIR)//themes
++	cp themes/* $(PLGRESDIR)//themes
+ 
+ install-skins:
+-	mkdir -p $(DESTDIR)$(PLGRESDIR)/skins
+-	cp -r skins/* $(DESTDIR)$(PLGRESDIR)/skins
+-	mkdir -p $(DESTDIR)$(PLGRESDIR)/dtd
+-	cp -r dtd/* $(DESTDIR)$(PLGRESDIR)/dtd
++	mkdir -p $(PLGRESDIR)/skins
++	cp -r skins/* $(PLGRESDIR)/skins
++	mkdir -p $(PLGRESDIR)/dtd
++	cp -r dtd/* $(PLGRESDIR)/dtd
+ 
+ install-scripts:
+ 	mkdir -p $(DESTDIR)$(SKINDESIGNER_SCRIPTDIR)
+ 	cp -r scripts/* $(DESTDIR)$(SKINDESIGNER_SCRIPTDIR)
+ 
+ install: install-lib install-i18n install-themes install-skins install-scripts install-subprojects
+ 
+ dist: $(I18Npo) clean

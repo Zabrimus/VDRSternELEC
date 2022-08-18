@@ -1,0 +1,51 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2022-02-13 14:58:12.000000000 +0100
++++ b/Makefile	2022-04-24 19:38:17.946151434 +0200
+@@ -8,26 +8,26 @@
+ 
+ # The official name of this plugin.
+ # This name will be used in the '-P...' option of VDR to load the plugin.
+ # By default the main source file also carries this name.
+ 
+ PLUGIN = skinelchihd
+ 
+ # External image lib to use: imagemagick or graphicsmagick
+-IMAGELIB ?= imagemagick
++IMAGELIB ?= graphicsmagick
+ 
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKG_CONFIG ?= pkg-config
+ PKGCFG = $(if $(VDRDIR),$(shell $(PKG_CONFIG) --variable=$(1) $(VDRDIR)/vdr.pc),$(shell $(PKG_CONFIG) --variable=$(1) vdr || $(PKG_CONFIG) --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+@@ -125,17 +125,17 @@
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	@echo LD $@
+ 	$(Q)$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	$(Q)install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	$(Q)install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ dist: $(I18Npo) clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a * $(TMPDIR)/$(ARCHIVE)
+ 	@tar cjf $(PACKAGE).tar.bz2 -C $(TMPDIR) $(ARCHIVE)

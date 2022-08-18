@@ -1,0 +1,41 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-07-21 12:54:31.000000000 +0200
++++ b/Makefile	2022-04-12 06:30:56.119761241 +0200
+@@ -14,17 +14,17 @@
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ VDRCONFDIR = $(call PKGCFG,configdir)
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ export CFLAGS   = $(call PKGCFG,cflags)
+ export CXXFLAGS = $(call PKGCFG,cxxflags)
+@@ -107,17 +107,17 @@
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	@echo LD $@
+ 	$(Q)$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@
+ 
+ install-lib: $(SOFILE)
+ 	@echo IN $@
+-	$(Q)install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	$(Q)install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-themes:
+ 	mkdir -p $(DESTDIR)$(VDRCONFDIR)/themes
+ 	cp themes/* $(DESTDIR)$(VDRCONFDIR)/themes
+ 
+ install: install-lib install-i18n install-themes
+ 
+ dist: $(I18Npo) clean

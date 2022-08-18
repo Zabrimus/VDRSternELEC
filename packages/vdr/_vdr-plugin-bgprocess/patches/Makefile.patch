@@ -1,0 +1,22 @@
+diff -u8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-01-23 15:45:45.000000000 +0100
++++ b/Makefile	2022-04-12 06:43:21.096618064 +0200
+@@ -16,17 +16,17 @@
+ ### The C++ compiler and options:
+ 
+ CXX      ?= g++
+ CXXFLAGS ?= -fPIC -g -O2 -Wall -Woverloaded-virtual
+ 
+ ### The directory environment:
+ 
+ VDRDIR = ../../..
+-LIBDIR = ../../lib
++LIBDIR ?= ../../lib
+ TMPDIR = /tmp
+ 
+ ### Allow user defined options to overwrite defaults:
+ 
+ -include $(VDRDIR)/Make.config
+ 
+ ### Test whether VDR has locale support
+ VDRLOCALE = $(shell grep 'I18N_DEFAULT_LOCALE' $(VDRDIR)/i18n.h)

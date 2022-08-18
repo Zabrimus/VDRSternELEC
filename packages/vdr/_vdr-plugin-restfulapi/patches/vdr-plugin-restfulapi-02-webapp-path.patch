@@ -1,0 +1,48 @@
+diff -ru8bBw a/tools.cpp b/tools.cpp
+--- a/tools.cpp	2016-10-16 11:52:25.000000000 +0200
++++ b/tools.cpp	2022-04-30 12:10:33.340068506 +0200
+@@ -207,19 +207,19 @@
+   static Settings settings;
+   return &settings;
+ }
+ 
+ void Settings::initDefault()
+ {
+   SetPort((string)"8002");
+   SetIp((string)"0.0.0.0");
+-  SetEpgImageDirectory((string)"/var/cache/vdr/epgimages");
+-  SetChannelLogoDirectory((string)"/usr/share/vdr/channel-logos");
+-  SetWebappDirectory((string)"/var/lib/vdr/plugins/restfulapi/webapp");
++  SetEpgImageDirectory((string)"/storage/.cache/vdr/epgimages");
++  SetChannelLogoDirectory((string)"/storage/.cache/vdr/channel-logos");
++  SetWebappDirectory((string)"/storage/.config/vdropt/plugins/restfulapi");
+   SetHeaders((string)"true");
+   webapp_filetypes_filename = "webapp_file_types.conf";
+ }
+ 
+ // --- HtmlHeader --------------------------------------------------------------
+ 
+ void HtmlHeader::ToStream(StreamExtension* se)
+ {
+diff -ru8bBw a/tools.h b/tools.h
+--- a/tools.h	2016-10-16 11:52:25.000000000 +0200
++++ b/tools.h	2022-04-30 12:09:37.516008204 +0200
+@@ -35,17 +35,17 @@
+ //some defines for inotify memory allocation
+ #define EVENT_SIZE ( sizeof (struct inotify_event) )
+ #define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
+ 
+ #ifndef RESTFULAPI_EXTENSIONS
+ #define RESTFULAPI_EXTENSIONS
+ 
+ #ifndef DOCUMENT_ROOT
+-#define DOCUMENT_ROOT "/var/lib/vdr/plugins/restfulapi/"
++#define DOCUMENT_ROOT "/storage/.config/vdropt/plugins/restfulapi"
+ #endif
+ 
+ class Settings
+ {
+   private:
+     int port;
+     std::string ip;
+     std::string epgimage_dir;

@@ -1,0 +1,43 @@
+diff -u8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-05-30 18:54:39.000000000 +0200
++++ b/Makefile	2022-03-25 18:25:56.224011321 +0100
+@@ -16,17 +16,17 @@
+ 
+ VERSION = $(shell grep 'const char VERSION\[\] *=' $(PLUGIN).c | awk '{ print $$5 }' | sed -e 's/[";]//g')
+ GITTAG  = $(shell git describe --always 2>/dev/null)
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ CFGDIR = $(call PKGCFG,configdir)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+@@ -133,18 +133,18 @@
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	@echo LD $@
+ 	$(Q)$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 	$(Q)$(STRIP) $@
+ 
+ install-lib: $(SOFILE)
+-	@echo IN $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
+-	$(Q)install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	@echo IN $(LIBDIR)/$^.$(APIVERSION)
++	$(Q)install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-conf:
+ 	@mkdir -p $(DESTDIR)$(CFGDIR)/plugins/$(PLUGIN)
+ 
+ install: install-lib install-i18n install-conf
+ 
+ dist: $(I18Npo) clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)

@@ -1,0 +1,22 @@
+diff -u8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-12-30 13:40:26.000000000 +0100
++++ b/Makefile	2022-04-12 06:45:53.160792712 +0200
+@@ -12,17 +12,17 @@
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).h | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(DESTDIR)$(call PKGCFG,libdir)
++LIBDIR ?= $(DESTDIR)$(call PKGCFG,libdir)
+ LOCDIR = $(DESTDIR)$(call PKGCFG,locdir)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+ export CXXFLAGS = $(call PKGCFG,cxxflags)

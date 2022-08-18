@@ -1,0 +1,63 @@
+diff -ru8bBw a/Make.config b/Make.config
+--- a/Make.config	2020-08-21 06:54:25.000000000 +0200
++++ b/Make.config	2022-04-12 15:43:52.107524893 +0200
+@@ -12,17 +12,17 @@
+ #USE_CLANG = 1
+ 
+ # -----------------------
+ # don't touch below ;)
+ 
+ ifdef USE_CLANG
+   CC = clang++
+ else
+-  CC = g++
++  CC = $(CXX)
+ endif
+ 
+ doCompile = $(CC) -c $(CFLAGS) $(DEFINES) $(INCLUDES)
+ doLink    = $(CC) $(LFLAGS)
+ doLib     = ar -rs
+ 
+ USES = -DVDR_PLUGIN -DUSEJSON -DUSEGUNZIP -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
+ 
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2020-08-21 06:54:25.000000000 +0200
++++ b/Makefile	2022-04-12 15:42:10.223399474 +0200
+@@ -18,17 +18,17 @@
+ BRANCH      = $(shell git rev-parse --abbrev-ref HEAD)
+ GIT_REV     = $(shell git describe --always 2>/dev/null)
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+ 
+-LIBDIR   = $(call PKGCFG,libdir)
++LIBDIR   ?= $(call PKGCFG,libdir)
+ LOCDIR   = $(call PKGCFG,locdir)
+ PLGCFG   = $(call PKGCFG,plgcfg)
+ CONFDEST = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
+ HTTPDEST = $(CONFDEST)/http
+ 
+ #
+ 
+ TMPDIR ?= /tmp
+@@ -133,17 +133,17 @@
+ 
+ cbuild:
+ 	(cd client && $(MAKE) cbuild)
+ 
+ buildenv:
+ 	(cd client && $(MAKE) buildenv)
+ 
+ install-lib: $(SOFILE)
+-	install -D -m644 $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D -m644 $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n install-config install-http
+ 
+ install-config:
+ 	if ! test -d $(DESTDIR)$(CONFDEST); then \
+ 	   mkdir -p $(DESTDIR)$(CONFDEST); \
+ 	   chmod a+rx $(DESTDIR)$(CONFDEST); \
+ 	fi

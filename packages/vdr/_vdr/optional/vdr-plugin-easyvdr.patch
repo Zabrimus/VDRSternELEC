@@ -1,0 +1,18 @@
+--- a/plugin.h.orig	2020-06-29 11:29:06.000000000 +0200
++++ b/plugin.h	2021-01-23 12:01:45.011454886 +0100
+@@ -22,6 +22,7 @@
+ class cPlugin {
+   friend class cDll;
+   friend class cPluginManager;
++  friend class cEasyPluginManager;
+ private:
+   static cString configDirectory;
+   static cString cacheDirectory;
+@@ -85,6 +86,7 @@
+ class cDlls : public cList<cDll> {};
+ 
+ class cPluginManager {
++  friend class cEasyPluginManager;
+ private:
+   static cPluginManager *pluginManager;
+   char *directory;

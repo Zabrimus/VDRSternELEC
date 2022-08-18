@@ -1,0 +1,41 @@
+diff -u8bBw a/Makefile b/Makefile
+--- a/Makefile	2019-07-27 10:26:48.000000000 +0200
++++ b/Makefile	2022-03-25 17:33:34.755686519 +0100
+@@ -13,17 +13,17 @@
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' DVBAPI.h | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ GITTAG  = $(shell git describe --always 2>/dev/null)
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG  = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+-LIBDIR  = $(call PKGCFG,libdir)
++LIBDIR  ?= $(call PKGCFG,libdir)
+ LOCDIR  = $(call PKGCFG,locdir)
+ PLGCFG  = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+@@ -135,17 +135,17 @@
+ 
+ ifndef LIBDVBCSA
+ $(FFDECSA): $(FFDECSADIR)/*.c $(FFDECSADIR)/*.h
+ 	@echo CC $@
+ 	$(Q)@$(MAKE) COMPILER="$(CXX)" FLAGS="$(CXXFLAGS) $(LDFLAGS) $(CSAFLAGS)" PARALLEL_MODE=$(PARALLEL) -C $(FFDECSADIR) all
+ endif
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ dist: clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a * $(TMPDIR)/$(ARCHIVE)
+ 	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)

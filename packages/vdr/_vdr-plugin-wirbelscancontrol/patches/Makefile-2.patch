@@ -1,0 +1,41 @@
+diff -ur8bBw a/Makefile b/Makefile
+--- a/Makefile	2022-03-25 19:07:55.544303035 +0100
++++ b/Makefile	2022-03-25 19:08:52.064401619 +0100
+@@ -34,17 +34,17 @@
+ DISTFILES+= COPYING HISTORY Makefile README
+ 
+ ### The version number of this plugin (taken from the main source file):
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ 
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ export CFLAGS   = $(call PKGCFG,cflags)
+@@ -142,17 +142,17 @@
+ 
+ $(SOFILE): $(OBJS)
+ ifeq ($(CXX),@g++)
+ 	@echo -e "${GN} LINK $(SOFILE)${RST}"
+ endif
+ 	$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@ $(LDFLAGS)
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ dist: $(I18Npo) clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a $(DISTFILES) $(TMPDIR)/$(ARCHIVE)
+ 	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)

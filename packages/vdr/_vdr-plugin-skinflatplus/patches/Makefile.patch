@@ -1,0 +1,32 @@
+diff -rbBwu a/Makefile b/Makefile
+--- a/Makefile	2022-01-17 09:37:28.000000000 +0100
++++ b/Makefile	2022-04-12 19:21:25.894873691 +0200
+@@ -39,7 +39,7 @@
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG  = $(call PKGCFG,plgcfg)
+ VDRCONFDIR = $(call PKGCFG,configdir)
+@@ -142,7 +142,7 @@
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-themes:
+ 	mkdir -p $(DESTDIR)$(VDRCONFDIR)/themes
+@@ -161,8 +161,8 @@
+ 	cp configs/* $(DESTDIR)$(VDRCONFDIR)/plugins/$(PLUGIN)/configs
+ 
+ install-widgets:
+-	mkdir -p $(DESTDIR)$(SKINFLATPLUS_WIDGETDIR)
+-	cp -r widgets/* $(DESTDIR)$(SKINFLATPLUS_WIDGETDIR)
++	mkdir -p $(SKINFLATPLUS_WIDGETDIR)
++	cp -r widgets/* $(SKINFLATPLUS_WIDGETDIR)
+ 
+ install: install-lib install-i18n install-themes install-icons install-decors install-configs install-widgets
+ 

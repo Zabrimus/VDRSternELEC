@@ -1,0 +1,65 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2014-08-06 17:54:47.000000000 +0200
++++ b/Makefile	2022-04-27 16:26:52.286112933 +0200
+@@ -14,17 +14,17 @@
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG  = $(call PKGCFG,plgcfg)
+ VDRCONFDIR = $(call PKGCFG,configdir)
+ PLGRESDIR = $(call PKGCFG,resdir)/plugins/$(PLUGIN)
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ export CFLAGS   = $(call PKGCFG,cflags)
+@@ -43,21 +43,21 @@
+ PACKAGE = vdr-$(ARCHIVE)
+ 
+ ### The name of the shared object file:
+ 
+ SOFILE = libvdr-$(PLUGIN).so
+ 
+ ### Includes and Defines and Dependencies (add further entries here):
+ 
+-INCLUDES += $(shell pkg-config --cflags Magick++)
++INCLUDES += $(shell pkg-config --cflags GraphicsMagick++)
+ 
+ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
+ 
+-LIBS += $(shell pkg-config --libs Magick++)
++LIBS += $(shell pkg-config --libs GraphicsMagick++)
+ 
+ ### The object files (add further files here):
+ 
+ OBJS = config.o imageloader.o baserender.o displaychannel.o displaymenu.o displaymessage.o \
+ 	   displayreplay.o displaytracks.o displayvolume.o flat.o $(PLUGIN).o
+ 
+ ### The main target:
+ 
+@@ -104,17 +104,17 @@
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install-themes:
+ 	mkdir -p $(DESTDIR)$(VDRCONFDIR)/themes
+ 	cp themes/* $(DESTDIR)$(VDRCONFDIR)/themes
+ 
+ install-icons:
+ 	mkdir -p $(DESTDIR)$(PLGRESDIR)/icons
+ 	cp -r icons/* $(DESTDIR)$(PLGRESDIR)/icons

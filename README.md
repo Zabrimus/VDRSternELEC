@@ -103,7 +103,7 @@ apt-get install build-essential coreutils squashfuse git curl xfonts-utils xsltp
 
 ### Checkout VDRSternELEC
 ```
-git clone XXXX
+git clone https://github.com/Zabrimus/VDRSternELEC
 ```
 
 ### Configure the build process

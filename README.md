@@ -58,6 +58,7 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  osd2web            | yes     | valid   | no      | yes  | 
  osddemo            | yes     | valid   | no      | yes  | 
  osdteletext        | yes     | valid   | no      | yes  | 
+ permashift         | yes     | valid   | no      | yes  |
  pictures           | yes     | valid   | no      | yes  | 
  quickepgsearch     | yes     | valid   | no      | yes  | 
  radio              | yes     | valid   | no      | yes  | -f /storage/.config/vdropt/plugins/radio
@@ -74,6 +75,7 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  skinlcarsng        | yes     | valid   | no      | yes  | 
  skinnopacity       | yes     | valid   | no      | yes  | 
  skinsoppalusikka   | yes     | valid   | no      | yes  | 
+ softhddevice-drm   | yes     | valid   | yes     | no   | -a hw:1,0
  softhdodroid       | yes     | valid   | yes     | no   | -a hw:CARD=AMLAUGESOUND,DEV=0
  status             | yes     | valid   | no      | yes  | 
  streamdev-client   | yes     | valid   | no      | yes  | 

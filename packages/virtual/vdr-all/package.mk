@@ -76,6 +76,10 @@ if [ "${DYNAMITE}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-dynamite"
 fi
 
+if [ "${PERMASHIFT}" = "y" ]; then
+	PKG_DEPENDS_TARGET+=" _vdr-plugin-permashift"
+fi
+
 # Warning: Compiled without libcdio, libcdio_paranoia, libcdda due to compile problems for the mentioned libs
 PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
 

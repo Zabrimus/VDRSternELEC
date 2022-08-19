@@ -123,6 +123,10 @@ REVISION=
 PROJECT=Amlogic-ce
 DEVICE=Amlogic-ng
 ARCH=arm
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhdodroid
+VDR_INPUTDEVICE=satip
 ```
 
 - DISTRO: can be either ```CoreELEC``` or ```LibreELEC```
@@ -138,6 +142,8 @@ ARCH=arm
 - ARCH: 
   - CoreELEC: ```arm```
   - LibreELEC: ```arm```, ```aarch64``` or another supported arch for LibreELEC
+- VDR_OUTPUTDEVICE: can be either ```softhdodroid``` or ```softhddevice-drm```
+- VDR_INPUDEVICE: can be either ```satip``` or ```streamdev-client```
 
 #### config/extras
 A sample configuration looks like this

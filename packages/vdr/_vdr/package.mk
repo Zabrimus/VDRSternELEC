@@ -75,9 +75,15 @@ makeinstall_target() {
   PREFIX="${VDR_PREFIX}"
   CONFDIR="/storage/.config/vdropt"
 
+  if [ "${PROJECT}" = "Allwinner" ]; then
+     LDPRELOADMALI=""
+  else
+     LDPRELOADMALI="/usr/lib/libMali.so"
+  fi
+
   make DESTDIR="${INSTALL}" install
 
-  SED_SCRIPT="s#XXCONFDIRXX#${CONFDIR}# ; s#XXBINDIRXX#${PREFIX}/bin# ; s#XXVERSIONXX#${PKG_VERSION}# ; s#XXLIBDIRXX#${PREFIX}/lib# ; s#XXPREFIXXX#${PREFIX}# ; s#XXPREFIXCONFXX#${PREFIX}/config#"
+  SED_SCRIPT="s#XXCONFDIRXX#${CONFDIR}# ; s#XXBINDIRXX#${PREFIX}/bin# ; s#XXVERSIONXX#${PKG_VERSION}# ; s#XXLIBDIRXX#${PREFIX}/lib# ; s#XXPREFIXXX#${PREFIX}# ; s#XXPREFIXCONFXX#${PREFIX}/config# ; s#XXLDPRELOADMALIXX#${LDPRELOADMALI}#"
 
   cat ${PKG_DIR}/bin/start_vdr.sh | sed "${SED_SCRIPT}" > ${INSTALL}/${PREFIX}/bin/start_vdr.sh
   chmod +x ${INSTALL}/${PREFIX}/bin/start_vdr.sh
@@ -94,11 +100,58 @@ makeinstall_target() {
   cat ${PKG_DIR}/bin/switch_kodi_vdr.sh | sed "${SED_SCRIPT}" > ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
   chmod +x ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
 
+  # Create start parameters depending on the project
+  if [ "${PROJECT}" = "Allwinner" ]; then
+    cat >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh <<\EOF
+if [ "${START_PRG}" = "vdr" ]; then
+   systemctl stop kodi
+   systemctl start vdropt
+elif [ "${START_PRG}" = "kodi" ]; then
+   systemctl stop vdropt
+   systemctl start kodi
+fi
+EOF
+  else
+    cat >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh <<\EOF
+if [ "${START_PRG}" = "vdr" ]; then
+   systemctl stop kodi
+   echo 4 > /sys/module/amvdec_h264/parameters/dec_control
+   systemctl start vdropt
+elif [ "${START_PRG}" = "kodi" ]; then
+   systemctl stop vdropt
+   echo rm pip0 > /sys/class/vfm/map
+   systemctl start kodi
+fi
+EOF
+  fi
+
   cp ${PKG_DIR}/bin/switch_to_vdr.sh ${INSTALL}/${PREFIX}/bin/switch_to_vdr.sh
   chmod +x ${INSTALL}/${PREFIX}/bin/switch_to_vdr.sh
 
   cp ${PKG_DIR}/bin/autostart.sh ${INSTALL}/${PREFIX}/bin/autostart.sh
   chmod +x ${INSTALL}/${PREFIX}/bin/autostart.sh
+
+  if [ "${PROJECT}" = "Allwinner" ]; then
+    cat >> ${INSTALL}/${PREFIX}/bin/autostart.sh <<\EOF
+if [ "${START_PRG}" = "vdr" ]; then
+   systemctl stop kodi
+   systemctl start vdropt
+elif [ "${START_PRG}" = "kodi" ]; then
+   systemctl stop vdropt
+fi
+EOF
+  else
+    cat >> ${INSTALL}/${PREFIX}/bin/autostart.sh <<\EOF
+if [ "${START_PRG}" = "vdr" ]; then
+   systemctl stop kodi
+   echo 4 > /sys/module/amvdec_h264/parameters/dec_control
+   systemctl start vdropt
+elif [ "${START_PRG}" = "kodi" ]; then
+   systemctl stop vdropt
+   echo rm pip0 > /sys/class/vfm/map
+fi
+EOF
+  fi
 
   # rename perl svdrpsend to svdrpsend.pl and copy the netcat variant
   mv ${INSTALL}/${PREFIX}/bin/svdrpsend ${INSTALL}/${PREFIX}/bin/svdrpsend.pl
@@ -126,8 +179,8 @@ post_makeinstall_target() {
   cp -PR ${PKG_DIR}/conf.d/* ${VDR_DIR}/storage/.config/vdropt-sample/conf.d/
 
   cat >> ${VDR_DIR}/storage/.config/vdropt-sample/enabled_plugins <<EOF
-softhdodroid
-satip
+${VDR_OUTPUTDEVICE}
+${VDR_INPUTDEVICE}
 EOF
 
   if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | read; then

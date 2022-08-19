@@ -8,3 +8,7 @@ REVISION=
 PROJECT=Amlogic-ce
 DEVICE=Amlogic-ng
 ARCH=arm
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhdodroid
+VDR_INPUTDEVICE=satip

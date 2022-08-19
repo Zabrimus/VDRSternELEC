@@ -20,13 +20,3 @@ systemctl start switch_kodi_vdr.path
 
 # Start either Kodi or VDR on reboot
 . /storage/.profile
-
-if [ "${START_PRG}" = "vdr" ]; then
-   systemctl stop kodi
-   echo 4 > /sys/module/amvdec_h264/parameters/dec_control
-   systemctl start vdropt
-elif [ "${START_PRG}" = "kodi" ]; then
-   systemctl stop vdropt
-   echo rm pip0 > /sys/class/vfm/map
-fi
-

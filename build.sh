@@ -97,6 +97,8 @@ build() {
       EASYVDR="$EASYVDR" \
       DYNAMITE="$DYNAMITE" \
       ZAPCOCKPIT="$ZAPCOCKPIT" \
+      VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE" \
+      VDR_INPUTDEVICE="$VDR_INPUTDEVICE" \
       make image
 }
 

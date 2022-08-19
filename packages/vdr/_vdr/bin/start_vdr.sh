@@ -3,6 +3,7 @@
 CONF_DIR="/storage/.config/vdropt"
 BIN_DIR="XXBINDIRXX"
 LIB_DIR="XXLIBDIRXX"
+LD_PRELOAD_MALI="XXLDPRELOADMALIXX"
 
 read_plugin_configuration () {
   param=`cat ${CONF_DIR}/conf.d/$1.conf  | sed "s/#.*$//g ; s/^#$//g ; s/ *$//g" | tr '\n' ' ' | sed  "s/\[/-P \\'/ ; s/\]// ; s/ *$/\'/"`
@@ -33,7 +34,7 @@ export LOCPATH=/storage/.kodi/addons/service.locale/locpath
 
 # really start VDR
 if [ -z "$VDR_LD_PRELOAD" ]; then
-   sh -c "LD_PRELOAD=/usr/lib/libMali.so LD_LIBRARY_PATH=$LIB_DIR:$LIB_DIR/vdr:$LD_LIBRARY_PATH ${BIN_DIR}/$arg"
+   sh -c "LD_PRELOAD=$LD_PRELOAD_MALI LD_LIBRARY_PATH=$LIB_DIR:$LIB_DIR/vdr:$LD_LIBRARY_PATH ${BIN_DIR}/$arg"
 else
-   sh -c "LD_PRELOAD=\"/usr/lib/libMali.so:$VDR_LD_PRELOAD\" LD_LIBRARY_PATH=$LIB_DIR:$LIB_DIR/vdr:$LD_LIBRARY_PATH ${BIN_DIR}/$arg"
+   sh -c "LD_PRELOAD=\"$LD_PRELOAD_MALI:$VDR_LD_PRELOAD\" LD_LIBRARY_PATH=$LIB_DIR:$LIB_DIR/vdr:$LD_LIBRARY_PATH ${BIN_DIR}/$arg"
 fi

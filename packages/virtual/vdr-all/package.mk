@@ -10,7 +10,11 @@ PKG_SECTION="virtual"
 PKG_LONGDESC="A DVB TV server application."
 
 PKG_DEPENDS_TARGET+=" _vdr"
-PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid"
+if [ "${VDR_OUTPUTDEVICE}" = "softhdodroid" ]; then
+   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid"
+elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ]; then
+   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
+fi
 PKG_DEPENDS_TARGET+=" _vdr-plugin-satip"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-ddci2"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-dummydevice"
@@ -79,21 +83,23 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
 # PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
 
 post_install() {
-  # Fix some links
-  cd ${INSTALL}/usr/lib/
+  if [ "${PROJECT} = "Amlogic-ce" ] || [ "${PROJECT} = "Amlogic" ]; then
+     # Fix some links
+     cd ${INSTALL}/usr/lib/
 
-  if [ -f libEGL.so.1.1.0 ]; then
-     rm libEGL.so.1.1.0
-     ln -s /usr/lib/libMali.so libEGL.so.1.1.0
-  fi
+     if [ -f libEGL.so.1.1.0 ]; then
+        rm libEGL.so.1.1.0
+        ln -s /usr/lib/libMali.so libEGL.so.1.1.0
+     fi
 
-  if [ -f libGLESv2.so.2.1.0 ]; then
-     rm libGLESv2.so.2.1.0
-     ln -s /usr/lib/libMali.so libGLESv2.so.2.1.0
-  fi
+     if [ -f libGLESv2.so.2.1.0 ]; then
+        rm libGLESv2.so.2.1.0
+        ln -s /usr/lib/libMali.so libGLESv2.so.2.1.0
+     fi
 
-  if [ -f libGLESv1_CM.so.1.2.0 ]; then
-     rm libGLESv1_CM.so.1.2.0
-     ln -s /usr/lib/libMali.so libGLESv1_CM.so.1.2.0
+     if [ -f libGLESv1_CM.so.1.2.0 ]; then
+        rm libGLESv1_CM.so.1.2.0
+        ln -s /usr/lib/libMali.so libGLESv1_CM.so.1.2.0
+     fi
   fi
 }

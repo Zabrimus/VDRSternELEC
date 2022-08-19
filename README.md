@@ -172,8 +172,9 @@ After choosing an existing configuration or creating a new one, the build script
 ```
 $ ./build.sh 
 Usage:  -config <name> -extras <name>
--config  : Build the distribution defined in directory config/distro/<name>.
--extras  : Build additional plugins / Use optional VDR patches. Use extra config/extras/<name>
+-config : Build the distribution defined in directory config/distro/<name>.
+-extra  : Build additional plugins / Use optional VDR patches. Use extra config/extras/<name>
+          Multiple -extra are possible.
 
 Available configs:
 CoreELEC-19  CoreELEC-19.4-Matrix  CoreELEC-20
@@ -181,10 +182,10 @@ LibreELEC-10.0.2-aarch64 LibreELEC-10.0.2-arm LibreELEC-master-aarch64  LibreELE
 LibreELEC-master-arm-Allwinner-H6
 
 Available extras:
-dynamite  dynamite-zapcockpit  easyvdr  easyvdr-zapcockpit  zapcockpit
+dynamite  easyvdr  zapcockpit
 ```
 
-Sample call:  ```./build.sh -config CoreELEC-19 -extras easyvdr```
+Sample call:  ```./build.sh -config CoreELEC-19 -extra easyvdr -extra zapcockpit```
 
 ### Build images
 After the call of build.sh, the desired images can be found in either

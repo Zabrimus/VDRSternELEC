@@ -2,9 +2,3 @@
 
 # vdr-plugin-easyvdr (y/n)
 EASYVDR=y
-
-# vdr-plugin-dynamite (y/n)
-DYNAMITE=n
-
-# zapcockpit patch (y/n)
-ZAPCOCKPIT=n

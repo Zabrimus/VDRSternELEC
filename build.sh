@@ -5,8 +5,9 @@ set -e
 usage() {
   cat << EOF >&2
 Usage: $PROGNAME -config <name> -extras <name>
--config  : Build the distribution defined in directory config/distro/<name>.
--extras  : Build additional plugins / Use optional VDR patches. Use extra config/extras/<name>
+-config : Build the distribution defined in directory config/distro/<name>.
+-extra  : Build additional plugins / Use optional VDR patches. Use extra config/extras/<name>
+          Multiple -extra are possible.
 EOF
   echo
   echo "Available configs:"
@@ -108,10 +109,21 @@ cleanup() {
   git reset --hard
 }
 
+read_extra() {
+  if [ ! "x$1" = "x" ] && [ ! -f config/extras/$1 ]; then
+    echo "extra '$1' not found"
+    echo
+    usage
+  fi
+
+  echo "Read Extra $1"
+  . config/extras/$1
+}
+
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -config) shift; CONFIG=$1 ;;
-        -extras) shift; EXTRAS=$1 ;;
+        -extra) shift; read_extra $1 ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac
     shift || continue
@@ -128,18 +140,9 @@ if [ ! -f config/distro/$CONFIG ]; then
     usage
 fi
 
-if [ ! "x$EXTRAS" = "x" ] && [ ! -f config/extras/$EXTRAS ]; then
-  echo "extra '$EXTRAS' not found"
-  echo
-  usage
-fi
-
 ROOTDIR=`pwd`
 
-if [ ! "x$EXTRAS" = "x" ]; then
-   . config/extras/$EXTRAS
-fi
-
+echo "Read config $CONFIG"
 . config/distro/$CONFIG
 
 checkout

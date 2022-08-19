@@ -29,7 +29,7 @@ checkout() {
      exit 1
   fi
 
-  git submodule update --init
+  git submodule update --init -- $DISTRO
 
   cd $DISTRO
   git reset --hard

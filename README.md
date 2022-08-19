@@ -172,7 +172,9 @@ Usage:  -config <name> -extras <name>
 -extras  : Build additional plugins / Use optional VDR patches. Use extra config/extras/<name>
 
 Available configs:
-CoreELEC-19  CoreELEC-19.4-Matrix  CoreELEC-20  LibreELEC-10.0.2-aarch64  LibreELEC-10.0.2-arm  LibreELEC-master-aarch64  LibreELEC-master-arm
+CoreELEC-19  CoreELEC-19.4-Matrix  CoreELEC-20
+LibreELEC-10.0.2-aarch64 LibreELEC-10.0.2-arm LibreELEC-master-aarch64  LibreELEC-master-arm
+LibreELEC-master-arm-Allwinner-H6
 
 Available extras:
 dynamite  dynamite-zapcockpit  easyvdr  easyvdr-zapcockpit  zapcockpit
@@ -183,7 +185,7 @@ Sample call:  ```./build.sh -config CoreELEC-19 -extras easyvdr```
 ### Build images
 After the call of build.sh, the desired images can be found in either
 <details>
-    <summary>directoy CoreELEC/target</summary>
+    <summary>directory CoreELEC/target</summary>
 
 ```
 280569134 17. Aug 12:41 CoreELEC-Amlogic-ng.arm-20.0-Nexus_devel_20220817124047-Generic.img.gz
@@ -199,7 +201,7 @@ After the call of build.sh, the desired images can be found in either
 </details>
 
 <details>
-    <summary>directoy LibreELEC/target</summary> 
+    <summary>directory LibreELEC/target</summary> 
 
 ```
 180836837 18. Aug 08:58 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-bananapi-m5.img.gz

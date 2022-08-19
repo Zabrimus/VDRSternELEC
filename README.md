@@ -14,6 +14,10 @@ It is also possible, that some VDR output devices (plugins) are missing.
 
 Tests and/or pull requests are highly appreciated.
 
+## aarch64 Builds
+Due to [LibreELEC Forum](https://forum.libreelec.tv/thread/22564-official-le-test-images-for-amlogic-kodi-20/?postID=167900#post167900), 
+aarch64 builds are possible, but Kodi is not really usable, because no Kodi Addon Repository for aarch64 binary exists. 
+
 ## Current status:
 
 **Following plugins are successfully build and part of the vdr tar**

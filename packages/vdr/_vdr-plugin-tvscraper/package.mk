@@ -2,7 +2,7 @@
 
 PKG_NAME="_vdr-plugin-tvscraper"
 PKG_VERSION="1.1.4"
-PKG_SHA256="934cbab7912ce03f7c6cf2da62c620e11f6c3b7989d7505fc42ed16b462b10a7"
+PKG_SHA256="b81a613dbf6bf2ba4c6a2a625a45ea19c96536f49f05c6cdd90735e4ba3d2d91"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/MarkusEh/vdr-plugin-tvscraper"
 PKG_URL="https://github.com/MarkusEh/vdr-plugin-tvscraper/archive/refs/tags/v${PKG_VERSION}.tar.gz"

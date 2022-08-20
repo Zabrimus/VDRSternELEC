@@ -39,14 +39,13 @@ checkout() {
     git checkout tags/$TAG
   elif [ ! "x$BRANCH" = "x" ]; then
     git checkout $BRANCH
+    git pull --all
   elif [ ! "x$REVISION" = "x" ]; then
     git checkout $REVISION
   else
     echo "No TAG, BRANCH or REVISION found"
     exit 1;
   fi;
-
-  git pull --all
 }
 
 apply_patches() {

@@ -94,7 +94,6 @@ build() {
       PROJECT="$PROJECT" \
       DEVICE="$DEVICE" \
       ARCH="$ARCH" \
-      BUILD_SUFFIX="TEST" \
       EASYVDR="$EASYVDR" \
       DYNAMITE="$DYNAMITE" \
       ZAPCOCKPIT="$ZAPCOCKPIT" \

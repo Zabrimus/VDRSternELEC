@@ -1,0 +1,40 @@
+name: Build CoreELEC/VDR 19 Images
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Prepare build
+        run: |
+          mkdir -p image-artifacts
+          rm -f image-artifacts/*
+
+      - name: Restore sources cache
+        run: |
+          if [ -d ../build-cache/sources ]; then 
+            rm -f sources  
+            ln -s ../build-cache/sources sources
+          fi
+
+      - name: Build coreelec-19-VDR
+        run: |
+          ./build.sh -config CoreELEC-19 -extra easyvdr
+
+      - name: Save sources cache
+        run: |
+          mkdir -p ../build-cache
+          
+          if [ ! -d ../build-cache/sources ]; then
+            mv sources ../build-cache/sources
+          else
+            rm sources
+          fi

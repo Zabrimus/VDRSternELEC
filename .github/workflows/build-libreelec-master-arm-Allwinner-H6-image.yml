@@ -1,4 +1,4 @@
-name: Build CoreELEC/VDR 19 Images
+name: Build LibreELEC-master-arm-Allwinner-H6
 
 # Controls when the workflow will run
 on:

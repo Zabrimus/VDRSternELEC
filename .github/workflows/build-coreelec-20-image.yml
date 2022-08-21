@@ -1,11 +1,27 @@
 name: Build CoreELEC-20
 
-# Controls when the workflow will run
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Build All"]
+    type:
+      - complete
 
 jobs:
+  pre_build:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v4
+        with:
+          concurrent_skipping: 'always'
+
   build:
+    needs: pre_build
+    if: ${{ needs.pre_build.outputs.should_skip != 'true' }}
+
     runs-on: self-hosted
 
     steps:

@@ -1,0 +1,17 @@
+name: Build All
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Build All
+        run: |
+          echo "Build All..."

@@ -58,6 +58,7 @@ jobs:
         run: |
           mv CoreELEC/target/*Generic.img* ../build-artifacts/CoreELEC-20/
           mv CoreELEC/target/*tar ../build-artifacts/CoreELEC-20/
+          mv CoreELEC/target/*tar.sha256 ../build-artifacts/CoreELEC-20/
 
       - name: Create index file
         run: |

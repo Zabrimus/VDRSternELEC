@@ -57,6 +57,7 @@ jobs:
       - name: Copy build artifacts
         run: |
           mv LibreELEC.tv/target/*tar ../build-artifacts/LibreELEC-master-arm-Allwinner-H6
+          mv LibreELEC.tv/target/*tar.sha256 ../build-artifacts/LibreELEC-master-arm-Allwinner-H6
 
       - name: Create index file
         run: |

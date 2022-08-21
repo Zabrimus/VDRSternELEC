@@ -57,6 +57,7 @@ jobs:
       - name: Copy build artifacts
         run: |
           mv LibreELEC.tv/target/*tar ../build-artifacts/LibreELEC-master-arm 
+          mv LibreELEC.tv/target/*tar.shs256 ../build-artifacts/LibreELEC-master-arm
 
       - name: Create index file
         run: |

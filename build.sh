@@ -37,11 +37,14 @@ checkout() {
 
   if [ ! "x$TAG" = "x" ]; then
     git checkout tags/$TAG
+    BUILD_SUFFIX=$TAG
   elif [ ! "x$BRANCH" = "x" ]; then
     git checkout $BRANCH
     git pull --all
+    BUILD_SUFFIX=
   elif [ ! "x$REVISION" = "x" ]; then
     git checkout $REVISION
+    BUILD_SUFFIX=$REVISION
   else
     echo "No TAG, BRANCH or REVISION found"
     exit 1;
@@ -93,6 +96,7 @@ build() {
       PROJECT="$PROJECT" \
       DEVICE="$DEVICE" \
       ARCH="$ARCH" \
+      BUILD_SUFFIX="$BUILD_SUFFIX" \
       EASYVDR="$EASYVDR" \
       DYNAMITE="$DYNAMITE" \
       ZAPCOCKPIT="$ZAPCOCKPIT" \

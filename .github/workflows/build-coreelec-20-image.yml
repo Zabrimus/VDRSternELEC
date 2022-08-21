@@ -31,8 +31,7 @@ jobs:
 
       - name: Prepare build
         run: |
-          mkdir -p image-artifacts
-          rm -f image-artifacts/*
+          rm -f CoreELEC/target/
 
       - name: Restore sources cache
         run: |
@@ -54,3 +53,12 @@ jobs:
           else
             rm sources
           fi
+
+      - name: Copy build artifacts
+        run: |
+          mv CoreELEC/target/*Generic.img* ../build-artifacts/CoreELEC-20/
+          mv CoreELEC/target/*tar ../build-artifacts/CoreELEC-20/
+
+      - name: Create index file
+        run: |
+          ~/.local/bin/create_index

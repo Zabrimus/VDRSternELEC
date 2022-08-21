@@ -31,8 +31,7 @@ jobs:
 
       - name: Prepare build
         run: |
-          mkdir -p image-artifacts
-          rm -f image-artifacts/*
+          rm -f LibreELEC.tv/target/*
 
       - name: Restore sources cache
         run: |
@@ -54,3 +53,12 @@ jobs:
           else
             rm sources
           fi
+
+      - name: Copy build artifacts
+        run: |
+          mv LibreELEC.tv/target/*tar ../build-artifacts/LibreELEC-master-arm-Allwinner-H6
+
+      - name: Create index file
+        run: |
+          ~/.local/bin/create_index
+

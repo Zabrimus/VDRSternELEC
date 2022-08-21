@@ -31,7 +31,7 @@ jobs:
 
       - name: Prepare build
         run: |
-          rm -f CoreELEC/target/
+          rm -f CoreELEC/target/*
 
       - name: Restore sources cache
         run: |

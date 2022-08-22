@@ -58,6 +58,7 @@ jobs:
         run: |
           mv LibreELEC.tv/target/*tar ../build-artifacts/LibreELEC-master-arm 
           mv LibreELEC.tv/target/*tar.sha256 ../build-artifacts/LibreELEC-master-arm
+          mv LibreELEC.tv/target/*-odroid-c4* ../build-artifacts/LibreELEC-master-arm 
 
       - name: Create index file
         run: |

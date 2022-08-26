@@ -12,18 +12,12 @@ PKG_LONGDESC="This PlugIn is a VDR implementation of Video Transfer and a basic 
 PKG_TOOLCHAIN="manual"
 
 pre_configure_target() {
-  # test if prefix is set
-  if [ "x${VDR_PREFIX}" = "x" ]; then
-      echo "==> VDR_PREFIX is empty, but must be set"
-      exit 1
-  fi
-
-  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}${VDR_PREFIX}/lib"
+  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
 }
 
 make_target() {
   VDR_DIR=$(get_build_dir _vdr)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/${VDR_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}
+  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
   export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
 
   make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}"
@@ -35,12 +29,12 @@ makeinstall_target() {
   make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" LOCDIR="${LOC_DIR}"  install
 
   # Copy libstreamdev-client.so to enable multiple streamdev-clients (e.g. for PIP or using multiple servers)
-  PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/${VDR_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}
+  PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
   APIVERSION=$(pkg-config --variable=apiversion vdr)
 
-  cp ${INSTALL}${VDR_PREFIX}/lib/vdr/libvdr-streamdev-client.so.${APIVERSION} ${INSTALL}${VDR_PREFIX}/lib/vdr/libvdr-streamdev-client2.so.${APIVERSION}
-  cp ${INSTALL}${VDR_PREFIX}/lib/vdr/libvdr-streamdev-client.so.${APIVERSION} ${INSTALL}${VDR_PREFIX}/lib/vdr/libvdr-streamdev-client3.so.${APIVERSION}
-  cp ${INSTALL}${VDR_PREFIX}/lib/vdr/libvdr-streamdev-client.so.${APIVERSION} ${INSTALL}${VDR_PREFIX}/lib/vdr/libvdr-streamdev-client4.so.${APIVERSION}
+  cp ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client.so.${APIVERSION} ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client2.so.${APIVERSION}
+  cp ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client.so.${APIVERSION} ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client3.so.${APIVERSION}
+  cp ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client.so.${APIVERSION} ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client4.so.${APIVERSION}
 }
 
 post_makeinstall_target() {
@@ -59,6 +53,6 @@ post_makeinstall_target() {
   # create config.zip
   VERSION=$(pkg-config --variable=apiversion vdr)
   cd ${INSTALL}
-  mkdir -p ${INSTALL}${VDR_PREFIX}/config/
-  zip -qrum9 "${INSTALL}${VDR_PREFIX}/config/streamdev-sample-config.zip" storage
+  mkdir -p ${INSTALL}/usr/local/config/
+  zip -qrum9 "${INSTALL}/usr/local/config/streamdev-sample-config.zip" storage
 }

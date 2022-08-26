@@ -10,18 +10,12 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="libxml++"
 PKG_TOOLCHAIN="meson"
 
-PKG_MESON_OPTS_TARGET="--prefix=${VDR_PREFIX} \
-					   --bindir=${VDR_PREFIX}/bin \
-					   --libexecdir=${VDR_PREFIX}/bin \
-					   --sbindir=${VDR_PREFIX}/sbin \
-					   --libdir=${VDR_PREFIX}/lib"
+PKG_MESON_OPTS_TARGET="--prefix=/usr/local \
+					   --bindir=/usr/local/bin \
+					   --libexecdir=/usr/local/bin \
+					   --sbindir=/usr/local/sbin \
+					   --libdir=/usr/local/lib"
 
 pre_configure_target() {
-  # test if prefix is set
-  if [ "x${VDR_PREFIX}" = "x" ]; then
-      echo "==> VDR_PREFIX is empty, but must be set"
-      exit 1
-  fi
-
-  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}${VDR_PREFIX}/lib"
+  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
 }

@@ -10,12 +10,12 @@ PKG_DEPENDS_TARGET="toolchain _libdvdread"
 PKG_LONGDESC="liba52 - a free ATSC A/52 stream decoder"
 PKG_TOOLCHAIN="auto"
 
-PKG_CONFIGURE_OPTS_TARGET="--prefix=${VDR_PREFIX} \
-						   --bindir=${VDR_PREFIX}/bin \
-                           --libdir=${VDR_PREFIX}/lib \
-                           --libexecdir=${VDR_PREFIX}/bin \
-                           --sbindir=${VDR_PREFIX}/sbin \
-                           --sysconfdir=${VDR_PREFIX}/etc \
+PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
+						   --bindir=/usr/local/bin \
+                           --libdir=/usr/local/lib \
+                           --libexecdir=/usr/local/bin \
+                           --sbindir=/usr/local/sbin \
+                           --sysconfdir=/usr/local/etc \
                            --disable-oss \
 						   --disable-solaris-audio \
 						   --disable-al-audio \
@@ -25,13 +25,7 @@ PKG_CONFIGURE_OPTS_TARGET="--prefix=${VDR_PREFIX} \
                            "
 
 pre_configure_target() {
-  # test if prefix is set
-  if [ "x${VDR_PREFIX}" = "x" ]; then
-      echo "==> VDR_PREFIX is empty, but must be set"
-      exit 1
-  fi
-
-  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}${VDR_PREFIX}/lib"
+  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
 }
 
 make_target() {

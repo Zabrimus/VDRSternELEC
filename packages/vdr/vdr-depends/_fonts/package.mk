@@ -14,18 +14,10 @@ unpack() {
   unzip ${SOURCES}/${PKG_NAME}/${PKG_NAME}-${PKG_VERSION}.zip
 }
 
-pre_configure_target() {
-  # test if prefix is set
-  if [ "x${VDR_PREFIX}" = "x" ]; then
-      echo "==> VDR_PREFIX is empty, but must be set"
-      exit 1
-  fi
-}
-
 make_target() {
     FONTDIR=$(echo ${PKG_NAME}-${PKG_VERSION} | sed -e s:_::g)
 
-	if [ "${VDR_PREFIX}" = "/usr/local" ]; then
+	if [ "/usr/local" = "/usr/local" ]; then
 		mkdir -p ${INSTALL}/usr/local/vdrshare/fonts/android
 		cp  ${PKG_BUILD}/${FONTDIR}/fonts-android-4.3/{*.ttf,fonts.dir,fonts.scale} ${INSTALL}/usr/local/vdrshare/fonts/android/
 

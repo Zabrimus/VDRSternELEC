@@ -13,18 +13,12 @@ PKG_LONGDESC="VDR Output Device (softhddevice-drm)"
 PKG_TOOLCHAIN="manual"
 
 pre_configure_target() {
-  # test if prefix is set
-  if [ "x${VDR_PREFIX}" = "x" ]; then
-      echo "==> VDR_PREFIX is empty, but must be set"
-      exit 1
-  fi
-
-  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}${VDR_PREFIX}/lib -L${SYSROOT_PREFIX}/usr/lib"
+  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib -L${SYSROOT_PREFIX}/usr/lib"
 }
 
 make_target() {
   VDR_DIR=$(get_build_dir _vdr)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/${VDR_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}
+  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
   export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
 
   make GLES=1
@@ -50,6 +44,6 @@ post_makeinstall_target() {
   # create config.zip
   VERSION=$(pkg-config --variable=apiversion vdr)
   cd ${INSTALL}
-  mkdir -p ${INSTALL}${VDR_PREFIX}/config/
-  zip -qrum9 "${INSTALL}${VDR_PREFIX}/config/softhddevice-drm-sample-config.zip" storage
+  mkdir -p ${INSTALL}/usr/local/config/
+  zip -qrum9 "${INSTALL}/usr/local/config/softhddevice-drm-sample-config.zip" storage
 }

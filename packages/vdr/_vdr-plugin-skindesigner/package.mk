@@ -12,24 +12,18 @@ PKG_LONGDESC="A VDR skinning engine that displays XML based Skins"
 PKG_TOOLCHAIN="manual"
 
 pre_configure_target() {
-  # test if prefix is set
-  if [ "x${VDR_PREFIX}" = "x" ]; then
-      echo "==> VDR_PREFIX is empty, but must be set"
-      exit 1
-  fi
-
-  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}${VDR_PREFIX}/lib"
+  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
 }
 
 make_target() {
   VDR_DIR=$(get_build_dir _vdr)
 
-  export PKG_CONFIG_PATH=${VDR_DIR}:"$(get_build_dir _vdr-plugin-skindesigner)":"${SYSROOT_PREFIX}${VDR_PREFIX}/lib/pkgconfig":"$(get_install_dir shared-mime-info)/usr/share/pkgconfig":"$(get_install_dir pango)/usr/lib/pkgconfig":"$(get_install_dir libXft)/usr/lib/pkgconfig":${PKG_CONFIG_PATH}
+  export PKG_CONFIG_PATH=${VDR_DIR}:"$(get_build_dir _vdr-plugin-skindesigner)":"${SYSROOT_PREFIX}/usr/local/lib/pkgconfig":"$(get_install_dir shared-mime-info)/usr/share/pkgconfig":"$(get_install_dir pango)/usr/lib/pkgconfig":"$(get_install_dir libXft)/usr/lib/pkgconfig":${PKG_CONFIG_PATH}
   export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-  export PATH="${SYSROOT_PREFIX}${VDR_PREFIX}/bin":$PATH
+  export PATH="${SYSROOT_PREFIX}/usr/local/bin":$PATH
   SKINDESIGNER_SCRIPTDIR="/storage/.config/vdropt/plugins/skindesigner/scripts"
 
-  make SKINDESIGNER_SCRIPTDIR="${SKINDESIGNER_SCRIPTDIR}" INCDIR="${VDR_PREFIX}/include"
+  make SKINDESIGNER_SCRIPTDIR="${SKINDESIGNER_SCRIPTDIR}" INCDIR="/usr/local/include"
 }
 
 makeinstall_target() {
@@ -38,11 +32,11 @@ makeinstall_target() {
   SKINDESIGNER_SCRIPTDIR="/storage/.config/vdropt/plugins/skindesigner/scripts"
   SKINDESIGNER_DIR=$(get_install_dir _vdr-plugin-skindesigner)
 
-  make PREFIX="${VDR_PREFIX}" DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" PLGRESDIR="${PLGRES_DIR}" SKINDESIGNER_SCRIPTDIR="${SKINDESIGNER_SCRIPTDIR}" install
+  make PREFIX="/usr/local" DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" PLGRESDIR="${PLGRES_DIR}" SKINDESIGNER_SCRIPTDIR="${SKINDESIGNER_SCRIPTDIR}" install
 
   # ugly hack. Similar to the one in _vdr
-  mkdir -p ${SKINDESIGNER_DIR}${VDR_PREFIX}/${VDR_PREFIX}
-  cd ${SKINDESIGNER_DIR}${VDR_PREFIX}/${VDR_PREFIX}
+  mkdir -p ${SKINDESIGNER_DIR}/usr/local/usr/local
+  cd ${SKINDESIGNER_DIR}/usr/local/usr/local
   ln -s ../../include include
   cd $(get_build_dir _vdr_plugin_skindesigner)
 }
@@ -59,6 +53,6 @@ post_makeinstall_target() {
   # create config.zip
   VERSION=$(pkg-config --variable=apiversion vdr)
   cd ${INSTALL}
-  mkdir -p ${INSTALL}${VDR_PREFIX}/config/
-  zip -qrum9 "${INSTALL}${VDR_PREFIX}/config/skindesigner-sample-config.zip" storage
+  mkdir -p ${INSTALL}/usr/local/config/
+  zip -qrum9 "${INSTALL}/usr/local/config/skindesigner-sample-config.zip" storage
 }

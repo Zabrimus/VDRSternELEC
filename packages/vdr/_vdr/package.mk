@@ -40,16 +40,11 @@ post_unpack() {
 
 pre_configure_target() {
   # test if prefix is set
-  if [ "x${VDR_PREFIX}" = "x" ]; then
-      echo "==> VDR_PREFIX is empty, but must be set"
-      exit 1
-  fi
-
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/lib/iconv -liconv"
 }
 
 pre_make_target() {
-  PREFIX="${VDR_PREFIX}"
+  PREFIX="/usr/local/"
 
   cat > Make.config <<EOF
 PREFIX = ${PREFIX}
@@ -66,8 +61,8 @@ EOF
   # Ein ganz übler Hack. Es ist nicht gelungen pkg-config zu überreden, bei --cflags oder --libs (aber nur nur bei bestimmten Libs),
   # nicht(!) den Wert */sysroot/opt/vdr/opt/vdr zurückzugeben, den es eigentlich nicht geben darf und der beim compile und beim linken
   # ziemliche Problem macht.
-  mkdir -p ${SYSROOT_PREFIX}${VDR_PREFIX}/opt
-  cd ${SYSROOT_PREFIX}${VDR_PREFIX}/opt
+  mkdir -p ${SYSROOT_PREFIX}/usr/local/opt
+  cd ${SYSROOT_PREFIX}/usr/local/opt
   ln -f -s ../../vdr/ vdr
   cd $(get_build_dir _vdr)
 }
@@ -77,7 +72,7 @@ make_target() {
 }
 
 makeinstall_target() {
-  PREFIX="${VDR_PREFIX}"
+  PREFIX="/usr/local"
   CONFDIR="/storage/.config/vdropt"
 
   if [ "${PROJECT}" = "Allwinner" ]; then
@@ -174,7 +169,7 @@ EOF
 }
 
 post_makeinstall_target() {
-  PREFIX="${VDR_PREFIX}"
+  PREFIX="/usr/local"
   VDR_DIR=$(get_install_dir _vdr)
 
   # move configuration to another folder to prevent overwriting existing configuration after installation

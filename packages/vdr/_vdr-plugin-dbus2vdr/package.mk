@@ -13,19 +13,13 @@ PKG_LONGDESC="This plugin will expose some methods via DBus to control the vdr."
 PKG_TOOLCHAIN="manual"
 
 pre_configure_target() {
-  # test if prefix is set
-  if [ "x${VDR_PREFIX}" = "x" ]; then
-      echo "==> VDR_PREFIX is empty, but must be set"
-      exit 1
-  fi
-
-  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}${VDR_PREFIX}/lib"
+  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
 }
 
 make_target() {
   VDR_DIR=$(get_build_dir _vdr)
   LIBPNGPP_DIR=$(get_build_dir _libpngpp)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/${VDR_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}
+  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
   export CPLUS_INCLUDE_PATH=${VDR_DIR}/include:${LIBPNGPP_DIR}
 
   make
@@ -41,9 +35,9 @@ post_makeinstall_target() {
   rm -Rf ${INSTALL}/etc/init
 
   # move other files
-  mkdir -p ${INSTALL}${VDR_PREFIX}/bin
-  mv ${INSTALL}/usr/share/vdr-plugin-dbus2vdr/* ${INSTALL}${VDR_PREFIX}/bin
-  cp $(get_pkg_directory _vdr-plugin-dbus2vdr)/config/vdr-dbus-send.sh ${INSTALL}${VDR_PREFIX}/bin
+  mkdir -p ${INSTALL}/usr/local/bin
+  mv ${INSTALL}/usr/share/vdr-plugin-dbus2vdr/* ${INSTALL}/usr/local/bin
+  cp $(get_pkg_directory _vdr-plugin-dbus2vdr)/config/vdr-dbus-send.sh ${INSTALL}/usr/local/bin
 
   cp $(get_pkg_directory _vdr-plugin-dbus2vdr)/config/de.tvdr.vdr.conf ${INSTALL}/etc/dbus-1/system.d/de.tvdr.vdr.conf
 
@@ -58,6 +52,6 @@ post_makeinstall_target() {
   # create config.zip
   VERSION=$(pkg-config --variable=apiversion vdr)
   cd ${INSTALL}
-  mkdir -p ${INSTALL}${VDR_PREFIX}/config/
-  zip -qrum9 "${INSTALL}${VDR_PREFIX}/config/dbus2vdr-sample-config.zip" storage
+  mkdir -p ${INSTALL}/usr/local/config/
+  zip -qrum9 "${INSTALL}/usr/local/config/dbus2vdr-sample-config.zip" storage
 }

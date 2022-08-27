@@ -1,13 +1,13 @@
 # one of BRANCH, TAG or REVISION is mandatory
 DISTRO=LibreELEC.tv
-BRANCH=
-TAG=10.0.2
+BRANCH=libreelec-10.0
+TAG=
 REVISION=
 
 # Build settings
 PROJECT=Amlogic
 DEVICE=AMLGX
-ARCH=arm
+ARCH=aarch64
 
 # VDR settings
 VDR_OUTPUTDEVICE=softhdodroid

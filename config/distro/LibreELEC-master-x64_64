@@ -1,0 +1,14 @@
+# one of BRANCH, TAG or REVISION is mandatory
+DISTRO=LibreELEC.tv
+BRANCH=master
+TAG=
+REVISION=
+
+# Build settings
+PROJECT=Generic
+DEVICE=Generic
+ARCH=x86_64
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhdodroid
+VDR_INPUTDEVICE=satip

@@ -19,7 +19,6 @@ pre_configure_target() {
   export VAAPI=0
   export CUVID=1
   export DRM=0
-  # export LIBPLACEBO=1
   export LIBPLACEBO=0
   export LIBPLACEBO_GL=0
 }

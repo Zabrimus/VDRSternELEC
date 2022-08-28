@@ -10,11 +10,19 @@ PKG_SECTION="virtual"
 PKG_LONGDESC="A DVB TV server application."
 
 PKG_DEPENDS_TARGET+=" _vdr"
+
 if [ "${VDR_OUTPUTDEVICE}" = "softhdodroid" ]; then
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid"
 elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ]; then
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
 fi
+
+if [ "${ARCH}" = "x86_64" ]; then
+	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdcuvid"
+	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdvaapi"
+	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
+fi
+
 PKG_DEPENDS_TARGET+=" _vdr-plugin-satip"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-ddci2"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-dummydevice"

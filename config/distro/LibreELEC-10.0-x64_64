@@ -10,5 +10,5 @@ DEVICE=
 ARCH=x86_64
 
 # VDR settings
-VDR_OUTPUTDEVICE=softhdodroid
+VDR_OUTPUTDEVICE=softhdddevice
 VDR_INPUTDEVICE=satip

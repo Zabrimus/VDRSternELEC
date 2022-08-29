@@ -8,7 +8,7 @@ PKG_SHA256="517d36937c406858164673db696dc1d9c7be7ef0960fbf2965bfef768f46b8c0"
 PKG_LICENSE="Apache"
 PKG_SITE="https://github.com/google/shaderc"
 PKG_URL="https://github.com/google/shaderc/archive/refs/tags/v${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain glslang"
 PKG_LONGDESC="A collection of tools, libraries and tests for shader compilation."
 PKG_BUILD_FLAGS="+pic"
 

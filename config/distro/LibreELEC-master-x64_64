@@ -6,9 +6,9 @@ REVISION=
 
 # Build settings
 PROJECT=Generic
-DEVICE=Generic
+DEVICE=x11
 ARCH=x86_64
 
 # VDR settings
-VDR_OUTPUTDEVICE=softhdodroid
+VDR_OUTPUTDEVICE=softhddevice
 VDR_INPUTDEVICE=satip

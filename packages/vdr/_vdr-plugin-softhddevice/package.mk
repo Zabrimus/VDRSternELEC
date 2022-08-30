@@ -20,9 +20,6 @@ make_target() {
   export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
   export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
 
-  TEST1=$(pkg-config --cflags gl glu)
-  echo "==========> TEST1: ${TEST1}"
-
   make
 }
 

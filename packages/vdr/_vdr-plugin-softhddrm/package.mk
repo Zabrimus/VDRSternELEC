@@ -9,7 +9,7 @@ PKG_URL="https://github.com/jojo61/vdr-plugin-softhdcuvid/archive/${PKG_VERSION}
 PKG_SOURCE_DIR="vdr-plugin-softhdcuvid-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr mesa glu glew _freeglut _libxcb libX11 _xcb-util-wm _libplacebo"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
-PKG_LONGDESC="TODO"
+PKG_LONGDESC="VDR Output Device (softhdddrm"
 PKG_TOOLCHAIN="manual"
 
 pre_configure_target() {

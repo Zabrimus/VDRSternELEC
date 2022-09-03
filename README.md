@@ -18,6 +18,17 @@ Tests and/or pull requests are highly appreciated.
 Due to [LibreELEC Forum](https://forum.libreelec.tv/thread/22564-official-le-test-images-for-amlogic-kodi-20/?postID=167900#post167900), 
 aarch64 builds are possible, but Kodi is not really usable, because no Kodi Addon Repository for aarch64 binary exists. 
 
+## Work in progress (x86_64)
+The x86_64 build is successful, but not tested in real systems. The following output devices for VDR will be build
+if the config LibreELEC-master-x64_64 has been selected for the build:
+- softhddevice (vaapi, vdpau, cuvid)
+- softhdcuvid (cuvid)
+- softhddvaapi (vaapi)
+- softhddrm (drm)
+
+The X graphic driver qxl (used for KVM/Qemu) will also be build, but the X server immediately crashes while starting.
+The reason has not yet been found.
+
 ## Current status:
 
 **Following plugins are successfully build and part of the vdr tar**

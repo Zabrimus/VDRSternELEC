@@ -2,6 +2,8 @@
 
 set -e
 
+PROGNAME=$0
+
 usage() {
   cat << EOF >&2
 Usage: $PROGNAME -config <name> -extras <name>
@@ -91,6 +93,9 @@ prepare_sources() {
 
 build() {
   cd $ROOTDIR/$DISTRO
+
+  # delete old build artifacts
+  rm -f target/*
 
   PROJECT="$PROJECT" \
     DEVICE="$DEVICE" \

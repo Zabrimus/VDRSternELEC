@@ -1,0 +1,27 @@
+diff -ru8bBwd a/config/graphic b/config/graphic
+--- a/config/graphic	2022-09-02 09:04:24.961140086 +0200
++++ b/config/graphic	2022-09-02 09:12:43.996956972 +0200
+@@ -138,16 +138,23 @@
+     VAAPI_SUPPORT="no"
+     VDPAU_SUPPORT="no"
+   fi
+ 
+   if listcontains "${GRAPHIC_DRIVERS}" "virtio"; then
+     GALLIUM_DRIVERS+=" virgl"
+   fi
+ 
++  if listcontains "${GRAPHIC_DRIVERS}" "qxl"; then
++    GALLIUM_DRIVERS+=" swrast"
++    XORG_DRIVERS+=" qxl"
++    LLVM_SUPPORT="yes"
++    COMPOSITE_SUPPORT="yes"
++  fi
++
+   if listcontains "${GRAPHIC_DRIVERS}" "vmware"; then
+     GALLIUM_DRIVERS+=" svga"
+     XORG_DRIVERS+=" vmware"
+     COMPOSITE_SUPPORT="yes"
+   fi
+ 
+   # VDPAU Support depends on X11
+   if [ ! "${DISPLAYSERVER}" = "x11" ]; then

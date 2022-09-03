@@ -1,0 +1,12 @@
+diff -rbBwdu a/projects/Generic/linux/linux.x86_64.conf b/projects/Generic/linux/linux.x86_64.conf
+--- a/projects/Generic/linux/linux.x86_64.conf	2022-09-02 12:49:36.306403476 +0200
++++ b/projects/Generic/linux/linux.x86_64.conf	2022-09-02 12:50:11.362389762 +0200
+@@ -455,7 +455,7 @@
+ CONFIG_LEGACY_VSYSCALL_XONLY=y
+ # CONFIG_LEGACY_VSYSCALL_NONE is not set
+ CONFIG_CMDLINE_BOOL=y
+-CONFIG_CMDLINE="root=/dev/ram0 rdinit=/init usbcore.autosuspend=-1"
++CONFIG_CMDLINE="root=/dev/ram0 rdinit=/init usbcore.autosuspend=-1 ssh"
+ # CONFIG_CMDLINE_OVERRIDE is not set
+ CONFIG_MODIFY_LDT_SYSCALL=y
+ # CONFIG_STRICT_SIGALTSTACK_SIZE is not set

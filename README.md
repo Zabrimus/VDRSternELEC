@@ -26,8 +26,9 @@ if the config LibreELEC-master-x64_64 has been selected for the build:
 - softhddvaapi (vaapi)
 - softhddrm (drm)
 
-The X graphic driver qxl (used for KVM/Qemu) will also be build, but the X server immediately crashes while starting.
-The reason has not yet been found.
+The X graphic driver qxl (used for KVM/Qemu) will also be build and the X server starts successfully.
+- Kodi crashes
+- VDR Output Plugin doesn't start
 
 ## Current status:
 

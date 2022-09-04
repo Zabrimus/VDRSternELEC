@@ -39,7 +39,7 @@ makeinstall_target() {
 }
 
 post_makeinstall_target() {
-  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/plugins/softhddrm
+  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/plugins/softhdcuvid
 
   mkdir -p ${INSTALL}/storage/.config/vdropt-sample/conf.d
   cp -PR ${PKG_DIR}/conf.d/* ${INSTALL}/storage/.config/vdropt-sample/conf.d/
@@ -53,5 +53,5 @@ post_makeinstall_target() {
   VERSION=$(pkg-config --variable=apiversion vdr)
   cd ${INSTALL}
   mkdir -p ${INSTALL}/usr/local/config/
-  zip -qrum9 "${INSTALL}/usr/local/config/softhddrm-sample-config.zip" storage
+  zip -qrum9 "${INSTALL}/usr/local/config/softhdcuvid-sample-config.zip" storage
 }

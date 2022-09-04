@@ -1,0 +1,25 @@
+diff -u8d a/Makefile b/Makefile
+--- a/Makefile	2022-08-29 11:13:10.000000000 +0200
++++ b/Makefile	2022-09-03 23:13:30.200275216 +0200
+@@ -164,18 +164,18 @@
+ ifeq ($(OPENGLOSD),1)
+ CONFIG += -DUSE_OPENGLOSD
+ _CFLAGS += $(shell pkg-config --cflags glew)
+ LIBS += $(shell pkg-config --libs glew) -lglut
+ _CFLAGS += $(shell pkg-config --cflags freetype2)
+ LIBS   += $(shell pkg-config --libs freetype2)
+ endif
+ 
+-_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm)
+-LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm)
++_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm xi xrandr)
++LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm xi xrandr)
+ 
+ ### Includes and Defines (add further entries here):
+ 
+ INCLUDES +=
+ 
+ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"' -D_GNU_SOURCE $(CONFIG) \
+ 	$(if $(GIT_REV), -DGIT_REV='"$(GIT_REV)"')
+ 
+Gemeinsame Unterverzeichnisse: a/po und b/po.

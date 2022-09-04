@@ -16,7 +16,7 @@ PKG_CMAKE_OPTS_TARGET="-DSHADERC_SKIP_TESTS=on \
     				  "
 pre_configure_target() {
   mkdir -p ${PKG_BUILD}/third_party
-  ln -s $(get_build_dir spirv-tools) ${PKG_BUILD}/third_party/spirv-tools
-  ln -s $(get_build_dir spirv-headers) ${PKG_BUILD}/third_party/spirv-headers
-  ln -s $(get_build_dir glslang) ${PKG_BUILD}/third_party/glslang
+  ln -s -f $(get_build_dir spirv-tools) ${PKG_BUILD}/third_party/spirv-tools
+  ln -s -f $(get_build_dir spirv-headers) ${PKG_BUILD}/third_party/spirv-headers
+  ln -s -f $(get_build_dir glslang) ${PKG_BUILD}/third_party/glslang
 }

@@ -1,0 +1,22 @@
+diff -rud8 a/config/graphic b/config/graphic
+--- a/config/graphic	2022-09-04 14:38:15.963433697 +0200
++++ b/config/graphic	2022-09-05 08:38:36.727842068 +0200
+@@ -135,17 +135,17 @@
+     GALLIUM_DRIVERS+=" vc4 v3d kmsro"
+     VULKAN_DRIVERS_MESA+=" broadcom"
+     V4L2_SUPPORT="yes"
+     VAAPI_SUPPORT="no"
+     VDPAU_SUPPORT="no"
+   fi
+ 
+   if listcontains "${GRAPHIC_DRIVERS}" "virtio"; then
+-    GALLIUM_DRIVERS+=" virgl"
++    GALLIUM_DRIVERS+=" virgl swrast"
+   fi
+ 
+   if listcontains "${GRAPHIC_DRIVERS}" "vmware"; then
+     GALLIUM_DRIVERS+=" svga"
+     XORG_DRIVERS+=" vmware"
+     COMPOSITE_SUPPORT="yes"
+   fi
+ 

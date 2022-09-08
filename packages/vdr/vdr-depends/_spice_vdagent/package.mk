@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-PKG_NAME="_spice_vd_agent"
+PKG_NAME="_spice_vdagent"
 PKG_VERSION="0.22.1"
 PKG_SHA256="060faea068b41f48104c5a6cb80c6a91f361c3bbf813becf83beedf57302be37"
 PKG_LICENSE="GPL3"
@@ -23,5 +23,11 @@ KG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 pre_configure_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
 
-  NOCONFIGURE=1 ./autogen.sh
+  autoreconf -fi
 }
+
+#post_install() {
+#  enable_service spice-vdagent
+#  enable_service spice-vdagentd
+#}
+

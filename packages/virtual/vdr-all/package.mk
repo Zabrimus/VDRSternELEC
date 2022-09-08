@@ -23,6 +23,7 @@ if [ "${ARCH}" = "x86_64" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
+	PKG_DEPENDS_TARGET+=" _vdr-plugin-xineliboutput"
 fi
 
 PKG_DEPENDS_TARGET+=" _vdr-plugin-satip"

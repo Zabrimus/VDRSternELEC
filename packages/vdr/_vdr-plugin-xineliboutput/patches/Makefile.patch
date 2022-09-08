@@ -1,0 +1,40 @@
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2020-01-22 12:19:22.000000000 +0100
++++ b/Makefile	2022-09-08 16:44:53.587699509 +0200
+@@ -51,16 +51,17 @@
+     CXXFLAGS   ?= -O3 -pipe -Wall -Woverloaded-virtual -fPIC -g -fno-common -bundle -flat_namespace -undefined suppress
+     CFLAGS     ?= -O3 -pipe -Wall -fPIC -g -fno-common -bundle -flat_namespace -undefined suppress
+     LDFLAGS_SO ?= -fvisibility=hidden
+ else
+     CXXFLAGS   ?= -O3 -pipe -Wall -Woverloaded-virtual -fPIC -g
+     CFLAGS     ?= -O3 -pipe -Wall -fPIC -g
+     LDFLAGS_SO ?= -fvisibility=hidden
+     LDFLAGS_SO += -shared
++    LDFLAGS_SO += $(ADD_LD_FLAGS)
+ endif
+ 
+ ###
+ ### The directory environment:
+ ###
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+@@ -291,17 +292,17 @@
+ 
+ 
+ ###
+ ### Rules:
+ ###
+ 
+ mpg2c: mpg2c.c
+ 	@echo CCLD $@
+-	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) mpg2c.c -o $@
++	gcc mpg2c.c -o mpg2c
+ 
+ # data
+ black_720x576.c: mpg2c black_720x576.mpg
+ 	@echo GEN $@
+ 	$(Q)./mpg2c black black_720x576.mpg black_720x576.c
+ nosignal_720x576.c: mpg2c nosignal_720x576.mpg
+ 	@echo GEN $@
+ 	$(Q)./mpg2c nosignal nosignal_720x576.mpg nosignal_720x576.c

@@ -1,0 +1,22 @@
+diff -ru8bBwd a/logdefs.h b/logdefs.h
+--- a/logdefs.h	2020-01-22 12:19:22.000000000 +0100
++++ b/logdefs.h	2022-09-09 19:03:58.207892462 +0200
+@@ -118,17 +118,17 @@
+ 
+ 
+ 
+ /*
+  * ASSERT
+  */
+ 
+ #ifdef NDEBUG
+-#  define ASSERT(expr)
++#  define ASSERT(expr, fatal)
+ #else
+ #  define ASSERT(expr,fatal) \
+       do { \
+         if(UNLIKELY(!(expr))) {                         \
+           LOGERR("Asseretion failed: %s at %s:%d (%s)", \
+                  #expr, __FILE__, __LINE__, __FUNCTION__); \
+           if(fatal) \
+             abort(); \

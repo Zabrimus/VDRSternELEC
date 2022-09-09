@@ -1,6 +1,6 @@
-diff -ru8bBwd a/Makefile b/Makefile
+diff -u8bBwd a/Makefile b/Makefile
 --- a/Makefile	2020-01-22 12:19:22.000000000 +0100
-+++ b/Makefile	2022-09-08 16:44:53.587699509 +0200
++++ b/Makefile	2022-09-09 19:57:03.079939409 +0200
 @@ -51,16 +51,17 @@
      CXXFLAGS   ?= -O3 -pipe -Wall -Woverloaded-virtual -fPIC -g -fno-common -bundle -flat_namespace -undefined suppress
      CFLAGS     ?= -O3 -pipe -Wall -fPIC -g -fno-common -bundle -flat_namespace -undefined suppress
@@ -38,3 +38,42 @@ diff -ru8bBwd a/Makefile b/Makefile
  nosignal_720x576.c: mpg2c nosignal_720x576.mpg
  	@echo GEN $@
  	$(Q)./mpg2c nosignal nosignal_720x576.mpg nosignal_720x576.c
+@@ -382,35 +383,35 @@
+ 	$(Q)$(CXX) $(CXXFLAGS) $(LDFLAGS_SO) $(LDFLAGS) -shared $(OBJS) $(OBJS_MPG) $(LIBS) $(LIBS_VDR) -o $@
+ ifeq ($(VDR_TREE), yes)
+ 	$(INSTALL) $@ $(LIBDIR)/
+ endif
+ 
+ install-lib: $(TARGETS_VDR)
+ ifeq ($(XINELIBOUTPUT_VDRPLUGIN), yes)
+ 	@echo Installing $^
+-	@mkdir -p $(DESTDIR)$(LIBDIR)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/
++	@mkdir -p $(LIBDIR)
++	install -D $^ $(LIBDIR)/
+ endif
+ 
+ install: install-lib install-i18n
+ 
+ #
+ # vdr-sxfe
+ #
+ 
+ $(VDRPLUGIN_SXFE): $(OBJS_SXFE_SO)
+ 	@echo LD $@
+ 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_SO) $(LDFLAGS) $(OBJS_SXFE_SO) $(LIBS_X11) $(LIBS_XINE) $(LIBS_JPEG) -o $@
+ ifeq ($(VDR_TREE), yes)
+ 	$(INSTALL) $@ $(LIBDIR)/
+ endif
+ $(VDRSXFE): $(OBJS_SXFE)
+ 	@echo LD $@
+-	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS_SXFE) $(LIBS_X11) $(LIBS_XINE) $(LIBS_JPEG) $(LIBS_CEC) $(LIBS_PTHREAD) -o $@
++	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS_SXFE) $(LIBS_X11) $(LIBS_XINE) $(LIBS_JPEG) $(LIBS_CEC) $(LIBS_PTHREAD) $(ADD_LD_FLAGS) -o $@
+ 
+ #
+ # vdr-wlfe
+ #
+ 
+ $(VDRPLUGIN_WLFE): $(OBJS_WLFE_SO)
+ 	@echo LD $@
+ 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_SO) $(LDFLAGS) $(OBJS_WLFE_SO) $(LIBS_WAYLAND) $(LIBS_XINE) $(LIBS_JPEG) -o $@

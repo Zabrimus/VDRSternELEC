@@ -1,0 +1,336 @@
+--- a/src/fluxcomp.cpp	2013-11-10 22:59:50.000000000 +0100
++++ b/src/fluxcomp.cpp	2013-09-20 15:02:42.000000000 +0200
+@@ -147,27 +147,29 @@
+      bool           c_mode;
+      bool           identity;
+      std::string    include_prefix;
+      bool           no_direct;
+      bool           call_mode;
+      bool           object_ptrs;
+      std::string    static_args_bytes;
+      bool           dispatch_error_abort;
++     std::string    output_dir;
+ 
+ public:
+      FluxConfig()
+           :
+           c_mode( false ),
+           identity( false ),
+           no_direct( false ),
+           call_mode( false ),
+           object_ptrs( false ),
+           static_args_bytes( "1000" ),
+-          dispatch_error_abort( false )
++          dispatch_error_abort( false ),
++          output_dir("")
+      {
+      }
+ 
+      bool
+      parse_command_line( int argc, char *argv[] )
+      {
+           int n;
+ 
+@@ -225,16 +227,21 @@
+                     continue;
+                }
+ 
+                if (strcmp (arg, "--dispatch-error-abort") == 0) {
+                     dispatch_error_abort = true;
+                     continue;
+                }
+ 
++               if (strncmp (arg, "-o=", 3) == 0) {
++                    output_dir = std::string(&arg[3]) + "/";
++                    continue;
++               }
++
+                if (filename || access( arg, R_OK )) {
+                     print_usage( argv[0] );
+                     return false;
+                }
+ 
+                filename = arg;
+           }
+ 
+@@ -257,16 +264,17 @@
+           fprintf( stderr, "   -V, --version-code             Output version code to stdout\n" );
+           fprintf( stderr, "   -c, --generate-c               Generate C instead of C++ code\n" );
+           fprintf( stderr, "   -i, --identity                 Generate caller identity tracking code\n" );
+           fprintf( stderr, "   --object-ptrs                  Return object pointers rather than IDs\n" );
+           fprintf( stderr, "   --call-mode                    Use call mode function to determine call mode\n" );
+           fprintf( stderr, "   -p=, --include-prefix=         Override standard include prefix for includes\n" );
+           fprintf( stderr, "   --static-args-bytes=           Override standard limit (1000) for stack based arguments\n" );
+           fprintf( stderr, "   --dispatch-error-abort         Abort execution when object lookups etc fail\n" );
++          fprintf( stderr, "   -o=                            write to output directory\n" );
+           fprintf( stderr, "\n" );
+      }
+ };
+ 
+ /**********************************************************************************************************************/
+ 
+ class Entity
+ {
+@@ -352,32 +360,34 @@
+ };
+ 
+ class Method : public Entity
+ {
+ public:
+      Method( Entity *parent )
+           :
+           Entity( parent ),
++          indirect( false ),
+           async( false ),
+           queue( false ),
+           buffer( false )
+      {
+      }
+ 
+ 
+      virtual Type GetType() const { return ENTITY_METHOD; }
+ 
+ 
+      virtual void Dump() const;
+ 
+      virtual void SetProperty( const std::string &name, const std::string &value );
+ 
+ 
+      std::string              name;
++     bool                     indirect;
+      bool                     async;
+      bool                     queue;
+      bool                     buffer;
+ 
+ public:
+      static std::string
+      PrintParam( std::string string_buffer,
+                  std::string type,
+@@ -512,16 +522,31 @@
+ 
+           D_WARN( "unsupported type '%s'", type.c_str() );
+ 
+           D_UNIMPLEMENTED();
+ 
+           return "x";
+      }
+ 
++     std::string typeCast() const
++     {
++          if (type == "int") {
++               if (type_name == "u64")
++                    return "(unsigned long long) ";
++
++               if (type_name == "s64")
++                    return "(long long) ";
++
++               return "";
++          }
++
++          return "";
++     }
++
+      std::string size( bool use_args ) const
+      {
+           if (array) {
+                if (use_args)
+                     return std::string("args->") + count + " * sizeof(" + type_name + ")";
+                else
+                     return (split ? std::string( "num_records" ) : count) + " * sizeof(" + type_name + ")";
+           }
+@@ -674,16 +699,21 @@
+ Method::SetProperty( const std::string &name,
+                      const std::string &value )
+ {
+      if (name == "name") {
+           this->name = value;
+           return;
+      }
+ 
++     if (name == "indirect") {
++          indirect = value == "yes";
++          return;
++     }
++
+      if (name == "async") {
+           async = value == "yes";
+           return;
+      }
+ 
+      if (name == "queue") {
+           queue = value == "yes";
+           return;
+@@ -1632,18 +1662,19 @@
+                               face->object.c_str(), arg->name.c_str(), arg->name.c_str() );
+ 
+                     result += buf;
+                }
+                else if (arg->type == "enum" || arg->type == "int") {
+                     char buf[1000];
+ 
+                     snprintf( buf, sizeof(buf),
+-                              "            D_DEBUG_AT( DirectFB_%s, \"  -> %s = %%%s\\n\", args->%s );\n",
+-                              face->object.c_str(), arg->name.c_str(), arg->formatCharacter().c_str(), arg->name.c_str() );
++                              "            D_DEBUG_AT( DirectFB_%s, \"  -> %s = %%%s\\n\", %sargs->%s );\n",
++                              face->object.c_str(), arg->name.c_str(), arg->formatCharacter().c_str(),
++                              arg->typeCast().c_str(), arg->name.c_str() );
+ 
+                     result += buf;
+                }
+                else
+                     result += std::string("         ;    // TODO: ") + arg->type + " debug\n";
+           }
+      }
+ 
+@@ -1782,17 +1813,17 @@
+ };
+ 
+ /**********************************************************************************************************************/
+ 
+ void
+ FluxComp::GenerateHeader( const Interface *face, const FluxConfig &config )
+ {
+      FILE        *file;
+-     std::string  filename = face->object + ".h";
++     std::string  filename = config.output_dir + face->object + ".h";
+ 
+      file = fopen( filename.c_str(), "w" );
+      if (!file) {
+           D_PERROR( "FluxComp: fopen( '%s' ) failed!\n", filename.c_str() );
+           return;
+      }
+ 
+      fprintf( file, "/*\n"
+@@ -2048,17 +2079,17 @@
+ 
+      fclose( file );
+ }
+ 
+ void
+ FluxComp::GenerateSource( const Interface *face, const FluxConfig &config )
+ {
+      FILE        *file;
+-     std::string  filename = face->object;
++     std::string  filename = config.output_dir + face->object;
+      bool         direct   = true;
+ 
+      if (!config.c_mode)
+           filename += ".cpp";
+      else
+           filename += ".c";
+ 
+      if (config.no_direct || face->object != face->dispatch)
+@@ -2124,17 +2155,17 @@
+                         face->object.c_str(), method->entities.empty() ? "" : ",",
+                         method->ArgumentsAsParamDecl().c_str() );
+ 
+                if (config.call_mode) {
+                     fprintf( file,      "    DFBResult ret;\n"
+                                         "\n"
+                                         "    switch (CoreDFB_CallMode( core_dfb )) {\n"
+                                         "        case COREDFB_CALL_DIRECT:" );
+-                    if (direct)
++                    if (direct && !method->indirect)
+                          fprintf( file, "{\n"
+                                         "            DirectFB::%s_Real real( core_dfb, obj );\n"
+                                         "\n"
+                                         "            Core_PushCalling();\n"
+                                         "            ret = real.%s( %s );\n"
+                                         "            Core_PopCalling();\n"                                  
+                                         "\n"
+                                         "            return ret;\n"
+@@ -2193,17 +2224,17 @@
+                         face->object.c_str(), method->entities.empty() ? "" : ",",
+                         method->ArgumentsAsParamDecl().c_str() );
+ 
+                if (config.call_mode) {
+                     fprintf( file,      "    DFBResult ret;\n"
+                                         "\n"                                        
+                                         "    switch (CoreDFB_CallMode( core_dfb )) {\n"
+                                         "        case COREDFB_CALL_DIRECT:" );
+-                    if (direct)
++                    if (direct && !method->indirect)
+                          fprintf( file, "{\n"
+                                         "            Core_PushCalling();\n"
+                                         "            ret = %s_Real__%s( obj%s%s );\n"
+                                         "            Core_PopCalling();\n"
+                                         "\n"
+                                         "            return ret;\n"
+                                         "        }\n",
+                                   face->name.c_str(), method->name.c_str(), method->ArgumentsAsParamDecl().empty() ? "" : ", ", method->ArgumentsNames().c_str() );
+@@ -2410,17 +2441,17 @@
+                               "\n"
+                               "    D_DEBUG_AT( DirectFB_%s, \"%s_Requestor::%%s()\\n\", __FUNCTION__ );\n"
+                               "\n"
+                               "%s"
+                               "\n"
+                               "%s"
+                               "\n"
+                               "%s"
+-                              "    ret = (DFBResult) %s_Call( obj, (FusionCallExecFlags)(FCEF_ONEWAY%s), %s%s_%s, args, %s, NULL, 0, NULL );\n"
++                              "    ret = (DFBResult) %s_Call( obj, (FusionCallExecFlags)(FCEF_ONEWAY%s%s), %s%s_%s, args, %s, NULL, 0, NULL );\n"
+                               "    if (ret) {\n"
+                               "        D_DERROR( ret, \"%%s: %s_Call( %s_%s ) failed!\\n\", __FUNCTION__ );\n"
+                               "        goto out;\n"
+                               "    }\n"
+                               "\n"
+                               "%s"
+                               "\n"
+                               "%s"
+@@ -2432,17 +2463,17 @@
+                               "\n",
+                         method->ArgumentsOutputObjectDecl().c_str(),
+                         config.static_args_bytes.c_str(),
+                         face->object.c_str(), method->name.c_str(), face->object.c_str(), method->name.c_str(), method->ArgumentsSize( face, false ).c_str(),
+                         face->object.c_str(), face->name.c_str(),
+                         method->ArgumentsAssertions().c_str(),
+                         method->ArgumentsInputAssignments().c_str(),
+                         face->buffered ? "    flush();\n\n" : "",
+-                        face->object.c_str(), method->queue ? " | FCEF_QUEUE" : "", config.c_mode ? "_" : "", face->object.c_str(), method->name.c_str(), method->ArgumentsSize( face, false ).c_str(),
++                        face->object.c_str(), method->queue ? " | FCEF_QUEUE" : "", method->indirect ? " | FCEF_NODIRECT" : "", config.c_mode ? "_" : "", face->object.c_str(), method->name.c_str(), method->ArgumentsSize( face, false ).c_str(),
+                         face->object.c_str(), face->object.c_str(), method->name.c_str(),
+                         method->ArgumentsOutputAssignments().c_str(),
+                         method->ArgumentsOutputObjectCatch( config ).c_str() );
+           }
+           else {
+                fprintf( file, "{\n"
+                               "    DFBResult           ret = DFB_OK;\n"
+                               "%s"
+@@ -2463,17 +2494,17 @@
+                               "\n"
+                               "    D_DEBUG_AT( DirectFB_%s, \"%s_Requestor::%%s()\\n\", __FUNCTION__ );\n"
+                               "\n"
+                               "%s"
+                               "\n"
+                               "%s"
+                               "\n"
+                               "%s"
+-                              "    ret = (DFBResult) %s_Call( obj, FCEF_NONE, %s%s_%s, args, %s, return_args, %s, NULL );\n"
++                              "    ret = (DFBResult) %s_Call( obj, %s, %s%s_%s, args, %s, return_args, %s, NULL );\n"
+                               "    if (ret) {\n"
+                               "        D_DERROR( ret, \"%%s: %s_Call( %s_%s ) failed!\\n\", __FUNCTION__ );\n"
+                               "        goto out;\n"
+                               "    }\n"
+                               "\n"
+                               "    if (return_args->result) {\n"
+                               "        /*D_DERROR( return_args->result, \"%%s: %s_%s failed!\\n\", __FUNCTION__ );*/\n"
+                               "        ret = return_args->result;\n"
+@@ -2494,17 +2525,17 @@
+                         config.static_args_bytes.c_str(),
+                         config.static_args_bytes.c_str(),
+                         face->object.c_str(), method->name.c_str(), face->object.c_str(), method->name.c_str(), method->ArgumentsSize( face, false ).c_str(),
+                         face->object.c_str(), method->name.c_str(), face->object.c_str(), method->name.c_str(), method->ArgumentsSize( face, true ).c_str(),
+                         face->object.c_str(), face->name.c_str(),
+                         method->ArgumentsAssertions().c_str(),
+                         method->ArgumentsInputAssignments().c_str(),
+                         face->buffered ? "     flush();\n\n" : "",
+-                        face->object.c_str(), config.c_mode ? "_" : "", face->object.c_str(), method->name.c_str(), method->ArgumentsSize( face, false ).c_str(), method->ArgumentsSize( face, true ).c_str(),
++                        face->object.c_str(), method->indirect ? "(FusionCallExecFlags)FCEF_NODIRECT" : "FCEF_NONE", config.c_mode ? "_" : "", face->object.c_str(), method->name.c_str(), method->ArgumentsSize( face, false ).c_str(), method->ArgumentsSize( face, true ).c_str(),
+                         face->object.c_str(), face->object.c_str(), method->name.c_str(),
+                         face->object.c_str(), method->name.c_str(),
+                         method->ArgumentsOutputAssignments().c_str(),
+                         method->ArgumentsOutputObjectCatch( config ).c_str() );
+           }
+      }
+ 
+      /* Dispatch Object */

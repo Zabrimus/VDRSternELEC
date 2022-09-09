@@ -7,7 +7,7 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://sourceforge.net/projects/xineliboutput"
 PKG_URL="https://sourceforge.net/code-snapshots/git/x/xi/xineliboutput/git.git/xineliboutput-git-${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="xineliboutput-git-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain _vdr glibc _xine-lib libX11 mesa _xcb-util-wm _libxcb _freeglut libXi libXxf86vm"
+PKG_DEPENDS_TARGET="toolchain _vdr glibc _xine-lib libX11 mesa _xcb-util-wm _libxcb _freeglut libXi libXxf86vm _directfb2"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="An output device which depends on xinelib"
 PKG_TOOLCHAIN="manual"
@@ -23,7 +23,7 @@ make_target() {
 
 
   export ADD_LD_FLAGS="$(pkg-config --libs x11 glu gl glx glew)"
-  cd .. && make VERBOSE=1 all
+  cd .. && make all
 }
 
 makeinstall_target() {

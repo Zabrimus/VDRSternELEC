@@ -27,7 +27,7 @@ pre_configure_target() {
 }
 
 #post_install() {
-#  enable_service spice-vdagent
-#  enable_service spice-vdagentd
+#  enable_service spice-vdagent.service
+#  enable_service spice-vdagentd.service
 #}
 

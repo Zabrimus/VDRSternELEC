@@ -1,5 +1,6 @@
 [Unit]
 Description=Agent daemon for Spice guests
+After=xorg.service
 Requires=spice-vdagentd.socket
 
 [Service]
@@ -12,3 +13,4 @@ Restart=on-failure
 
 [Install]
 Also=spice-vdagentd.socket
+WantedBy=multi-user.target

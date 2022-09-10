@@ -18,17 +18,47 @@ Tests and/or pull requests are highly appreciated.
 Due to [LibreELEC Forum](https://forum.libreelec.tv/thread/22564-official-le-test-images-for-amlogic-kodi-20/?postID=167900#post167900), 
 aarch64 builds are possible, but Kodi is not really usable, because no Kodi Addon Repository for aarch64 binary exists. 
 
-## Work in progress (x86_64)
+## x86_64 Builds
 The x86_64 build is successful, but not tested in real systems. The following output devices for VDR will be build
 if the config LibreELEC-master-x64_64 has been selected for the build:
 - softhddevice (vaapi, vdpau, cuvid)
 - softhdcuvid (cuvid)
 - softhddvaapi (vaapi)
 - softhddrm (drm)
+- xineliboutput (several, fb and others)
 
-The X graphic driver qxl (used for KVM/Qemu) will also be build and the X server starts successfully.
-- Kodi crashes
-- VDR Output Plugin doesn't start
+## QEMU/KVM
+It is possible to use the x86_64 Build ova disk image in QEMU/KVM, after some preparation:
+1. Build LibreELEC x86_64 with ```./build.sh -config LibreELEC-master-x64_64```
+2. In folder ```LibreELEC.tv/target/``` exists an file ```LibreELEC-x11.x86_64*.ova```.
+3. Use the script ```convert_ova_to_qcow2.sh``` to unpack the ova file and convert the vmdk file to a QEMU/KVM disk image with ```./convert_ova_to_qcow2.sh LibreELEC-x11.x86_64*.ova```.
+4. The script resizes the disk image and adds 5 Gigabyte. If this is too much or too less, then modify the script accordingly.
+5. The resulting qcow2 disk image can be imported in QEMU/KVM, but do not start the VM yet. 
+6. Modify the virtlib XML and change the existing graphics and video part to 
+```
+    <graphics type="spice" port="-1" autoport="no">
+      <listen type="address"/>
+    </graphics>
+    <graphics type="egl-headless">
+      <gl rendernode="/dev/dri/renderD128"/>
+    </graphics>
+```
+and
+```
+    <video>
+      <model type="virtio" heads="1" primary="yes">
+        <acceleration accel3d="yes"/>
+      </model>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
+    </video>
+```
+
+### Current status
+The VDR video is a bit unstable. Using xineliboutput as output plugin the VDR video is visible or not. A VDR restart could help or not. Audio is always audible.
+
+I'm running out of ideas where to change something: It could be a compile flag, a missing library, a configuration issue or whatever.
+
+KODI on the other hand is fully functional and visible.
 
 ## Current status:
 
@@ -37,78 +67,81 @@ The X graphic driver qxl (used for KVM/Qemu) will also be build and the X server
 CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  Plugin             | install | ini     | AutoRun | Stop | Arguments
 --------------------------------------------------------------------------------
- ac3mode            | yes     | valid   | no      | yes  | 
- cdplayer           | yes     | valid   | no      | yes  | 
- cecremote          | yes     | valid   | no      | yes  | 
- chanman            | yes     | valid   | no      | yes  | 
- channellists       | yes     | valid   | no      | yes  | 
- conflictcheckonly  | yes     | valid   | no      | yes  | 
+ ac3mode            | yes     | valid   | no      | yes  |
+ cdplayer           | yes     | valid   | no      | yes  |
+ cecremote          | yes     | valid   | no      | yes  |
+ chanman            | yes     | valid   | no      | yes  |
+ channellists       | yes     | valid   | no      | yes  |
+ conflictcheckonly  | yes     | valid   | no      | yes  |
  control            | yes     | valid   | yes     | yes  |
- dbus2vdr           | yes     | valid   | no      | yes  | 
- ddci2              | yes     | valid   | no      | yes  | 
- devstatus          | yes     | valid   | no      | yes  | 
- dummydevice        | yes     | valid   | no      | yes  | 
- dvbapi             | yes     | valid   | no      | yes  | 
- dvd                | yes     | valid   | no      | yes  | 
- dynamite           | no      | valid   | no      | yes  | 
- eepg               | yes     | valid   | no      | yes  | 
- epg2vdr            | yes     | valid   | no      | yes  | 
- epgfixer           | yes     | valid   | no      | yes  | 
- epgsearch          | yes     | valid   | no      | yes  | 
- epgsearchonly      | yes     | valid   | no      | yes  | 
- epgtableid0        | yes     | valid   | no      | yes  | 
- externalplayer     | yes     | valid   | no      | yes  | 
- femon              | yes     | valid   | no      | yes  | 
- filebrowser        | yes     | valid   | no      | yes  | 
+ dbus2vdr           | yes     | valid   | no      | yes  |
+ ddci2              | yes     | valid   | no      | yes  |
+ devstatus          | yes     | valid   | no      | yes  |
+ dummydevice        | yes     | valid   | no      | yes  |
+ dvbapi             | yes     | valid   | no      | yes  |
+ dvd                | yes     | valid   | no      | yes  |
+ dynamite           | no      | valid   | no      | yes  |
+ eepg               | yes     | valid   | no      | yes  |
+ epg2vdr            | yes     | valid   | no      | yes  |
+ epgfixer           | yes     | valid   | no      | yes  |
+ epgsearch          | yes     | valid   | no      | yes  |
+ epgsearchonly      | yes     | valid   | no      | yes  |
+ epgtableid0        | yes     | valid   | no      | yes  |
+ externalplayer     | yes     | valid   | no      | yes  |
+ femon              | yes     | valid   | no      | yes  |
+ filebrowser        | yes     | valid   | no      | yes  |
  fritzbox           | yes     | valid   | no      | yes  | -c /storage/.config/vdropt/plugins/fritz/on-call.sh
- hello              | yes     | valid   | no      | yes  | 
- iptv               | yes     | valid   | no      | yes  | 
- live               | yes     | valid   | no      | yes  | 
- markad             | yes     | valid   | no      | yes  | 
- menuorg            | yes     | valid   | no      | yes  | 
- mp3                | yes     | valid   | no      | yes  | 
- osd2web            | yes     | valid   | no      | yes  | 
- osddemo            | yes     | valid   | no      | yes  | 
- osdteletext        | yes     | valid   | no      | yes  | 
+ hello              | yes     | valid   | no      | yes  |
+ iptv               | yes     | valid   | no      | yes  |
+ live               | yes     | valid   | no      | yes  |
+ markad             | yes     | valid   | no      | yes  |
+ menuorg            | yes     | valid   | no      | yes  |
+ mp3                | yes     | valid   | no      | yes  |
+ osd2web            | yes     | valid   | no      | yes  |
+ osddemo            | yes     | valid   | no      | yes  |
+ osdteletext        | yes     | valid   | no      | yes  |
  permashift         | yes     | valid   | no      | yes  |
- pictures           | yes     | valid   | no      | yes  | 
- quickepgsearch     | yes     | valid   | no      | yes  | 
+ pictures           | yes     | valid   | no      | yes  |
+ quickepgsearch     | yes     | valid   | no      | yes  |
  radio              | yes     | valid   | no      | yes  | -f /storage/.config/vdropt/plugins/radio
- remote             | yes     | valid   | no      | yes  | 
- remoteosd          | yes     | valid   | no      | yes  | 
- restfulapi         | yes     | valid   | no      | yes  | 
- robotv             | yes     | valid   | no      | yes  | 
- satip              | yes     | valid   | yes     | yes  | 
- scraper2vdr        | yes     | valid   | no      | yes  | 
- skindesigner       | yes     | valid   | no      | yes  | 
- skinelchihd        | yes     | valid   | no      | yes  | 
- skinflat           | yes     | valid   | no      | yes  | 
- skinflatplus       | yes     | valid   | no      | yes  | 
- skinlcarsng        | yes     | valid   | no      | yes  | 
- skinnopacity       | yes     | valid   | no      | yes  | 
- skinsoppalusikka   | yes     | valid   | no      | yes  | 
- softhddevice-drm   | yes     | valid   | yes     | no   | -a hw:1,0
+ remote             | yes     | valid   | no      | yes  |
+ remoteosd          | yes     | valid   | no      | yes  |
+ restfulapi         | yes     | valid   | no      | yes  |
+ robotv             | yes     | valid   | no      | yes  |
+ satip              | yes     | valid   | yes     | yes  |
+ scraper2vdr        | yes     | valid   | no      | yes  |
+ skindesigner       | yes     | valid   | no      | yes  |
+ skinelchihd        | yes     | valid   | no      | yes  |
+ skinflat           | yes     | valid   | no      | yes  |
+ skinflatplus       | yes     | valid   | no      | yes  |
+ skinlcarsng        | yes     | valid   | no      | yes  |
+ skinnopacity       | yes     | valid   | no      | yes  |
+ skinsoppalusikka   | yes     | valid   | no      | yes  |
+ softhdcuvid        | yes     | valid   | no      | yes  |
+ softhddevice       | yes     | valid   | no      | yes  |
+ softhddevice-drm   | yes     | valid   | no      | no   | -a hw:1,0
  softhdodroid       | yes     | valid   | yes     | no   | -a hw:CARD=AMLAUGESOUND,DEV=0
- status             | yes     | valid   | no      | yes  | 
- streamdev-client   | yes     | valid   | no      | yes  | 
- streamdev-client2  | yes     | valid   | no      | yes  | 
- streamdev-client3  | yes     | valid   | no      | yes  | 
- streamdev-client4  | yes     | valid   | no      | yes  | 
- streamdev-server   | yes     | valid   | no      | yes  | 
- svccli             | yes     | valid   | no      | yes  | 
- svcsvr             | yes     | valid   | no      | yes  | 
- svdrpdemo          | yes     | valid   | no      | yes  | 
- svdrpservice       | yes     | valid   | no      | yes  | 
+ status             | yes     | valid   | no      | yes  |
+ streamdev-client   | yes     | valid   | no      | yes  |
+ streamdev-client2  | yes     | valid   | no      | yes  |
+ streamdev-client3  | yes     | valid   | no      | yes  |
+ streamdev-client4  | yes     | valid   | no      | yes  |
+ streamdev-server   | yes     | valid   | no      | yes  |
+ svccli             | yes     | valid   | no      | yes  |
+ svcsvr             | yes     | valid   | no      | yes  |
+ svdrpdemo          | yes     | valid   | no      | yes  |
+ svdrpservice       | yes     | valid   | no      | yes  |
  systeminfo         | yes     | valid   | no      | yes  | --script=/storage/.config/vdropt/plugins/systeminfo/systeminfo.sh
- targavfd           | yes     | valid   | no      | yes  | 
- tvguideng          | yes     | valid   | no      | yes  | 
- tvscraper          | yes     | valid   | no      | yes  | 
- vnsiserver         | yes     | valid   | no      | yes  | 
- weatherforecast    | yes     | valid   | no      | yes  | 
- wirbelscan         | yes     | valid   | no      | yes  | 
- wirbelscancontrol  | yes     | valid   | no      | yes  | 
- zaphistory         | yes     | valid   | no      | yes  | 
- zappilot           | yes     | valid   | no      | yes  | 
+ targavfd           | yes     | valid   | no      | yes  |
+ tvguideng          | yes     | valid   | no      | yes  |
+ tvscraper          | yes     | valid   | no      | yes  |
+ vnsiserver         | yes     | valid   | no      | yes  |
+ weatherforecast    | yes     | valid   | no      | yes  |
+ wirbelscan         | yes     | valid   | no      | yes  |
+ wirbelscancontrol  | yes     | valid   | no      | yes  |
+ xineliboutput      | yes     | valid   | no      | yes  | --local=fbfe --video=fb -d :0.0 -C /storage/.config/vdropt/xinelib.conf -f
+ zaphistory         | yes     | valid   | no      | yes  |
+ zappilot           | yes     | valid   | no      | yes  |
 ```
 
 ## Build (tested with Ubuntu Focal and Debian 11)

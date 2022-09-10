@@ -97,6 +97,21 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
 # Makfile muss angepasst werden
 # PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
 
+
+# DirectFB2
+if [ "${DIRECTFB2}" = "y" ]; then
+	PKG_DEPENDS_TARGET+=" _DirectFB-LiTE"
+	#PKG_DEPENDS_TARGET+=" _DirectFB2-media"
+fi
+
+# DirectFB2 Samples
+if [ "${DIRECTFB2SAMPLES}" = "y" ]; then
+	PKG_DEPENDS_TARGET+=" _DirectFB-examples"
+	PKG_DEPENDS_TARGET+=" _DirectFB2-term"
+	PKG_DEPENDS_TARGET+=" _DirectFB-LiTE-examples"
+	#PKG_DEPENDS_TARGET+=" _DirectFB2-media-samples"
+fi
+
 post_install() {
   if [ "${PROJECT} = "Amlogic-ce" ] || [ "${PROJECT} = "Amlogic" ]; then
      # Fix some links

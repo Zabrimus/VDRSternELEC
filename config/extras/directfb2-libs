@@ -1,0 +1,4 @@
+# Build DirectFB2 and all existing libs
+
+# DIRECTFB2 (y/n)
+DIRECTFB2=y

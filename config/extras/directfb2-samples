@@ -1,0 +1,4 @@
+# Build all DirectFB2 samples
+
+# DIRECTFB2SAMPLES (y/n)
+DIRECTFB2SAMPLES=y

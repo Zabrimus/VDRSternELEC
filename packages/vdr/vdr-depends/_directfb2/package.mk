@@ -14,8 +14,17 @@ PKG_BUILD_FLAGS="+pic"
 PKG_SOURCE_DIR="DirectFB2-${PKG_VERSION}"
 PKG_TOOLCHAIN="meson"
 
-#PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local"
+# disabled until a build of linux-fusion is successful
+# PKG_MESON_OPTS_TARGET="-Dmulti=true"
+PKG_MESON_OPTS_TARGET="-Dmulti-kernel=false  \
+					   -Dmulti=false \
+					   "
 
 pre_configure_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
+}
+
+post_makeinstall_target() {
+  mkdir -p ${INSTALL}/etc/
+  cp ${PKG_DIR}/etc/* ${INSTALL}/etc/
 }

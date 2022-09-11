@@ -127,6 +127,7 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  streamdev-client3  | yes     | valid   | no      | yes  |
  streamdev-client4  | yes     | valid   | no      | yes  |
  streamdev-server   | yes     | valid   | no      | yes  |
+ suspendoutput      | yes     | valid   | no      | yes  | -b
  svccli             | yes     | valid   | no      | yes  |
  svcsvr             | yes     | valid   | no      | yes  |
  svdrpdemo          | yes     | valid   | no      | yes  |

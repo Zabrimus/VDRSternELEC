@@ -78,6 +78,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-cecremote"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-remote"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-menuorg"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-dbus2vdr"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-suspendoutput"
 
 if [ "${EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"

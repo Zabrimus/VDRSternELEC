@@ -1,0 +1,30 @@
+--- a/timer.h	2016-06-08 21:20:37.000000000 +0200
++++ b/timer.h	2022-09-11 11:47:04.940397794 +0200
+@@ -238,25 +238,25 @@
+                               TARG1 arg1,
+                               unsigned int TimeoutMs)
+ {
+   return new cTimerFunctorR1<TCLASS,TRESULT,TARG1>(c,fp,arg1,TimeoutMs);
+ }
+ 
+ template<class TCLASS>
+ cTimerEvent *CreateTimerEvent(TCLASS *c, void (TCLASS::*fp)(void),
+-                              unsigned int TimeoutMs, bool runOnce = true)
++                              unsigned int TimeoutMs, bool runOnce)
+ {
+   return new cTimerFunctor0<TCLASS>(c,fp,TimeoutMs,runOnce);
+ }
+ 
+ template<class TCLASS, class TARG1>
+ cTimerEvent *CreateTimerEvent(TCLASS *c, void (TCLASS::*fp)(TARG1),
+                               TARG1 arg1,
+-                              unsigned int TimeoutMs, bool runOnce = true)
++                              unsigned int TimeoutMs, bool runOnce)
+ {
+   return new cTimerFunctor1<TCLASS,TARG1>(c,fp,arg1,TimeoutMs,runOnce);
+ }
+ 
+ template<class TCLASS>
+ void CancelTimerEvents(TCLASS *c)
+ {
+   cTimerEvent::CancelAll((void*)c);

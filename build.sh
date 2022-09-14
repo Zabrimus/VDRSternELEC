@@ -61,21 +61,24 @@ apply_patches() {
        exit 1
     fi
 
+    if [ -n "${PATCH_SET}" ]; then
+       if [ ! -d patches/$DISTRO/patch-sets/$PATCH_SET ]; then
+          echo "Configured PATCH_SET ${PATCH_SET} does not exists in $DISTRO/patch-sets/"
+          exit 1
+       fi
+    fi
+
     cd $DISTRO
 
-    for patch in `ls ../patches/$DISTRO/*.patch`; do
+    for patch in `ls ../patches/$DISTRO/patch-sets/$PATCH_SET/*.patch`; do
         echo "Apply patch $patch"
         patch -p1 < $patch
     done
 
-    for script in `ls ../patches/$DISTRO/*.sh`; do
+    for script in `ls ../patches/$DISTRO/patch-sets/$PATCH_SET/*.sh`; do
         echo "Apply script $script"
         bash $script
     done
-
-    if [ -d ../patches/$DISTRO/copy ]; then
-       cp -a ../patches/$DISTRO/copy/* .
-    fi;
 }
 
 prepare_sources() {

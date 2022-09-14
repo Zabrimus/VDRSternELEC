@@ -4,6 +4,9 @@ BRANCH=master
 TAG=
 REVISION=
 
+# Use which patch-set (patches/LibreELEC/patch-sets/)
+PATCH_SET=default
+
 # Build settings
 PROJECT=Amlogic
 DEVICE=AMLGX

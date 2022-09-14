@@ -4,6 +4,9 @@ BRANCH=libreelec-10.0
 TAG=
 REVISION=
 
+# Use which patch-set (patches/LibreELEC/patch-sets/)
+PATCH_SET=default
+
 # Build settings
 PROJECT=Generic
 DEVICE=

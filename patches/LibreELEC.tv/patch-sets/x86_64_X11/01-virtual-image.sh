@@ -1,0 +1,1 @@
+../../all-patches/01-virtual-image.sh

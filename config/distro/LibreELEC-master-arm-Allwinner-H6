@@ -4,6 +4,9 @@ BRANCH=master
 TAG=
 REVISION=
 
+# Use which patch-set (patches/LibreELEC/patch-sets/)
+PATCH_SET=Allwinner_H6
+
 # Build settings
 PROJECT=Allwinner
 DEVICE=H6

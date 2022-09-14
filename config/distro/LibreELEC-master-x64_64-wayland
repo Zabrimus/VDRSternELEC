@@ -4,9 +4,12 @@ BRANCH=master
 TAG=
 REVISION=
 
+# Use which patch-set (patches/LibreELEC/patch-sets/)
+PATCH_SET=default
+
 # Build settings
 PROJECT=Generic
-DEVICE=x11
+DEVICE=wayland
 ARCH=x86_64
 
 # VDR settings

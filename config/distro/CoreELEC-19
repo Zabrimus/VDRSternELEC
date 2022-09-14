@@ -4,6 +4,9 @@ BRANCH=coreelec-19
 TAG=
 REVISION=
 
+# Use which patch-set (patches/CoreELEC/patch-sets/)
+PATCH_SET=default
+
 # Build settings
 PROJECT=Amlogic-ce
 DEVICE=Amlogic-ng
@@ -12,3 +15,4 @@ ARCH=arm
 # VDR settings
 VDR_OUTPUTDEVICE=softhdodroid
 VDR_INPUTDEVICE=satip
+

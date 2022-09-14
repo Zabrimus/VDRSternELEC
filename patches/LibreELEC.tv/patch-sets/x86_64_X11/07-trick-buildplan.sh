@@ -1,0 +1,1 @@
+../../all-patches/07-trick-buildplan.sh

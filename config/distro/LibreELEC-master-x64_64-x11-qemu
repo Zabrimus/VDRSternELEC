@@ -5,11 +5,11 @@ TAG=
 REVISION=
 
 # Use which patch-set (patches/LibreELEC/patch-sets/)
-PATCH_SET=default
+PATCH_SET=x86_64_X11_qemu
 
 # Build settings
 PROJECT=Generic
-DEVICE=wayland
+DEVICE=x11
 ARCH=x86_64
 
 # VDR settings

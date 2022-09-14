@@ -1,1 +1,0 @@
-../../all-patches/12-x11-add-vdagent.sh

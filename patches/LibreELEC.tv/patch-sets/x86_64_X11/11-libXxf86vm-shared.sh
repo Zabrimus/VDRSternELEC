@@ -1,1 +1,0 @@
-../../all-patches/11-libXxf86vm-shared.sh

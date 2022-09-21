@@ -61,24 +61,27 @@ apply_patches() {
        exit 1
     fi
 
-    if [ -n "${PATCH_SET}" ]; then
-       if [ ! -d patches/$DISTRO/patch-sets/$PATCH_SET ]; then
-          echo "Configured PATCH_SET ${PATCH_SET} does not exists in $DISTRO/patch-sets/"
-          exit 1
-       fi
-    fi
-
     cd $DISTRO
 
-    for patch in `ls ../patches/$DISTRO/patch-sets/$PATCH_SET/*.patch`; do
-        echo "Apply patch $patch"
-        patch -p1 < $patch
+    # Apply patches and sed scripts in ./patches
+    for i in `find ../patches -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.patch' 2>/dev/null`; do
+        echo "Apply patch $i"
+        patch -p1 < $i
     done
 
-    for script in `ls ../patches/$DISTRO/patch-sets/$PATCH_SET/*.sh`; do
-        echo "Apply script $script"
-        bash $script
+    for i in `find ../patches -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.sh' 2>/dev/null`; do
+        echo "Apply script $i"
+        bash $i
     done
+
+    # Copy package patches to LE/CE directory structure
+    if [ -d ../package_patches/$DISTRO ]; then
+      cp -r ../package_patches/$DISTRO/* .
+    fi
 }
 
 prepare_sources() {

@@ -75,7 +75,7 @@ makeinstall_target() {
   PREFIX="/usr/local"
   CONFDIR="/storage/.config/vdropt"
 
-  if [ "${PROJECT}" = "Allwinner" ]; then
+  if [ "${PROJECT}" = "Allwinner" ] || [ "${PROJECT}" = "Generic" ]; then
      LDPRELOADMALI=""
   else
      LDPRELOADMALI="/usr/lib/libMali.so"
@@ -101,7 +101,7 @@ makeinstall_target() {
   chmod +x ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
 
   # Create start parameters depending on the project
-  if [ "${PROJECT}" = "Allwinner" ]; then
+  if [ "${PROJECT}" = "Allwinner" ] || [ "${PROJECT}" = "Generic" ]; then
     cat >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh <<\EOF
 if [ "${START_PRG}" = "vdr" ]; then
    systemctl stop kodi
@@ -131,7 +131,7 @@ EOF
   cp ${PKG_DIR}/bin/autostart.sh ${INSTALL}/${PREFIX}/bin/autostart.sh
   chmod +x ${INSTALL}/${PREFIX}/bin/autostart.sh
 
-  if [ "${PROJECT}" = "Allwinner" ]; then
+  if [ "${PROJECT}" = "Allwinner" ] || [ "${PROJECT}" = "Generic" ]; then
     cat >> ${INSTALL}/${PREFIX}/bin/autostart.sh <<\EOF
 if [ "${START_PRG}" = "vdr" ]; then
    systemctl stop kodi

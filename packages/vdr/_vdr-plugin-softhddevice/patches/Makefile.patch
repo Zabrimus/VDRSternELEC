@@ -1,7 +1,7 @@
 diff -u8bBwd a/Makefile b/Makefile
---- a/Makefile	2022-08-29 11:13:10.000000000 +0200
-+++ b/Makefile	2022-08-29 11:54:40.674260176 +0200
-@@ -64,17 +64,17 @@
+--- a/Makefile	2022-09-10 17:49:17.000000000 +0200
++++ b/Makefile	2022-09-22 15:35:55.073035788 +0200
+@@ -66,17 +66,17 @@
  
  VERSION = $(shell grep 'static const char \*const VERSION *=' $(PLUGIN).cpp | awk '{ print $$7 }' | sed -e 's/[";]//g')
  GIT_REV = $(shell git describe --always 2>/dev/null)
@@ -20,7 +20,28 @@ diff -u8bBwd a/Makefile b/Makefile
  ### The compiler options:
  
  export CFLAGS	= $(call PKGCFG,cflags)
-@@ -254,17 +254,17 @@
+@@ -171,18 +171,18 @@
+ ifeq ($(OPENGLOSD),1)
+ CONFIG += -DUSE_OPENGLOSD
+ _CFLAGS += $(shell pkg-config --cflags glew)
+ LIBS += $(shell pkg-config --libs glew) -lglut
+ _CFLAGS += $(shell pkg-config --cflags freetype2)
+ LIBS   += $(shell pkg-config --libs freetype2)
+ endif
+ 
+-_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr)
+-LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr)
++_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr xi xrandr xxf86vm)
++LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr xi xrandr xxf86vm)
+ 
+ ### Includes and Defines (add further entries here):
+ 
+ INCLUDES +=
+ 
+ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"' -D_GNU_SOURCE $(CONFIG) \
+ 	$(if $(GIT_REV), -DGIT_REV='"$(GIT_REV)"')
+ 
+@@ -261,17 +261,17 @@
  
  $(OBJS): Makefile
  
@@ -39,4 +60,3 @@ diff -u8bBwd a/Makefile b/Makefile
  	@mkdir $(TMPDIR)/$(ARCHIVE)
  	@cp -a * $(TMPDIR)/$(ARCHIVE)
  	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)
-Gemeinsame Unterverzeichnisse: a/po und b/po.

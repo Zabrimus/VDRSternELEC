@@ -1,12 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-softhddevice"
-PKG_VERSION="1.9.1"
-PKG_SHA256="27df1fbb17bb166b3eb0e7d7fa2a4665ef2bb45d8c77ff5a581c213ec65e6275"
+PKG_VERSION="35b4cac79b82b876383de94503d0c28f50418322"
+PKG_SHA256="d62907b475e1464c7d9afd2b9b9a9b64081eb5d1d0cd64cbdc876cbb0f46af87"
 PKG_LICENSE="AGPLv3"
 PKG_SITE="https://github.com/ua0lnj/vdr-plugin-softhddevice"
-PKG_URL="https://github.com/ua0lnj/vdr-plugin-softhddevice/archive/refs/tags/v${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain _vdr libglvnd nvidia glm alsa freetype ffmpeg libdrm mesa libva _xcb-util-wm _libxcb glu libXi"
+PKG_URL="https://github.com/ua0lnj/vdr-plugin-softhddevice/archive/${PKG_VERSION}.zip"
+PKG_SOURCE_DIR="vdr-plugin-softhddevice-${PKG_VERSION}"
+PKG_DEPENDS_TARGET="toolchain _vdr libglvnd nvidia glm alsa freetype ffmpeg libdrm mesa libva _xcb-util-wm _libxcb glu libXi libXxf86vm"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="A software and GPU emulated UHD output device plugin for VDR."
 PKG_TOOLCHAIN="manual"

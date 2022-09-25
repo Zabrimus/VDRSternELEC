@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-xineliboutput"
-PKG_VERSION="279926fee2ea471da8f367cd76b7215118b9bc37"
-PKG_SHA256="b350674c66399fede362b72e0f097b1460fc1f51b3f1ca92320e2ce3f09e8331"
+PKG_VERSION="2.2.0+git20211212-2"
+PKG_SHA256="c4e8d440f9ae37986021e192fdcbb27681ca06d5033b73b9bca6f824b96a6e0c"
 PKG_LICENSE="GPL"
 PKG_SITE="https://sourceforge.net/projects/xineliboutput"
-PKG_URL="https://sourceforge.net/code-snapshots/git/x/xi/xineliboutput/git.git/xineliboutput-git-${PKG_VERSION}.zip"
-PKG_SOURCE_DIR="xineliboutput-git-${PKG_VERSION}"
+PKG_URL="https://salsa.debian.org/vdr-team/vdr-plugin-xineliboutput/-/archive/debian/${PKG_VERSION}/vdr-plugin-xineliboutput-debian-${PKG_VERSION}.tar.gz"
+PKG_SOURCE_DIR="vdr-plugin-xineliboutput-debian-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr glibc _xine-lib libX11 mesa _xcb-util-wm _libxcb _freeglut libXi libXxf86vm _directfb2"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="An output device which depends on xinelib"

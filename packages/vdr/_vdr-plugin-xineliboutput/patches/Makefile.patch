@@ -1,6 +1,6 @@
-diff -u8bBwd a/Makefile b/Makefile
---- a/Makefile	2020-01-22 12:19:22.000000000 +0100
-+++ b/Makefile	2022-09-09 19:57:03.079939409 +0200
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2022-01-12 19:25:02.000000000 +0100
++++ b/Makefile	2022-09-25 17:16:38.298103203 +0200
 @@ -51,16 +51,17 @@
      CXXFLAGS   ?= -O3 -pipe -Wall -Woverloaded-virtual -fPIC -g -fno-common -bundle -flat_namespace -undefined suppress
      CFLAGS     ?= -O3 -pipe -Wall -fPIC -g -fno-common -bundle -flat_namespace -undefined suppress
@@ -46,7 +46,7 @@ diff -u8bBwd a/Makefile b/Makefile
  
  install-lib: $(TARGETS_VDR)
  ifeq ($(XINELIBOUTPUT_VDRPLUGIN), yes)
- 	@echo Installing $^
+ 	@echo INSTALL $^
 -	@mkdir -p $(DESTDIR)$(LIBDIR)
 -	install -D $^ $(DESTDIR)$(LIBDIR)/
 +	@mkdir -p $(LIBDIR)

@@ -1,1 +1,0 @@
-../../all-patches/10-enable-opengles-x11.sh

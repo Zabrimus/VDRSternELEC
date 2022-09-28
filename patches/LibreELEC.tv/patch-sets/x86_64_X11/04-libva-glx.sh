@@ -1,1 +1,0 @@
-../../all-patches/04-libva-glx.sh

@@ -5,7 +5,7 @@ TAG=
 REVISION=
 
 # Use which patch-set (patches/LibreELEC/patch-sets/)
-PATCH_SET=x86_64_X11
+VARIANT=
 
 # Build settings
 PROJECT=Generic

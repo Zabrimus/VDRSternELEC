@@ -1,1 +1,0 @@
-../../all-patches/05-generic-x11-xinemara-shared.sh

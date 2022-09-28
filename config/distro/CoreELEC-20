@@ -4,8 +4,8 @@ BRANCH=coreelec-20
 TAG=
 REVISION=
 
-# Use which patch-set (patches/CoreELEC/patch-sets/)
-PATCH_SET=default
+# Use project variant
+VARIANT=
 
 # Build settings
 PROJECT=Amlogic-ce

@@ -1,0 +1,28 @@
+From 4eb2256c596c8719ed4aad0e19f8abad9ca89132 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Sun, 2 Oct 2022 22:08:02 +0200
+Subject: [PATCH] hack: fix Dprintf macro
+
+---
+ common.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/common.h b/common.h
+index 664f679..58b3b62 100644
+--- a/common.h
++++ b/common.h
+@@ -20,10 +20,7 @@
+ #include <stdio.h>
+ #include <time.h>
+ #define Dprintf(fmt, x...) {\
+-	struct timespec ts;\
+-	clock_gettime(CLOCK_MONOTONIC, &ts);\
+-	fprintf(stderr, "%ld.%.3ld [%d] "fmt,\
+-		ts.tv_sec, ts.tv_nsec / 1000000, cThread::ThreadId(), ##x);\
++	fprintf(stderr, fmt, ##x);\
+ }
+ #else
+ #define Dprintf(x...)
+-- 
+2.30.2
+

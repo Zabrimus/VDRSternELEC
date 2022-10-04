@@ -1,0 +1,100 @@
+--- a/svdrp.c	2022-02-02 10:56:43.000000000 +0100
++++ b/svdrp.c	2022-05-11 15:53:23.332315928 +0200
+@@ -868,24 +868,25 @@
+   "    image format defaults to JPEG.",
+   "HELP [ <topic> ]\n"
+   "    The HELP command gives help info.",
+   "HITK [ <key> ... ]\n"
+   "    Hit the given remote control key. Without option a list of all\n"
+   "    valid key names is given. If more than one key is given, they are\n"
+   "    entered into the remote control queue in the given sequence. There\n"
+   "    can be up to 31 keys.",
+-  "LSTC [ :ids ] [ :groups | <number> | <name> | <id> ]\n"
++  "LSTC [ :ids ] [:lcn] [ :groups | <number> | <name> | <id> ]\n"
+   "    List channels. Without option, all channels are listed. Otherwise\n"
+   "    only the given channel is listed. If a name is given, all channels\n"
+   "    containing the given string as part of their name are listed.\n"
+   "    If ':groups' is given, all channels are listed including group\n"
+   "    separators. The channel number of a group separator is always 0.\n"
+   "    With ':ids' the channel ids are listed following the channel numbers.\n"
+-  "    The special number 0 can be given to list the current channel.",
++  "    The special number 0 can be given to list the current channel.\n"
++  "    With ':lcn' the channel logical numbers are listed.",
+   "LSTD\n"
+   "    List all available devices. Each device is listed with its name and\n"
+   "    whether it is currently the primary device ('P') or it implements a\n"
+   "    decoder ('D') and can be used as output device.",
+   "LSTE [ <channel> ] [ now | next | at <time> ]\n"
+   "    List EPG data. Without any parameters all data of all channels is\n"
+   "    listed. If a channel is given (either by number or by channel ID),\n"
+   "    only data for that channel is listed. 'now', 'next', or 'at <time>'\n"
+@@ -1731,52 +1732,64 @@
+ }
+ 
+ void cSVDRPServer::CmdLSTC(const char *Option)
+ {
+   LOCK_CHANNELS_READ;
+   bool WithChannelIds = startswith(Option, ":ids") && (Option[4] == ' ' || Option[4] == 0);
+   if (WithChannelIds)
+      Option = skipspace(Option + 4);
++
++  bool WithLcn = startswith(Option, ":lcn") && (Option[4] == ' ' || Option[4] == 0);
++  if (WithLcn)
++        Option = skipspace(Option + 4);
++
+   bool WithGroupSeps = strcasecmp(Option, ":groups") == 0;
++
+   if (*Option && !WithGroupSeps) {
+      if (isnumber(Option)) {
+         int n = strtol(Option, NULL, 10);
+         if (n == 0)
+            n = cDevice::CurrentChannel();
+         if (const cChannel *Channel = Channels->GetByNumber(n))
+-           Reply(250, "%d%s%s %s", Channel->Number(), WithChannelIds ? " " : "", WithChannelIds ? *Channel->GetChannelID().ToString() : "", *Channel->ToText());
++           Reply(250, "%d%s%s%s%s %s", Channel->Number(), WithChannelIds ? " " : "", WithChannelIds ? *Channel->GetChannelID().ToString() : "",
++                 WithLcn ? " " : "", WithLcn ? *itoa(Channel->Lcn()) : "", *Channel->ToText());
+         else
+            Reply(501, "Channel \"%s\" not defined", Option);
+         }
+      else {
+         const cChannel *Next = Channels->GetByChannelID(tChannelID::FromString(Option));
+         if (!Next) {
+            for (const cChannel *Channel = Channels->First(); Channel; Channel = Channels->Next(Channel)) {
+                if (!Channel->GroupSep()) {
+                   if (strcasestr(Channel->Name(), Option)) {
+                      if (Next)
+-                        Reply(-250, "%d%s%s %s", Next->Number(), WithChannelIds ? " " : "", WithChannelIds ? *Next->GetChannelID().ToString() : "", *Next->ToText());
++                        Reply(-250, "%d%s%s%s%s %s", Next->Number(), WithChannelIds ? " " : "", WithChannelIds ? *Next->GetChannelID().ToString() : "",
++                              WithLcn ? " " : "", WithLcn ? *itoa(Next->Lcn()) : "", *Next->ToText());
+                      Next = Channel;
+                      }
+                   }
+                }
+            }
+         if (Next)
+-           Reply(250, "%d%s%s %s", Next->Number(), WithChannelIds ? " " : "", WithChannelIds ? *Next->GetChannelID().ToString() : "", *Next->ToText());
++           Reply(250, "%d%s%s%s%s %s", Next->Number(), WithChannelIds ? " " : "", WithChannelIds ? *Next->GetChannelID().ToString() : "",
++                 WithLcn ? " " : "", WithLcn ? *itoa(Next->Lcn()) : "", *Next->ToText());
+         else
+            Reply(501, "Channel \"%s\" not defined", Option);
+         }
+      }
+   else if (cChannels::MaxNumber() >= 1) {
+      for (const cChannel *Channel = Channels->First(); Channel; Channel = Channels->Next(Channel)) {
+          if (WithGroupSeps)
+-            Reply(Channel->Next() ? -250: 250, "%d%s%s %s", Channel->GroupSep() ? 0 : Channel->Number(), (WithChannelIds && !Channel->GroupSep()) ? " " : "", (WithChannelIds && !Channel->GroupSep()) ? *Channel->GetChannelID().ToString() : "", *Channel->ToText());
++            Reply(Channel->Next() ? -250: 250, "%d%s%s%s%s %s", Channel->GroupSep() ? 0 : Channel->Number(), (WithChannelIds && !Channel->GroupSep()) ? " " : "", (WithChannelIds && !Channel->GroupSep()) ? *Channel->GetChannelID().ToString() : "",
++                  WithLcn ? " " : "", WithLcn ? *itoa(Channel->Lcn()) : "", *Channel->ToText());
+          else if (!Channel->GroupSep())
+-            Reply(Channel->Number() < cChannels::MaxNumber() ? -250 : 250, "%d%s%s %s", Channel->Number(), WithChannelIds ? " " : "", WithChannelIds ? *Channel->GetChannelID().ToString() : "", *Channel->ToText());
++            Reply(Channel->Number() < cChannels::MaxNumber() ? -250 : 250, "%d%s%s%s%s %s", Channel->Number(), WithChannelIds ? " " : "", WithChannelIds ? *Channel->GetChannelID().ToString() : "",
++                  WithLcn ? " " : "", WithLcn ? *itoa(Channel->Lcn()) : "", *Channel->ToText());
++
+          }
+      }
+   else
+      Reply(550, "No channels defined");
+ }
+ 
+ void cSVDRPServer::CmdLSTD(const char *Option)
+ {

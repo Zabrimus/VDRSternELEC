@@ -51,6 +51,14 @@ checkout() {
     echo "No TAG, BRANCH or REVISION found"
     exit 1;
   fi;
+
+  if [ ! "x$VARIANT" = "x" ]; then
+    if [ ! "x$BUILD_SUFFIX" = "x" ]; then
+      BUILD_SUFFIX="$BUILD_SUFFIX-$VARIANT"
+    else
+      BUILD_SUFFIX="$VARIANT"
+    fi
+  fi
 }
 
 apply_patches() {

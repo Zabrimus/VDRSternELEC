@@ -1,0 +1,13 @@
+Driver patch:
+See https://forums.developer.nvidia.com/t/proprietary-kernel-driver-on-kernel-6-x-and-debian-bookworm-this-is-a-proposed-solution/225718
+
+--- a/kernel/nvidia-drm/nvidia-drm-helper.h	2022-08-22 14:52:07.255249844 +0200
++++ b/kernel/nvidia-drm/nvidia-drm-helper.h	2022-08-22 14:50:36.618863332 +0200
+@@ -108,6 +108,7 @@ nv_drm_prime_pages_to_sg(struct drm_devi
+  * OTHER DEALINGS IN THE SOFTWARE.
+  */
+ #include <drm/drm_crtc.h>
++#include <drm/drm_framebuffer.h>
+
+ #if defined(drm_for_each_plane)
+ #define nv_drm_for_each_plane(plane, dev)

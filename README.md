@@ -134,6 +134,7 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  svdrpservice       | yes     | valid   | no      | yes  |
  systeminfo         | yes     | valid   | no      | yes  | --script=/storage/.config/vdropt/plugins/systeminfo/systeminfo.sh
  targavfd           | yes     | valid   | no      | yes  |
+ tvguide            | yes     | valid   | no      | yes  |
  tvguideng          | yes     | valid   | no      | yes  |
  tvscraper          | yes     | valid   | no      | yes  |
  vnsiserver         | yes     | valid   | no      | yes  |

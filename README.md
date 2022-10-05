@@ -216,22 +216,37 @@ ZAPCOCKPIT=y
 - DYNAMITE=y: Build also the plugin vdr-plugin-dynamite
 - ZAPCOCKPIT=y: Apply the VDR zapcockpit patch
 
+#### config/addons
+A sample configuration looks like this
+```
+ADDON_SUNDTEK_MEDIATV=sundtek-mediatv
+```
+The build.sh scripts needs to changed accordingly, if a new addon shall be added. 
+The addon will be installed after the first boot/update.
+
+There exists a high chance, that not all addons can be compiled for LibreELEC/master. Mainly dvb-latest and crazycat are candidates to fail, 
+because of the frequently updated linux kernel. 
+
 ### Build
 After choosing an existing configuration or creating a new one, the build script can be called:
 ```
 $ ./build.sh 
-Usage:  -config <name> -extras <name>
+Usage: ./build.sh -config <name> -extras <name>
 -config : Build the distribution defined in directory config/distro/<name>.
 -extra  : Build additional plugins / Use optional VDR patches. Use extra config/extras/<name>
           Multiple -extra are possible.
+-addon  : Build additional addons which will be pre-installed.
+          Multiple -addon are possible.
 
 Available configs:
-CoreELEC-19  CoreELEC-19.4-Matrix  CoreELEC-20
-LibreELEC-10.0.2-aarch64 LibreELEC-10.0.2-arm LibreELEC-master-aarch64  LibreELEC-master-arm
-LibreELEC-master-arm-Allwinner-H6
+CoreELEC-19                          CoreELEC-20                                                                                                                                                   LibreELEC-10.0-arm     LibreELEC-master-aarch64  LibreELEC-master-arm-Allwinner-H6  LibreELEC-master-x64_64-x11-qemu
+CoreELEC-19.4-Matrix  LibreELEC-10.0-aarch64  LibreELEC-10.0-x64_64  LibreELEC-master-arm      LibreELEC-master-x64_64-x11
 
 Available extras:
-dynamite  easyvdr  zapcockpit
+directfb2-libs                 directfb2-samples  dynamite  easyvdr  permashift  zapcockpit
+
+Available addons:
+crazycat  digital_devices  dvb-latest  sundtek-mediatv
 ```
 
 Sample call:  ```./build.sh -config CoreELEC-19 -extra easyvdr -extra zapcockpit```

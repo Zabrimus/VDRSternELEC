@@ -2,6 +2,11 @@
 
 set -e
 
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+WHITE='\033[0;37m'
+RESET='\033[0m'
+
 PROGNAME=$0
 
 usage() {
@@ -10,6 +15,8 @@ Usage: $PROGNAME -config <name> -extras <name>
 -config : Build the distribution defined in directory config/distro/<name>.
 -extra  : Build additional plugins / Use optional VDR patches. Use extra config/extras/<name>
           Multiple -extra are possible.
+-addon  : Build additional addons which will be pre-installed.
+          Multiple -addon are possible.
 EOF
   echo
   echo "Available configs:"
@@ -18,6 +25,10 @@ EOF
   echo
   echo "Available extras:"
   ls config/extras
+
+  echo
+  echo "Available addons:"
+  ls config/addons
 
   echo
 
@@ -105,11 +116,38 @@ prepare_sources() {
   fi
 }
 
-build() {
+build_addons() {
   cd $ROOTDIR/$DISTRO
 
   # delete old build artifacts
-  rm -f target/*
+  rm -Rf target/*
+
+  ADDON_LOCALE=locale
+
+  # addons must be build before the final build is started
+  for i in 'CRAZYCAT' 'DIGITAL_DEVICES' 'DVB_LATEST' 'SUNDTEK_MEDIATV' 'LOCALE'; do
+    TMP=ADDON_$i
+    if [ ! "x${!TMP}" = "x" ]; then
+
+      # digital_devices can be build only for x86_64
+      if [ "$i" = "DIGITAL_DEVICES" ] && [ ! "$ARCH" = "x86_64" ]; then
+          echo -e "${RED}Addon digital_devices is only possible for ARCH x86_64. Skip build.${RESET}"
+          continue
+      fi
+
+      echo "Start building addon ${!TMP} ..."
+
+      PROJECT="$PROJECT" \
+        DEVICE="$DEVICE" \
+        ARCH="$ARCH" \
+        BUILD_SUFFIX="$BUILD_SUFFIX" \
+        scripts/create_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
+    fi
+  done
+}
+
+build() {
+  cd $ROOTDIR/$DISTRO
 
   PROJECT="$PROJECT" \
     DEVICE="$DEVICE" \
@@ -143,10 +181,22 @@ read_extra() {
   . config/extras/$1
 }
 
+read_addon() {
+  if [ ! "x$1" = "x" ] && [ ! -f config/addons/$1 ]; then
+    echo "addon '$1' not found"
+    echo
+    usage
+  fi
+
+  echo "Read addon $1"
+  . config/addons/$1
+}
+
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -config) shift; CONFIG=$1 ;;
         -extra) shift; read_extra $1 ;;
+        -addon) shift; read_addon $1 ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac
     shift || continue
@@ -168,8 +218,10 @@ ROOTDIR=`pwd`
 echo "Read config $CONFIG"
 . config/distro/$CONFIG
 
+cleanup
 checkout
 apply_patches
 prepare_sources
+build_addons
 build
 cleanup

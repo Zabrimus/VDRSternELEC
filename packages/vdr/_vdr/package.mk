@@ -74,10 +74,9 @@ make_target() {
 makeinstall_target() {
   PREFIX="/usr/local"
   CONFDIR="/storage/.config/vdropt"
+  LDPRELOADMALI=""
 
-  if [ "${PROJECT}" = "Allwinner" ] || [ "${PROJECT}" = "Generic" ]; then
-     LDPRELOADMALI=""
-  else
+  if [ "${PROJECT}" = "Amlogic-ce" ] || [ "${PROJECT}" = "Amlogic" ]; then
      LDPRELOADMALI="/usr/lib/libMali.so"
   fi
 
@@ -101,29 +100,19 @@ makeinstall_target() {
   chmod +x ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
 
   # Create start parameters depending on the project
-  if [ "${PROJECT}" = "Allwinner" ] || [ "${PROJECT}" = "Generic" ]; then
-    cat >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh <<\EOF
-if [ "${START_PRG}" = "vdr" ]; then
-   systemctl stop kodi
-   systemctl start vdropt
-elif [ "${START_PRG}" = "kodi" ]; then
-   systemctl stop vdropt
-   systemctl start kodi
-fi
-EOF
-  else
-    cat >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh <<\EOF
-if [ "${START_PRG}" = "vdr" ]; then
-   systemctl stop kodi
-   echo 4 > /sys/module/amvdec_h264/parameters/dec_control
-   systemctl start vdropt
-elif [ "${START_PRG}" = "kodi" ]; then
-   systemctl stop vdropt
-   echo rm pip0 > /sys/class/vfm/map
-   systemctl start kodi
-fi
-EOF
+  echo "if [ \"\${START_PRG}\" = \"vdr\" ]; then" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
+  echo "   systemctl stop kodi" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
+  if [ "${PROJECT}" = "Amlogic-ce" ] || [ "${PROJECT}" = "Amlogic" ]; then
+      echo "   echo 4 > /sys/module/amvdec_h264/parameters/dec_control" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
   fi
+  echo "   systemctl start vdropt" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
+  echo "elif [ \"\${START_PRG}\" = \"kodi\" ]; then" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
+    echo "   systemctl stop vdropt" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
+    if [ "${PROJECT}" = "Amlogic-ce" ] || [ "${PROJECT}" = "Amlogic" ]; then
+        echo "   echo rm pip0 > /sys/class/vfm/map" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
+    fi
+    echo "   systemctl start kodi" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
+  echo "fi" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
 
   cp ${PKG_DIR}/bin/switch_to_vdr.sh ${INSTALL}/${PREFIX}/bin/switch_to_vdr.sh
   chmod +x ${INSTALL}/${PREFIX}/bin/switch_to_vdr.sh
@@ -131,27 +120,19 @@ EOF
   cp ${PKG_DIR}/bin/autostart.sh ${INSTALL}/${PREFIX}/bin/autostart.sh
   chmod +x ${INSTALL}/${PREFIX}/bin/autostart.sh
 
-  if [ "${PROJECT}" = "Allwinner" ] || [ "${PROJECT}" = "Generic" ]; then
-    cat >> ${INSTALL}/${PREFIX}/bin/autostart.sh <<\EOF
-if [ "${START_PRG}" = "vdr" ]; then
-   systemctl stop kodi
-   systemctl start vdropt
-elif [ "${START_PRG}" = "kodi" ]; then
-   systemctl stop vdropt
-fi
-EOF
-  else
-    cat >> ${INSTALL}/${PREFIX}/bin/autostart.sh <<\EOF
-if [ "${START_PRG}" = "vdr" ]; then
-   systemctl stop kodi
-   echo 4 > /sys/module/amvdec_h264/parameters/dec_control
-   systemctl start vdropt
-elif [ "${START_PRG}" = "kodi" ]; then
-   systemctl stop vdropt
-   echo rm pip0 > /sys/class/vfm/map
-fi
-EOF
+  # Create start parameters depending on the project
+  echo "if [ \"\${START_PRG}\" = \"vdr\" ]; then" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
+  echo "   systemctl stop kodi" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
+  if [ "${PROJECT}" = "Amlogic-ce" ] || [ "${PROJECT}" = "Amlogic" ]; then
+      echo "   echo 4 > /sys/module/amvdec_h264/parameters/dec_control" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
   fi
+  echo "   systemctl start vdropt" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
+  echo "elif [ \"\${START_PRG}\" = \"kodi\" ]; then" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
+    echo "   systemctl stop vdropt" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
+    if [ "${PROJECT}" = "Amlogic-ce" ] || [ "${PROJECT}" = "Amlogic" ]; then
+        echo "   echo rm pip0 > /sys/class/vfm/map" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
+    fi
+  echo "fi" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
 
   # rename perl svdrpsend to svdrpsend.pl and copy the netcat variant
   mv ${INSTALL}/${PREFIX}/bin/svdrpsend ${INSTALL}/${PREFIX}/bin/svdrpsend.pl

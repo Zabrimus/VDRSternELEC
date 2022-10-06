@@ -125,7 +125,7 @@ build_addons() {
   ADDON_LOCALE=locale
 
   # addons must be build before the final build is started
-  for i in 'CRAZYCAT' 'DIGITAL_DEVICES' 'DVB_LATEST' 'SUNDTEK_MEDIATV' 'LOCALE'; do
+  for i in 'CRAZYCAT' 'DIGITAL_DEVICES' 'DVB_LATEST' 'SUNDTEK_MEDIATV' 'LOCALE' 'DVB_TOOLS' 'FFMPEG_TOOLS' 'NETWORK_TOOLS' 'SYSTEM_TOOLS'; do
     TMP=ADDON_$i
     if [ ! "x${!TMP}" = "x" ]; then
 

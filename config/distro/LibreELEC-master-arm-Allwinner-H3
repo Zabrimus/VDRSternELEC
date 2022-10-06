@@ -1,0 +1,17 @@
+# one of BRANCH, TAG or REVISION is mandatory
+DISTRO=LibreELEC.tv
+BRANCH=master
+TAG=
+REVISION=
+
+# Use project variant
+VARIANT=
+
+# Build settings
+PROJECT=Allwinner
+DEVICE=H3
+ARCH=arm
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhddevice-drm
+VDR_INPUTDEVICE=streamdev-client

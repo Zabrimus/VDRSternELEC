@@ -6,7 +6,7 @@
 for i in $(ls /usr/share/kodi/storage_addons/*.zip); do
   ADDON=$(basename $i | sed -e "s/-[^-]*.zip$//")
 
-  # if [ ! -d /storage/.kodi/addons/$ADDON ]; then
+  if [ ! -d /storage/.kodi/addons/$ADDON ]; then
     unzip -o -qq -d /storage/.kodi/addons $i
-  # fi
+  fi
 done;

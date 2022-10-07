@@ -240,16 +240,19 @@ Usage: ./build.sh -config <name> -extras <name>
 
 Available configs:
 CoreELEC-19   CoreELEC-20   CoreELEC-19.4-Matrix
-LibreELEC-10.0-aarch64   LibreELEC-master-aarch64  
-LibreELEC-10.0-arm   LibreELEC-master-arm 
-LibreELEC-master-arm-Allwinner-H6 
+LibreELEC-10.0-aarch64   LibreELEC-master-aarch64
+LibreELEC-10.0-arm   LibreELEC-master-arm
+LibreELEC-master-arm-Allwinner-H2-plus   LibreELEC-master-arm-Allwinner-H3
+LibreELEC-master-arm-Allwinner-H5   LibreELEC-master-arm-Allwinner-H6
+LibreELEC-master-arm-Allwinner-A64   LibreELEC-master-arm-Allwinner-R40
+LibreELEC-master-arm-Rockchip-RK3399
 LibreELEC-10.0-x64_64   LibreELEC-master-x64_64-x11   LibreELEC-master-x64_64-x11-qemu
 
 Available extras:
 directfb2-libs  directfb2-samples  dynamite  easyvdr  permashift  zapcockpit
 
 Available addons:
-crazycat  digital_devices  dvb-latest  sundtek-mediatv  
+crazycat  digital_devices  dvb-latest  sundtek-mediatv
 dvb-tools  ffmpeg-tools  network-tools  system-tools
 ```
 

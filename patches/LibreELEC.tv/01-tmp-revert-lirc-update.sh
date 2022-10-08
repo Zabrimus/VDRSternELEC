@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 # Temporary fix of lirc, revert to 0.10.1
 # If build has been fixed this patch will be deleted
 #
@@ -9,6 +11,13 @@
 # cp -PRf "${SYSROOT_PREFIX}"/* "${PKG_ORIG_SYSROOT_PREFIX}"
 # **************************************
 
-git restore --source=2da3f0e9edbd0d2c82f69bf852e8be8e9ebaab19 packages/sysutils/lirc
+CURRENT_BRANCH=$(git branch --show-current)
+
+if [ "${CURRENT_BRANCH}" = "master" ]; then
+  git restore --source=2da3f0e9edbd0d2c82f69bf852e8be8e9ebaab19 packages/sysutils/lirc
+fi
+
+
+
 
 

@@ -84,6 +84,7 @@ apply_patches() {
 
     # Apply patches and sed scripts in ./patches
     for i in `find ../patches -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO} -maxdepth 1 -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.patch' 2>/dev/null`; do
         echo "Apply patch $i"
@@ -91,6 +92,7 @@ apply_patches() {
     done
 
     for i in `find ../patches -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO} -maxdepth 1 -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.sh' 2>/dev/null`; do
         echo "Apply script $i"

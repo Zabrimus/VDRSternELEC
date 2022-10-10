@@ -1,0 +1,45 @@
+diff -u8bBwd a/Makefile b/Makefile
+--- a/Makefile	2022-10-09 20:03:52.000000000 +0200
++++ b/Makefile	2022-10-10 18:05:13.030337319 +0200
+@@ -42,17 +42,17 @@
+ 
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char VERSION\[\] *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+ 
+-LIBDIR = $(call PKGCFG,libdir)
++LIBDIR ?= $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ CONFIGDIR = $(call PKGCFG,configdir)
+ 
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+@@ -196,17 +196,17 @@
+ 
+ $(SOFILE): $(OBJS)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ ifndef SKINENIGMA_DEBUG
+ 	@$(STRIP) $@
+ endif
+ 
+ install-lib: $(SOFILE)
+-	@install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	@install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n
+ 
+ dist: clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a * $(TMPDIR)/$(ARCHIVE)
+ 	@tar czf $(PACKAGE).tgz --exclude CVS --exclude '.#*' --exclude '*.bak' -C $(TMPDIR) $(ARCHIVE)
+Gemeinsame Unterverzeichnisse: a/po und b/po.
+Gemeinsame Unterverzeichnisse: a/services und b/services.
+Gemeinsame Unterverzeichnisse: a/symbols und b/symbols.
+Gemeinsame Unterverzeichnisse: a/themes und b/themes.

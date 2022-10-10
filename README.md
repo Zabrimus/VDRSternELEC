@@ -113,6 +113,7 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  scraper2vdr        | yes     | valid   | no      | yes  |
  skindesigner       | yes     | valid   | no      | yes  |
  skinelchihd        | yes     | valid   | no      | yes  |
+ skinenigmang       | yes     | valid   | no      | yes  |
  skinflat           | yes     | valid   | no      | yes  |
  skinflatplus       | yes     | valid   | no      | yes  |
  skinlcarsng        | yes     | valid   | no      | yes  |

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-PKG_NAME="_vd-plugin-favorites"
+PKG_NAME="_vdr-plugin-favorites"
 PKG_VERSION="8f6fec4a78f1411fee4909b3c478d7c63206a861"
 PKG_SHA256="1fa1db12379e9e2a684a621941983e2f41aca554414618097eda67c6e0547ab6"
 PKG_LICENSE="GPL"

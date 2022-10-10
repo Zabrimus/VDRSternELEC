@@ -88,6 +88,7 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  epgsearchonly      | yes     | valid   | no      | yes  |
  epgtableid0        | yes     | valid   | no      | yes  |
  externalplayer     | yes     | valid   | no      | yes  |
+ favorites          | yes     | valid   | no      | yes  |
  femon              | yes     | valid   | no      | yes  |
  filebrowser        | yes     | valid   | no      | yes  |
  fritzbox           | yes     | valid   | no      | yes  | -c /storage/.config/vdropt/plugins/fritz/on-call.sh

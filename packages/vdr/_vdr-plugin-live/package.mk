@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-live"
-PKG_VERSION="e1890383f494dcd92ff6e9d93790ce68f275c431"
-PKG_SHA256="f0a835cebdf5b4cec3bc78d703a96df6425ddf7a28ac4690ac084ab8d046dde0"
+PKG_VERSION="3.1.8"
+PKG_SHA256="b7f50e68336964d2872ec5f06c3a29106ef5a2c314eadc653fde4f2cd9efabb2"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/MarkusEh/vdr-plugin-live"
-PKG_URL="https://github.com/MarkusEh/vdr-plugin-live/archive/${PKG_VERSION}.zip"
+PKG_URL="https://github.com/MarkusEh/vdr-plugin-live/archive/refs/tags/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain _vdr tntnet pcre libiconv cxxtools"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_SOURCE_DIR="vdr-plugin-live-${PKG_VERSION}"

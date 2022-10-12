@@ -6,7 +6,7 @@ set -e
 
 PROGNAME=$0
 
-if [[ "$#" -ew 0 ]]; then
+if [[ "$#" -eq 0 ]]; then
     echo "Package parameter is missing"
 fi
 

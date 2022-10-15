@@ -140,6 +140,7 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  tvguideng          | yes     | valid   | no      | yes  |
  tvscraper          | yes     | valid   | no      | yes  |
  vnsiserver         | yes     | valid   | no      | yes  |
+ vompserver         | yes     | valid   | no      | yes  |
  weatherforecast    | yes     | valid   | no      | yes  |
  wirbelscan         | yes     | valid   | no      | yes  |
  wirbelscancontrol  | yes     | valid   | no      | yes  |

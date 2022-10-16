@@ -14,6 +14,7 @@ Usage: $PROGNAME [-install-config] [-boot kodi|vdr]
 -C      : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
 -b kodi : Kodi will be started after booting
 -b vdr  : VDR will be started after booting
+-T      : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
 EOF
   exit 1
 }
@@ -66,6 +67,26 @@ EOF
   fi
 }
 
+install_triggerhappy() {
+  # create all directories if they currently not exists
+  mkdir -p /storage/.config/system.d
+  mkdir -p /storage/.config/udev.rules.d
+  mkdir -p /storage/.config/triggers.d
+
+  # copy files
+  cp /usr/local/config/triggerhappy/system.d/* /storage/.config/system.d
+  cp /usr/local/config/triggerhappy/udev.rules.d/* /storage/.config/udev.rules.d
+  cp /usr/local/config/triggerhappy/triggers.d/* /storage/.config/triggers.d
+
+  systemctl daemon-reload
+
+  systemctl enable triggerhappy.socket
+  systemctl enable triggerhappy.service
+
+  systemctl start triggerhappy.socket
+  systemctl start triggerhappy.service
+}
+
 install_copy() {
   install
 
@@ -99,11 +120,12 @@ if [ "$#" = "0" ]; then
     usage
 fi
 
-while getopts b:iC o; do
+while getopts b:iTC o; do
   case $o in
     (i) install;;
     (C) install_copy;;
     (b) boot "$OPTARG";;
+    (T) install_triggerhappy;;
     (*) usage
   esac
 done

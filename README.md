@@ -327,6 +327,7 @@ In folder /opt/vdr/bin or /usr/local/bin contains an install script
           -C      : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
           -b kodi : Kodi will be started after booting
           -b vdr  : VDR will be started after booting
+          -T      : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
 ```
 
 ## Switch OSD language
@@ -369,6 +370,31 @@ A whole sample can be found in ```<vdrdir>/config/DialogButtonMenu.xml```
 A new entry is needed, like e.g.
 ```
 Start Kodi       : echo "START_PRG=kodi" > /opt/tmp/switch_kodi_vdr
+```
+
+## Use FLIRC
+Configuration of FLIRC, VDR remote.conf and KODI keymapping is up to the user. 
+I only describe my configuration.
+
+Create the following ```/storage/.config/udev.rules.d/flirc-receiver.rules``` with following content
+```
+# FLIRC receiver
+ENV{ID_VENDOR_ID}=="20a0", ENV{ID_MODEL_ID}=="0006", \
+  ENV{eventlircd_enable}="true", \
+  ENV{eventlircd_evmap}="default.evmap"
+```
+After a reboot the flirc receiver is recognized by eventlircd and usable. 
+You can choose another evmap instead of ```default.evmap```, but the map must exists in directory ```/etc/eventlircd.d/```.
+I haven't found a solution to easily add a new configurable evmap.
+
+## triggerhappy
+triggerhappy is a lightweight hotkey daemon similar to Autohotkey (Windows) or hotkey (Linux with X), but which
+works without X or any other desktop environment.
+I personally use this daemon to shutdown my box by pressing a specific key on the keyboard (or a configured key in FLIRC).
+
+To enable triggerhappy use the install script
+```
+/usr/local/bin/install.sh -T
 ```
 
 ## Das Verzeichnis-Layout und Dateien

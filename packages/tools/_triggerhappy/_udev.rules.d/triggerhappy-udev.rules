@@ -1,0 +1,4 @@
+## open new input devices and pass the file descriptor to the triggerhappy daemon
+ACTION=="add", SUBSYSTEM=="input", \
+	ATTRS{name}!="triggerhappy", \
+	RUN+="/usr/local/sbin/th-cmd --socket /run/thd.socket --passfd --udev"

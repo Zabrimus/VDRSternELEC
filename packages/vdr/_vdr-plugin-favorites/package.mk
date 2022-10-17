@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-favorites"
-PKG_VERSION="8f6fec4a78f1411fee4909b3c478d7c63206a861"
-PKG_SHA256="1fa1db12379e9e2a684a621941983e2f41aca554414618097eda67c6e0547ab6"
+PKG_VERSION="711ab17aab91e14eb522925d2a0ad705f0341d3a"
+PKG_SHA256="27f5eaf343fe128bbc3b7166520c9dfbec5411bc9658b573e437bd237c1807a3"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-favorites"
-PKG_URL="https://github.com/vdr-projects/vdr-plugin-favorites/archive/${PKG_VERSION}.zip"
+PKG_URL="https://github.com/Zabrimus/vdr-plugin-favorites/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="vdr-plugin-favorites-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"

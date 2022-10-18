@@ -1,0 +1,32 @@
+diff -u8rbwd a/src/input.c b/src/input.c
+--- a/src/input.c	2022-08-07 11:36:24.000000000 +0200
++++ b/src/input.c	2022-10-18 18:42:39.026971441 +0200
+@@ -1398,26 +1398,28 @@
+ 		syslog(LOG_ERR,
+ 		       "input device %s: device open failed: %s\n",
+ 		       device->path,
+ 		       strerror(errno));
+ 		free(device->path);
+ 		free(device);
+ 		return -1;
+ 	}
++    /*
+ 	if (ioctl(device->fd, EVIOCGRAB, 1) < 0) {
+ 		syslog(LOG_ERR,
+ 		       "input device %s: device grab failed: %s\n",
+ 		       device->path,
+ 		       strerror(errno));
+ 		close(device->fd);
+ 		free(device->path);
+ 		free(device);
+ 		return -1;
+ 	}
++    */
+ 
+ 	if (input_device_evmap_init(device, eventlircd_input.evmap_dir, evmap_file) != 0) {
+ 		close(device->fd);
+ 		free(device->path);
+ 		free(device);
+ 		return -1;
+ 	}
+ 

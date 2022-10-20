@@ -1,0 +1,33 @@
+diff --git a/coreengine/definitions.h b/coreengine/definitions.h
+index 421c8de..e5df6cb 100644
+--- a/coreengine/definitions.h
++++ b/coreengine/definitions.h
+@@ -821,6 +821,7 @@ enum class eLeMenuDefaultIT {
+     neutrinoepg,
+     remotetimers,
+     zaphistory,
++    favorites,
+     remoteosd,
+     filebrowser,
+     epgsearch,
+diff --git a/coreengine/listelements.c b/coreengine/listelements.c
+index 1cea2ba..97265d6 100644
+--- a/coreengine/listelements.c
++++ b/coreengine/listelements.c
+@@ -672,6 +672,7 @@ void cLeMenuDefault::SetTokenContainer(void) {
+     tokenContainer->DefineIntToken("{neutrinoepg}", (int)TOKEN_LMD_IT::neutrinoepg);
+     tokenContainer->DefineIntToken("{remotetimers}", (int)TOKEN_LMD_IT::remotetimers);
+     tokenContainer->DefineIntToken("{zaphistory}", (int)TOKEN_LMD_IT::zaphistory);
++    tokenContainer->DefineIntToken("{favorites}", (int)TOKEN_LMD_IT::favorites);
+     tokenContainer->DefineIntToken("{remoteosd}", (int)TOKEN_LMD_IT::remoteosd);
+     tokenContainer->DefineIntToken("{filebrowser}", (int)TOKEN_LMD_IT::filebrowser);
+     tokenContainer->DefineIntToken("{epgsearch}", (int)TOKEN_LMD_IT::epgsearch);
+@@ -797,6 +798,8 @@ void cLeMenuDefault::SetMenuCategory(void) {
+         ADD_TOKEN_LMD_IT(remotetimers, 1);
+     } else if (!strcmp(plugName, "zaphistory")) {
+         ADD_TOKEN_LMD_IT(zaphistory, 1);
++    } else if (!strcmp(plugName, "favorites")) {
++        ADD_TOKEN_LMD_IT(favorites, 1);
+     } else if (!strcmp(plugName, "remoteosd")) {
+         ADD_TOKEN_LMD_IT(remoteosd, 1);
+     } else if (!strcmp(plugName, "filebrowser")) {

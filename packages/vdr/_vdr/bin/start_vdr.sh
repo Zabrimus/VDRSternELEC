@@ -32,6 +32,11 @@ killall splash-image
 . /storage/.profile
 export LOCPATH=/storage/.kodi/addons/service.locale/locpath
 
+# VFD: show clock
+if [ -e /tmp/openvfd_service ]; then
+  echo "" > /tmp/openvfd_service
+fi
+
 # really start VDR
 if [ -z "$VDR_LD_PRELOAD" ]; then
    sh -c "LD_PRELOAD=$LD_PRELOAD_MALI LD_LIBRARY_PATH=$LIB_DIR:$LIB_DIR/vdr:$LD_LIBRARY_PATH ${BIN_DIR}/$arg"

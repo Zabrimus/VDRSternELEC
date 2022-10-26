@@ -1,0 +1,8 @@
+26.10.2022 (CoreELEC)
+- patch openvfd driver
+  Show TEST in the VFD
+  echo -e -n '\x03TEST' > /tmp/openvfd_service
+
+  show current clock in the VFD
+  echo -e -n '\x00' > /tmp/openvfd_service
+- changed VDR start scripts to show the current clock instead of CE19

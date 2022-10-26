@@ -397,6 +397,18 @@ To enable triggerhappy use the install script
 /usr/local/bin/install.sh -T
 ```
 
+## VFD
+The repository contains a slighty patched openvfd driver with additional commands to set the shown value in the VFD.
+So instead showing only the current clock, it is possible to show something else.
+For example the following command shows TEST in the VFD
+```
+echo -e -n '\x03TEST' > /tmp/openvfd_service
+```
+You can switch back to the clock via
+```
+echo -e -n '\x00' > /tmp/openvfd_service
+```
+
 ## Das Verzeichnis-Layout und Dateien
 
 - ```/usr/local/lib``` or ```/opt/vdr/lib```<br>

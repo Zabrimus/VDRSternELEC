@@ -1,0 +1,58 @@
+From eded0540a1f6a50d250d3ac87b13f65b73d05917 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Thu, 27 Oct 2022 17:08:36 +0200
+Subject: [PATCH] add show_vdr_config
+
+---
+ distributions/LibreELEC/show_vdr_config | 37 +++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 distributions/LibreELEC/show_vdr_config
+
+diff --git a/distributions/LibreELEC/show_vdr_config b/distributions/LibreELEC/show_vdr_config
+new file mode 100644
+index 0000000000..6c2afd2814
+--- /dev/null
++++ b/distributions/LibreELEC/show_vdr_config
+@@ -0,0 +1,39 @@
++show_vdr_distro_config() {
++  # Input/ output device configuration
++
++  config_message+="\n\n VDR input/output device configuration:"
++  config_message+="\n ${dashes}${dashes}"
++
++  config_message+="\n - VDR Input Device:\t\t ${VDR_INPUTDEVICE}"
++  config_message+="\n - VDR Output Device:\t\t ${VDR_OUTPUTDEVICE}"
++
++  # Enabled extras
++  config_message+="\n\n VDR extras configuration:"
++  config_message+="\n ${dashes}${dashes}"
++  config_message+="\n - extras:\t\t\t"
++
++  for i in $(env | grep ^EXTRA_); do
++    TMP=$(echo $i | cut -d "=" -f 1)
++    if [ "${!TMP}" == "y" ]; then
++    TMP2=$(grep $TMP$ ../config/extras.list | cut -d ":" -f 1)
++      if [ ${TMP2} ]; then
++        config_message+=" ${TMP2}"
++      fi
++    fi
++  done
++
++  # Enabled addons
++  config_message+="\n\n VDR autoenabled addons:"
++  config_message+="\n ${dashes}${dashes}"
++  config_message+="\n - addons:\t\t\t"
++
++  for i in $(env | grep ^ADDON_); do
++    TMP=$(echo $i | cut -d "=" -f 1)
++    if [ "${!TMP}" != "" ]; then
++    TMP2=$(grep $TMP$ ../config/addons.list | cut -d ":" -f 1)
++      if [ ${TMP2} ]; then
++        config_message+=" ${TMP2}"
++      fi
++    fi
++  done
++}
+-- 
+2.30.2
+

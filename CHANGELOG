@@ -6,3 +6,8 @@
   show current clock in the VFD
   echo -e -n '\x00' > /tmp/openvfd_service
 - changed VDR start scripts to show the current clock instead of CE19
+
+28.10.2022 (VDR Plugins)
+- Update of several VDR plugins
+  epg2vdr, epgsearch, live, satip, skinnopacity, tvscraper
+  softhdcuvid, softhddevice, softhddrm, softhddroid, softhdvaapi

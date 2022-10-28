@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-satip"
-PKG_VERSION="0a216f1cf9d6401b1afbff420f4fa244ec15d299"
-PKG_SHA256="817900c9fa5ade5c52b0391b791f801832c57bdbed5e7501d7e92b4fe29de816"
+PKG_VERSION="a76ff4c25ae8bdfd4da60ad30e2c4414784d14a1"
+PKG_SHA256="b1e318d5333ba77d99fd4a07871f0135f3b32a8c972bf7551fbfcb74438c1748"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/rofafor/vdr-plugin-satip"
 PKG_URL="https://github.com/rofafor/vdr-plugin-satip/archive/${PKG_VERSION}.tar.gz"

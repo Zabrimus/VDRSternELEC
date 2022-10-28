@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-epg2vdr"
-PKG_VERSION="5a6a55bfab016372c31b901968bb738a4b319326"
-PKG_SHA256="78ce303bf4517a619685f7979ee654aafe2b0c3290172dc639cbbc96135aa3ac"
+PKG_VERSION="c2a373bb23540a037dbc3969c3995d76e233a931"
+PKG_SHA256="2f1b1e6189bc9060920cf05fd918432a4c59ab66efee1768c0d91cdcc83ecfc0"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/vdr-projects/vdr-plugin-epg2vdr"
-PKG_URL="https://github.com/vdr-projects/vdr-plugin-epg2vdr/archive/${PKG_VERSION}.zip"
+PKG_SITE="https://github.com/horchi/vdr-plugin-epg2vdr"
+PKG_URL="https://github.com/horchi/vdr-plugin-epg2vdr/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="vdr-plugin-epg2vdr-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr Python3 util-linux _mariadb-connector-c _jansson tinyxml2 libarchive"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory Python3) $(get_pkg_directory _mariadb-connector-c)"

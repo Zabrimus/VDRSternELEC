@@ -86,6 +86,7 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  epgfixer           | yes     | valid   | no      | yes  |
  epgsearch          | yes     | valid   | no      | yes  |
  epgsearchonly      | yes     | valid   | no      | yes  |
+ epgsync            | yes     | valid   | no      | yes  |
  epgtableid0        | yes     | valid   | no      | yes  |
  externalplayer     | yes     | valid   | no      | yes  |
  favorites          | yes     | valid   | no      | yes  |

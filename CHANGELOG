@@ -11,3 +11,7 @@
 - Update of several VDR plugins
   epg2vdr, epgsearch, live, satip, skinnopacity, tvscraper
   softhdcuvid, softhddevice, softhddrm, softhddroid, softhdvaapi
+
+29.19.2022 (Disabled patch, new VDR Plugin)
+- Disabled the eventlircd patch. Some other solution is needed
+- New VDR plugin epgsync

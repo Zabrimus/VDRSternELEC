@@ -82,6 +82,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-menuorg"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-dbus2vdr"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-suspendoutput"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-favorites"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-epgsync"
 
 if [ "${EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"

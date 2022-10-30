@@ -107,6 +107,7 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  pictures           | yes     | valid   | no      | yes  |
  quickepgsearch     | yes     | valid   | no      | yes  |
  radio              | yes     | valid   | no      | yes  | -f /storage/.config/vdropt/plugins/radio
+ recsearch          | yes     | valid   | no      | yes  | 
  remote             | yes     | valid   | no      | yes  |
  remoteosd          | yes     | valid   | no      | yes  |
  restfulapi         | yes     | valid   | no      | yes  |

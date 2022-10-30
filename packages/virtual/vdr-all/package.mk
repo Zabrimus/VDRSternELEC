@@ -86,6 +86,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-epgsync"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-seduatmo"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-boblight"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-screenshot"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-recsearch"
 
 if [ "${EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"

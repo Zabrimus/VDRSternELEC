@@ -68,6 +68,7 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  Plugin             | install | ini     | AutoRun | Stop | Arguments
 --------------------------------------------------------------------------------
  ac3mode            | yes     | valid   | no      | yes  |
+ boblight           | yes     | valid   | no      | yes  | 
  cdplayer           | yes     | valid   | no      | yes  |
  cecremote          | yes     | valid   | no      | yes  |
  chanman            | yes     | valid   | no      | yes  |
@@ -112,6 +113,8 @@ CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
  robotv             | yes     | valid   | no      | yes  |
  satip              | yes     | valid   | yes     | yes  |
  scraper2vdr        | yes     | valid   | no      | yes  |
+ screenshot         | yes     | valid   | no      | yes  | 
+ seduatmo           | yes     | valid   | no      | yes  |
  skindesigner       | yes     | valid   | no      | yes  |
  skinelchihd        | yes     | valid   | no      | yes  |
  skinenigmang       | yes     | valid   | no      | yes  |

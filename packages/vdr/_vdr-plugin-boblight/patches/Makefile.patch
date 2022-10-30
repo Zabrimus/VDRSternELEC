@@ -1,0 +1,41 @@
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2016-01-24 18:17:49.000000000 +0100
++++ b/Makefile	2022-10-30 09:51:54.198801457 +0100
+@@ -15,17 +15,17 @@
+ VERSION := $(shell git describe --tags master)
+ 
+ LIBS += -lboblight
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG  = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+-LIBDIR  = $(call PKGCFG,libdir)
++LIBDIR  ?= $(call PKGCFG,libdir)
+ LOCDIR  = $(call PKGCFG,locdir)
+ PLGCFG  = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 
+ export CFLAGS   = $(call PKGCFG,cflags)
+@@ -112,17 +112,17 @@
+ 
+ ### Targets:
+ 
+ $(SOFILE): $(OBJS) $(FFDECSA)
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(DECSALIB) $(LIBS) -o $@
+ 
+ 
+ install-lib: $(SOFILE)
+-	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib $(DEVPLUGINSTALL)
+ 
+ dist: clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a * $(TMPDIR)/$(ARCHIVE)
+ 	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)

@@ -1,0 +1,33 @@
+# List of all available addons to be prebuild
+#
+# structure of this file:
+# (1):(2)
+#
+# (1): command line argument for build.sh -addon
+# (2): environment variable name used in VDRSternELEC code
+
+################################################
+
+# Install addon crazycat (TBS driver with crazycat additions)
+crazycat:ADDON_CRAZYCAT
+
+# Install addon digital-devices
+digital-devices:ADDON_DIGITAL_DEVICES
+
+# Install addon dvb-latest
+dvb-latest:ADDON_DVB_LATEST
+
+# Install addon dvb-tools
+dvb-tools:ADDON_DVB_TOOLS
+
+# Install addon ffmpeg-tools
+ffmpeg-tools:ADDON_FFMPEG_TOOLS
+
+# Install addon network-tools
+network-tools:ADDON_NETWORK_TOOLS
+
+# Install addon sundtek-mediatv
+sundtek-mediatv:ADDON_SUNDTEK_MEDIATV
+
+# Install addon system-tools
+system-tools:ADDON_SYSTEM_TOOLS

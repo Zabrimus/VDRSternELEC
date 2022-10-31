@@ -20,15 +20,15 @@ post_unpack() {
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   rm -f ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch
 
-  if [ "${EASYVDR}" = "y" ]; then
+  if [ "${EXTRA_EASYVDR}" = "y" ]; then
   	cp ${PKG_DIR}/optional/vdr-plugin-easyvdr.patch ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   fi
 
-  if [ "${DYNAMITE}" = "y" ]; then
+  if [ "${EXTRA_DYNAMITE}" = "y" ]; then
   	cp ${PKG_DIR}/optional/vdr-2.4.6-dynamite.patch ${PKG_DIR}/patches/vdr-2.4.6-dynamite.patch
   fi
 
-  if [ "${PERMASHIFT}" = "y" ]; then
+  if [ "${EXTRA_PERMASHIFT}" = "y" ]; then
   	cp ${PKG_DIR}/optional/vdr-2.6-patch-for-permashift.patch ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch
   fi
 }

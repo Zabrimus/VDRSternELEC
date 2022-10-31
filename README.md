@@ -221,14 +221,13 @@ A sample configuration looks like this
 # Plugins/Patches
 
 # vdr-plugin-easyvdr (y/n)
-EASYVDR=y
+EXTRA_EASYVDR=y
 
 # vdr-plugin-dynamite (y/n)
-DYNAMITE=n
-
+EXTRA_DYNAMITE=n
 ```
-- EASYVDR=y: Build also the plugin vdr-plugin-easyvdr
-- DYNAMITE=y: Build also the plugin vdr-plugin-dynamite
+- EXTRA_EASYVDR=y: Build also the plugin vdr-plugin-easyvdr
+- EXTRA_DYNAMITE=y: Build also the plugin vdr-plugin-dynamite
 
 #### config/addons
 A sample configuration looks like this

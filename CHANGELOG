@@ -19,3 +19,7 @@
 30.10.2022 (new VDR Plugins)
 - New VDR plugins
   screenshot, boblight, seduatmo, recsearch
+
+31.10.2022 (added new VDR patch)
+- The hide-first-recording-level patch has been added.
+  See https://www.vdr-portal.de/forum/index.php?thread/131770-solved-vdr-2-3-1-hide-first-recording-level-v1-patch-absturz-beim-sortieren-der/&postID=1304053#post1304053

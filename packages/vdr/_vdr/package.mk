@@ -16,7 +16,6 @@ PKG_TOOLCHAIN="manual"
 
 post_unpack() {
   rm -rf ${PKG_BUILD}/PLUGINS/src/skincurses
-  rm -f ${PKG_DIR}/patches/vdr-2.4.0_zapcockpit.patch
   rm -f ${PKG_DIR}/patches/vdr-2.4.6-dynamite.patch
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   rm -f ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch
@@ -27,10 +26,6 @@ post_unpack() {
 
   if [ "${DYNAMITE}" = "y" ]; then
   	cp ${PKG_DIR}/optional/vdr-2.4.6-dynamite.patch ${PKG_DIR}/patches/vdr-2.4.6-dynamite.patch
-  fi
-
-  if [ "${ZAPCOCKPIT}" = "y" ]; then
-  	cp ${PKG_DIR}/optional/vdr-2.4.0_zapcockpit.patch ${PKG_DIR}/patches/vdr-2.4.0_zapcockpit.patch
   fi
 
   if [ "${PERMASHIFT}" = "y" ]; then
@@ -179,7 +174,6 @@ EOF
   # copy sample XML (PowerMenu for Kodi which includes a Button to switch to VDR)
   cat ${PKG_DIR}/config/DialogButtonMenu.xml | sed "s#XXBINDIRXX#${PREFIX}/bin#" > ${INSTALL}/${PREFIX}/config/DialogButtonMenu.xml
 
-  rm -f ${PKG_DIR}/patches/vdr-2.4.0_zapcockpit.patch
   rm -f ${PKG_DIR}/patches/vdr-2.4.6-dynamite.patch
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   rm -f ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch

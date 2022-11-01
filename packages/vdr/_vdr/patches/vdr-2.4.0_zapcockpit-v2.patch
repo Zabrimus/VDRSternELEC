@@ -1,10 +1,12 @@
-diff -Nur vdr-2.4.1/config.c vdr-2.4.1.p/config.c
---- vdr-2.4.1/config.c	2018-02-15 15:40:36.000000000 +0100
-+++ vdr-2.4.1.p/config.c	2020-02-07 10:19:48.221678977 +0100
-@@ -417,6 +417,11 @@
+diff --git a/config.c b/config.c
+index 43c3cbbb..076b9757 100644
+--- a/config.c
++++ b/config.c
+@@ -417,6 +417,12 @@ cSetup::cSetup(void)
    strcpy(SVDRPDefaultHost, "");
    ZapTimeout = 3;
    ChannelEntryTimeout = 1000;
++  ZapcockpitEnabled = 0;
 +  ZapcockpitUseGroups = 1;
 +  ZapcockpitUseHints = 1;
 +  ZapcockpitUseInfo = 1;
@@ -13,10 +15,11 @@ diff -Nur vdr-2.4.1/config.c vdr-2.4.1.p/config.c
    RcRepeatDelay = 300;
    RcRepeatDelta = 100;
    DefaultPriority = 50;
-@@ -645,6 +650,11 @@
+@@ -645,6 +651,12 @@ bool cSetup::Parse(const char *Name, const char *Value)
    else if (!strcasecmp(Name, "SVDRPDefaultHost"))    strn0cpy(SVDRPDefaultHost, Value, sizeof(SVDRPDefaultHost));
    else if (!strcasecmp(Name, "ZapTimeout"))          ZapTimeout         = atoi(Value);
    else if (!strcasecmp(Name, "ChannelEntryTimeout")) ChannelEntryTimeout= atoi(Value);
++  else if (!strcasecmp(Name, "ZapcockpitEnabled"))   ZapcockpitEnabled  = atoi(Value);
 +  else if (!strcasecmp(Name, "ZapcockpitUseGroups")) ZapcockpitUseGroups= atoi(Value);
 +  else if (!strcasecmp(Name, "ZapcockpitUseHints"))  ZapcockpitUseHints = atoi(Value);
 +  else if (!strcasecmp(Name, "ZapcockpitUseInfo"))   ZapcockpitUseInfo  = atoi(Value);
@@ -25,10 +28,11 @@ diff -Nur vdr-2.4.1/config.c vdr-2.4.1.p/config.c
    else if (!strcasecmp(Name, "RcRepeatDelay"))       RcRepeatDelay      = atoi(Value);
    else if (!strcasecmp(Name, "RcRepeatDelta"))       RcRepeatDelta      = atoi(Value);
    else if (!strcasecmp(Name, "DefaultPriority"))     DefaultPriority    = atoi(Value);
-@@ -777,6 +787,11 @@
+@@ -777,6 +789,12 @@ bool cSetup::Save(void)
    Store("SVDRPDefaultHost",   SVDRPDefaultHost);
    Store("ZapTimeout",         ZapTimeout);
    Store("ChannelEntryTimeout",ChannelEntryTimeout);
++  Store("ZapcockpitEnabled",  ZapcockpitEnabled);
 +  Store("ZapcockpitUseGroups",ZapcockpitUseGroups);
 +  Store("ZapcockpitUseHints", ZapcockpitUseHints);
 +  Store("ZapcockpitUseInfo",  ZapcockpitUseInfo);
@@ -37,13 +41,15 @@ diff -Nur vdr-2.4.1/config.c vdr-2.4.1.p/config.c
    Store("RcRepeatDelay",      RcRepeatDelay);
    Store("RcRepeatDelta",      RcRepeatDelta);
    Store("DefaultPriority",    DefaultPriority);
-diff -Nur vdr-2.4.1/config.h vdr-2.4.1.p/config.h
---- vdr-2.4.1/config.h	2019-06-16 11:13:45.000000000 +0200
-+++ vdr-2.4.1.p/config.h	2020-02-07 10:19:48.221678977 +0100
-@@ -293,6 +293,11 @@
+diff --git a/config.h b/config.h
+index ba549e7f..9f323f02 100644
+--- a/config.h
++++ b/config.h
+@@ -300,6 +300,12 @@ public:
    char SVDRPDefaultHost[HOST_NAME_MAX];
    int ZapTimeout;
    int ChannelEntryTimeout;
++  int ZapcockpitEnabled;
 +  int ZapcockpitUseGroups;
 +  int ZapcockpitUseHints;
 +  int ZapcockpitUseInfo;
@@ -52,13 +58,15 @@ diff -Nur vdr-2.4.1/config.h vdr-2.4.1.p/config.h
    int RcRepeatDelay;
    int RcRepeatDelta;
    int DefaultPriority, DefaultLifetime;
-diff -Nur vdr-2.4.1/menu.c vdr-2.4.1.p/menu.c
---- vdr-2.4.1/menu.c	2019-05-28 17:55:44.000000000 +0200
-+++ vdr-2.4.1.p/menu.c	2020-02-07 11:13:24.404660741 +0100
-@@ -4184,6 +4184,11 @@
+diff --git a/menu.c b/menu.c
+index 8f4eb19e..14d7d6c1 100644
+--- a/menu.c
++++ b/menu.c
+@@ -4269,6 +4269,12 @@ void cMenuSetupMisc::Set(void)
       }
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Zap timeout (s)"),            &data.ZapTimeout));
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Channel entry timeout (ms)"), &data.ChannelEntryTimeout, 0));
++  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: enabled"), &data.ZapcockpitEnabled));
 +  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: 2nd ok shows info"), &data.ZapcockpitUseInfo));
 +  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: Use extended channel group display"), &data.ZapcockpitUseGroups));
 +  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: Use channel hints"), &data.ZapcockpitUseHints));
@@ -67,7 +75,7 @@ diff -Nur vdr-2.4.1/menu.c vdr-2.4.1.p/menu.c
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Remote control repeat delay (ms)"), &data.RcRepeatDelay, 0));
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Remote control repeat delta (ms)"), &data.RcRepeatDelta, 0));
    Add(new cMenuEditChanItem(tr("Setup.Miscellaneous$Initial channel"),            &data.InitialChannel, tr("Setup.Miscellaneous$as before")));
-@@ -4654,7 +4659,7 @@
+@@ -4743,7 +4749,7 @@ cDisplayChannel::cDisplayChannel(int Number, bool Switched)
    lastTime.Set();
  }
  
@@ -76,7 +84,7 @@ diff -Nur vdr-2.4.1/menu.c vdr-2.4.1.p/menu.c
  :cOsdObject(true)
  {
    currentDisplayChannel = this;
-@@ -4672,7 +4677,8 @@
+@@ -4761,7 +4767,8 @@ cDisplayChannel::cDisplayChannel(eKeys FirstKey)
      LOCK_CHANNELS_READ;
      channel = Channels->GetByNumber(cDevice::CurrentChannel());
    }
@@ -86,7 +94,7 @@ diff -Nur vdr-2.4.1/menu.c vdr-2.4.1.p/menu.c
  }
  
  cDisplayChannel::~cDisplayChannel()
-@@ -4922,6 +4928,799 @@
+@@ -5011,6 +5018,799 @@ eOSState cDisplayChannel::ProcessKey(eKeys Key)
    return osEnd;
  }
  
@@ -886,10 +894,11 @@ diff -Nur vdr-2.4.1/menu.c vdr-2.4.1.p/menu.c
  // --- cDisplayVolume --------------------------------------------------------
  
  #define VOLUMETIMEOUT 1000 //ms
-diff -Nur vdr-2.4.1/menu.h vdr-2.4.1.p/menu.h
---- vdr-2.4.1/menu.h	2018-04-14 12:24:41.000000000 +0200
-+++ vdr-2.4.1.p/menu.h	2020-02-07 10:19:48.222678975 +0100
-@@ -119,30 +119,102 @@
+diff --git a/menu.h b/menu.h
+index a192d140..a7337df2 100644
+--- a/menu.h
++++ b/menu.h
+@@ -121,30 +121,102 @@ public:
  
  class cDisplayChannel : public cOsdObject {
  private:
@@ -1000,13 +1009,26 @@ diff -Nur vdr-2.4.1/menu.h vdr-2.4.1.p/menu.h
  class cDisplayVolume : public cOsdObject {
  private:
    cSkinDisplayVolume *displayVolume;
-diff -Nur vdr-2.4.1/po/de_DE.po vdr-2.4.1.p/po/de_DE.po
---- vdr-2.4.1/po/de_DE.po	2018-04-10 15:22:27.000000000 +0200
-+++ vdr-2.4.1.p/po/de_DE.po	2020-02-07 10:19:48.223678974 +0100
-@@ -1347,6 +1347,21 @@
+diff --git a/po/de_DE.po b/po/de_DE.po
+index 1be50aca..7c666d45 100644
+--- a/po/de_DE.po
++++ b/po/de_DE.po
+@@ -8,7 +8,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: VDR 2.6.0\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2021-07-01 17:10+0200\n"
++"POT-Creation-Date: 2022-10-31 21:32+0100\n"
+ "PO-Revision-Date: 2015-02-10 13:45+0100\n"
+ "Last-Translator: Klaus Schmidinger <vdr@tvdr.de>\n"
+ "Language-Team: German <vdr@linuxtv.org>\n"
+@@ -1383,6 +1383,24 @@ msgstr "Mindestzeit f
  msgid "Setup.Miscellaneous$Channel entry timeout (ms)"
- msgstr "Zeitlimit für Kanaleingabe (ms)"
+ msgstr "Zeitlimit fï¿½r Kanaleingabe (ms)"
  
++msgid "Setup.Miscellaneous$Zapcockpit: enabled"
++msgstr ""
++
 +msgid "Setup.Miscellaneous$Zapcockpit: 2nd ok shows info"
 +msgstr "Zapcockpit: zweites OK zeigt Info"
 +
@@ -1020,25 +1042,26 @@ diff -Nur vdr-2.4.1/po/de_DE.po vdr-2.4.1.p/po/de_DE.po
 +msgstr "Zapcockpit: letzte Kanalgruppe ausblenden"
 +
 +msgid "Setup.Miscellaneous$Zapcockpit: Show \"All Channels\" Item in Group List"
-+msgstr "Zapcockpit: Zeige \"Alle Kanäle\" in Kanalgruppen Liste"
++msgstr "Zapcockpit: Zeige \"Alle Kanï¿½le\" in Kanalgruppen Liste"
 +
  msgid "Setup.Miscellaneous$Remote control repeat delay (ms)"
- msgstr "Fernbedienung Wiederholverzögerung (ms)"
+ msgstr "Fernbedienung Wiederholverzï¿½gerung (ms)"
  
-@@ -1419,6 +1434,9 @@
+@@ -1455,6 +1473,9 @@ msgstr "Aufzeichnung beenden?"
  msgid "Cancel editing?"
  msgstr "Bearbeitung abbrechen?"
  
 +msgid "Setup.Miscellaneous$All Channels"
-+msgstr "Alle Kanäle"
++msgstr "Alle Kanï¿½le"
 +
  msgid "No audio available!"
- msgstr "Kein Audio verfügbar!"
+ msgstr "Kein Audio verfï¿½gbar!"
  
-diff -Nur vdr-2.4.1/skins.c vdr-2.4.1.p/skins.c
---- vdr-2.4.1/skins.c	2019-05-29 18:49:48.000000000 +0200
-+++ vdr-2.4.1.p/skins.c	2020-02-07 10:19:48.223678974 +0100
-@@ -79,6 +79,13 @@
+diff --git a/skins.c b/skins.c
+index 47b330e2..a6ead53a 100644
+--- a/skins.c
++++ b/skins.c
+@@ -79,6 +79,13 @@ void cSkinDisplayChannel::SetPositioner(const cPositioner *Positioner)
       SetMessage(mtInfo, cString::sprintf(tr("Moving dish to %.1f..."), double(positioner->TargetLongitude()) / 10));
  }
  
@@ -1052,10 +1075,11 @@ diff -Nur vdr-2.4.1/skins.c vdr-2.4.1.p/skins.c
  // --- cSkinDisplayMenu ------------------------------------------------------
  
  cSkinDisplayMenu::cSkinDisplayMenu(void)
-diff -Nur vdr-2.4.1/skins.h vdr-2.4.1.p/skins.h
---- vdr-2.4.1/skins.h	2019-05-29 18:49:48.000000000 +0200
-+++ vdr-2.4.1.p/skins.h	2020-02-07 10:19:48.223678974 +0100
-@@ -101,6 +101,34 @@
+diff --git a/skins.h b/skins.h
+index 40b185fc..53a8f700 100644
+--- a/skins.h
++++ b/skins.h
+@@ -101,6 +101,34 @@ public:
    */
    };
  
@@ -1090,35 +1114,52 @@ diff -Nur vdr-2.4.1/skins.h vdr-2.4.1.p/skins.h
  enum eMenuCategory {
    mcUndefined = -1,
    mcUnknown = 0,
-diff -Nur vdr-2.4.1/vdr.c vdr-2.4.1.p/vdr.c
---- vdr-2.4.1/vdr.c	2019-05-23 12:02:45.000000000 +0200
-+++ vdr-2.4.1.p/vdr.c	2020-02-07 10:19:48.223678974 +0100
-@@ -1088,7 +1088,7 @@
+diff --git a/vdr.c b/vdr.c
+index 06c0c9a9..0036e170 100644
+--- a/vdr.c
++++ b/vdr.c
+@@ -1076,8 +1076,14 @@ int main(int argc, char *argv[])
+         }
          // Channel display:
          if (!EITScanner.Active() && cDevice::CurrentChannel() != LastChannel) {
-            if (!Menu)
+-           if (!Menu)
 -              Menu = new cDisplayChannel(cDevice::CurrentChannel(), LastChannel >= 0);
-+              Menu = new cDisplayChannelExtended(cDevice::CurrentChannel(), LastChannel >= 0);
++           if (!Menu) {
++               if (Setup.ZapcockpitEnabled) {
++                   Menu = new cDisplayChannelExtended(cDevice::CurrentChannel(), LastChannel >= 0);
++               } else {
++                   Menu = new cDisplayChannel(cDevice::CurrentChannel(), LastChannel >= 0);
++               }
++           }
++
             LastChannel = cDevice::CurrentChannel();
             LastChannelChanged = Now;
             }
-@@ -1289,7 +1289,8 @@
+@@ -1298,7 +1304,12 @@ int main(int argc, char *argv[])
            case kChanDn|k_Repeat:
            case kChanDn:
                 if (!Interact) {
 -                  Menu = new cDisplayChannel(NORMALKEY(key));
-+                  Menu = new cDisplayChannelExtended(NORMALKEY(key));
-+                  Menu->ProcessKey(NORMALKEY(key));
++                   if (Setup.ZapcockpitEnabled) {
++                       Menu = new cDisplayChannelExtended(NORMALKEY(key));
++                       Menu->ProcessKey(NORMALKEY(key));
++                   } else {
++                       Menu = new cDisplayChannel(NORMALKEY(key));
++                   }
                    continue;
                    }
-                else if (cDisplayChannel::IsOpen() || cControl::Control()) {
-@@ -1482,7 +1483,8 @@
+                else if (cDisplayChannel::IsOpen() || Control) {
+@@ -1497,7 +1508,12 @@ int main(int argc, char *argv[])
               case kUp:
               case kDown|k_Repeat:
               case kDown:
 -                  Menu = new cDisplayChannel(NORMALKEY(key));
-+                  Menu = new cDisplayChannelExtended(NORMALKEY(key));
-+                  Menu->ProcessKey(NORMALKEY(key));
++                  if (Setup.ZapcockpitEnabled) {
++                      Menu = new cDisplayChannelExtended(NORMALKEY(key));
++                      Menu->ProcessKey(NORMALKEY(key));
++                  } else {
++                      Menu = new cDisplayChannel(NORMALKEY(key));
++                  }
                    break;
               // Viewing Control:
               case kOk:   LastChannel = -1; break; // forces channel display

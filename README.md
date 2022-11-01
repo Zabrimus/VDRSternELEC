@@ -62,6 +62,15 @@ KODI on the other hand is fully functional and visible.
 
 ## Current status:
 
+**The following patches are already applied to VDR**
+```
+svdrp_lstc_lcn.patch
+vdr-2.3.9-hide-first-recording-level-v2.patch
+vdr-2.4.0_zapcockpit-v2.patch
+vdr-2.6.1-undelete.patch
+vdr-menuorg-2.3.x.patch
+```
+
 **Following plugins are successfully build and part of the vdr tar**
 ```
 CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
@@ -217,12 +226,9 @@ EASYVDR=y
 # vdr-plugin-dynamite (y/n)
 DYNAMITE=n
 
-# zapcockpit patch (y/n)
-ZAPCOCKPIT=y
 ```
 - EASYVDR=y: Build also the plugin vdr-plugin-easyvdr
 - DYNAMITE=y: Build also the plugin vdr-plugin-dynamite
-- ZAPCOCKPIT=y: Apply the VDR zapcockpit patch
 
 #### config/addons
 A sample configuration looks like this
@@ -257,14 +263,14 @@ LibreELEC-master-arm-Rockchip-RK3399
 LibreELEC-10.0-x64_64   LibreELEC-master-x64_64-x11   LibreELEC-master-x64_64-x11-qemu
 
 Available extras:
-directfb2-libs  directfb2-samples  dynamite  easyvdr  permashift  zapcockpit
+directfb2-libs  directfb2-samples  dynamite  easyvdr  permashift
 
 Available addons:
 crazycat  digital_devices  dvb-latest  sundtek-mediatv
 dvb-tools  ffmpeg-tools  network-tools  system-tools
 ```
 
-Sample call:  ```./build.sh -config CoreELEC-19 -extra easyvdr -extra zapcockpit```
+Sample call:  ```./build.sh -config CoreELEC-19 -extra easyvdr```
 
 ### Build images
 After the call of build.sh, the desired images can be found in either

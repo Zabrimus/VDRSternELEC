@@ -23,3 +23,7 @@
 31.10.2022 (added new VDR patch)
 - The hide-first-recording-level patch has been added.
   See https://www.vdr-portal.de/forum/index.php?thread/131770-solved-vdr-2-3-1-hide-first-recording-level-v1-patch-absturz-beim-sortieren-der/&postID=1304053#post1304053
+
+01.11.2022 (added new VDR patch)
+- The zapcockit patch (slightly changed to enable/disable within the setup) has been moved from optional
+  to regular patch directory

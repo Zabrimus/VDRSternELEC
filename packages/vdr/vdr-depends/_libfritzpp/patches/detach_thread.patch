@@ -1,0 +1,35 @@
+Index: libfritz++/Listener.cpp
+===================================================================
+--- libfritz++/Listener.cpp	2020-08-31 12:35:17.529471966 +0200
++++ libfritz++/Listener.cpp	2020-08-31 12:35:17.525472037 +0200
+@@ -41,13 +41,17 @@
+ {
+ 	this->event = event;
+ 	thread = new std::thread(&Listener::run, this);
++	threadNativeHandle = thread->native_handle();
++	thread->detach();
+ }
+ 
+ Listener::~Listener()
+ {
+ 	if (thread) {
+ 		cancelThread();
+-		thread->join();
++		int r = pthread_cancel(threadNativeHandle);
++		if (r != 0)
++		    ERR(std::string{"could not cancel thread: "} + strerror(r));
+ 		delete thread;
+ 	}
+ }
+Index: libfritz++/Listener.h
+===================================================================
+--- libfritz++/Listener.h	2020-08-31 12:35:17.529471966 +0200
++++ libfritz++/Listener.h	2020-08-31 12:35:17.525472037 +0200
+@@ -59,6 +59,7 @@
+ 	EventHandler *event;
+ 	std::vector<int> activeConnections;
+ 	std::thread *thread;
++	pthread_t threadNativeHandle;
+ 	network::TcpClient *tcpClientPtr = nullptr;
+ 	Listener(EventHandler *event);
+ 	void handleNewCall(bool outgoing, int connId, std::string remoteNumber, std::string localParty, std::string medium);

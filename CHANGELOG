@@ -27,3 +27,8 @@
 01.11.2022 (added new VDR patch)
 - The zapcockit patch (slightly changed to enable/disable within the setup) has been moved from optional
   to regular patch directory
+
+02.11.2022 (add new VDR patches, libfrit++ patch)
+- menuselection.patch
+- opt-42-x_MainMenuHooks-v1.0.1.patch
+- detach_thread.patch

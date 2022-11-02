@@ -88,15 +88,15 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-boblight"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-screenshot"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-recsearch"
 
-if [ "${EASYVDR}" = "y" ]; then
+if [ "${EXTRA_EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"
 fi
 
-if [ "${DYNAMITE}" = "y" ]; then
+if [ "${EXTRA_DYNAMITE}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-dynamite"
 fi
 
-if [ "${PERMASHIFT}" = "y" ]; then
+if [ "${EXTRA_PERMASHIFT}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-permashift"
 fi
 
@@ -108,13 +108,13 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
 
 
 # DirectFB2
-if [ "${DIRECTFB2}" = "y" ]; then
+if [ "${EXTRA_DIRECTFB2}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _DirectFB-LiTE"
 	#PKG_DEPENDS_TARGET+=" _DirectFB2-media"
 fi
 
 # DirectFB2 Samples
-if [ "${DIRECTFB2SAMPLES}" = "y" ]; then
+if [ "${EXTRA_DIRECTFB2SAMPLES}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _DirectFB-examples"
 	PKG_DEPENDS_TARGET+=" _DirectFB2-term"
 	PKG_DEPENDS_TARGET+=" _DirectFB-LiTE-examples"

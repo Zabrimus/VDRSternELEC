@@ -1,0 +1,26 @@
+# List of all available extras, plugins and patches
+#
+# structure of this file:
+# (1):(2)
+#
+# (1): command line argument for build.sh -extra
+# (2): environment variable name used in VDRSternELEC code
+
+################################################
+
+# Build DirectFB2 and all existing libs
+directfb:EXTRA_DIRECTFB2
+
+# Build all DirectFB2 samples
+directfbsamples:EXTRA_DIRECTFB2SAMPLES
+
+# Plugins/Patches
+
+# vdr-plugin-dynamite
+dynamite:EXTRA_DYNAMITE
+
+# vdr-plugin-easyvdr
+easyvdr:EXTRA_EASYVDR
+
+# permashift plugin/patch
+permashift:EXTRA_PERMASHIFT

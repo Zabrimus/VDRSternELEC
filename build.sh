@@ -48,6 +48,7 @@ checkout() {
 
   cd $DISTRO
   git reset --hard
+  git clean -fd
 
   if [ ! "x$TAG" = "x" ]; then
     git checkout tags/$TAG

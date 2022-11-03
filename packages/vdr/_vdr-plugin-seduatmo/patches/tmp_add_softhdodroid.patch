@@ -1,0 +1,23 @@
+diff -u8bBwd a/seduthread.c b/seduthread.c
+--- a/seduthread.c	2020-12-09 16:38:01.000000000 +0100
++++ b/seduthread.c	2022-11-03 15:25:24.304900907 +0100
+@@ -184,16 +184,19 @@
+          softHdPlugin = cPluginManager::GetPlugin("softhdcuvid");
+ 
+       if (!softHdPlugin)
+          softHdPlugin = cPluginManager::GetPlugin("softhdvaapi");
+ 
+       if (!softHdPlugin)
+          softHdPlugin = cPluginManager::GetPlugin("softhddrm");
+ 
++       if (!softHdPlugin)
++           softHdPlugin = cPluginManager::GetPlugin("softhdodroid");
++
+       int softHdGrabService = (softHdPlugin && softHdPlugin->Service(ATMO1_GRAB_SERVICE, 0));
+ 
+       if (!softHdGrabService)
+          return error("Can't find grab service neither at softhddevice nor at softhdcuvid "
+                       "- aborting grab, retrying in 10 seconds!");
+    }
+ 
+    SoftHDDevice_AtmoGrabService_v1_1_t req;

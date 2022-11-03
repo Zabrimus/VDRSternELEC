@@ -32,3 +32,7 @@
 - menuselection.patch
 - opt-42-x_MainMenuHooks-v1.0.1.patch
 - detach_thread.patch
+
+03.11.2022 (plugin updates)
+- update live to latest version
+- added patches for seduatmo (softhdodroid) and fritz

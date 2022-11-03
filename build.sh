@@ -88,6 +88,7 @@ apply_patches() {
     for i in `find ../patches -maxdepth 1 -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO} -maxdepth 1 -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}/${BRANCH} -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.patch' 2>/dev/null`; do
         echo "Apply patch $i"
         patch -p1 < $i
@@ -96,6 +97,7 @@ apply_patches() {
     for i in `find ../patches -maxdepth 1 -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO} -maxdepth 1 -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}/${BRANCH} -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.sh' 2>/dev/null`; do
         echo "Apply script $i"
         bash $i

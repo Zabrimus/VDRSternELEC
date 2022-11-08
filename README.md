@@ -69,6 +69,7 @@ vdr-2.3.9-hide-first-recording-level-v2.patch
 vdr-2.4.0_zapcockpit-v2.patch
 vdr-2.6.1-undelete.patch
 vdr-menuorg-2.3.x.patch
+vdr-2.6.1-fix-svdrp-poll-timers-timeout.patch
 ```
 
 **Following plugins are successfully build and part of the vdr tar**

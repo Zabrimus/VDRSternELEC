@@ -41,3 +41,9 @@
 - duplicates
 - added VDR patchvdr-2.6.1-fix-check-still-recording-02.patch
   See https://www.vdr-portal.de/forum/index.php?thread/135085-abspielen-der-letzten-25-sekunden-der-aufnahme-vdr-reagiert-nicht-auf-eingaben-b/&postID=1353534#post1353534
+
+08.11.2022 (plugin updates)
+- update live to latest version
+- update markad to latest version (3.0.27)
+- added VDR patch vdr-2.6.1-fix-svdrp-poll-timers-timeout.patch
+  See https://www.vdr-portal.de/forum/index.php?thread/135177-vdr-2-6-1-svdrp-poll-timers-timeout-while-waiting-for-response/&postID=1353559#post1353559

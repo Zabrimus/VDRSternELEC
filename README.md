@@ -1,194 +1,67 @@
-# VDR*ELEC
-This is a build system for CoreELEC and LibreELEC which includes VDR together with many VDR plugins.
-The CoreELEC and LibreELEC repositories are included as git submodules.
+# What is VDR*ELEC?
+VDR*ELEC is a collection of scripts and patches, which add a VDR client and many VDR plugins to [CoreELEC (CE)](https://github.com/CoreELEC/CoreELEC) and [LibreELEC (LE)](https://github.com/LibreELEC/LibreELEC.tv) images. 
+The images include a full-featured CoreELEC or LibreELEC distribution, where it's possible to comfortably switch between KODI and VDR.
 
-It is possible to configure the application to start with: KODI or VDR. There exists also an easy solution to switch between KODI and VDR. 
+> **Disclaimer:** Not all images are tested and there is no guarantee at all, that the VDR client on these images is working as expected. Possible reasons are missing or misconfigured VDR output devices and plugins.  
+> Therefore tests and/or pull requests are highly appreciated.
 
-The result of the build process are images for CoreELEC/LibreELEC which contains VDR and all plugins.
+## Directory structure of this repository
 
-This is still work in progress...
+:file_folder: **CoreELEC** - CoreELEC's build directory included as git submodule  
+:file_folder: **LibreELEC** - LibreELEC's build directory included as git submodule  
+:file_folder: **config**  
+    + :file_folder: **distro** - includes predefined build configurations  
+    + **addons.list** - lists all available pre-buildable KODI addons  
+    + **extras.list** - lists all available extras (patches, plugins)  
+:file_folder: **package_patches** - these patches are copied to LE/CE packages folders before build  
+:file_folder: **packages** - packages, that will be added to upstream CE/LE  
+:file_folder: **patches** - these patches are applied to CE/LE directory itself before build  
 
-## *Warning*
-The LibreELEC images are not well tested and there is no guarantee at all, that these images are installable/working/or whatever.
-It is also possible, that some VDR output devices (plugins) are missing.
-
-Tests and/or pull requests are highly appreciated.
-
-## aarch64 Builds
-Due to [LibreELEC Forum](https://forum.libreelec.tv/thread/22564-official-le-test-images-for-amlogic-kodi-20/?postID=167900#post167900), 
-aarch64 builds are possible, but Kodi is not really usable, because no Kodi Addon Repository for aarch64 binary exists. 
-
-## x86_64 Builds
-The x86_64 build is successful, but not tested in real systems. The following output devices for VDR will be build
-if the config LibreELEC-master-x64_64 has been selected for the build:
-- softhddevice (vaapi, vdpau, cuvid)
-- softhdcuvid (cuvid)
-- softhddvaapi (vaapi)
-- softhddrm (drm)
-- xineliboutput (several, fb and others)
-
-## QEMU/KVM
-It is possible to use the x86_64 Build ova disk image in QEMU/KVM, after some preparation:
-1. Build LibreELEC x86_64 with ```./build.sh -config LibreELEC-master-x64_64```
-2. In folder ```LibreELEC.tv/target/``` exists an file ```LibreELEC-x11.x86_64*.ova```.
-3. Use the script ```convert_ova_to_qcow2.sh``` to unpack the ova file and convert the vmdk file to a QEMU/KVM disk image with ```./convert_ova_to_qcow2.sh LibreELEC-x11.x86_64*.ova```.
-4. The script resizes the disk image and adds 5 Gigabyte. If this is too much or too less, then modify the script accordingly.
-5. The resulting qcow2 disk image can be imported in QEMU/KVM, but do not start the VM yet. 
-6. Modify the virtlib XML and change the existing graphics and video part to 
-```
-    <graphics type="spice" port="-1" autoport="no">
-      <listen type="address"/>
-    </graphics>
-    <graphics type="egl-headless">
-      <gl rendernode="/dev/dri/renderD128"/>
-    </graphics>
-```
-and
-```
-    <video>
-      <model type="virtio" heads="1" primary="yes">
-        <acceleration accel3d="yes"/>
-      </model>
-      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
-    </video>
-```
-
-### Current status
-The VDR video is a bit unstable. Using xineliboutput as output plugin the VDR video is visible or not. A VDR restart could help or not. Audio is always audible.
-
-I'm running out of ideas where to change something: It could be a compile flag, a missing library, a configuration issue or whatever.
-
-KODI on the other hand is fully functional and visible.
-
-## Current status:
-
-**The following patches are already applied to VDR**
+## Current status of VDR and plugins:
+The following patches are already applied to VDR
 ```
 svdrp_lstc_lcn.patch
 vdr-2.3.9-hide-first-recording-level-v2.patch
 vdr-2.4.0_zapcockpit-v2.patch
 vdr-2.6.1-undelete.patch
 vdr-menuorg-2.3.x.patch
-vdr-2.6.1-fix-svdrp-poll-timers-timeout.patch
+vdr-2.6.1-fix-check-still-recording-02.patch
 ```
 
-**Following plugins are successfully build and part of the vdr tar**
-```
-CoreELEC:/usr/local/bin # ./easyvdrctl.sh --all-status
- Plugin             | install | ini     | AutoRun | Stop | Arguments
---------------------------------------------------------------------------------
- ac3mode            | yes     | valid   | no      | yes  |
- boblight           | yes     | valid   | no      | yes  | 
- cdplayer           | yes     | valid   | no      | yes  |
- cecremote          | yes     | valid   | no      | yes  |
- chanman            | yes     | valid   | no      | yes  |
- channellists       | yes     | valid   | no      | yes  |
- conflictcheckonly  | yes     | valid   | no      | yes  |
- control            | yes     | valid   | yes     | yes  |
- dbus2vdr           | yes     | valid   | no      | yes  |
- ddci2              | yes     | valid   | no      | yes  |
- devstatus          | yes     | valid   | no      | yes  |
- dummydevice        | yes     | valid   | no      | yes  |
- dvbapi             | yes     | valid   | no      | yes  |
- dvd                | yes     | valid   | no      | yes  |
- dynamite           | no      | valid   | no      | yes  |
- eepg               | yes     | valid   | no      | yes  |
- epg2vdr            | yes     | valid   | no      | yes  |
- epgfixer           | yes     | valid   | no      | yes  |
- epgsearch          | yes     | valid   | no      | yes  |
- epgsearchonly      | yes     | valid   | no      | yes  |
- epgsync            | yes     | valid   | no      | yes  |
- epgtableid0        | yes     | valid   | no      | yes  |
- externalplayer     | yes     | valid   | no      | yes  |
- favorites          | yes     | valid   | no      | yes  |
- femon              | yes     | valid   | no      | yes  |
- filebrowser        | yes     | valid   | no      | yes  |
- fritzbox           | yes     | valid   | no      | yes  | -c /storage/.config/vdropt/plugins/fritz/on-call.sh
- hello              | yes     | valid   | no      | yes  |
- iptv               | yes     | valid   | no      | yes  |
- live               | yes     | valid   | no      | yes  |
- markad             | yes     | valid   | no      | yes  |
- menuorg            | yes     | valid   | no      | yes  |
- mp3                | yes     | valid   | no      | yes  |
- osd2web            | yes     | valid   | no      | yes  |
- osddemo            | yes     | valid   | no      | yes  |
- osdteletext        | yes     | valid   | no      | yes  |
- permashift         | yes     | valid   | no      | yes  |
- pictures           | yes     | valid   | no      | yes  |
- quickepgsearch     | yes     | valid   | no      | yes  |
- radio              | yes     | valid   | no      | yes  | -f /storage/.config/vdropt/plugins/radio
- recsearch          | yes     | valid   | no      | yes  | 
- remote             | yes     | valid   | no      | yes  |
- remoteosd          | yes     | valid   | no      | yes  |
- restfulapi         | yes     | valid   | no      | yes  |
- robotv             | yes     | valid   | no      | yes  |
- satip              | yes     | valid   | yes     | yes  |
- scraper2vdr        | yes     | valid   | no      | yes  |
- screenshot         | yes     | valid   | no      | yes  | 
- seduatmo           | yes     | valid   | no      | yes  |
- skindesigner       | yes     | valid   | no      | yes  |
- skinelchihd        | yes     | valid   | no      | yes  |
- skinenigmang       | yes     | valid   | no      | yes  |
- skinflat           | yes     | valid   | no      | yes  |
- skinflatplus       | yes     | valid   | no      | yes  |
- skinlcarsng        | yes     | valid   | no      | yes  |
- skinnopacity       | yes     | valid   | no      | yes  |
- skinsoppalusikka   | yes     | valid   | no      | yes  |
- softhdcuvid        | yes     | valid   | no      | yes  |
- softhddevice       | yes     | valid   | no      | yes  |
- softhddevice-drm   | yes     | valid   | no      | no   | -a hw:1,0
- softhdodroid       | yes     | valid   | yes     | no   | -a hw:CARD=AMLAUGESOUND,DEV=0
- status             | yes     | valid   | no      | yes  |
- streamdev-client   | yes     | valid   | no      | yes  |
- streamdev-client2  | yes     | valid   | no      | yes  |
- streamdev-client3  | yes     | valid   | no      | yes  |
- streamdev-client4  | yes     | valid   | no      | yes  |
- streamdev-server   | yes     | valid   | no      | yes  |
- suspendoutput      | yes     | valid   | no      | yes  | -b
- svccli             | yes     | valid   | no      | yes  |
- svcsvr             | yes     | valid   | no      | yes  |
- svdrpdemo          | yes     | valid   | no      | yes  |
- svdrpservice       | yes     | valid   | no      | yes  |
- systeminfo         | yes     | valid   | no      | yes  | --script=/storage/.config/vdropt/plugins/systeminfo/systeminfo.sh
- targavfd           | yes     | valid   | no      | yes  |
- tvguide            | yes     | valid   | no      | yes  |
- tvguideng          | yes     | valid   | no      | yes  |
- tvscraper          | yes     | valid   | no      | yes  |
- vnsiserver         | yes     | valid   | no      | yes  |
- vompserver         | yes     | valid   | no      | yes  |
- weatherforecast    | yes     | valid   | no      | yes  |
- wirbelscan         | yes     | valid   | no      | yes  |
- wirbelscancontrol  | yes     | valid   | no      | yes  |
- xineliboutput      | yes     | valid   | no      | yes  | --local=fbfe --video=fb -d :0.0 -C /storage/.config/vdropt/xinelib.conf -f
- zaphistory         | yes     | valid   | no      | yes  |
- zappilot           | yes     | valid   | no      | yes  |
-```
+[These plugins](packages/vdr) are successfully built and part of the VDR tar.
 
-## Build (tested with Ubuntu Focal and Debian 11)
+# Get an image file
+You can choose between downloading a prebuilt image like the official CE/LE ones or building a customized image on your own.
+
+## Prebuilt images
+The eaysiest way is to use a prebuilt image. These images are periodically available in the [releases](https://github.com/Zabrimus/VDRSternELEC/releases) section of this repository. Choose the image matching your hardware and write it to SD-Card or USB. You can also use these images as an update image for your existing CE/LE installation.
+
+## Manual build
+*Refer to [LibreELEC](https://wiki.libreelec.tv/development-1/build-basics) or [CoreELEC](https://wiki.coreelec.org/coreelec:build_ce) building dependencies.  
+The following description is based on Debian or Ubuntu as the host system.*
 ### Install all dependencies
 ```
-apt-get install build-essential coreutils squashfuse git curl xfonts-utils xsltproc default-jre \
-                libxml-parser-perl libjson-perl libncurses5-dev bc gawk wget zip zstd libparse-yapp-perl \
-                gperf lzop unzip patchutils cpio                
+apt-get install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless
 ```
-
-### Checkout VDRSternELEC
+### Checkout VDR*ELEC
 ```
 git clone https://github.com/Zabrimus/VDRSternELEC
 ```
-
 ### Configure the build process
-#### config/distro
-Several configurations are already provided in directory ```config/distro```. If you don't want to use an existing 
-configuration, you can create a new one within this directory.
+#### Config file/ Environment variables
+The configuration is mainly done via environment variables.  
+Several configurations are already provided in ```config/distro```. If you don't want to use an existing configuration, you can create a new one within this directory.
 
-A sample configuration looks like this
+A sample configuration file looks like this:
 ```
 # one of BRANCH, TAG or REVISION is mandatory
 DISTRO=CoreELEC
 BRANCH=coreelec-20
 TAG=
 REVISION=
+
+# Use project variant
+VARIANT=
 
 # Build settings
 PROJECT=Amlogic-ce
@@ -199,189 +72,152 @@ ARCH=arm
 VDR_OUTPUTDEVICE=softhdodroid
 VDR_INPUTDEVICE=satip
 ```
-
+**Environment variables:**
 - DISTRO: can be either ```CoreELEC``` or ```LibreELEC```
-- BRANCH: The existing branch to use, or
-- TAG: use a git tag to build, or
+- BRANCH: The existing branch to use  
+or  
+- TAG: use a git tag to build  
+or  
 - REVISION: you can build with a specific revision.
+- VARIANT: specify some variant of the project, e.g. for choosing different patches
 - PROJECT: 
   - CoreELEC: ```Amlogic-ce```
-  - LibreELEC: ```Amlogic``` or another supported project for LibreELEC
+  - LibreELEC: ```Allwinner``` or another supported PROJECT for LibreELEC
 - DEVICE: 
   - CoreELEC: ```Amlogic-ng```
-  - LibreELEC: ```AMLGX``` or another supported DEVICE for LibreELEC.
+  - LibreELEC: ```H6``` or another supported DEVICE for LibreELEC.
 - ARCH: 
   - CoreELEC: ```arm```
-  - LibreELEC: ```arm```, ```aarch64``` or another supported arch for LibreELEC
-- VDR_OUTPUTDEVICE: can be either ```softhdodroid``` or ```softhddevice-drm```
-- VDR_INPUDEVICE: can be either ```satip``` or ```streamdev-client```
+  - LibreELEC: ```arm``` or another supported ARCH for LibreELEC
+- VDR_OUTPUTDEVICE: VDR output device, which is enabled by default, e.g. ```softhdodroid```, ```softhddevice-drm``` or another one from the [available packages](packages/vdr)
+- VDR_INPUTDEVICE: VDR input device, which is enabled by default, e.g. ```satip``` or ```streamdev-client```
 
-#### config/extras
-A sample configuration looks like this
-```
-# Plugins/Patches
+#### Addons
+It's possible to build some KODI addons and pre-install them to the image. All available addons are listed in [addons.list](config/addons.list).  
+Building the addons with ```build.sh``` can be triggered by adding them with the ```-addon``` option and a comma separated list.
 
-# vdr-plugin-easyvdr (y/n)
-EXTRA_EASYVDR=y
+*Probably not all addons can be compiled for LibreELEC/master. Mainly dvb-latest and crazycat are candidates to fail, because of the frequently updated linux kernel.*
 
-# vdr-plugin-dynamite (y/n)
-EXTRA_DYNAMITE=n
-```
-- EXTRA_EASYVDR=y: Build also the plugin vdr-plugin-easyvdr
-- EXTRA_DYNAMITE=y: Build also the plugin vdr-plugin-dynamite
+#### Extras
+It's also possible to build some additional plugins or apply some patches on VDR during build process. All available extras are listed in [extras.list](config/extras.list).  
+Building the extras with ```build.sh``` can be triggered by adding them with the ```-extra``` option and a comma separated list.
 
-#### config/addons
-A sample configuration looks like this
-```
-ADDON_SUNDTEK_MEDIATV=sundtek-mediatv
-```
-The build.sh scripts needs to changed accordingly, if a new addon shall be added. 
-The addon will be installed after the first boot/update.
-
-There exists a high chance, that not all addons can be compiled for LibreELEC/master. Mainly dvb-latest and crazycat are candidates to fail, 
-because of the frequently updated linux kernel. 
-
-### Build
+### Building the image
 After choosing an existing configuration or creating a new one, the build script can be called:
 ```
-$ ./build.sh 
-Usage: ./build.sh -config <name> -extras <name>
--config : Build the distribution defined in directory config/distro/<name>.
--extra  : Build additional plugins / Use optional VDR patches. Use extra config/extras/<name>
-          Multiple -extra are possible.
--addon  : Build additional addons which will be pre-installed.
-          Multiple -addon are possible.
+$ ./build.sh
+Usage: ./build.sh -config <name> [-extras <name,name> -addon <name,name>]
+-config : Build the distribution defined in directory config/distro/<name>
+-extra  : Build additional plugins / Use optional VDR patches / Use extra from config/extras.list
+          (option is followed by a comma-separated list of the available extras below)
+-addon  : Build additional addons which will be pre-installed / Use addon from config/addons.list
+          (option is followed by a comma-separated list of the available addons below)
+-help   : Show this help
 
 Available configs:
-CoreELEC-19   CoreELEC-20   CoreELEC-19.4-Matrix
-LibreELEC-10.0-aarch64   LibreELEC-master-aarch64
-LibreELEC-10.0-arm   LibreELEC-master-arm
-LibreELEC-master-arm-Allwinner-H2-plus   LibreELEC-master-arm-Allwinner-H3
-LibreELEC-master-arm-Allwinner-H5   LibreELEC-master-arm-Allwinner-H6
-LibreELEC-master-arm-Allwinner-A64   LibreELEC-master-arm-Allwinner-R40
-LibreELEC-master-arm-Rockchip-RK3399
-LibreELEC-10.0-x64_64   LibreELEC-master-x64_64-x11   LibreELEC-master-x64_64-x11-qemu
+CoreELEC-19           LibreELEC-10.0-aarch64  LibreELEC-master-aarch64            LibreELEC-master-arm-Allwinner-H2-plus  LibreELEC-master-arm-Allwinner-H6     LibreELEC-master-x64_64-x11
+CoreELEC-19.4-Matrix  LibreELEC-10.0-arm      LibreELEC-master-arm                LibreELEC-master-arm-Allwinner-H3       LibreELEC-master-arm-Allwinner-R40    LibreELEC-master-x64_64-x11-qemu
+CoreELEC-20           LibreELEC-10.0-x64_64   LibreELEC-master-arm-Allwinner-A64  LibreELEC-master-arm-Allwinner-H5       LibreELEC-master-arm-Rockchip-RK3399
 
 Available extras:
-directfb2-libs  directfb2-samples  dynamite  easyvdr  permashift
+directfb
+directfbsamples
+dynamite
+easyvdr
+permashift
 
 Available addons:
-crazycat  digital_devices  dvb-latest  sundtek-mediatv
-dvb-tools  ffmpeg-tools  network-tools  system-tools
+crazycat
+digital-devices
+dvb-latest
+dvb-tools
+ffmpeg-tools
+network-tools
+sundtek-mediatv
+system-tools
 ```
+Example call:  ```./build.sh -config CoreELEC-19 -extra easyvdr```  
 
-Sample call:  ```./build.sh -config CoreELEC-19 -extra easyvdr```
+If everything worked fine, the desired images can be found in either  ```CoreELEC/target``` or ```LibreELEC/target```.
 
-### Build images
-After the call of build.sh, the desired images can be found in either
-<details>
-    <summary>directory CoreELEC/target</summary>
+# Creating bootable media
+Write your image file to an SD-Card like you are used to do it with [LibreELEC](https://wiki.libreelec.tv/installation/create-media) or [CoreELEC](https://wiki.coreelec.org/coreelec:bootmedia#step_2) and boot your device.
 
-```
-280569134 17. Aug 12:41 CoreELEC-Amlogic-ng.arm-20.0-Nexus_devel_20220817124047-Generic.img.gz
-280932778 17. Aug 12:41 CoreELEC-Amlogic-ng.arm-20.0-Nexus_devel_20220817124047-LaFrite.img.gz
-281594040 17. Aug 12:41 CoreELEC-Amlogic-ng.arm-20.0-Nexus_devel_20220817124047-LePotato.img.gz
-281171760 17. Aug 12:41 CoreELEC-Amlogic-ng.arm-20.0-Nexus_devel_20220817124047-Odroid_C4.img.gz
-281172125 17. Aug 12:41 CoreELEC-Amlogic-ng.arm-20.0-Nexus_devel_20220817124047-Odroid_HC4.img.gz
-281199018 17. Aug 12:41 CoreELEC-Amlogic-ng.arm-20.0-Nexus_devel_20220817124047-Odroid_N2.img.gz
-281239656 17. Aug 12:41 CoreELEC-Amlogic-ng.arm-20.0-Nexus_devel_20220817124047-Radxa_Zero2.img.gz
-281225969 17. Aug 12:41 CoreELEC-Amlogic-ng.arm-20.0-Nexus_devel_20220817124047-Radxa_Zero.img.gz
-320788480 17. Aug 12:41 CoreELEC-Amlogic-ng.arm-20.0-Nexus_devel_20220817124047.tar
-```
-</details>
+# Post-installation work
+## First boot
+The first boot will come up with KODI gui. Follow the dialog and choose your language and network settings. It's very helpful to enable ssh service, to be able to access the device from outside.
 
-<details>
-    <summary>directory LibreELEC/target</summary> 
+## Install KODI addons
+This would be a good time to install the KODI addons of your choice. E.g. ```system-tools addon``` (if not pre-installed) can be very helpful, because it makes mc available on the device. In order to be able to get the right language within VDR you should also install the ```locale addon``` (if not pre-installed) and configure the addon with your desired language (e.g. de_DE).
 
-```
-180836837 18. Aug 08:58 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-bananapi-m5.img.gz
-180972740 18. Aug 08:58 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-box.img.gz
-181191802 18. Aug 08:59 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-khadas-vim2.img.gz
-180867746 18. Aug 08:59 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-khadas-vim3.img.gz
-180871534 18. Aug 08:59 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-khadas-vim3l.img.gz
-181176449 18. Aug 08:59 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-khadas-vim.img.gz
-181231958 18. Aug 08:59 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-lafrite.img.gz
-181225990 18. Aug 08:59 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-lepotato.img.gz
-180530980 18. Aug 09:00 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-nanopi-k2.img.gz
-180574850 18. Aug 09:00 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-odroid-c2.img.gz
-180849702 18. Aug 09:00 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-odroid-c4.img.gz
-180860975 18. Aug 09:00 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-odroid-hc4.img.gz
-180833609 18. Aug 09:00 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-odroid-n2.img.gz
-180779771 18. Aug 09:01 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-radxa-zero2.img.gz
-180803039 18. Aug 09:01 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-radxa-zero.img.gz
-185528320 18. Aug 08:58 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca.tar
-181224517 18. Aug 09:01 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-wetek-core2.img.gz
-180584449 18. Aug 09:01 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-wetek-hub.img.gz
-180584962 18. Aug 09:01 LibreELEC-AMLGX.arm-11.0-devel-20220818085603-8f586ca-wetek-play2.img.gz
-```
-</details>
-
-## Images with integrated VDR and plugins
-### Installation 
-```
-     scp target/CoreELEC-Amlogic-ng.arm-*.tar root@<ip der box>:/storage/.update
-     reboot
-     
-     or
-     
-     Install the desired image in a micro SD as described in the CoreELEC part of this Readme. 
-```
+## Directory structure
+- ```/usr/local/lib```  
+  contains libraries which are usually not part of CoreELEC/ LibreELEC
+- ```/usr/local/vdr```  
+  contains VDR and all plugins
+- ```/storage/.config/vdropt/```  
+  contains the default configuration files  
+- ```/storage/.config/vdropt-sample```  
+  contains sample configuration files
+- ```/storage/videos```  
+  is the default video directory
 
 ## Install script
-In folder /opt/vdr/bin or /usr/local/bin contains an install script
+Now it's time to run the install script ```/usr/local/bin/install.sh``` from within the console (e.g. via ssh):
 ```
-  cd /opt/vdr/bin
-  ./install.sh
-  
-  Usage: install.sh [-install-config] [-boot kodi|vdr]
-          -i      : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
-          -C      : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
-          -b kodi : Kodi will be started after booting
-          -b vdr  : VDR will be started after booting
-          -T      : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
+# /usr/local/bin/install.sh
+Usage: /usr/local/bin/install.sh [-install-config] [-boot kodi|vdr]
+
+-i      : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
+-C      : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
+-b kodi : Kodi will be started after booting
+-b vdr  : VDR will be started after booting
+-T      : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
+```
+If you are at the first boot, the minimum you have to do is running the script with the ```-i``` option, which will copy the default configuration to the right place. If you also want, that VDR will start as default, these are the commands of your choice:
+```
+/usr/local/bin/install.sh -i
+/usr/local/bin/install.sh -b vdr
 ```
 
-## Switch OSD language
-To be able to switch the OSD languange you have to
-- install Kodi addon: locale
-- configure Kodi addon locale and choose your desired language
-- create/modify file /storage/.profile with (in my case it's german):<br>
-   export LANG="de_DE.UTF-8"<br>
-   export LC_ALL="de_DE.UTF-8
-- reboot
+## Configuration
+### Language settings
+To be able to use the configured language within VDR you have to create/modify file /storage/.profile with (e.g. for german UTF-8):  
+```
+export LANG="de_DE.UTF-8"
+export LC_ALL="de_DE.UTF-8“
+```
+Choose the values depending on your choice in KODI's locale addon (*de_DE is de_DE.UTF-8*).  
+:exclamation: **You need to create ```/storage/.profile```, otherwise VDR won't start!**
 
+### Remote control
+LibreELEC and CoreELEC use kernel built-in remote support as default. See [LibreELEC - Infra-Red Remotes](https://wiki.libreelec.tv/configuration/ir-remotes). If your remote control does not work out of the box in KODI, you can follow the instructions there.
+
+### Enabled plugins
+```/storage/.config/vdropt/enabled_plugins``` contains a list of the plugins to autostart with VDR. Simply edit the file and add other plugins of your choice to the already pre-activated ones. 
+
+### VDR specific configuration
+After basic configuration is done you probably need to adapt VDR's conf files.  
+VDR configuration is located in ```/storage/.config/vdropt```. The ```channels.conf``` and the other files need to be edited according to your needs.
+
+# Reboot
+Once configuration is completed, your device should start into VDR after a reboot.
+
+# Updating
+Do an update with the image file like you are used to do it with [LibreELEC](https://wiki.libreelec.tv/support/update) or [CoreELEC](https://discourse.coreelec.org/t/how-to-update-coreelec/1037).  
+
+Example for getting your image onto the device with scp:
+```
+scp target/CoreELEC-Amlogic-ng.arm-*.tar root@<ip address>:/storage/.update
+reboot
+```
+
+# Several notes and additional hints
 ## Skindesigner repository
 Skindesigner uses a git repository to install custom skins. To be able to use this feature installing git is necessary.
 - Install entware (see https://wiki.coreelec.org/coreelec:entware)
 - Install git and git-http
   ```opgk install git git-http```
-
-## Switch Kodi <-> VDR
-The install script (parameter -i) tries to modify/create as many default configuration as possible. 
-If some configuration files already exists, they will not be overwritten, but the changes needs to be done manually.
-
-### /storage/.config/autostart.sh
-The default file will be copied from installation directory, but if the file already exists, a warning will be displayed.
-One additional line is necessary
-```/storage/.opt/vdr/bin/autostart.sh```
-This script prepares some systemd units and paths.
-
-### /storage/.kodi/addons/skin.estuary/xml/DialogButtonMenu.xml
-In Kodis default theme estuary, one additional entry will be added to the power menu to switch to VDR. 
-If another skin is used, the entry needs to be done manually.
-```
-<item>
-    <label>VDR</label>
-    <onclick>System.Exec("/opt/vdr/bin/switch_to_vdr.sh")</onclick>
-</item>
-```
-A whole sample can be found in ```<vdrdir>/config/DialogButtonMenu.xml```
-
-### /storage/.config/vdropt/commands.conf
-A new entry is needed, like e.g.
-```
-Start Kodi       : echo "START_PRG=kodi" > /opt/tmp/switch_kodi_vdr
-```
 
 ## Use FLIRC
 Configuration of FLIRC, VDR remote.conf and KODI keymapping is up to the user. 
@@ -420,20 +256,7 @@ You can switch back to the clock via
 echo -e -n '\x00' > /tmp/openvfd_service
 ```
 
-## Das Verzeichnis-Layout und Dateien
-
-- ```/usr/local/lib``` or ```/opt/vdr/lib```<br>
-  contains libraries which are usually not part of CoreELEC
-- ```/usr/local/vdr``` or ```/opt/vdr/```<br>
-  contains VDR and all plugins
-- ```/usr/local/vdr-2.6.1/config``` or ```/storage/.config/vdropt/```<br>
-  contains the default configuration files  
-- ```storage/.config/vdropt```<br>
-  contains the VDR and plugin configuration files. Will never be overwritten by the install process. 
-- ```storage/.config/vdropt-sample```<br>
-  contains sample configuration files
-
-## Start VDR
+## Starting VDR
 ### \<bindir\>/start_vdr.sh 
 Reads the file ```/storage/.config/vdropt/enabled-plugins``` which contains a plugin name on each line and starts VDR 
 with all enabled plugins. The plugin configuration are read from ```/storage/.config/vdropt/*.conf```.
@@ -442,10 +265,24 @@ Uses the plugin vdr-plugin-easyvdr (see https://www.gen2vdr.de/wirbel/easyvdr/in
 The configuration entries can be found in the ```/storage/.config/vdropt/*_settings.ini```.
 Plugins can be started/stopped at runtime via the OSD.
 Additionally the command line tool easyvdrctl.sh (which uses easyvdrctl) can be found in the &lt;bindir&gt;.
+### /storage/.kodi/addons/skin.estuary/xml/DialogButtonMenu.xml
+In Kodis default theme estuary, one additional entry will be added to the power menu to switch to VDR. 
+If another skin is used, the entry needs to be done manually.
+```
+<item>
+    <label>VDR</label>
+    <onclick>System.Exec("/usr/local/bin/switch_to_vdr.sh")</onclick>
+</item>
+```
+A whole sample can be found in ```<vdrdir>/config/DialogButtonMenu.xml```
+### /storage/.config/vdropt/commands.conf
+A new entry is needed, like e.g.
+```
+Start Kodi       : echo "START_PRG=kodi" > /storage/.cache/switch_kodi_vdr
+```
 
 ## LD_PRELOAD
-The VDR start scripts adds the mandatory library /usr/lib/libMali.so to LD_PRELOAD. It is possible to add other libraries if needed
-by setting a variable in ```/storage/.profile```
+It is possible to add libraries to be preloaded if needed by setting a variable in ```/storage/.profile```
 ```
 VDR_LD_PRELOAD=/path/to/lib1.so:/path/to/lib2.so
 ```

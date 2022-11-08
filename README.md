@@ -26,6 +26,7 @@ vdr-2.4.0_zapcockpit-v2.patch
 vdr-2.6.1-undelete.patch
 vdr-menuorg-2.3.x.patch
 vdr-2.6.1-fix-check-still-recording-02.patch
+vdr-2.6.1-fix-svdrp-poll-timers-timeout.patch
 ```
 
 [These plugins](packages/vdr) are successfully built and part of the VDR tar.

@@ -1,0 +1,22 @@
+diff -ru8bBwd a/include/linux/amlogic/media/vout/hdmi_tx/hdmi_tx_module.h b/include/linux/amlogic/media/vout/hdmi_tx/hdmi_tx_module.h
+--- a/include/linux/amlogic/media/vout/hdmi_tx/hdmi_tx_module.h	2022-10-05 07:37:37.000000000 +0200
++++ b/include/linux/amlogic/media/vout/hdmi_tx/hdmi_tx_module.h	2022-11-09 14:30:42.022883195 +0100
+@@ -804,17 +804,17 @@
+ 	const char *env;
+ };
+ 
+ int hdmitx_set_uevent(enum hdmitx_event type, int val);
+ 
+ #ifdef CONFIG_AMLOGIC_HDMITX
+ extern struct hdmitx_dev *get_hdmitx_device(void);
+ extern int get_hpd_state(void);
+-#ifdef CONFIG_DRM_MESON_HDMI
++#if defined(CONFIG_DRM_MESON_HDMI) || defined(CONFIG_DRM_MESON_HDMI_MODULE)
+ void hdmitx_notify_hpd(int hpd, void *p);
+ #endif
+ bool is_tv_changed(void);
+ extern void hdmitx_hdcp_status(int hdmi_authenticated);
+ #else
+ static inline struct hdmitx_dev *get_hdmitx_device(void)
+ {
+ 	return NULL;

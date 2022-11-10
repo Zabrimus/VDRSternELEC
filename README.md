@@ -1,3 +1,6 @@
+:exclamation: **I tried to enable DRM on CoreELEC 19, but currently the linux kernel doesn't compile.**
+
+
 # What is VDR*ELEC?
 VDR*ELEC is a collection of scripts and patches, which add a VDR client and many VDR plugins to [CoreELEC (CE)](https://github.com/CoreELEC/CoreELEC) and [LibreELEC (LE)](https://github.com/LibreELEC/LibreELEC.tv) images. 
 The images include a full-featured CoreELEC or LibreELEC distribution, where it's possible to comfortably switch between KODI and VDR.

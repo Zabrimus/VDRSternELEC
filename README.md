@@ -51,7 +51,7 @@ git clone https://github.com/Zabrimus/VDRSternELEC
 ### Configure the build process
 #### Config file/ Environment variables
 The configuration is mainly done via environment variables.  
-Several configurations are already provided in ```config/distro```. If you don't want to use an existing configuration, you can create a new one within this directory.
+Several configurations are already provided in [config/distro](config/distro). If you don't want to use an existing configuration, you can create a new one within this directory.
 
 A sample configuration file looks like this:
 ```
@@ -116,9 +116,12 @@ Usage: ./build.sh -config <name> [-extras <name,name> -addon <name,name>]
 -help   : Show this help
 
 Available configs:
-CoreELEC-19           LibreELEC-10.0-aarch64  LibreELEC-master-aarch64            LibreELEC-master-arm-Allwinner-H2-plus  LibreELEC-master-arm-Allwinner-H6     LibreELEC-master-x64_64-x11
-CoreELEC-19.4-Matrix  LibreELEC-10.0-arm      LibreELEC-master-arm                LibreELEC-master-arm-Allwinner-H3       LibreELEC-master-arm-Allwinner-R40    LibreELEC-master-x64_64-x11-qemu
-CoreELEC-20           LibreELEC-10.0-x64_64   LibreELEC-master-arm-Allwinner-A64  LibreELEC-master-arm-Allwinner-H5       LibreELEC-master-arm-Rockchip-RK3399
+CoreELEC-19                   LibreELEC-master-aarch64                LibreELEC-master-arm-Allwinner-R40
+CoreELEC-19.4-Matrix          LibreELEC-master-arm-Allwinner-A64      LibreELEC-master-arm-AMLGX
+CoreELEC-20                   LibreELEC-master-arm-Allwinner-H2-plus  LibreELEC-master-arm-Rockchip-RK3399
+LibreELEC-10.0-aarch64-AMLGX  LibreELEC-master-arm-Allwinner-H3       LibreELEC-master-x64_64-x11
+LibreELEC-10.0-arm-AMLGX      LibreELEC-master-arm-Allwinner-H5       LibreELEC-master-x64_64-x11-qemu
+LibreELEC-10.0-x64_64         LibreELEC-master-arm-Allwinner-H6
 
 Available extras:
 directfb

@@ -47,3 +47,6 @@
 - update markad to latest version (3.0.27)
 - added VDR patch vdr-2.6.1-fix-svdrp-poll-timers-timeout.patch
   See https://www.vdr-portal.de/forum/index.php?thread/135177-vdr-2-6-1-svdrp-poll-timers-timeout-while-waiting-for-response/&postID=1353559#post1353559
+
+10.11.2022 (plugin update)
+- update skindesigner

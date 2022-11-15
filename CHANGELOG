@@ -59,3 +59,7 @@
 - update skinflatplus
 - added VDR patch vdr-2.6.1-fix-check-still-recording-03.patch
   See https://www.vdr-portal.de/forum/index.php?thread/135085-abspielen-der-letzten-25-sekunden-der-aufnahme-vdr-reagiert-nicht-auf-eingaben-b/&postID=1353740#post1353740
+
+15.11.2022 (new plugins)
+- New Plugins:
+    extrecmenung, nordlichtsepg

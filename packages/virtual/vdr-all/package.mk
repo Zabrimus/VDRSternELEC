@@ -88,6 +88,8 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-boblight"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-screenshot"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-recsearch"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-duplicates"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-nordlichtsepg"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-extrecmenung"
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"

@@ -1,0 +1,50 @@
+diff -ru8bBwd a/po/de_DE.po b/po/de_DE.po
+--- a/po/de_DE.po	2019-02-26 09:15:00.000000000 +0100
++++ b/po/de_DE.po	2022-11-20 12:10:18.949723755 +0100
+@@ -15,17 +15,17 @@
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=ISO-8859-15\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ 
+ msgid "Button$Edit T."
+ msgstr "T. editieren"
+ 
+ msgid "Button$Delete T."
+-msgstr "T. l�schen"
++msgstr "T. löschen"
+ 
+ msgid "no info"
+ msgstr "keine Info"
+ 
+ msgid "Can't switch channel!"
+ msgstr ""
+ 
+ msgid "Extended EPG"
+@@ -42,24 +42,24 @@
+ 
+ msgid "Switch with Ok"
+ msgstr "Mit Ok umschalten"
+ 
+ msgid "Appearance"
+ msgstr "Erscheinungsbild"
+ 
+ msgid "Hide main menu entry"
+-msgstr "Eintrag im Hauptmen� verstecken"
++msgstr "Eintrag im Hauptmenü verstecken"
+ 
+ msgid "Keep display after switching"
+ msgstr "Anzeige nicht beenden nach Umschalten"
+ 
+ msgid "Show channel numbers"
+ msgstr "Kanalnummern anzeigen"
+ 
+ msgid "Show channel groups"
+ msgstr "Kanalgruppen anzeigen"
+ 
+ msgid "Hide encrypted channels"
+-msgstr "Verschl�sselte Kan�le ausblenden"
++msgstr "Verschlüsselte Kanäle ausblenden"
+ 
+ msgid "Hide radio channels"
+-msgstr "Radio-Kan�le ausblenden"
++msgstr "Radio-Kanäle ausblenden"

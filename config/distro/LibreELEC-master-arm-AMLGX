@@ -13,5 +13,5 @@ DEVICE=AMLGX
 ARCH=arm
 
 # VDR settings
-VDR_OUTPUTDEVICE=softhdodroid
+VDR_OUTPUTDEVICE=softhddevice-drm
 VDR_INPUTDEVICE=satip

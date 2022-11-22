@@ -1,11 +1,21 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-softhddevice-drm"
-PKG_VERSION="4f662866ad642decc025b4c2ea790e0a6171e0e3"
-PKG_SHA256="f7ddbad1753f311a34824603c251438b98c3186aa9fb404aa8d288850228aad0"
+
+if [ "${PROJECT}" = "Amlogic" ] && [ "${DEVICE}" = "AMLGX" ]; then
+	PKG_VERSION="cbccef7cc37c3122c75f58000a50227fe468ca45"
+	PKG_SHA256="476862b1f127a3583ce6d4544b72668ced48c6379ede2f8598977e41ad8c60e7"
+	PKG_SITE="https://github.com/zillevdr/vdr-plugin-softhddevice-drm"
+	PKG_URL="https://github.com/zillevdr/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
+else
+	PKG_VERSION="4f662866ad642decc025b4c2ea790e0a6171e0e3"
+	PKG_SHA256="f7ddbad1753f311a34824603c251438b98c3186aa9fb404aa8d288850228aad0"
+    PKG_SITE="https://github.com/rellla/vdr-plugin-softhddevice-drm"
+    PKG_URL="https://github.com/rellla/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
+fi
+
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/rellla/vdr-plugin-softhddevice-drm"
-PKG_URL="https://github.com/rellla/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
+
 PKG_SOURCE_DIR="vdr-plugin-softhddevice-drm-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain glm alsa freetype ffmpeg _vdr libdrm mesa"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"

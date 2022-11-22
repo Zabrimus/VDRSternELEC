@@ -98,27 +98,27 @@ makeinstall_target() {
   cat<<EOF >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
   if [ "\${START_PRG}" = "vdr" ]; then
     systemctl stop kodi
+
     if [ "${PROJECT}" = "Amlogic-ce" ]; then
       echo 4 > /sys/module/amvdec_h264/parameters/dec_control
     fi
 
-    if [ "\$DETACH_VDR" = "yes" ]; then
-      /usr/local/bin/svdrpsend REMO on
-      /usr/local/bin/svdrpsend PLUG softhdodroid ATTA -a hw:CARD=AMLAUGESOUND,DEV=2
-    else
-      systemctl start vdropt
-    fi
+	if [ ! -z \${SWITCH_VDR_SCRIPT} ]; then
+   	  eval \${SWITCH_VDR_SCRIPT} attach
+	else
+   	  systemctl start vdropt
+	fi
   elif [ "\${START_PRG}" = "kodi" ]; then
-    if [ "\$DETACH_VDR" = "yes" ]; then
-      /usr/local/bin/svdrpsend PLUG softhdodroid DETA
-      /usr/local/bin/svdrpsend REMO off
-    else
-      systemctl stop vdropt
-    fi
+	if [ ! -z \${SWITCH_VDR_SCRIPT} ]; then
+   	  eval \${SWITCH_VDR_SCRIPT} detach
+	else
+   	  systemctl stop vdropt
+	fi
 
     if [ "${PROJECT}" = "Amlogic-ce" ]; then
       echo rm pip0 > /sys/class/vfm/map
     fi
+
     systemctl start kodi
   fi
 EOF
@@ -128,6 +128,9 @@ EOF
 
   cp ${PKG_DIR}/bin/autostart.sh ${INSTALL}/${PREFIX}/bin/autostart.sh
   chmod +x ${INSTALL}/${PREFIX}/bin/autostart.sh
+
+  cp ${PKG_DIR}/bin/switch_vdr_softhdodroid.sh ${INSTALL}/${PREFIX}/bin/switch_vdr_softhdodroid.sh
+  chmod +x ${INSTALL}/${PREFIX}/bin/switch_vdr_softhdodroid.sh
 
   # Create start parameters depending on the project
   cat<<EOF >> ${INSTALL}/${PREFIX}/bin/autostart.sh

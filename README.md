@@ -195,12 +195,17 @@ Choose the values depending on your choice in KODI's locale addon (*de_DE is de_
 :exclamation: **You need to create ```/storage/.profile```, otherwise VDR won't start!**
 
 ### Fast switch between Kodi and VDR
-You can add the following into ```/storage/.profile``` to prevent a complete stop of VDR
-if you want to start Kodi. It's then much faster to return to VDR. VDR will only be detached 
-from the frontend and runs in the background. 
+You can add the following into ```/storage/.profile```   
 ```
-DETACH_VDR=yes
+SWITCH_VDR_SCRIPT=<script to attach/detach the VDR frontend>
 ```
+A sample script for CoreELEC and softhodroid exists in ```/usr/local/bin/switch_vdr_softhdodroid.sh``` which can be used like
+```
+SWITCH_VDR_SCRIPT=/usr/local/bin/switch_vdr_softhdodroid.sh
+```
+The script takes one parameter 'attach' or 'detach' which can be used to distinguish between the desired actions.
+A attach/detach of the VDR frontend is much faster than starting/stopping VDR. VDR itself will run still in the background.
+
 :exclamation: If you update from a previous version of VDR*ELEC you have to modify a systemd script:
 ```
 sed -i "/Conflicts/d" /storage/.config/system.d/vdropt.service

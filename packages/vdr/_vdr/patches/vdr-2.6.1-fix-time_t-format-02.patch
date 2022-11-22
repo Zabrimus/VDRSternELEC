@@ -1,0 +1,754 @@
+--- ./eit.c	2021/12/11 20:58:51	5.4
++++ ./eit.c	2022/11/22 13:40:23
+@@ -469,7 +469,7 @@
+         timespec ts = {};
+         ts.tv_sec = dvbtim;
+         if (clock_settime(CLOCK_REALTIME, &ts) == 0)
+-           isyslog("system time changed from %s (%ld) to %s (%ld)", *TimeToString(loctim), loctim, *TimeToString(dvbtim), dvbtim);
++           isyslog("system time changed from %s (%jd) to %s (%jd)", *TimeToString(loctim), intmax_t(loctim), *TimeToString(dvbtim), intmax_t(dvbtim));
+         else
+            esyslog("ERROR while setting system time: %m");
+         }
+@@ -479,7 +479,7 @@
+         delta.tv_sec = diff;
+         delta.tv_usec = 0;
+         if (adjtime(&delta, NULL) == 0)
+-           isyslog("system time adjustment initiated from %s (%ld) to %s (%ld)", *TimeToString(loctim), loctim, *TimeToString(dvbtim), dvbtim);
++           isyslog("system time adjustment initiated from %s (%jd) to %s (%jd)", *TimeToString(loctim), intmax_t(loctim), *TimeToString(dvbtim), intmax_t(dvbtim));
+         else
+            esyslog("ERROR while adjusting system time: %m");
+         }
+--- ./epg.c	2021/04/29 09:19:58	5.6
++++ ./epg.c	2022/11/22 14:04:13
+@@ -451,7 +451,7 @@
+ void cEvent::Dump(FILE *f, const char *Prefix, bool InfoOnly) const
+ {
+   if (InfoOnly || startTime + duration + EPG_LINGER_TIME >= time(NULL)) {
+-     fprintf(f, "%sE %u %ld %d %X %X\n", Prefix, eventID, startTime, duration, tableID, version);
++     fprintf(f, "%sE %u %jd %d %X %X\n", Prefix, eventID, intmax_t(startTime), duration, tableID, version);
+      if (!isempty(title))
+         fprintf(f, "%sT %s\n", Prefix, title);
+      if (!isempty(shortText))
+@@ -476,7 +476,7 @@
+             }
+         }
+      if (vps)
+-        fprintf(f, "%sV %ld\n", Prefix, vps);
++        fprintf(f, "%sV %jd\n", Prefix, intmax_t(vps));
+      if (!InfoOnly && !isempty(aux)) {
+         strreplace(aux, '\n', '|');
+         fprintf(f, "%s@ %s\n", Prefix, aux);
+@@ -518,7 +518,7 @@
+                  components = new cComponents;
+               components->SetComponent(components->NumComponents(), t);
+               break;
+-    case 'V': SetVps(atoi(t));
++    case 'V': SetVps(atol(t));
+               break;
+     case '@': strreplace(t, '|', '\n');
+               SetAux(t);
+@@ -541,11 +541,11 @@
+            switch (*s) {
+              case 'E': if (!Event) {
+                           unsigned int EventID;
+-                          time_t StartTime;
++                          intmax_t StartTime; // actually time_t, but intmax_t for scanning with "%jd"
+                           int Duration;
+                           unsigned int TableID = 0;
+                           unsigned int Version = 0xFF; // actual value is ignored
+-                          int n = sscanf(t, "%u %ld %d %X %X", &EventID, &StartTime, &Duration, &TableID, &Version);
++                          int n = sscanf(t, "%u %jd %d %X %X", &EventID, &StartTime, &Duration, &TableID, &Version);
+                           if (n >= 3 && n <= 5) {
+                              Event = (cEvent *)Schedule->GetEventByTime(StartTime);
+                              cEvent *newEvent = NULL;
+--- ./po/ar.po	2021/12/27 13:31:04	5.5
++++ ./po/ar.po	2022/11/22 13:51:14
+@@ -1547,15 +1547,15 @@
+ msgstr "اغلق الحاسوب"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "تم تسجيل %ld دقيقة سيتم الاغلاق على اى حال"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "تم تسجيل %jd دقيقة سيتم الاغلاق على اى حال"
+ 
+ msgid "shut down anyway?"
+ msgstr "الاغلاق على اى حال"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Plugin %s wakes up in %ld min, continue?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Plugin %s wakes up in %jd min, continue?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Editing - restart anyway?"
+--- ./po/ca_ES.po	2021/12/27 13:31:04	5.5
++++ ./po/ca_ES.po	2022/11/22 13:51:14
+@@ -1546,15 +1546,15 @@
+ msgstr "Gravant - Apagar de totes maneres?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Hi ha una gravaci� en %ld minuts - Apagar de totes maneres?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Hi ha una gravaci� en %jd minuts - Apagar de totes maneres?"
+ 
+ msgid "shut down anyway?"
+ msgstr "Apagar de totes maneres?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "El plugin %s s'activar� en %ld minuts, continuar?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "El plugin %s s'activar� en %jd minuts, continuar?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Editant - Reiniciar de totes maneres?"
+--- ./po/cs_CZ.po	2021/12/27 13:31:04	5.5
++++ ./po/cs_CZ.po	2022/11/22 13:51:14
+@@ -1546,15 +1546,15 @@
+ msgstr "Systém nahrává - přesto vypnout?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Nahrávání začne za %ld minut - přesto vypnout?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Nahrávání začne za %jd minut - přesto vypnout?"
+ 
+ msgid "shut down anyway?"
+ msgstr "přesto vypnout?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Modul %s startuje za %ld min., pokračovat?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Modul %s startuje za %jd min., pokračovat?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Edituji - přesto restartovat?"
+--- ./po/da_DK.po	2021/12/27 13:31:04	5.5
++++ ./po/da_DK.po	2022/11/22 13:51:14
+@@ -1543,15 +1543,15 @@
+ msgstr "Optagelse igang - sluk alligevel?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Optagelse om %ld minutter - sluk alligevel?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Optagelse om %jd minutter - sluk alligevel?"
+ 
+ msgid "shut down anyway?"
+ msgstr "sluk alligevel?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Plugin %s v�gner om %ld min, forts�t?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Plugin %s v�gner om %jd min, forts�t?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Redigering igang - genstart alligevel?"
+--- ./po/de_DE.po	2021/12/27 13:31:04	5.5
++++ ./po/de_DE.po	2022/11/22 13:51:14
+@@ -1544,15 +1544,15 @@
+ msgstr "Aufnahme l�uft - trotzdem ausschalten?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Aufnahme in %ld Minuten - trotzdem ausschalten?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Aufnahme in %jd Minuten - trotzdem ausschalten?"
+ 
+ msgid "shut down anyway?"
+ msgstr "trotzdem ausschalten?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Plugin %s wacht in %ld Min auf, weiter?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Plugin %s wacht in %jd Min auf, weiter?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Bearbeitung l�uft - trotzdem neu starten?"
+--- ./po/el_GR.po	2021/12/27 13:31:04	5.5
++++ ./po/el_GR.po	2022/11/22 13:51:14
+@@ -1543,14 +1543,14 @@
+ msgstr "������� ������� - ������ �� ����� �����������?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "���������� ������� �� %ld ����� - ������ �� �����������?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "���������� ������� �� %jd ����� - ������ �� �����������?"
+ 
+ msgid "shut down anyway?"
+ msgstr "������ �� ����� �����������?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
++msgid "Plugin %s wakes up in %jd min, continue?"
+ msgstr ""
+ 
+ msgid "Editing - restart anyway?"
+--- ./po/es_ES.po	2021/12/27 13:31:04	5.5
++++ ./po/es_ES.po	2022/11/22 13:51:14
+@@ -1544,15 +1544,15 @@
+ msgstr "Grabaci�n en curso - �apagar igualmente?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Grabaci�n dentro de %ld minutos, �apagar igualmente?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Grabaci�n dentro de %jd minutos, �apagar igualmente?"
+ 
+ msgid "shut down anyway?"
+ msgstr "�apagar igualmente?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Plugin %s inicia en %ld min, �continuar?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Plugin %s inicia en %jd min, �continuar?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Editando - �reiniciar igualmente?"
+--- ./po/et_EE.po	2021/12/27 13:31:04	5.5
++++ ./po/et_EE.po	2022/11/22 13:51:14
+@@ -1543,15 +1543,15 @@
+ msgstr "Salvestamine aktiivne - lülitada välja?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Salvestamine algab %ld minuti pärast - lülitada välja?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Salvestamine algab %jd minuti pärast - lülitada välja?"
+ 
+ msgid "shut down anyway?"
+ msgstr "lülitada välja?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Plugin %s ärkab %ld minuti pärast, jätkata?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Plugin %s ärkab %jd minuti pärast, jätkata?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Töötlemine aktiivne - taaskäivitada?"
+--- ./po/fi_FI.po	2021/12/27 13:31:04	5.5
++++ ./po/fi_FI.po	2022/11/22 13:51:14
+@@ -1547,15 +1547,15 @@
+ msgstr "Tallennus kesken - sammutetaanko?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Tallennus alkaa %ld min kuluttua - sammutetaanko?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Tallennus alkaa %jd min kuluttua - sammutetaanko?"
+ 
+ msgid "shut down anyway?"
+ msgstr "sammutetaanko?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Laajennos %s herää %ld minuutin kuluttua - sammutetaanko?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Laajennos %s herää %jd minuutin kuluttua - sammutetaanko?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Muokkaus kesken - käynnistetäänkö uudelleen?"
+--- ./po/fr_FR.po	2021/12/27 13:31:04	5.5
++++ ./po/fr_FR.po	2022/11/22 13:51:14
+@@ -1554,15 +1554,15 @@
+ msgstr "Enregistrement en cours - confirmer l'arrêt ?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Enregistrement dans %ld minutes - confirmer l'arrêt ?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Enregistrement dans %jd minutes - confirmer l'arrêt ?"
+ 
+ msgid "shut down anyway?"
+ msgstr "confirmer l'arrêt ?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Le plugin %s démarre dans %ld min, continuer ?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Le plugin %s démarre dans %jd min, continuer ?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Édition en cours - confirmer redémarrage ?"
+--- ./po/hr_HR.po	2021/12/27 13:31:04	5.5
++++ ./po/hr_HR.po	2022/11/22 13:51:13
+@@ -1545,15 +1545,15 @@
+ msgstr "Snimanje traje - isklju�iti unato�?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Snimanje za %ld minuta - isklju�iti unato�?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Snimanje za %jd minuta - isklju�iti unato�?"
+ 
+ msgid "shut down anyway?"
+ msgstr "svejedno isklju�iti?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Dodatak %s se budi u %ld min, nastavi?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Dodatak %s se budi u %jd min, nastavi?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Ure�ivanje u tijeku - ponovno pokreni unato�?"
+--- ./po/hu_HU.po	2021/12/27 13:31:04	5.5
++++ ./po/hu_HU.po	2022/11/22 13:51:13
+@@ -1548,15 +1548,15 @@
+ msgstr "Felvétel folyamatban - mégis leállítani?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Felvétel %ld perc múlva kezdődik - mégis leállítani?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Felvétel %jd perc múlva kezdődik - mégis leállítani?"
+ 
+ msgid "shut down anyway?"
+ msgstr "mégis leállítani?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "A(z) %s plugin ébreszt %ld perc múlva, folytatni?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "A(z) %s plugin ébreszt %jd perc múlva, folytatni?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Szerkesztés folyamatban - mégis újraindítani?"
+--- ./po/it_IT.po	2022/01/14 10:27:26	5.6
++++ ./po/it_IT.po	2022/11/22 13:51:13
+@@ -1549,15 +1549,15 @@
+ msgstr "Registrazione in corso - spegnere comunque?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Registrazione tra %ld minuti - spegnere comunque?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Registrazione tra %jd minuti - spegnere comunque?"
+ 
+ msgid "shut down anyway?"
+ msgstr "spegnere comunque?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Il plugin %s si ripristina tra %ld min, continuare?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Il plugin %s si ripristina tra %jd min, continuare?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Modifica in corso - riavviare comunque?"
+--- ./po/lt_LT.po	2021/12/27 13:31:04	5.5
++++ ./po/lt_LT.po	2022/11/22 13:51:13
+@@ -1543,15 +1543,15 @@
+ msgstr "Įrašinėjama - išjungti vistiek?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Įrašas prasidės po %ld minučių, išjungti vistiek?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Įrašas prasidės po %jd minučių, išjungti vistiek?"
+ 
+ msgid "shut down anyway?"
+ msgstr "išjungti bet kokiu atveju?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Įskiepas %s aktyvuosis po %ld min, tęsti toliau?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Įskiepas %s aktyvuosis po %jd min, tęsti toliau?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Koreguojama - perkrauti vistiek?"
+--- ./po/mk_MK.po	2021/12/27 13:31:04	5.5
++++ ./po/mk_MK.po	2022/11/22 13:51:13
+@@ -1545,15 +1545,15 @@
+ msgstr "Снимање во тек - исклучи?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Снимање уште %ld минути - исклучи?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Снимање уште %jd минути - исклучи?"
+ 
+ msgid "shut down anyway?"
+ msgstr "сеедно исклучи?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Додатокот %s се подига за %ld мин, продолжи?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Додатокот %s се подига за %jd мин, продолжи?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Уредување во тек - рестартирај?"
+--- ./po/nl_NL.po	2021/12/27 13:31:04	5.5
++++ ./po/nl_NL.po	2022/11/22 13:51:13
+@@ -1549,15 +1549,15 @@
+ msgstr "Opname loopt - toch uitschakelen?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Opname in %ld minuten - toch uitschakelen?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Opname in %jd minuten - toch uitschakelen?"
+ 
+ msgid "shut down anyway?"
+ msgstr "toch uitschakelen?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Plugin %s wordt binnen %ld min. aktief, doorgaan?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Plugin %s wordt binnen %jd min. aktief, doorgaan?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Bewerken aktief - toch herstarten?"
+--- ./po/nn_NO.po	2021/12/27 13:31:04	5.5
++++ ./po/nn_NO.po	2022/11/22 13:51:13
+@@ -1544,14 +1544,14 @@
+ msgstr "Gj�r opptak - sl� av likevel?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Skal gj�re opptak om %ld minutter - sl� av likevel?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Skal gj�re opptak om %jd minutter - sl� av likevel?"
+ 
+ msgid "shut down anyway?"
+ msgstr "sl� av likevel?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
++msgid "Plugin %s wakes up in %jd min, continue?"
+ msgstr ""
+ 
+ msgid "Editing - restart anyway?"
+--- ./po/pl_PL.po	2021/12/27 13:31:04	5.5
++++ ./po/pl_PL.po	2022/11/22 13:51:13
+@@ -1548,15 +1548,15 @@
+ msgstr "Trwa nagrywanie - wyłączyć mimo to?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Nagrywanie za %ld minut - wyłączyć mimo to?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Nagrywanie za %jd minut - wyłączyć mimo to?"
+ 
+ msgid "shut down anyway?"
+ msgstr "wyłączyć mimo to?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Wtyczka %s obudzi się za %ld min, kontynuować?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Wtyczka %s obudzi się za %jd min, kontynuować?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Montaż w trakcie - Zrestartować mimo to?"
+--- ./po/pt_PT.po	2021/12/27 13:31:04	5.5
++++ ./po/pt_PT.po	2022/11/22 13:51:13
+@@ -1544,15 +1544,15 @@
+ msgstr "A gravar - desligar mesmo assim?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Grava��o programada em %ld minutos - desligar mesmo assim?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Grava��o programada em %jd minutos - desligar mesmo assim?"
+ 
+ msgid "shut down anyway?"
+ msgstr "desligar mesmo assim?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "O plugin %s acorda daqui a %ld minuots, continuar?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "O plugin %s acorda daqui a %jd minuots, continuar?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "A editar - reiniciar mesmo assim?"
+--- ./po/ro_RO.po	2021/12/27 13:31:04	5.5
++++ ./po/ro_RO.po	2022/11/22 13:51:13
+@@ -1545,15 +1545,15 @@
+ msgstr "Tocmai se înregistrează - închid, totuşi?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Înregistrez peste %ld minute - închid, totuşi?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Înregistrez peste %jd minute - închid, totuşi?"
+ 
+ msgid "shut down anyway?"
+ msgstr "închid, totuşi?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Plugin-ul %s se va trezi +n %ld min, continui?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Plugin-ul %s se va trezi +n %jd min, continui?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Editarea tocmai se efectuează - repornesc, totuşi?"
+--- ./po/ru_RU.po	2021/12/27 13:31:04	5.5
++++ ./po/ru_RU.po	2022/11/22 13:51:13
+@@ -1544,15 +1544,15 @@
+ msgstr "Идёт запись - действительно выключить?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Через %ld минут начнётся запись - действительно выключить?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Через %jd минут начнётся запись - действительно выключить?"
+ 
+ msgid "shut down anyway?"
+ msgstr "действительно выключить?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Plugin %s проснется через %ld минут - продолжить?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Plugin %s проснется через %jd минут - продолжить?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Процесс монтажа - действительно перезапустить?"
+--- ./po/sk_SK.po	2021/12/27 13:31:04	5.5
++++ ./po/sk_SK.po	2022/11/22 13:51:13
+@@ -1544,15 +1544,15 @@
+ msgstr "Nahr�va - aj tak vypn��?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Nahr�vanie za�ne za %ld min�t - aj tak vypn��?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Nahr�vanie za�ne za %jd min�t - aj tak vypn��?"
+ 
+ msgid "shut down anyway?"
+ msgstr "Ur�ite vypn��?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Modul %s sa prebud� za %ld min., pokra�ova�?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Modul %s sa prebud� za %jd min., pokra�ova�?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Upravuje sa - aj tak re�tartova�?"
+--- ./po/sl_SI.po	2021/12/27 13:31:04	5.5
++++ ./po/sl_SI.po	2022/11/22 13:51:13
+@@ -1544,15 +1544,15 @@
+ msgstr "Snemanje - zares izklopi?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Snemanje �ez %ld minut, zares izklopi?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Snemanje �ez %jd minut, zares izklopi?"
+ 
+ msgid "shut down anyway?"
+ msgstr "zares izklopi?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Vstavek %s se zbudi v %ld min, nadaljuj?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Vstavek %s se zbudi v %jd min, nadaljuj?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Urejanje - zares ponoven zagon?"
+--- ./po/sr_RS.po	2021/12/27 13:31:04	5.5
++++ ./po/sr_RS.po	2022/11/22 13:51:13
+@@ -1544,15 +1544,15 @@
+ msgstr "Snimanje u toku - svejedno isklju�i?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Snimanje za %ld minuta - svejedno isklju�i?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Snimanje za %jd minuta - svejedno isklju�i?"
+ 
+ msgid "shut down anyway?"
+ msgstr "svejedno isklju�i?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Dodatak %s se budi za %ld min, nastavi?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Dodatak %s se budi za %jd min, nastavi?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Ure�ivanje u toku - svejedno ponovno pokreni?"
+--- ./po/sv_SE.po	2021/12/27 13:31:04	5.5
++++ ./po/sv_SE.po	2022/11/22 13:51:13
+@@ -1548,15 +1548,15 @@
+ msgstr "Inspelning p�g�r, vill du avsluta �nd�?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Inspelning startar om %ld minuter, vill du avsluta �nd�?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Inspelning startar om %jd minuter, vill du avsluta �nd�?"
+ 
+ msgid "shut down anyway?"
+ msgstr "vill du avsluta �nd�?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Plugin %s aktiv om %ld min, vill du forts�tta?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Plugin %s aktiv om %jd min, vill du forts�tta?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Editering p�g�r, vill du starta om �nd�?"
+--- ./po/tr_TR.po	2021/12/27 13:31:04	5.5
++++ ./po/tr_TR.po	2022/11/22 13:51:13
+@@ -1543,15 +1543,15 @@
+ msgstr "Kay�t ediliyor - buna ra�men kapat?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Kay�t %ld dakikada ba�l�yor - buna ra�men kapat?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Kay�t %jd dakikada ba�l�yor - buna ra�men kapat?"
+ 
+ msgid "shut down anyway?"
+ msgstr "buna ra�men kapat?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Eklenti %s %ld dakikada a��l�yor, devam et?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Eklenti %s %jd dakikada a��l�yor, devam et?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Kesim aktif - buna ra�men yeniden ba�lat?"
+--- ./po/uk_UA.po	2021/12/27 13:31:04	5.5
++++ ./po/uk_UA.po	2022/11/22 13:51:13
+@@ -1544,15 +1544,15 @@
+ msgstr "Йде запис - дійсно виключити?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "Через %ld хвилин почнеться запис - дійсно виключити?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Через %jd хвилин почнеться запис - дійсно виключити?"
+ 
+ msgid "shut down anyway?"
+ msgstr "дійсно виключити?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "Модуль %s включиться через %ld хвилин - продовжити?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Модуль %s включиться через %jd хвилин - продовжити?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "Процес монтажу - дійсно перезапустити?"
+--- ./po/zh_CN.po	2021/12/27 13:31:04	5.5
++++ ./po/zh_CN.po	2022/11/22 13:51:13
+@@ -1545,15 +1545,15 @@
+ msgstr "录像中,是否立即关机?"
+ 
+ #, c-format
+-msgid "Recording in %ld minutes, shut down anyway?"
+-msgstr "录像已有 %ld 分钟，立即关机?"
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "录像已有 %jd 分钟，立即关机?"
+ 
+ msgid "shut down anyway?"
+ msgstr "是否立即关机?"
+ 
+ #, c-format
+-msgid "Plugin %s wakes up in %ld min, continue?"
+-msgstr "插件 %s 唤醒在 %ld 分钟，是否继续?"
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "插件 %s 唤醒在 %jd 分钟，是否继续?"
+ 
+ msgid "Editing - restart anyway?"
+ msgstr "编辑中,是否现在重启?"
+--- ./recording.c	2022/11/13 15:20:42	5.17
++++ ./recording.c	2022/11/22 13:42:56
+@@ -485,11 +485,11 @@
+                        break;
+              case 'E': {
+                          unsigned int EventID;
+-                         time_t StartTime;
++                         intmax_t StartTime; // actually time_t, but intmax_t for scanning with "%jd"
+                          int Duration;
+                          unsigned int TableID = 0;
+                          unsigned int Version = 0xFF;
+-                         int n = sscanf(t, "%u %ld %d %X %X", &EventID, &StartTime, &Duration, &TableID, &Version);
++                         int n = sscanf(t, "%u %jd %d %X %X", &EventID, &StartTime, &Duration, &TableID, &Version);
+                          if (n >= 3 && n <= 5) {
+                             ownEvent->SetEventID(EventID);
+                             ownEvent->SetStartTime(StartTime);
+--- ./shutdown.c	2018/03/23 15:39:21	5.0
++++ ./shutdown.c	2022/11/22 13:46:20
+@@ -113,7 +113,7 @@
+      }
+   else {
+      // Set inactive from now on
+-     dsyslog("scheduled wakeup time in %ld minutes, assuming automatic start of VDR", Delta / 60);
++     dsyslog("scheduled wakeup time in %jd minutes, assuming automatic start of VDR", intmax_t(Delta / 60));
+      SetUserInactiveTimeout(-3, true);
+      }
+ }
+@@ -127,7 +127,7 @@
+ void cShutdownHandler::CallShutdownCommand(time_t WakeupTime, int Channel, const char *File, bool UserShutdown)
+ {
+   time_t Delta = WakeupTime ? WakeupTime - time(NULL) : 0;
+-  cString cmd = cString::sprintf("%s %ld %ld %d \"%s\" %d", shutdownCommand, WakeupTime, Delta, Channel, *strescape(File, "\\\"$"), UserShutdown);
++  cString cmd = cString::sprintf("%s %jd %jd %d \"%s\" %d", shutdownCommand, intmax_t(WakeupTime), intmax_t(Delta), Channel, *strescape(File, "\\\"$"), UserShutdown);
+   isyslog("executing '%s'", *cmd);
+   int Status = SystemExec(cmd, true);
+   if (!WIFEXITED(Status) || WEXITSTATUS(Status))
+@@ -183,7 +183,7 @@
+      // Timer within Min Event Timeout
+      if (!Interactive)
+         return false;
+-     cString buf = cString::sprintf(tr("Recording in %ld minutes, shut down anyway?"), Delta / 60);
++     cString buf = cString::sprintf(tr("Recording in %jd minutes, shut down anyway?"), intmax_t(Delta / 60));
+      if (!Interface->Confirm(buf))
+         return false;
+      }
+@@ -198,7 +198,7 @@
+      // Plugin wakeup within Min Event Timeout
+      if (!Interactive)
+         return false;
+-     cString buf = cString::sprintf(tr("Plugin %s wakes up in %ld min, continue?"), Plugin->Name(), Delta / 60);
++     cString buf = cString::sprintf(tr("Plugin %s wakes up in %jd min, continue?"), Plugin->Name(), intmax_t(Delta / 60));
+      if (!Interface->Confirm(buf))
+         return false;
+      }
+--- ./svdrp.c	2022/11/19 15:49:27	5.5
++++ ./svdrp.c	2022/11/22 13:55:06
+@@ -2230,9 +2230,9 @@
+      if (!*Option)
+         Reply(250, "%d %s", Id, *TimeToString(Start));
+      else if (strcasecmp(Option, "ABS") == 0)
+-        Reply(250, "%d %ld", Id, Start);
++        Reply(250, "%d %jd", Id, intmax_t(Start));
+      else if (strcasecmp(Option, "REL") == 0)
+-        Reply(250, "%d %ld", Id, Start - time(NULL));
++        Reply(250, "%d %jd", Id, intmax_t(Start - time(NULL)));
+      else
+         Reply(501, "Unknown option: \"%s\"", Option);
+      }
+--- ./tools.c	2022/03/07 12:17:13	5.6
++++ ./tools.c	2022/11/22 13:58:32
+@@ -767,7 +767,7 @@
+               esyslog("cTimeMs: clock_gettime(CLOCK_MONOTONIC) failed");
+            }
+         else
+-           dsyslog("cTimeMs: not using monotonic clock - resolution is too bad (%ld s %ld ns)", tp.tv_sec, tp.tv_nsec);
++           dsyslog("cTimeMs: not using monotonic clock - resolution is too bad (%jd s %ld ns)", intmax_t(tp.tv_sec), tp.tv_nsec);
+         }
+      else
+         esyslog("cTimeMs: clock_getres(CLOCK_MONOTONIC) failed");

@@ -194,6 +194,19 @@ export LC_ALL="de_DE.UTF-8“
 Choose the values depending on your choice in KODI's locale addon (*de_DE is de_DE.UTF-8*).  
 :exclamation: **You need to create ```/storage/.profile```, otherwise VDR won't start!**
 
+### Fast switch between Kodi and VDR
+You can add the following into ```/storage/.profile``` to prevent a complete stop of VDR
+if you want to start Kodi. It's then much faster to return to VDR. VDR will only be detached 
+from the frontend and runs in the background. 
+```
+DETACH_VDR=yes
+```
+:exclamation: If you update from a previous version of VDR*ELEC you have to modify a systemd script:
+```
+sed -i "/Conflicts/d" /storage/.config/system.d/vdropt.service
+systemctl daemon-reload
+```
+
 ### Remote control
 LibreELEC and CoreELEC use kernel built-in remote support as default. See [LibreELEC - Infra-Red Remotes](https://wiki.libreelec.tv/configuration/ir-remotes). If your remote control does not work out of the box in KODI, you can follow the instructions there.
 

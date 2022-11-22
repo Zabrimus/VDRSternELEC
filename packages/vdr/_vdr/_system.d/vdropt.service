@@ -2,7 +2,6 @@
 Description=VDR Client
 Requires=network-online.target graphical.target
 After=network-online.target graphical.target
-Conflicts=kodi.service
 
 [Service]
 ExecStart=XXBINDIRXX/start_vdr.sh

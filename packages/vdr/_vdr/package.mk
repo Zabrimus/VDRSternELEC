@@ -71,7 +71,7 @@ makeinstall_target() {
   CONFDIR="/storage/.config/vdropt"
   LDPRELOADMALI=""
 
-  if [ "${PROJECT}" = "Amlogic-ce" ] || [ "${PROJECT}" = "Amlogic" ]; then
+  if [ "${PROJECT}" = "Amlogic-ce" ]; then
      LDPRELOADMALI="/usr/lib/libMali.so"
   fi
 
@@ -95,19 +95,33 @@ makeinstall_target() {
   chmod +x ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
 
   # Create start parameters depending on the project
-  echo "if [ \"\${START_PRG}\" = \"vdr\" ]; then" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
-  echo "   systemctl stop kodi" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
-  if [ "${PROJECT}" = "Amlogic-ce" ] || [ "${PROJECT}" = "Amlogic" ]; then
-      echo "   echo 4 > /sys/module/amvdec_h264/parameters/dec_control" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
-  fi
-  echo "   systemctl start vdropt" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
-  echo "elif [ \"\${START_PRG}\" = \"kodi\" ]; then" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
-    echo "   systemctl stop vdropt" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
-    if [ "${PROJECT}" = "Amlogic-ce" ] || [ "${PROJECT}" = "Amlogic" ]; then
-        echo "   echo rm pip0 > /sys/class/vfm/map" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
+  cat<<EOF >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
+  if [ "\${START_PRG}" = "vdr" ]; then
+    systemctl stop kodi
+    if [ "${PROJECT}" = "Amlogic-ce" ]; then
+      echo 4 > /sys/module/amvdec_h264/parameters/dec_control
     fi
-    echo "   systemctl start kodi" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
-  echo "fi" >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
+
+    if [ "\$DETACH_VDR" = "yes" ]; then
+      /usr/local/bin/svdrpsend REMO on
+      /usr/local/bin/svdrpsend PLUG softhdodroid ATTA -a hw:CARD=AMLAUGESOUND,DEV=2
+    else
+      systemctl start vdropt
+    fi
+  elif [ "\${START_PRG}" = "kodi" ]; then
+    if [ "\$DETACH_VDR" = "yes" ]; then
+      /usr/local/bin/svdrpsend PLUG softhdodroid DETA
+      /usr/local/bin/svdrpsend REMO off
+    else
+      systemctl stop vdropt
+    fi
+
+    if [ "${PROJECT}" = "Amlogic-ce" ]; then
+      echo rm pip0 > /sys/class/vfm/map
+    fi
+    systemctl start kodi
+  fi
+EOF
 
   cp ${PKG_DIR}/bin/switch_to_vdr.sh ${INSTALL}/${PREFIX}/bin/switch_to_vdr.sh
   chmod +x ${INSTALL}/${PREFIX}/bin/switch_to_vdr.sh
@@ -116,18 +130,21 @@ makeinstall_target() {
   chmod +x ${INSTALL}/${PREFIX}/bin/autostart.sh
 
   # Create start parameters depending on the project
-  echo "if [ \"\${START_PRG}\" = \"vdr\" ]; then" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
-  echo "   systemctl stop kodi" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
-  if [ "${PROJECT}" = "Amlogic-ce" ] || [ "${PROJECT}" = "Amlogic" ]; then
-      echo "   echo 4 > /sys/module/amvdec_h264/parameters/dec_control" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
-  fi
-  echo "   systemctl start vdropt" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
-  echo "elif [ \"\${START_PRG}\" = \"kodi\" ]; then" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
-    echo "   systemctl stop vdropt" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
-    if [ "${PROJECT}" = "Amlogic-ce" ] || [ "${PROJECT}" = "Amlogic" ]; then
-        echo "   echo rm pip0 > /sys/class/vfm/map" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
+  cat<<EOF >> ${INSTALL}/${PREFIX}/bin/autostart.sh
+  if [ "\${START_PRG}" = "vdr" ]; then
+    systemctl stop kodi
+    if [ "${PROJECT}" = "Amlogic-ce" ]; then
+      echo 4 > /sys/module/amvdec_h264/parameters/dec_control
     fi
-  echo "fi" >> ${INSTALL}/${PREFIX}/bin/autostart.sh
+    systemctl start vdropt
+  elif [ "\${START_PRG}" = "kodi" ]; then
+    systemctl stop vdropt
+    if [ "${PROJECT}" = "Amlogic-ce" ]; then
+      echo rm pip0 > /sys/class/vfm/map
+    fi
+    systemctl start kodi
+  fi
+EOF
 
   # rename perl svdrpsend to svdrpsend.pl and copy the netcat variant
   mv ${INSTALL}/${PREFIX}/bin/svdrpsend ${INSTALL}/${PREFIX}/bin/svdrpsend.pl

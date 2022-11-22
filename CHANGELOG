@@ -63,3 +63,9 @@
 15.11.2022 (new plugins)
 - New Plugins:
     extrecmenung, nordlichtsepg
+
+22.11.2022 (new patches, new start scripts)
+- added VDR patch vdr-2.6.1-fix-time_t-format-02.patch
+  See https://www.vdr-portal.de/forum/index.php?thread/135358-epg-data-mit-dauer-0/&postID=1354066#post1354066
+- Modified the script to change between Kodi and VDR. The script recognize a new profile parameter DETACH_VDR.
+  If set to 'yes' VDR will not be stopped, but detached from frontend and attached again if Kodi stops.

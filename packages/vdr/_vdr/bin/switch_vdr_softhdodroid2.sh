@@ -7,11 +7,9 @@
 # For all other VDR frontend plugins, the script needs to be adapted
 
 if [ "$1" = "attach" ]; then
-    echo 4 > /sys/module/amvdec_h264/parameters/dec_control
-    /usr/local/bin/svdrpsend REMO on
-    /usr/local/bin/svdrpsend PLUG softhdodroid ATTA -a hw:CARD=AMLAUGESOUND,DEV=2
+  echo 4 > /sys/module/amvdec_h264/parameters/dec_control
+  systemctl start vdropt
 elif [ "$1" = "detach" ]; then
-    /usr/local/bin/svdrpsend PLUG softhdodroid DETA
-    /usr/local/bin/svdrpsend REMO off
-    echo rm pip0 > /sys/class/vfm/map
+  systemctl stop vdropt
+  echo rm pip0 > /sys/class/vfm/map
 fi

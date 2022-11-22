@@ -99,10 +99,6 @@ makeinstall_target() {
   if [ "\${START_PRG}" = "vdr" ]; then
     systemctl stop kodi
 
-    if [ "${PROJECT}" = "Amlogic-ce" ]; then
-      echo 4 > /sys/module/amvdec_h264/parameters/dec_control
-    fi
-
 	if [ ! -z \${SWITCH_VDR_SCRIPT} ]; then
    	  eval \${SWITCH_VDR_SCRIPT} attach
 	else
@@ -114,10 +110,6 @@ makeinstall_target() {
 	else
    	  systemctl stop vdropt
 	fi
-
-    if [ "${PROJECT}" = "Amlogic-ce" ]; then
-      echo rm pip0 > /sys/class/vfm/map
-    fi
 
     systemctl start kodi
   fi

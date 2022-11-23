@@ -15,7 +15,7 @@ read_vdr_configuration () {
 arg="vdr $(read_vdr_configuration) -P \"easyvdr -c /storage/.config/vdropt/conf.d/easyvdr.ini\""
 
 # kill splash image (CoreELEC)
-killall splash-image
+killall splash-image || true
 
 # needed for locale / OSD language
 . /storage/.profile

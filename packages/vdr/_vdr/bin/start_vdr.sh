@@ -28,7 +28,7 @@ for line in $file; do
 done
 
 # kill splash image (CoreELEC)
-killall splash-image
+killall splash-image || true
 
 # needed for locale / OSD language
 . /storage/.profile

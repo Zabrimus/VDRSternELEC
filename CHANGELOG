@@ -71,3 +71,6 @@
   If the script exists, then it will be executed with 'attach' or 'detach' as parameter. It's up to the user to
   implement useful commands to attach/detach the VDR frontend.
   A sample for softhdodroid exists in /usr/local/bin/switch_vdr_softhdodroid.sh
+
+25.11.2022 (plugin update)
+- update softhddevice

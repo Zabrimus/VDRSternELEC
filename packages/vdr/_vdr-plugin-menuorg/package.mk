@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-menuorg"
-PKG_VERSION="0.5.2"
-PKG_SHA256="082b57434b09c9c26206cd41324761e44835917eee1cfffa55fad5cff7fa5e5f"
+PKG_VERSION="203218929551ec4c6f1dd45c6d8012c214eaa2c8"
+PKG_SHA256="88a9b2cd73db39ecffdeaf405eca746ada09432637b73ad8a35fb24dac609930"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-menuorg"
-PKG_URL="https://github.com/vdr-projects/vdr-plugin-menuorg/archive/refs/tags/${PKG_VERSION}.tar.gz"
+PKG_URL="https://github.com/vdr-projects/vdr-plugin-menuorg/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="vdr-plugin-menuorg-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _libxmlplusplus"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"

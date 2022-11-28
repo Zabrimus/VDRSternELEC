@@ -1,12 +1,14 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-vnsiserver"
-PKG_VERSION="1.8.1"
-PKG_SHA256="492268d5521e1dfd00db8323130d85ee71f91557b8ce210f0cc90a73a4283a9a"
+PKG_VERSION="9694587c5149242c8ec03aa938d389789803904f"
+PKG_SHA256="986326916c19c343e39ffde782529cd6fbd760d825405d4521b59be0856f04bd"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-vnsiserver"
-PKG_URL="https://github.com/vdr-projects/vdr-plugin-vnsiserver/archive/refs/tags/${PKG_VERSION}.tar.gz"
+PKG_URL="https://github.com/vdr-projects/vdr-plugin-vnsiserver/archive/${PKG_VERSION}.zip"
+PKG_BRANCH="master"
 PKG_DEPENDS_TARGET="toolchain _vdr"
+PKG_SOURCE_DIR="vdr-plugin-vnsiserver-${PKG_VERSION}"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory _vdr-plugin-wirbelscan)"
 PKG_LONGDESC="VDR plugin to handle Kodi clients."
 PKG_TOOLCHAIN="manual"

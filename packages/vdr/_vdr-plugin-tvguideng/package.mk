@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-tvguideng"
-PKG_VERSION="0.3.3"
-PKG_SHA256="5882bf77f945dbaa7411e8052c1f0517befd8145446fcc5c82f47da11c0212a6"
+PKG_VERSION="51da4fcf963e363bc5198b6cefda5b9ac87b593b"
+PKG_SHA256="1d1bc55ccb675c51bcefa3785fd21e2022022ce583f983c693f3e7c3fd4f771c"
 PKG_LICENSE="GPL2"
 PKG_SITE="https://gitlab.com/kamel5/tvguideng"
-PKG_URL="https://gitlab.com/kamel5/tvguideng/-/archive/${PKG_VERSION}/tvguideng-${PKG_VERSION}.tar.bz2"
+PKG_URL="https://gitlab.com/kamel5/tvguideng/-/archive/${PKG_VERSION}/tvguideng-${PKG_VERSION}.tar.gz"
+PKG_BRANCH="master"
 PKG_SOURCE_DIR="tvguideng-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _vdr-plugin-skindesigner"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"

@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-devstatus"
-PKG_VERSION="0.5.0"
-PKG_SHA256="658ae5cb3dd708b6b43e3491b9845f3a07cf1689f8df1a1cd93c869a515f62c1"
+PKG_VERSION="ea22649f47aaaa35dcaeaf8208ef48ea8f3068c7"
+PKG_SHA256="b025aea7f42e2fa5cadbea1324ee7e93f7fa8b177d4705b9e1b08233cd2b87e5"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/kamel5/devstatus"
-PKG_URL="https://gitlab.com/kamel5/devstatus/-/archive/v${PKG_VERSION}/devstatus-v${PKG_VERSION}.tar.bz2"
-PKG_SOURCE_DIR="devstatus-v${PKG_VERSION}"
+PKG_URL="https://gitlab.com/kamel5/devstatus/-/archive/${PKG_VERSION}/devstatus-${PKG_VERSION}.tar.gz"
+PKG_SOURCE_DIR="devstatus-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="TODO"

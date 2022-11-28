@@ -1,12 +1,14 @@
 # SPDX-License-Identifier: GPL-2.0
 
 PKG_NAME="_vdr-plugin-robotv"
-PKG_VERSION="f521e57e947468b54288f696bdcae8e6485c6167"
-PKG_SHA256="3f949fca133bdab690f0a5b4bb7d77a52e1b94c94fc8d815c2c203e9f06a6622"
+PKG_VERSION="e9246b24cbdc855ff1bd87995f09b41cc77f41dc"
+PKG_SHA256="aac31332b31c0d35405f575ad9f805161acbc1c0115afa33ddaf67248523d25c"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/pipelka/roboTV"
-PKG_URL="https://github.com/pipelka/vdr-plugin-robotv/archive/${PKG_VERSION}.tar.gz"
+PKG_SITE="https://github.com/pipelka/vdr-plugin-robotv"
+PKG_URL="https://github.com/pipelka/vdr-plugin-robotv/archive/${PKG_VERSION}.zip"
+PKG_BRANCH="master"
 PKG_DEPENDS_TARGET="toolchain _vdr avahi"
+PKG_SOURCE_DIR="vdr-plugin-robotv-${PKG_VERSION}"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="RoboTV is a Android TV based frontend for VDR."
 PKG_TOOLCHAIN="manual"

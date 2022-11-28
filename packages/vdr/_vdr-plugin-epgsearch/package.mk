@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-epgsearch"
-PKG_VERSION="a868a52e89caa0e3f099eb6875c8cfe4cd2a6ac7"
-PKG_SHA256="1f628032590e313007a26a6864a0d83dbd515f833c700a5bac9bd0e7df4f03bc"
+PKG_VERSION="0f42d5e0cdb8d8bcb2686fb23325aa3a22e410db"
+PKG_SHA256="4ebbed2f61af51efb9dbd8be4d015ce7f46b114dcd7147a1c74f949b67aeb70c"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-epgsearch"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-epgsearch/archive/${PKG_VERSION}.tar.gz"
+PKG_BRANCH="master"
 PKG_DEPENDS_TARGET="toolchain _vdr pcre"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="EPGSearch is a plugin for the Video-Disc-Recorder (VDR)."

@@ -1,11 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-scraper2vdr"
-PKG_VERSION="1.0.12"
-PKG_SHA256="5e40763e06d218ee0f1993794a1d4b90da7877003ae749d48ee144753d6d26b7"
+PKG_VERSION="ee20d354965f7d7e428aace41aec11a7821e4a6f"
+PKG_SHA256="e73c03c03c49a8f6ca55a2ec24f046c85816184f525ffaacc94b7bf2218b7b98"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/horchi/scraper2vdr"
-PKG_URL="https://github.com/horchi/scraper2vdr/archive/refs/tags/${PKG_VERSION}.tar.gz"
+PKG_URL="https://github.com/horchi/scraper2vdr/archive/${PKG_VERSION}.zip"
+PKG_BRANCH="master"
+PKG_SOURCE_DIR="scraper2vdr-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _mariadb-connector-c _graphicsmagick"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory Python3) $(get_pkg_directory _mariadb-connector-c)"
 PKG_LONGDESC="scraper2vdr acts as client and provides scraped metadata for tvshows and movies from epgd to other plugins via its service interface."

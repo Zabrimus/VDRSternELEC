@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-restfulapi"
-PKG_VERSION="0.2.6.6"
-PKG_SHA256="dd62bfc4c7944d55ef6d49b7637af947c219d433a029689fbd7823639e6b891b"
+PKG_VERSION="87c1504b23aa9c7fa1ccf66e6a2fe4a786bdff55"
+PKG_SHA256="9b2bc5daf6b45784e670e66105f87808cf218003c14fe379404e7db0494cfd6f"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/yavdr/vdr-plugin-restfulapi"
-PKG_URL="https://github.com/yavdr/vdr-plugin-restfulapi/archive/refs/tags/${PKG_VERSION}.zip"
+PKG_URL="https://github.com/yavdr/vdr-plugin-restfulapi/archive/${PKG_VERSION}.zip"
+PKG_BRANCH="master"
 PKG_DEPENDS_TARGET="toolchain _vdr cxxtools _vdr-plugin-wirbelscan"
 PKG_SOURCE_DIR="vdr-plugin-restfulapi-${PKG_VERSION}"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory _vdr-plugin-wirbelscan)"

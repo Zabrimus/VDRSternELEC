@@ -79,3 +79,6 @@
 - update live (3.1.9)
 - update all plugins to their latest version
 - rework on packages to be able to easier find latest version
+
+29.11.2022 (plugin update)
+- update softhddevice-drm (rellla)

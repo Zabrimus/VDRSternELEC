@@ -83,6 +83,5 @@
 29.11.2022 (plugin update)
 - update softhddevice-drm (rellla)
 
-20.11.2022 (VDR update, disable plugin)
+20.11.2022 (VDR update)
 - update VDR to 2.6.2
-- disabled remote plugin (needs patch for 2.6.2)

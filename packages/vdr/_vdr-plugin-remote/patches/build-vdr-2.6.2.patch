@@ -1,0 +1,22 @@
+diff -ru8bBwd a/remote.c b/remote.c
+--- a/remote.c	2022-01-12 21:03:54.000000000 +0100
++++ b/remote.c	2022-11-30 18:40:28.266080608 +0100
+@@ -791,17 +791,17 @@
+         switch (devtyp[i])
+         {
+             case 'i':
+                 new cRemoteDevInput(nam,fh[i],devnam[i]);
+                 break;
+ 
+ #ifdef REMOTE_FEATURE_LIRC
+             case 'l':
+-                new cLircRemote(devnam[i]); // use vdr's lirc code
++                cLircRemote::NewLircRemote(devnam[i]); // use vdr's lirc code
+                 break;
+ #endif
+ #ifdef REMOTE_FEATURE_LIRCOLD
+             case 'l':
+                 new cRemoteDevLirc(nam,fh[i],devnam[i]);
+                 break;
+ #endif
+ 

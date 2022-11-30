@@ -1,0 +1,31 @@
+diff --git a/remux.c b/remux.c
+index 391fd6ff..54fc50fd 100644
+--- a/remux.c
++++ b/remux.c
+@@ -1333,7 +1333,7 @@ int cMpeg2Parser::Parse(const uchar *Data, int Length, int Pid)
+             seenScanType = true;
+             if (debug) {
+                cString s = cString::sprintf("MPEG2: %d x %d%c %.2f fps", frameWidth, frameHeight, progressive ? 'p' : 'i', framesPerSecond);
+-               dsyslog(s);
++               dsyslog("%s",*s);
+                dbgframes("\n%s", *s);
+                }
+             }
+@@ -1607,7 +1607,7 @@ void cH264Parser::ParseSequenceParameterSet(void)
+         }
+      if (debug) {
+         cString s = cString::sprintf("H.264: %d x %d%c %.2f fps %d Bit", frameWidth, frameHeight, progressive ? 'p':'i', framesPerSecond, bitDepth);
+-        dsyslog(s);
++        dsyslog("%s", *s);
+         dbgframes("\n%s", *s);
+         }
+      }
+@@ -1908,7 +1908,7 @@ void cH265Parser::ParseSequenceParameterSet(void)
+      }
+   if (debug) {
+      cString s = cString::sprintf("H.265: %d x %d%c %.2f fps %d Bit", frameWidth, frameHeight, progressive ? 'p':'i', framesPerSecond, bitDepth);
+-     dsyslog(s);
++     dsyslog("%s", *s);
+      dbgframes("\n%s", *s);
+      }
+ }

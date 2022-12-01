@@ -86,7 +86,8 @@
 20.11.2022 (VDR update)
 - update VDR to 2.6.2
 
-01.12.2022 (new experimental driver)
+01.12.2022 (new experimental driver, plugin update)
 - added new driver rtc-meson-vrtc
   See https://www.vdr-portal.de/forum/index.php?thread/135091-installation-eines-vdr-plugins-nativ-auf-coreelec-boxen/&postID=1354433#post1354433
+- update plugin skinflatplus
 

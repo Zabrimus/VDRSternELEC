@@ -18,9 +18,9 @@ diff -ru8bBwd a/arch/arm64/boot/dts/amlogic/mesonsm1.dtsi b/arch/arm64/boot/dts/
 -		status = "okay";
 +    vrtc: rtc@0a8 {
 +        compatible = "amlogic,meson-vrtc";
-+        reg = <0x0 0x000a8 0x0 0x4>;
++        reg = <0x0 0xff8000a8 0x0 0x4>;
  	};
- 
+
  	cpu_info {
  		compatible = "amlogic, cpuinfo";
  		status = "okay";

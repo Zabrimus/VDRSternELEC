@@ -132,12 +132,6 @@ EOF
       echo 4 > /sys/module/amvdec_h264/parameters/dec_control
     fi
     systemctl start vdropt
-  elif [ "\${START_PRG}" = "kodi" ]; then
-    systemctl stop vdropt
-    if [ "${PROJECT}" = "Amlogic-ce" ]; then
-      echo rm pip0 > /sys/class/vfm/map
-    fi
-    systemctl start kodi
   fi
 EOF
 

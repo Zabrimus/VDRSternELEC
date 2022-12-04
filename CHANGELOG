@@ -94,3 +94,6 @@
   See https://www.vdr-portal.de/forum/index.php?thread/135372-announce-vdr-version-2-6-2-freigegeben/&postID=1354440#post1354440
   and https://www.vdr-portal.de/forum/index.php?thread/135372-announce-vdr-version-2-6-2-freigegeben/&postID=1354438#post1354438
 
+04.12.2022 (enabled meson-vrtc driver, fixed start script)
+- enabled new driver rtc-meson-vrtc (needs an updated dtb.img)
+- fixed start script (kodi)

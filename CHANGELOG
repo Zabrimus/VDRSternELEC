@@ -97,3 +97,6 @@
 04.12.2022 (enabled meson-vrtc driver, fixed start script)
 - enabled new driver rtc-meson-vrtc (needs an updated dtb.img)
 - fixed start script (kodi)
+
+07.12.2022 (plugin update)
+- update plugin softhddevice-drm (zille)

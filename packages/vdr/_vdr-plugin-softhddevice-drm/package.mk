@@ -3,8 +3,8 @@
 PKG_NAME="_vdr-plugin-softhddevice-drm"
 
 if [ "${PROJECT}" = "Amlogic" ] && [ "${DEVICE}" = "AMLGX" ]; then
-	PKG_VERSION="cbccef7cc37c3122c75f58000a50227fe468ca45"
-	PKG_SHA256="476862b1f127a3583ce6d4544b72668ced48c6379ede2f8598977e41ad8c60e7"
+	PKG_VERSION="fb8209749bd7d927a4f586e89810911f8c6e36e8"
+	PKG_SHA256="57bbcde7a5c751233f0076484b027563af20249c1193440986f0a3d8a36a4d0f"
 	PKG_SITE="https://github.com/zillevdr/vdr-plugin-softhddevice-drm"
 	PKG_URL="https://github.com/zillevdr/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
 else

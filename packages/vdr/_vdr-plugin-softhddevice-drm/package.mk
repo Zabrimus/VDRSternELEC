@@ -8,8 +8,8 @@ if [ "${PROJECT}" = "Amlogic" ] && [ "${DEVICE}" = "AMLGX" ]; then
 	PKG_SITE="https://github.com/zillevdr/vdr-plugin-softhddevice-drm"
 	PKG_URL="https://github.com/zillevdr/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
 else
-	PKG_VERSION="b8cba5f2249632dafe66268dddca3d4bf90aacde"
-	PKG_SHA256="e89160d17a76b4ea5adc7552c956759fbd1054a4cc94c30c753c319f731d9779"
+	PKG_VERSION="21c8dab4db34420aa43238594c73aa376cdee36c"
+	PKG_SHA256="09caec705c8b26774bdaaa41ef6f43f951b94bb3fb21a58d5bf81e2fa3ef1579"
     PKG_SITE="https://github.com/rellla/vdr-plugin-softhddevice-drm"
     PKG_URL="https://github.com/rellla/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
     PKG_BRANCH="drm-atomic-gles"

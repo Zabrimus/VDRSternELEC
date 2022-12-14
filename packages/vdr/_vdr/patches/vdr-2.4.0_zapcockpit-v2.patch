@@ -1,8 +1,12 @@
-diff --git a/config.c b/config.c
-index 43c3cbbb..076b9757 100644
---- a/config.c
-+++ b/config.c
-@@ -417,6 +417,12 @@ cSetup::cSetup(void)
+diff -ru8bBwd a/config.c b/config.c
+--- a/config.c	2022-12-14 09:38:41.000000000 +0100
++++ b/config.c	2022-12-14 11:33:56.827725968 +0100
+@@ -412,16 +412,22 @@
+   EPGBugfixLevel = 3;
+   EPGLinger = 0;
+   SVDRPTimeout = 300;
+   SVDRPPeering = 0;
+   strn0cpy(SVDRPHostName, GetHostName(), sizeof(SVDRPHostName));
    strcpy(SVDRPDefaultHost, "");
    ZapTimeout = 3;
    ChannelEntryTimeout = 1000;
@@ -15,7 +19,17 @@ index 43c3cbbb..076b9757 100644
    RcRepeatDelay = 300;
    RcRepeatDelta = 100;
    DefaultPriority = 50;
-@@ -645,6 +651,12 @@ bool cSetup::Parse(const char *Name, const char *Value)
+   DefaultLifetime = MAXLIFETIME;
+   RecordKeyHandling = 2;
+   PauseKeyHandling = 2;
+   PausePriority = 10;
+   PauseLifetime = 1;
+@@ -640,16 +646,22 @@
+   else if (!strcasecmp(Name, "EPGBugfixLevel"))      EPGBugfixLevel     = atoi(Value);
+   else if (!strcasecmp(Name, "EPGLinger"))           EPGLinger          = atoi(Value);
+   else if (!strcasecmp(Name, "SVDRPTimeout"))        SVDRPTimeout       = atoi(Value);
+   else if (!strcasecmp(Name, "SVDRPPeering"))        SVDRPPeering       = atoi(Value);
+   else if (!strcasecmp(Name, "SVDRPHostName"))     { if (*Value) strn0cpy(SVDRPHostName, Value, sizeof(SVDRPHostName)); }
    else if (!strcasecmp(Name, "SVDRPDefaultHost"))    strn0cpy(SVDRPDefaultHost, Value, sizeof(SVDRPDefaultHost));
    else if (!strcasecmp(Name, "ZapTimeout"))          ZapTimeout         = atoi(Value);
    else if (!strcasecmp(Name, "ChannelEntryTimeout")) ChannelEntryTimeout= atoi(Value);
@@ -28,7 +42,17 @@ index 43c3cbbb..076b9757 100644
    else if (!strcasecmp(Name, "RcRepeatDelay"))       RcRepeatDelay      = atoi(Value);
    else if (!strcasecmp(Name, "RcRepeatDelta"))       RcRepeatDelta      = atoi(Value);
    else if (!strcasecmp(Name, "DefaultPriority"))     DefaultPriority    = atoi(Value);
-@@ -777,6 +789,12 @@ bool cSetup::Save(void)
+   else if (!strcasecmp(Name, "DefaultLifetime"))     DefaultLifetime    = atoi(Value);
+   else if (!strcasecmp(Name, "RecordKeyHandling"))   RecordKeyHandling  = atoi(Value);
+   else if (!strcasecmp(Name, "PauseKeyHandling"))    PauseKeyHandling   = atoi(Value);
+   else if (!strcasecmp(Name, "PausePriority"))       PausePriority      = atoi(Value);
+   else if (!strcasecmp(Name, "PauseLifetime"))       PauseLifetime      = atoi(Value);
+@@ -772,16 +784,22 @@
+   Store("EPGBugfixLevel",     EPGBugfixLevel);
+   Store("EPGLinger",          EPGLinger);
+   Store("SVDRPTimeout",       SVDRPTimeout);
+   Store("SVDRPPeering",       SVDRPPeering);
+   Store("SVDRPHostName",      strcmp(SVDRPHostName, GetHostName()) ? SVDRPHostName : "");
    Store("SVDRPDefaultHost",   SVDRPDefaultHost);
    Store("ZapTimeout",         ZapTimeout);
    Store("ChannelEntryTimeout",ChannelEntryTimeout);
@@ -41,11 +65,20 @@ index 43c3cbbb..076b9757 100644
    Store("RcRepeatDelay",      RcRepeatDelay);
    Store("RcRepeatDelta",      RcRepeatDelta);
    Store("DefaultPriority",    DefaultPriority);
-diff --git a/config.h b/config.h
-index ba549e7f..9f323f02 100644
---- a/config.h
-+++ b/config.h
-@@ -300,6 +300,12 @@ public:
+   Store("DefaultLifetime",    DefaultLifetime);
+   Store("RecordKeyHandling",  RecordKeyHandling);
+   Store("PauseKeyHandling",   PauseKeyHandling);
+   Store("PausePriority",      PausePriority);
+   Store("PauseLifetime",      PauseLifetime);
+diff -ru8bBwd a/config.h b/config.h
+--- a/config.h	2022-12-14 09:38:41.000000000 +0100
++++ b/config.h	2022-12-14 11:33:56.827725968 +0100
+@@ -295,16 +295,22 @@
+   int EPGBugfixLevel;
+   int EPGLinger;
+   int SVDRPTimeout;
+   int SVDRPPeering;
+   char SVDRPHostName[HOST_NAME_MAX];
    char SVDRPDefaultHost[HOST_NAME_MAX];
    int ZapTimeout;
    int ChannelEntryTimeout;
@@ -58,11 +91,20 @@ index ba549e7f..9f323f02 100644
    int RcRepeatDelay;
    int RcRepeatDelta;
    int DefaultPriority, DefaultLifetime;
-diff --git a/menu.c b/menu.c
-index 8f4eb19e..14d7d6c1 100644
---- a/menu.c
-+++ b/menu.c
-@@ -4269,6 +4269,12 @@ void cMenuSetupMisc::Set(void)
+   int RecordKeyHandling;
+   int PauseKeyHandling;
+   int PausePriority, PauseLifetime;
+   int UseSubtitle;
+   int UseVps;
+diff -ru8bBwd a/menu.c b/menu.c
+--- a/menu.c	2022-12-14 09:38:41.000000000 +0100
++++ b/menu.c	2022-12-14 11:33:56.831726395 +0100
+@@ -4264,16 +4264,22 @@
+      if (GetSVDRPServerNames(&svdrpServerNames)) {
+         svdrpServerNames.Sort(true);
+         svdrpServerNames.Insert(strdup(""));
+         Add(new cMenuEditStrlItem(tr("Setup.Miscellaneous$SVDRP default host"), data.SVDRPDefaultHost, sizeof(data.SVDRPDefaultHost), &svdrpServerNames));
+         }
       }
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Zap timeout (s)"),            &data.ZapTimeout));
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Channel entry timeout (ms)"), &data.ChannelEntryTimeout, 0));
@@ -75,7 +117,17 @@ index 8f4eb19e..14d7d6c1 100644
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Remote control repeat delay (ms)"), &data.RcRepeatDelay, 0));
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Remote control repeat delta (ms)"), &data.RcRepeatDelta, 0));
    Add(new cMenuEditChanItem(tr("Setup.Miscellaneous$Initial channel"),            &data.InitialChannel, tr("Setup.Miscellaneous$as before")));
-@@ -4743,7 +4749,7 @@ cDisplayChannel::cDisplayChannel(int Number, bool Switched)
+   Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Initial volume"),             &data.InitialVolume, -1, 255, tr("Setup.Miscellaneous$as before")));
+   Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Volume steps"),               &data.VolumeSteps, 5, 255));
+   Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Volume linearize"),           &data.VolumeLinearize, -20, 20));
+   Add(new cMenuEditBoolItem(tr("Setup.Miscellaneous$Channels wrap"),              &data.ChannelsWrap));
+   Add(new cMenuEditStraItem(tr("Setup.Miscellaneous$Show channel names with source"), &data.ShowChannelNamesWithSource, 3, showChannelNamesWithSourceTexts));
+@@ -4738,17 +4744,17 @@
+        DisplayInfo();
+        }
+   }
+   if (channel)
+      displayChannel->Flush();
    lastTime.Set();
  }
  
@@ -84,17 +136,35 @@ index 8f4eb19e..14d7d6c1 100644
  :cOsdObject(true)
  {
    currentDisplayChannel = this;
-@@ -4761,7 +4767,8 @@ cDisplayChannel::cDisplayChannel(eKeys FirstKey)
+   group = -1;
+   number = 0;
+   timeout = true;
+   lastPresent = lastFollowing = NULL;
+   cOsdProvider::OsdSizeChanged(osdState); // just to get the current state
+@@ -4756,16 +4762,17 @@
+   withInfo = Setup.ShowInfoOnChSwitch;
+   displayChannel = Skins.Current()->DisplayChannel(withInfo);
+   positioner = NULL;
+   channel = NULL;
+   {
      LOCK_CHANNELS_READ;
      channel = Channels->GetByNumber(cDevice::CurrentChannel());
    }
--  ProcessKey(FirstKey);
 +  if (processKey)
-+     ProcessKey(FirstKey);
+   ProcessKey(FirstKey);
  }
  
  cDisplayChannel::~cDisplayChannel()
-@@ -5011,6 +5018,799 @@ eOSState cDisplayChannel::ProcessKey(eKeys Key)
+ {
+   delete displayChannel;
+   currentDisplayChannel = NULL;
+   cStatus::MsgOsdClear();
+@@ -5006,16 +5013,809 @@
+        positioner = Positioner;
+      }
+      displayChannel->Flush();
+      return osContinue;
+      }
    return osEnd;
  }
  
@@ -894,11 +964,20 @@ index 8f4eb19e..14d7d6c1 100644
  // --- cDisplayVolume --------------------------------------------------------
  
  #define VOLUMETIMEOUT 1000 //ms
-diff --git a/menu.h b/menu.h
-index a192d140..a7337df2 100644
---- a/menu.h
-+++ b/menu.h
-@@ -121,30 +121,102 @@ public:
+ #define MUTETIMEOUT   5000 //ms
+ 
+ cDisplayVolume *cDisplayVolume::currentDisplayVolume = NULL;
+ 
+ cDisplayVolume::cDisplayVolume(void)
+diff -ru8bBwd a/menu.h b/menu.h
+--- a/menu.h	2022-12-14 09:38:41.000000000 +0100
++++ b/menu.h	2022-12-14 11:33:56.831726395 +0100
+@@ -116,40 +116,112 @@
+ public:
+   cMenuMain(eOSState State = osUnknown, bool OpenSubMenus = false);
+   virtual eOSState ProcessKey(eKeys Key);
+   static cOsdObject *PluginOsdObject(void);
+   };
  
  class cDisplayChannel : public cOsdObject {
  private:
@@ -1009,23 +1088,30 @@ index a192d140..a7337df2 100644
  class cDisplayVolume : public cOsdObject {
  private:
    cSkinDisplayVolume *displayVolume;
-diff --git a/po/de_DE.po b/po/de_DE.po
-index 1be50aca..7c666d45 100644
---- a/po/de_DE.po
-+++ b/po/de_DE.po
-@@ -8,7 +8,7 @@ msgid ""
- msgstr ""
- "Project-Id-Version: VDR 2.6.0\n"
- "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
--"POT-Creation-Date: 2021-07-01 17:10+0200\n"
-+"POT-Creation-Date: 2022-10-31 21:32+0100\n"
- "PO-Revision-Date: 2015-02-10 13:45+0100\n"
- "Last-Translator: Klaus Schmidinger <vdr@tvdr.de>\n"
- "Language-Team: German <vdr@linuxtv.org>\n"
-@@ -1383,6 +1383,24 @@ msgstr "Mindestzeit f
- msgid "Setup.Miscellaneous$Channel entry timeout (ms)"
- msgstr "Zeitlimit fï¿½r Kanaleingabe (ms)"
+   cTimeMs timeout;
+   static cDisplayVolume *currentDisplayVolume;
+   virtual void Show(void);
+   cDisplayVolume(void);
+ public:
+diff -ru8bBwd a/po/de_DE.po b/po/de_DE.po
+--- a/po/de_DE.po	2022-12-14 09:38:41.000000000 +0100
++++ b/po/de_DE.po	2022-12-14 11:35:28.413191737 +0100
+@@ -1377,23 +1377,41 @@
  
+ msgid "Setup.Miscellaneous$SVDRP host name"
+ msgstr "SVDRP Maschinenname"
+ 
+ msgid "Setup.Miscellaneous$SVDRP default host"
+ msgstr "SVDRP Standardmaschine"
+ 
+ msgid "Setup.Miscellaneous$Zap timeout (s)"
+-msgstr "Mindestzeit für vorherigen Kanal (s)"
++msgstr "Mindestzeit fÃ¼r vorherigen Kanal (s)"
+ 
+ msgid "Setup.Miscellaneous$Channel entry timeout (ms)"
+-msgstr "Zeitlimit für Kanaleingabe (ms)"
++msgstr "Zeitlimit fÃ¼r Kanaleingabe (ms)"
++
 +msgid "Setup.Miscellaneous$Zapcockpit: enabled"
 +msgstr ""
 +
@@ -1042,12 +1128,25 @@ index 1be50aca..7c666d45 100644
 +msgstr "Zapcockpit: letzte Kanalgruppe ausblenden"
 +
 +msgid "Setup.Miscellaneous$Zapcockpit: Show \"All Channels\" Item in Group List"
-+msgstr "Zapcockpit: Zeige \"Alle Kanï¿½le\" in Kanalgruppen Liste"
-+
- msgid "Setup.Miscellaneous$Remote control repeat delay (ms)"
- msgstr "Fernbedienung Wiederholverzï¿½gerung (ms)"
++msgstr "Zapcockpit: Zeige \"Alle KanÃ¤le\" in Kanalgruppen Liste"
  
-@@ -1455,6 +1473,9 @@ msgstr "Aufzeichnung beenden?"
+ msgid "Setup.Miscellaneous$Remote control repeat delay (ms)"
+-msgstr "Fernbedienung Wiederholverzögerung (ms)"
++msgstr "Fernbedienung WiederholverzÃ¶gerung (ms)"
+ 
+ msgid "Setup.Miscellaneous$Remote control repeat delta (ms)"
+ msgstr "Fernbedienung Wiederholintervall (ms)"
+ 
+ msgid "Setup.Miscellaneous$Initial channel"
+ msgstr "Kanal beim Einschalten"
+ 
+ msgid "Setup.Miscellaneous$as before"
+@@ -1454,16 +1472,19 @@
+ msgstr " Bearbeitung abbrechen"
+ 
+ msgid "Stop recording?"
+ msgstr "Aufzeichnung beenden?"
+ 
  msgid "Cancel editing?"
  msgstr "Bearbeitung abbrechen?"
  
@@ -1055,13 +1154,23 @@ index 1be50aca..7c666d45 100644
 +msgstr "Alle Kanï¿½le"
 +
  msgid "No audio available!"
- msgstr "Kein Audio verfï¿½gbar!"
+ msgstr "Kein Audio verfügbar!"
  
-diff --git a/skins.c b/skins.c
-index 47b330e2..a6ead53a 100644
---- a/skins.c
-+++ b/skins.c
-@@ -79,6 +79,13 @@ void cSkinDisplayChannel::SetPositioner(const cPositioner *Positioner)
+ msgid "No subtitles"
+ msgstr "Keine Untertitel"
+ 
+ msgid "No subtitles available!"
+ msgstr "Keine Untertitel verfügbar!"
+Nur in b/po: de_DE.po.orig.
+diff -ru8bBwd a/skins.c b/skins.c
+--- a/skins.c	2022-12-14 09:38:41.000000000 +0100
++++ b/skins.c	2022-12-14 11:33:56.831726395 +0100
+@@ -74,16 +74,23 @@
+ {
+   if (positioner && Positioner != positioner)
+      SetMessage(mtInfo, NULL);
+   positioner = Positioner;
+   if (positioner)
       SetMessage(mtInfo, cString::sprintf(tr("Moving dish to %.1f..."), double(positioner->TargetLongitude()) / 10));
  }
  
@@ -1075,11 +1184,20 @@ index 47b330e2..a6ead53a 100644
  // --- cSkinDisplayMenu ------------------------------------------------------
  
  cSkinDisplayMenu::cSkinDisplayMenu(void)
-diff --git a/skins.h b/skins.h
-index 40b185fc..53a8f700 100644
---- a/skins.h
-+++ b/skins.h
-@@ -101,6 +101,34 @@ public:
+ {
+   menuCategory = mcUndefined;
+   SetTabs(0);
+ }
+ 
+diff -ru8bBwd a/skins.h b/skins.h
+--- a/skins.h	2022-12-14 09:38:41.000000000 +0100
++++ b/skins.h	2022-12-14 11:33:56.831726395 +0100
+@@ -96,16 +96,44 @@
+   /*TODO
+   SetButtons
+     Red    = Video options
+     Green  = Info now
+     Yellow = Info next
    */
    };
  
@@ -1114,52 +1232,84 @@ index 40b185fc..53a8f700 100644
  enum eMenuCategory {
    mcUndefined = -1,
    mcUnknown = 0,
-diff --git a/vdr.c b/vdr.c
-index 06c0c9a9..0036e170 100644
---- a/vdr.c
-+++ b/vdr.c
-@@ -1076,8 +1076,14 @@ int main(int argc, char *argv[])
+   mcMain,
+   mcSchedule,
+   mcScheduleNow,
+   mcScheduleNext,
+   mcChannel,
+diff -ru8bBwd a/vdr.c b/vdr.c
+--- a/vdr.c	2022-12-14 09:38:41.000000000 +0100
++++ b/vdr.c	2022-12-14 11:33:56.831726395 +0100
+@@ -1073,18 +1073,24 @@
+           if (ChannelSaveTimeout == 1) {
+              // Only one of them was modified, so we reset the state keys to handle them both in the next turn:
+              ChannelsStateKey.Reset();
+              TimersStateKey.Reset();
+              }
          }
          // Channel display:
          if (!EITScanner.Active() && cDevice::CurrentChannel() != LastChannel) {
 -           if (!Menu)
--              Menu = new cDisplayChannel(cDevice::CurrentChannel(), LastChannel >= 0);
 +           if (!Menu) {
 +               if (Setup.ZapcockpitEnabled) {
 +                   Menu = new cDisplayChannelExtended(cDevice::CurrentChannel(), LastChannel >= 0);
 +               } else {
-+                   Menu = new cDisplayChannel(cDevice::CurrentChannel(), LastChannel >= 0);
+               Menu = new cDisplayChannel(cDevice::CurrentChannel(), LastChannel >= 0);
 +               }
 +           }
 +
             LastChannel = cDevice::CurrentChannel();
             LastChannelChanged = Now;
             }
-@@ -1298,7 +1304,12 @@ int main(int argc, char *argv[])
+         if (Now - LastChannelChanged >= Setup.ZapTimeout && LastChannel != PreviousChannel[PreviousChannelIndex])
+            PreviousChannel[PreviousChannelIndex ^= 1] = LastChannel;
+         {
+           // Timers and Recordings:
+           static cStateKey TimersStateKey;
+@@ -1295,17 +1301,22 @@
+                }
+                break;
+           // Channel up/down:
+           case kChanUp|k_Repeat:
+           case kChanUp:
            case kChanDn|k_Repeat:
            case kChanDn:
                 if (!Interact) {
--                  Menu = new cDisplayChannel(NORMALKEY(key));
 +                   if (Setup.ZapcockpitEnabled) {
 +                       Menu = new cDisplayChannelExtended(NORMALKEY(key));
 +                       Menu->ProcessKey(NORMALKEY(key));
 +                   } else {
-+                       Menu = new cDisplayChannel(NORMALKEY(key));
+                   Menu = new cDisplayChannel(NORMALKEY(key));
 +                   }
                    continue;
                    }
                 else if (cDisplayChannel::IsOpen() || Control) {
-@@ -1497,7 +1508,12 @@ int main(int argc, char *argv[])
+                   Interact->ProcessKey(key);
+                   continue;
+                   }
+                else
+                   cDevice::SwitchChannel(NORMALKEY(key) == kChanUp ? 1 : -1);
+@@ -1494,17 +1505,22 @@
+              case kPrev:
+              case kNext|k_Repeat:
+              case kNext:
+              // Up/Down Channel Select:
+              case kUp|k_Repeat:
               case kUp:
               case kDown|k_Repeat:
               case kDown:
--                  Menu = new cDisplayChannel(NORMALKEY(key));
 +                  if (Setup.ZapcockpitEnabled) {
 +                      Menu = new cDisplayChannelExtended(NORMALKEY(key));
 +                      Menu->ProcessKey(NORMALKEY(key));
 +                  } else {
-+                      Menu = new cDisplayChannel(NORMALKEY(key));
+                   Menu = new cDisplayChannel(NORMALKEY(key));
 +                  }
                    break;
               // Viewing Control:
               case kOk:   LastChannel = -1; break; // forces channel display
+              // Instant resume of the last viewed recording:
+              case kPlay:
+                   if (cReplayControl::LastReplayed()) {
+                      Control = NULL;
+                      cControl::Shutdown();
+Nur in b: vdr.c.orig.

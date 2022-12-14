@@ -107,3 +107,6 @@
 12.12.2022 (new VDR patch)
 - added VDR patch
   See https://www.vdr-portal.de/forum/index.php?thread/135372-announce-vdr-version-2-6-2-freigegeben/&postID=1354767#post1354767
+
+14.12.2022 (update VDR)
+- update VDR to 2.6.3, remove obsolete patches

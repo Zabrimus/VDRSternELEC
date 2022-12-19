@@ -90,7 +90,7 @@ or
 - ARCH: 
   - CoreELEC: ```arm```
   - LibreELEC: ```arm``` or another supported ARCH for LibreELEC
-- VDR_OUTPUTDEVICE: VDR output device, which is enabled by default, e.g. ```softhdodroid```, ```softhddevice-drm``` or another one from the [available packages](packages/vdr)
+- VDR_OUTPUTDEVICE: VDR output device, which is enabled by default, e.g. ```softhdodroid```, ```softhddevice-drm```, ```softhddevice-drm-gles``` or another one from the [available packages](packages/vdr)
 - VDR_INPUTDEVICE: VDR input device, which is enabled by default, e.g. ```satip``` or ```streamdev-client```
 
 #### Addons

@@ -8,8 +8,8 @@ REVISION=
 VARIANT=
 
 # Build settings
-PROJECT=Allwinner
-DEVICE=H2-plus
+PROJECT=RPi
+DEVICE=RPi4
 ARCH=arm
 
 # VDR settings

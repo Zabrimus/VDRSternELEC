@@ -116,12 +116,25 @@ Usage: ./build.sh -config <name> [-extras <name,name> -addon <name,name>]
 -help   : Show this help
 
 Available configs:
-CoreELEC-19                   LibreELEC-master-aarch64                LibreELEC-master-arm-Allwinner-R40
-CoreELEC-19.4-Matrix          LibreELEC-master-arm-Allwinner-A64      LibreELEC-master-arm-AMLGX
-CoreELEC-20                   LibreELEC-master-arm-Allwinner-H2-plus  LibreELEC-master-arm-Rockchip-RK3399
-LibreELEC-10.0-aarch64-AMLGX  LibreELEC-master-arm-Allwinner-H3       LibreELEC-master-x86_64-x11
-LibreELEC-10.0-arm-AMLGX      LibreELEC-master-arm-Allwinner-H5       LibreELEC-master-x86_64-x11-qemu
-LibreELEC-10.0-x86_64         LibreELEC-master-arm-Allwinner-H6
+CoreELEC-19
+CoreELEC-19.4-Matrix
+CoreELEC-20
+LibreELEC-10.0-aarch64-AMLGX
+LibreELEC-10.0-arm-AMLGX
+LibreELEC-10.0-x86_64
+LibreELEC-master-aarch64
+LibreELEC-master-arm-Allwinner-A64
+LibreELEC-master-arm-Allwinner-H3
+LibreELEC-master-arm-Allwinner-H5
+LibreELEC-master-arm-Allwinner-H6
+LibreELEC-master-arm-Allwinner-R40
+LibreELEC-master-arm-AMLGX
+LibreELEC-master-arm-Rockchip-RK3288
+LibreELEC-master-arm-Rockchip-RK3328
+LibreELEC-master-arm-Rockchip-RK3399
+LibreELEC-master-arm-RPi-RPi4
+LibreELEC-master-x86_64-x11
+LibreELEC-master-x86_64-x11-qemu
 
 Available extras:
 directfb

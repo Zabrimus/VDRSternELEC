@@ -9,7 +9,7 @@ VARIANT=
 
 # Build settings
 PROJECT=Rockchip
-DEVICE=RK3399
+DEVICE=RK3328
 ARCH=arm
 
 # VDR settings

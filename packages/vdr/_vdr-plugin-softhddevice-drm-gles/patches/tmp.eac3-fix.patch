@@ -1,0 +1,22 @@
+diff -ru8bBwd a/softhddev.c b/softhddev.c
+--- a/softhddev.c	2022-06-26 21:45:19.000000000 +0200
++++ b/softhddev.c	2022-08-30 06:58:00.332040165 +0200
+@@ -380,17 +380,17 @@
+     if (size < 5) {			// need 5 bytes to see if AC-3/E-AC-3
+ 	return -5;
+     }
+ 
+     if (data[5] > (10 << 3)) {		// E-AC-3
+ 	if ((data[4] & 0xF0) == 0xF0) {	// invalid fscod fscod2
+ 	    return 0;
+ 	}
+-	frame_size = ((data[2] & 0x03) << 8) + data[3] + 1;
++	frame_size = ((data[2] & 0x07) << 8) + data[3] + 1;
+ 	frame_size *= 2;
+     } else {				// AC-3
+ 	int fscod;
+ 	int frmsizcod;
+ 
+ 	// crc1 crc1 fscod|frmsizcod
+ 	fscod = data[4] >> 6;
+ 	if (fscod == 0x03) {		// invalid sample rate

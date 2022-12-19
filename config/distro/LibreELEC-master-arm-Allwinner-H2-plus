@@ -13,5 +13,5 @@ DEVICE=H2-plus
 ARCH=arm
 
 # VDR settings
-VDR_OUTPUTDEVICE=softhddevice-drm
+VDR_OUTPUTDEVICE=softhddevice-drm-gles
 VDR_INPUTDEVICE=streamdev-client

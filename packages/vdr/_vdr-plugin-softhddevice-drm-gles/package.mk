@@ -1,18 +1,19 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-PKG_NAME="_vdr-plugin-softhddevice-drm"
+PKG_NAME="_vdr-plugin-softhddevice-drm-gles"
 
-PKG_VERSION="fb8209749bd7d927a4f586e89810911f8c6e36e8"
-PKG_SHA256="57bbcde7a5c751233f0076484b027563af20249c1193440986f0a3d8a36a4d0f"
-PKG_SITE="https://github.com/zillevdr/vdr-plugin-softhddevice-drm"
-PKG_URL="https://github.com/zillevdr/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
+PKG_VERSION="de6af864627488550288a31b9c45398fe4c56e9d"
+PKG_SHA256="46b6c84fb7fb0808182d6fdacc54b5a18d9b22530155c4a37256531e57039e07"
+PKG_SITE="https://github.com/rellla/vdr-plugin-softhddevice-drm"
+PKG_URL="https://github.com/rellla/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
+PKG_BRANCH="drm-atomic-gles"
 
 PKG_LICENSE="GPL"
 
 PKG_SOURCE_DIR="vdr-plugin-softhddevice-drm-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain glm alsa freetype ffmpeg _vdr libdrm"
+PKG_DEPENDS_TARGET="toolchain glm alsa freetype ffmpeg _vdr libdrm mesa"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
-PKG_LONGDESC="VDR Output Device (softhddevice-drm)"
+PKG_LONGDESC="VDR Output Device (softhddevice-drm-gles)"
 PKG_TOOLCHAIN="manual"
 
 pre_configure_target() {
@@ -24,7 +25,7 @@ make_target() {
   export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
   export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
 
-  make
+  make GLES=1
 }
 
 makeinstall_target() {
@@ -32,7 +33,7 @@ makeinstall_target() {
   LIB_DIR=${LOC_DIR}/../../lib/vdr
   VDRDIR=${VDR_DIR}
 
-  make VDRDIR=${VDR_DIR} LOCDIR="${LOC_DIR}" LIBDIR="${LIB_DIR}" install
+  make VDRDIR=${VDR_DIR} LOCDIR="${LOC_DIR}" LIBDIR="${LIB_DIR}" GLES=1 install
 }
 
 post_makeinstall_target() {
@@ -48,5 +49,5 @@ post_makeinstall_target() {
   VERSION=$(pkg-config --variable=apiversion vdr)
   cd ${INSTALL}
   mkdir -p ${INSTALL}/usr/local/config/
-  zip -qrum9 "${INSTALL}/usr/local/config/softhddevice-drm-sample-config.zip" storage
+  zip -qrum9 "${INSTALL}/usr/local/config/softhddevice-drm-gles-sample-config.zip" storage
 }

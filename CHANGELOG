@@ -116,3 +116,7 @@
 
 18.12.2002 (plugin update)
 - update softhddevice
+
+19.12.2002 (plugin update)
+- rellla/softhddevice-drm was renamed to softhddevice-drm-gles
+- switch to softhddevice-drm-gles for Allwinner

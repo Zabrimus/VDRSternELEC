@@ -114,9 +114,16 @@
 17.12.2022 (plugin update)
 - update skinnopacity
 
-18.12.2002 (plugin update)
+18.12.2022 (plugin update)
 - update softhddevice
 
-19.12.2002 (plugin update)
+19.12.2022 (plugin update, new distros)
 - rellla/softhddevice-drm was renamed to softhddevice-drm-gles
 - switch to softhddevice-drm-gles for Allwinner
+
+20.12.2022 (plugin update)
+- update plugins
+  live, skinenigmang, skinflatplus, softhdcuvid, softhdvaapi, vnsiserver, zaphistory
+- added VDR patch 0001-Restore-volume.patch
+  See https://www.vdr-portal.de/forum/index.php?thread/135403-volume-beim-vdr-start/&postID=1354961#post1354961
+

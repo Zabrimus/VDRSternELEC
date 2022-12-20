@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-skinenigmang"
-PKG_VERSION="dbcd3e6bb9ec0087787d2bedc4528d5925c90d71"
-PKG_SHA256="526aaaaf1b72995bc940acba2fbf5f16521455e409b2c2e932ea6baf4b3e4308"
+PKG_VERSION="8cb81b890dbb2770660adc5b3f927e01418abd64"
+PKG_SHA256="d7fe17a16b130913c245ef0d0c21c3af5e86cabec715d680360e25f91de743fc"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-skinenigmang"
-PKG_URL="https://github.com/vdr-projects/vdr-plugin-skinenigmang/archive/dbcd3e6bb9ec0087787d2bedc4528d5925c90d71.zip"
+PKG_URL="https://github.com/vdr-projects/vdr-plugin-skinenigmang/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="vdr-plugin-skinenigmang-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _graphicsmagick"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"

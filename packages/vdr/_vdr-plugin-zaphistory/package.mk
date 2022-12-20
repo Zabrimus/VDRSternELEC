@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-zaphistory"
-PKG_VERSION="484b48a61c841a72c12c3a347bbafd0b96826da3"
-PKG_SHA256="b4768d0c43986cb648b5bf4a9131a1a616be8c9f2d17068b54adb70e976ec4cc"
+PKG_VERSION="bf75bc764bb6510386db646295f62d74df4cc911"
+PKG_SHA256="79749c3e9b5a8ef00b7613b01a9173ec25254d9c9a14bab303624394f6b1a66c"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-zaphistory"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-zaphistory/archive/${PKG_VERSION}.zip"

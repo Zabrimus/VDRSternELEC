@@ -2,9 +2,13 @@
 
 set -e
 
-# dummy method
+# dummy methods
 get_pkg_directory() {
   echo "H"
+}
+
+target_has_feature() {
+  return 1
 }
 
 # find all package.mk und try to check, if an update exists

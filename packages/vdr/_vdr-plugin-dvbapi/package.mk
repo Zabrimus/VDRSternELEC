@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-dvbapi"
-PKG_VERSION="c5f3648c8f0bb7213280253bad106a6a3e113b9e"
-PKG_SHA256="4a8eb5b645f0dcd4d6333ed39c0cc7ae5686c43c2e369e53691e51f3a857ed3a"
+PKG_VERSION="28fc0c9670427d74010365772077b507bdd5e096"
+PKG_SHA256="183356e9e877345f54e6df0e9a274b367e649438003619845ebff485cb5dbf3c"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/manio/vdr-plugin-dvbapi"
 PKG_URL="https://github.com/manio/vdr-plugin-dvbapi/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain _vdr libdvbcsa"
+PKG_DEPENDS_TARGET="toolchain _vdr _libdvbcsa"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="VDR dvbapi plugin for use with OSCam"
 PKG_TOOLCHAIN="manual"
@@ -20,7 +20,7 @@ make_target() {
   export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
   export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
 
-  make LIBDVBCSA=1
+  make LIBDVBCSA_NEW=1
 }
 
 makeinstall_target() {

@@ -3,13 +3,11 @@
 PKG_NAME="_vdr-plugin-softhddevice-drm-gles"
 
 PKG_VERSION="aa293fe8b0eee4f21badfe93dab25528477d1b96"
-PKG_SHA256="cba6e4740a19938baf74ff56a9677e8e0bc581bd34b08725d280c0120fda0084ls"
+PKG_SHA256="cba6e4740a19938baf74ff56a9677e8e0bc581bd34b08725d280c0120fda0084"
 PKG_SITE="https://github.com/rellla/vdr-plugin-softhddevice-drm"
 PKG_URL="https://github.com/rellla/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="drm-atomic-gles"
-
 PKG_LICENSE="GPL"
-
 PKG_SOURCE_DIR="vdr-plugin-softhddevice-drm-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain glm alsa freetype ffmpeg _vdr libdrm mesa"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"

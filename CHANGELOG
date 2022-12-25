@@ -127,3 +127,6 @@
 - added VDR patch 0001-Restore-volume.patch
   See https://www.vdr-portal.de/forum/index.php?thread/135403-volume-beim-vdr-start/&postID=1354961#post1354961
 
+25.12.2022 (plugin update)
+- update plugins
+  live, markad, skinflatplus, softhddevice-drm-gles

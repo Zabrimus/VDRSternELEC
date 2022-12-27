@@ -1,0 +1,17 @@
+# one of BRANCH, TAG or REVISION is mandatory
+DISTRO=CoreELEC
+BRANCH=coreelec-20-5.4
+TAG=
+REVISION=
+
+# Use project variant
+VARIANT=
+
+# Build settings
+PROJECT=Amlogic-ce
+DEVICE=Amlogic-ne
+ARCH=arm
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhdodroid
+VDR_INPUTDEVICE=satip

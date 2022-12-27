@@ -1,0 +1,22 @@
+diff -ru8bBwd a/projects/Amlogic-ce/devices/Amlogic-ne/packages/opengl-meson/package.mk b/projects/Amlogic-ce/devices/Amlogic-ne/packages/opengl-meson/package.mk
+--- a/projects/Amlogic-ce/devices/Amlogic-ne/packages/opengl-meson/package.mk	2022-12-27 14:05:20.285372110 +0100
++++ b/projects/Amlogic-ce/devices/Amlogic-ne/packages/opengl-meson/package.mk	2022-12-27 14:59:23.418674878 +0100
+@@ -40,16 +40,18 @@
+   mkdir -p ${INSTALL}/usr/sbin
+     cp ${PKG_DIR}/scripts/libmali-overlay-setup ${INSTALL}/usr/sbin
+   # install needed files for compiling
+   mkdir -p ${SYSROOT_PREFIX}/usr/include/EGL
+     cp -pr include/EGL ${SYSROOT_PREFIX}/usr/include
+     cp -pr include/EGL_platform/platform_fbdev/* ${SYSROOT_PREFIX}/usr/include/EGL
+   mkdir -p ${SYSROOT_PREFIX}/usr/include/GLES2
+     cp -pr include/GLES2 ${SYSROOT_PREFIX}/usr/include
++  mkdir -p ${SYSROOT_PREFIX}/usr/include/GLES3
++    cp -pr include/GLES3 ${SYSROOT_PREFIX}/usr/include
+   mkdir -p ${SYSROOT_PREFIX}/usr/include/KHR
+     cp -pr include/KHR ${SYSROOT_PREFIX}/usr/include
+   mkdir -p ${SYSROOT_PREFIX}/usr/lib
+     cp -pr lib/pkgconfig ${SYSROOT_PREFIX}/usr/lib
+     ln ${INSTALL}/usr/lib/libMali.gondul.so ${SYSROOT_PREFIX}/usr/lib/libEGL.so
+     ln ${INSTALL}/usr/lib/libMali.gondul.so ${SYSROOT_PREFIX}/usr/lib/libGLESv2.so
+ }
+ 

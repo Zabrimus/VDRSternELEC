@@ -131,5 +131,7 @@
 - update plugins
   live, markad, skinflatplus, softhddevice-drm-gles, dvbapi
 
-27.12.2022 (new Distro)
+27.12.2022 (new Distro, added VDR patch)
 - added new distro CoreELEC-20-ne
+- added VDR patch for live pause
+  See https://www.vdr-portal.de/forum/index.php?thread/135408-ab-vdr-2-6-3-meldung-zeitversetzte-aufnahme-l%C3%B6schen-bei-wiedergabestart/&postID=1355243#post1355243

@@ -127,6 +127,10 @@ if [ "${EXTRA_DIRECTFB2SAMPLES}" = "y" ]; then
 	#PKG_DEPENDS_TARGET+=" _DirectFB2-media-samples"
 fi
 
+if [ "${EXTRA_CHANNELLOGOS}" = "y" ]; then
+	PKG_DEPENDS_TARGET+=" _MP_Logos"
+fi
+
 post_install() {
   if [ "${PROJECT} = "Amlogic-ce" ] || [ "${PROJECT} = "Amlogic" ]; then
      # Fix some links

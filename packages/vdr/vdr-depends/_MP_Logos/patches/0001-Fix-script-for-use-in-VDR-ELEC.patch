@@ -1,0 +1,55 @@
+From b50ee15494cb4e04bc469e20b2879f5afd6d5bf3 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Tue, 3 Jan 2023 12:04:14 +0100
+Subject: [PATCH] Fix script for use in VDR*ELEC
+
+Logo conversion is not working. Logos are png in standard size an light version.
+---
+ mp_logos.sh | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/mp_logos.sh b/mp_logos.sh
+index 4aef41f..66f8646 100755
+--- a/mp_logos.sh
++++ b/mp_logos.sh
+@@ -49,15 +49,19 @@ f_process_channellogo() {  # Verlinken der Senderlogos zu den gefundenen Kanäle
+   if [[ "$USE_SVG" == 'true' ]] ; then  # Die Originalen *.svg-Logos verwenden
+     EXT='svg'  # Erweiterung der Logo-Datei
+     if [[ "$LOGO_VARIANT" =~ 'Light' ]] ; then
++      LOGO_NAME="${MODE}/${FILE%.*}.${EXT}"
+       LOGO_FILE="${MP_LOGODIR}/${MODE}/${FILE%.*}.${EXT}"  # Light
+     else
++      LOGO_NAME="${MODE}/${FILE%.*} - Dark.${EXT}"  # Dark
+       LOGO_FILE="${MP_LOGODIR}/${MODE}/${FILE%.*} - Dark.${EXT}"  # Dark
+       if [[ ! -e "$LOGO_FILE" ]] ; then
+         f_log WARN "Logo $LOGO_FILE nicht gefunden! Verwende 'Light'-Version."
++        LOGO_NAME="${MODE}/${FILE%.*}.${EXT}"  # Fallback auf Light
+         LOGO_FILE="${MP_LOGODIR}/${MODE}/${FILE%.*}.${EXT}"  # Fallback auf Light
+       fi
+     fi
+   else  # Normaler Modus mit PNG-Logos
++    LOGO_NAME="${MODE}/${LOGO_VARIANT}/${FILE}"
+     LOGO_FILE="${MP_LOGODIR}/${MODE}/${LOGO_VARIANT}/${FILE}"
+   fi
+ 
+@@ -79,7 +83,7 @@ f_process_channellogo() {  # Verlinken der Senderlogos zu den gefundenen Kanäle
+       if [[ "$USE_PLAIN_LOGO" == 'true' ]] ; then
+         f_log INFO "Verlinke neue Datei (${FILE}) mit $channel"
+         # Symlink erstellen (--force überschreibt bereits existierenen Link)
+-        ln -f -s "$LOGO_FILE" "${LOGODIR}/${channel}" || \
++        ln -f -s "/usr/local/vdrshare/logofiles/$LOGO_NAME" "${LOGODIR}/${channel}" || \
+           { f_log ERR "Symbolischer Link \"${LOGODIR}/${channel}\" konnte nicht erstellt werden!" ; continue ;}
+       else
+         logoname="${LOGO_FILE##*/}"
+@@ -274,8 +278,6 @@ for line in "${mapping[@]}" ; do
+   esac
+ done
+ 
+-find "$LOGODIR" -xtype l -delete >> "${LOGFILE:-/dev/null}"  # Alte (defekte) Symlinks löschen
+-
+ [[ -n "$PROV" ]] && f_log "==> ${NO_CHANNEL:-Keine} Kanäle ohne Provider (${PROV}) in LogoMapping.xml"
+ [[ -n "$CHANNELSCONF" && "$NOPROV" -gt 0 ]] && f_log "==> $NOPROV Kanäle ohne Provider wurden in der Kanalliste gefunden"
+ f_log "==> ${N_LOGO:-0} neue oder aktualisierte Kanäle verlinkt (Vorhandene Logos: ${LOGO})"
+-- 
+2.30.2
+

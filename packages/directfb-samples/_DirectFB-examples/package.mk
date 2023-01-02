@@ -3,10 +3,10 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_DirectFB-examples"
-PKG_VERSION="a4be967abe06d1aee6f469cef584133d3ce889ff"
-PKG_SHA256="1a2d94a86b74371477b74f26c60398927e53cdbf26b0a8ead852fb45ee5591b4"
+PKG_VERSION="b053b7c8e62c5a45f167f3044143c71af2412305"
+PKG_SHA256="6dc7ff18297082057147c0bfc5e9eaebe02e508833914a0866c9df6ed709ea8d"
 PKG_LICENSE="LPGL"
-PKG_SITE="https://github.com/directfb2/DirectFB2"
+PKG_SITE="https://github.com/directfb2/DirectFB-examples"
 PKG_URL="https://github.com/directfb2/DirectFB-examples/archive/${PKG_VERSION}.zip"
 PKG_DEPENDS_TARGET="toolchain _directfb2"
 PKG_LONGDESC="DirectFB-examples contains simple applications that can be used to demonstrate and test various DirectFB features."

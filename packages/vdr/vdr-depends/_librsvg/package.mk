@@ -1,14 +1,17 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_librsvg"
+# PKG_VERSION="fb67478360b8b09a7b2cf52adedf95b02dd8c1df"
+# PKG_SHA256="4717ea3b342036a7f8612085ea84f01f21bb3822cc7c19a067e9895a37c7cebc"
+# PKG_URL="https://gitlab.gnome.org/GNOME/librsvg/-/archive/${PKG_VERSION}/librsvg-${PKG_VERSION}.tar.gz"
+
 PKG_VERSION="2.54"
 PKG_SHA256="baf8ebc147f146b4261bb3d0cd0fac944bf8dbb4b1f2347d23341f974dcc3085"
 PKG_LICENSE="LGPL 2.1"
 PKG_SITE="https://gitlab.gnome.org/GNOME/librsvg"
-PKG_URL="${SOURCEFORGE_SRC}/libpng/librsvg-${PKG_VERSION}.tar.xz"
 PKG_URL="https://download.gnome.org/sources/librsvg/${PKG_VERSION}/librsvg-${PKG_VERSION}.0.tar.xz"
+PKG_BRANCH="main"
 PKG_DEPENDS_HOST=""
-#PKG_DEPENDS_TARGET="toolchain cairo _rust gdk-pixbuf pango glib libjpeg-turbo libXft libpng jasper shared-mime-info tiff freetype gobject-introspection"
 PKG_DEPENDS_TARGET="toolchain cairo _rust gdk-pixbuf pango glib libjpeg-turbo libXft libpng jasper shared-mime-info tiff freetype"
 PKG_DEPENDS_CONFIG="shared-mime-info pango gdk-pixbuf pango libXft"
 PKG_LONGDESC="A library to render SVG images to Cairo surfaces."

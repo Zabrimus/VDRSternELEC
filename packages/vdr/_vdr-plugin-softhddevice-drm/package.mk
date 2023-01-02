@@ -6,9 +6,8 @@ PKG_VERSION="fb8209749bd7d927a4f586e89810911f8c6e36e8"
 PKG_SHA256="57bbcde7a5c751233f0076484b027563af20249c1193440986f0a3d8a36a4d0f"
 PKG_SITE="https://github.com/zillevdr/vdr-plugin-softhddevice-drm"
 PKG_URL="https://github.com/zillevdr/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
-
+PKG_BRANCH="drm"
 PKG_LICENSE="GPL"
-
 PKG_SOURCE_DIR="vdr-plugin-softhddevice-drm-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain glm alsa freetype ffmpeg _vdr libdrm"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"

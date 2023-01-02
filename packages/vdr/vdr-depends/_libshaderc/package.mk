@@ -3,7 +3,7 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_libshaderc"
-PKG_VERSION="2022.3"
+PKG_VERSION="2022.4"
 PKG_SHA256="c1dee49535cfdf86994990b21fe129a74bb0d628a647f4aae8905bd61df32607"
 PKG_LICENSE="Apache"
 PKG_SITE="https://github.com/google/shaderc"

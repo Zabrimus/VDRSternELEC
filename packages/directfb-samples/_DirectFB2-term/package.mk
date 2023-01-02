@@ -3,10 +3,10 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_DirectFB2-term"
-PKG_VERSION="68f1498e32d98b175b28725564122d3fd9f4dbee"
-PKG_SHA256="1c4f5ed1a899a32a5ee1a6ae82a8694a6686a73c89947907c04995e6b776c9cb"
+PKG_VERSION="c6e3d58e7b3a1a789bde9afd172d143a5610a313"
+PKG_SHA256="d5d2ca1c06d215f86064bdc597e1531f557f779989611a1913df837b669b86c9"
 PKG_LICENSE="LPGL"
-PKG_SITE="https://github.com/directfb2/DirectFB2"
+PKG_SITE="https://github.com/directfb2/DFBTerm"
 PKG_URL="https://github.com/directfb2/DFBTerm/archive/${PKG_VERSION}.zip"
 PKG_DEPENDS_TARGET="toolchain _directfb2 _DirectFB-LiTE"
 PKG_LONGDESC="DFBTerm is a terminal emulator runnning on DirectFB and based on libzvt."

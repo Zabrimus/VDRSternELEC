@@ -4,7 +4,7 @@
 
 PKG_NAME="_libshaderc"
 PKG_VERSION="2022.4"
-PKG_SHA256="c1dee49535cfdf86994990b21fe129a74bb0d628a647f4aae8905bd61df32607"
+PKG_SHA256="a948436f2eca403026fe2c900df0108a0f4972005230817d805c43d96554c9ea"
 PKG_LICENSE="Apache"
 PKG_SITE="https://github.com/google/shaderc"
 PKG_URL="https://github.com/google/shaderc/archive/refs/tags/v${PKG_VERSION}.tar.gz"

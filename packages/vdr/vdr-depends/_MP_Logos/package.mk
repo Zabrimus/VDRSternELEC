@@ -13,18 +13,25 @@ PKG_TOOLCHAIN="manual"
 make_target() {
     export MP_LOGODIR="$(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logofiles"
     export MAPPING="$(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logofiles/LogoMapping.xml"
-    export LOGODIR="${PKG_BUILD}/logos"
     export AUTO_UPDATE="false"
-    export LOGO_VARIANT="Light"
     export TO_LOWER="A-Z"
 
     touch ${PKG_BUILD}/mp_logos.conf
-
-    mkdir -p ${LOGODIR}
-
     cd ${MP_LOGODIR}
-    bash ${PKG_BUILD}/mp_logos.sh -c ${PKG_BUILD}/mp_logos.conf
 
-    mkdir -p ${INSTALL}/usr/local/vdrshare/logos
+# Link "Light" variant
+    export LOGO_VARIANT="Light"
+    export LOGODIR="${PKG_BUILD}/logos${LOGO_VARIANT}"
+    mkdir -p ${LOGODIR}
+    bash ${PKG_BUILD}/mp_logos.sh -c ${PKG_BUILD}/mp_logos.conf
+    mkdir -p ${INSTALL}/usr/local/vdrshare/logos${LOGO_VARIANT}
+    cp -R ${LOGODIR} ${INSTALL}/usr/local/vdrshare
+
+# Link "Dark" variant
+    export LOGO_VARIANT="Dark"
+    export LOGODIR="${PKG_BUILD}/logos${LOGO_VARIANT}"
+    mkdir -p ${LOGODIR}
+    bash ${PKG_BUILD}/mp_logos.sh -c ${PKG_BUILD}/mp_logos.conf
+    mkdir -p ${INSTALL}/usr/local/vdrshare/logos${LOGO_VARIANT}
     cp -R ${LOGODIR} ${INSTALL}/usr/local/vdrshare
 }

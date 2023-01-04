@@ -140,6 +140,7 @@ Available extras:
 directfb
 directfbsamples
 dynamite
+channellogos
 easyvdr
 permashift
 
@@ -230,6 +231,9 @@ LibreELEC and CoreELEC use kernel built-in remote support as default. See [Libre
 
 ### Enabled plugins
 ```/storage/.config/vdropt/enabled_plugins``` contains a list of the plugins to autostart with VDR. Simply edit the file and add other plugins of your choice to the already pre-activated ones. 
+
+### Channel logos
+```/usr/local/vdrshare/logos``` contains the channel logos, if they have been built with ```-e channellogos```. 
 
 ### VDR specific configuration
 After basic configuration is done you probably need to adapt VDR's conf files.  

@@ -1,0 +1,53 @@
+From 5b3d3a8fd9121654469bf19b02f8c2be61e9735b Mon Sep 17 00:00:00 2001
+From: FireFly <christoph1.haubrich@arcor.de>
+Date: Mon, 17 Oct 2022 16:16:29 +0200
+Subject: [PATCH 1/2] fix missing retune resulting in black screen
+
+(cherry picked from commit 0f20f764bce549f7866ab19a91d0850397de21ea)
+---
+ tuner.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tuner.c b/tuner.c
+index c6670bb..bfa3d41 100644
+--- a/tuner.c
++++ b/tuner.c
+@@ -244,6 +244,7 @@ bool cSatipTuner::Connect(void)
+         if (useTcp)
+            debug1("%s Requesting TCP [device %d]", __PRETTY_FUNCTION__, deviceIdM);
+         if (rtspM.Setup(*uri, rtpM.Port(), rtcpM.Port(), useTcp)) {
++           lastParamM = streamParamM;
+            keepAliveM.Set(timeoutM);
+            if (nextServerM.IsValid()) {
+               currentServerM = nextServerM;
+
+From 7a02076d8b88962628f1bbe3a5b0082a75d26041 Mon Sep 17 00:00:00 2001
+From: FireFly <christoph1.haubrich@arcor.de>
+Date: Mon, 17 Oct 2022 16:18:53 +0200
+Subject: [PATCH 2/2] avoid empty and therefore useless requests to SATIP
+ server
+
+(cherry picked from commit 275afb68bc6a8a7fdc91600c8869815008c94d6d)
+---
+ tuner.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/tuner.c b/tuner.c
+index bfa3d41..b5af331 100644
+--- a/tuner.c
++++ b/tuner.c
+@@ -553,9 +553,11 @@ bool cSatipTuner::UpdatePids(bool forceP)
+            tnrParamM = param;
+            }
+         }
+-     pidUpdateCacheM.Set(ePidUpdateIntervalMs);
+-     if (!rtspM.Play(*uri))
+-        return false;
++     if (paramadded) {
++        pidUpdateCacheM.Set(ePidUpdateIntervalMs);
++        if (!rtspM.Play(*uri))
++           return false;
++        }
+      addPidsM.Clear();
+      delPidsM.Clear();
+      }

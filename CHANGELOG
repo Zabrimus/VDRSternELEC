@@ -139,3 +139,6 @@
 01.01.2023 (plugin update)
 - update plugins
   live, markad, softhddevice
+
+04.01.2023 (satip patch)
+- added temp. patch (pull request #84 for vdr-plugin-satip)

@@ -13,11 +13,15 @@ PKG_TOOLCHAIN="manual"
 make_target() {
     INSTALLPATH="${INSTALL}/usr/local/vdrshare/logofiles"
 
-    mkdir -p ${INSTALLPATH}/Radio
-    cp -R ${PKG_BUILD}/Radio ${INSTALLPATH}
+    mkdir -p ${INSTALLPATH}/Radio/.Light
+    cp -R ${PKG_BUILD}/Radio/.Light ${INSTALLPATH}/Radio
+    mkdir -p ${INSTALLPATH}/Radio/.Dark
+    cp -R ${PKG_BUILD}/Radio/.Dark ${INSTALLPATH}/Radio
 
-    mkdir -p ${INSTALLPATH}/TV
-    cp -R ${PKG_BUILD}/TV ${INSTALLPATH}
+    mkdir -p ${INSTALLPATH}/TV/.Light
+    cp -R ${PKG_BUILD}/TV/.Light ${INSTALLPATH}/TV
+    mkdir -p ${INSTALLPATH}/TV/.Dark
+    cp -R ${PKG_BUILD}/TV/.Dark ${INSTALLPATH}/TV
 
     cp  ${PKG_BUILD}/LogoMapping.xml ${INSTALLPATH}/LogoMapping.xml
 }

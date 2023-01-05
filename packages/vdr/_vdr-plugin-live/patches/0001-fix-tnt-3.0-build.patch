@@ -7,17 +7,21 @@ Subject: [PATCH] fix tnt 3.0 build
  Makefile | 7 -------
  1 file changed, 7 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 02a7271..118816b 100644
---- a/Makefile
-+++ b/Makefile
-@@ -38,16 +38,9 @@ APIVERSION := $(call PKGCFG,apiversion)
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2023-01-04 18:49:07.000000000 +0100
++++ b/Makefile	2023-01-05 17:29:15.533846214 +0100
+@@ -33,26 +33,19 @@
+ APIVERSION := $(call PKGCFG,apiversion)
+ 
+ ### Allow user defined options to overwrite defaults:
+ -include $(PLGCFG)
+ 
  include global.mk
-
+ 
  ### Determine tntnet and cxxtools versions:
 -TNTNET-CONFIG := $(shell which tntnet-config 2>/dev/null)
 -ifeq ($(TNTNET-CONFIG),)
- TNTVERSION = $(shell pkg-config --modversion tntnet | sed -e's/\.//g' | sed -e's/pre.*//g' | awk '/^..$$/ { print $$1."000"} /^...$$/ { print $$1."00"} /^....$$/ { print $$1."0" } /^.....$$/ { print $$1 }')
+ TNTVERSION := $(shell pkg-config --modversion tntnet | sed -e's/\.//g' | sed -e's/pre.*//g' | awk '/^..$$/ { print $$1."000"} /^...$$/ { print $$1."00"} /^....$$/ { print $$1."0" } /^.....$$/ { print $$1 }')
  CXXFLAGS  += $(shell pkg-config --cflags tntnet)
  LIBS      += $(shell pkg-config --libs tntnet)
 -else
@@ -25,9 +29,11 @@ index 02a7271..118816b 100644
 -CXXFLAGS  += $(shell tntnet-config --cxxflags)
 -LIBS      += $(shell tntnet-config --libs)
 -endif
-
+ 
  # $(info $$TNTVERSION is [${TNTVERSION}])
-
---
-2.30.2
-
+ 
+ CXXTOOLVER := $(shell cxxtools-config --version | sed -e's/\.//g' | sed -e's/pre.*//g' | awk '/^..$$/ { print $$1."000"} /^...$$/ { print $$1."00"} /^....$$/ { print $$1."0" } /^.....$$/ { print $$1 }')
+ 
+ 
+ ### Optional configuration features
+ PLUGINFEATURES :=

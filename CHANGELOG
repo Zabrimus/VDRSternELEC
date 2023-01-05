@@ -142,3 +142,7 @@
 
 04.01.2023 (satip patch)
 - added temp. patch (pull request #84 for vdr-plugin-satip)
+
+05.01.2023 (plugin update)
+- update plugin
+  satip, live, osd2web, skinflatplus

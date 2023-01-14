@@ -2,5 +2,5 @@
 
 set -e
 
-sed -i 's:# cache packages folder:# cache VDR packages\n    find "${ROOT}/../${PACKAGES}" -type f -name package.mk 2>/dev/null | sed "s#/package\.mk\\$#${_ANCHOR}#" >> "${temp_global}"\n\n    # cache packages folder:g' config/functions
+sed -i 's:# cache packages folder:# cache VDR packages\n    find "${ROOT}/../${PACKAGES}" -type f -name package.mk 2>/dev/null | sed -e "s#CoreELEC/../##g" | sed -e "s#LibreELEC/../##g" | sed "s#/package\.mk\\$#${_ANCHOR}#" >> "${temp_global}"\n\n    # cache packages folder:g' config/functions
 

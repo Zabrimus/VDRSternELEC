@@ -88,23 +88,13 @@ update() {
 
     if [[ $PKG_SITE =~ github ]] || [[ $PKG_SITE =~ gitlab ]]; then
       COUNT_BRANCHES=$(git ls-remote -h $PKG_SITE | wc -l)
+
       PKG_BRANCH_DEFAULT=`git ls-remote --symref "$PKG_SITE" HEAD | sed -nE 's|^ref: refs/heads/(\S+)\s+HEAD|\1|p'`
       if [[ -z ${PKG_BRANCH} ]]; then
          PKG_BRANCH=$PKG_BRANCH_DEFAULT
       fi
-      if [[ -z ${PKG_BRANCH} ]] && [[ ${COUNT_BRANCHES} -ge 2 ]]; then
-         echo "Warning: ${PKG_SITE} -> PKG_BRANCH not found, but there exists multiple branches"
-      fi
 
-      if [[ -z $PKG_BRANCH ]]; then
-        LATEST=$(git ls-remote -h $PKG_SITE | head -1 | awk -F' '  '{ print $1 }')
-      else
-        LATEST=$(git ls-remote -h $PKG_SITE | grep $PKG_BRANCH | head -1 | awk -F' '  '{ print $1 }')
-      fi
-
-      if [[ -z $LATEST ]]; then
-          continue
-      fi
+      LATEST=$(git ls-remote -h $PKG_SITE | grep $PKG_BRANCH | head -1 | awk -F' '  '{ print $1 }')
 
       if [ ! "$PKG_VERSION" == "$LATEST" ]; then
           echo "$PKG_NAME - found new version"

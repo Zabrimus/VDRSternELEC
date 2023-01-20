@@ -2,3 +2,9 @@
 /sources/
 /.idea/
 /analyze/
+/build-all.sh
+/mybuild.sh
+/mybuild-20.sh
+/mybuild-20-ne.sh
+/mybuild-amlgx.sh
+/mybuild-x86.sh

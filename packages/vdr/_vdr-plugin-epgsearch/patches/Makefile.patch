@@ -1,6 +1,6 @@
-diff -u8bBw a/Makefile b/Makefile
---- a/Makefile	2021-05-25 20:37:46.000000000 +0200
-+++ b/Makefile	2022-03-25 17:48:05.320781811 +0100
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2023-01-09 19:58:55.000000000 +0100
++++ b/Makefile	2023-01-20 07:31:19.540272670 +0100
 @@ -64,17 +64,17 @@
  
  # Use package data if installed...otherwise assume we're under the VDR source directory:
@@ -20,7 +20,7 @@ diff -u8bBw a/Makefile b/Makefile
  TMPDIR ?= /tmp
  
  PLGCFG = $(call PKGCFG,plgcfg)
-@@ -289,29 +289,29 @@
+@@ -294,29 +294,29 @@
  	ln -sf ./doc/de/epgsearch.1.txt README.DE
  	@rm -f $(DEPFILE_stmp)
  	@date > $(DEPFILE_stmp)
@@ -51,6 +51,6 @@ diff -u8bBw a/Makefile b/Makefile
  	mkdir -p $(DESTDIR)$(CONFDIR)/plugins/$(PLUGIN)/conf.d
  	cp -n conf/* $(DESTDIR)$(CONFDIR)/plugins/$(PLUGIN)
  
- install-doc:
+ install-doc: docs
  	mkdir -p $(DESTDIR)$(MANDIR)/man1
  	mkdir -p $(DESTDIR)$(MANDIR)/man4

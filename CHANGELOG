@@ -158,3 +158,8 @@
 20.01.2023 (plugin update)
 - update plugins
   epgsearch, live, vnsiserver
+
+21.01.2023 (plugin update)
+- update plugin
+  scraper2vdr (See https://www.vdr-portal.de/forum/index.php?thread/135457-epgd-mit-tvdb-api-4/)
+

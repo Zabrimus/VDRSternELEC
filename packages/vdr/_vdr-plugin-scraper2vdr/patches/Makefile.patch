@@ -1,7 +1,7 @@
 diff -ru8bBw a/lib/Makefile b/lib/Makefile
---- a/lib/Makefile	2022-01-04 06:54:16.000000000 +0100
-+++ b/lib/Makefile	2022-04-27 13:51:27.555058842 +0200
-@@ -18,49 +18,49 @@
+--- a/lib/Makefile	2023-01-21 08:19:38.000000000 +0100
++++ b/lib/Makefile	2023-01-21 16:18:26.647329844 +0100
+@@ -18,17 +18,17 @@
     LIBOBJS += imgtools.o
  endif
  
@@ -20,18 +20,7 @@ diff -ru8bBw a/lib/Makefile b/lib/Makefile
  ifdef USEEPGS
  	LIBOBJS += searchtimer.o
  endif
- 
- ifdef USEPYTHON
--	BASELIBS += $(shell python-config --libs)
-+	BASELIBS += $(shell pkg-config --libs python3)
-    LIBOBJS += python.o
- endif
- 
- ifdef USELIBXML
-    BASELIBS += $(shell xml2-config --libs) $(shell xslt-config --libs)
- endif
- 
- ifdef SYSD_NOTIFY
+@@ -46,17 +46,17 @@
     BASELIBS  += $(shell pkg-config --libs libsystemd-daemon)
  	CFLAGS += $(shell pkg-config --cflags libsystemd-daemon)
  endif
@@ -45,46 +34,40 @@ diff -ru8bBw a/lib/Makefile b/lib/Makefile
  DEFINES += $(USES)
  
  ifdef USEPYTHON
--	CFLAGS += $(shell python-config --includes)
-+	CFLAGS += $(shell pkg-config --cflags python3)
+ 	CFLAGS += $(shell python-config --includes)
  endif
  
  all: lib $(TEST) $(DEMO)
  lib: $(LIBTARGET).a
- 
- $(LIBTARGET).a : $(LIBOBJS)
- 	@echo Building Lib ...
- 	$(doLib) $@ $(LIBOBJS)
 diff -ru8bBw a/Make.config b/Make.config
---- a/Make.config	2022-01-04 06:54:16.000000000 +0100
-+++ b/Make.config	2022-04-27 13:51:27.555058842 +0200
-@@ -14,17 +14,17 @@
- # internals
- 
- SQLCFG = mariadb_config
- 
- ifdef MYSQL
+--- a/Make.config	2023-01-21 08:19:38.000000000 +0100
++++ b/Make.config	2023-01-21 16:10:15.226051537 +0100
+@@ -19,17 +19,17 @@
    SQLCFG = mysql_config
  endif
  
--CC        = g++
-+CC        = $(CXX)
+ #USE_CLANG = 1
+ 
+ ifdef USE_CLANG
+   CC = clang++
+ else
+-  CC = g++
++  CC = $(CXX)
+ endif
+ 
  doCompile = $(CC) -c $(CFLAGS) $(DEFINES)
  doLink    = $(CC) $(LFLAGS)
  doLib     = ar -rs
  
  TMPDIR = /tmp
  
- USES = -DVDR_PLUGIN -DUSEUUID -DUSEMD5
- 
 diff -ru8bBw a/Makefile b/Makefile
---- a/Makefile	2022-01-04 06:54:16.000000000 +0100
-+++ b/Makefile	2022-04-27 13:52:03.563085109 +0200
-@@ -1,16 +1,16 @@
+--- a/Makefile	2023-01-21 08:19:38.000000000 +0100
++++ b/Makefile	2023-01-21 16:13:44.094770628 +0100
+@@ -1,15 +1,15 @@
  #
  # Makefile for a Video Disk Recorder plugin
  #
- # $Id$
  
  # External image lib to use: imagemagick, graphicsmagick
  
@@ -95,10 +78,10 @@ diff -ru8bBw a/Makefile b/Makefile
  HLIB   = -L./lib -lhorchi
  HISTFILE  = "HISTORY.h"
  
- ### The version number of this plugin (taken from the main source file):
+ include Make.config
  
- VERSION = $(shell grep 'define _VERSION ' $(HISTFILE) | awk '{ print $$3 }' | sed -e 's/[";]//g')
-@@ -20,17 +20,17 @@
+ ### The version number of this plugin (taken from the main source file):
+@@ -21,17 +21,17 @@
  LASTTAG     = $(shell git describe --tags --abbrev=0)
  BRANCH      = $(shell git rev-parse --abbrev-ref HEAD)
  GIT_REV = $(shell git describe --always 2>/dev/null)
@@ -113,21 +96,21 @@ diff -ru8bBw a/Makefile b/Makefile
  PLGCFG = $(call PKGCFG,plgcfg)
  CONFDEST = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
  
- SQLCFG = mariadb_config
+ TMPDIR ?= /tmp
  
- ifdef MYSQL
-   SQLCFG = mysql_config
-@@ -47,30 +47,30 @@
- ### The version number of VDR's plugin API:
+ ### The compiler options:
  
- APIVERSION = $(call PKGCFG,apiversion)
+@@ -44,30 +44,30 @@
  
  ### Allow user defined options to overwrite defaults:
  
  -include $(PLGCFG)
  
--LIBS = $(HLIB) $(shell $(SQLCFG) --libs_r) -luuid -lcrypto
-+LIBS = $(HLIB) $(shell pkg-config --libs libmariadb) -luuid -lcrypto
+ LIBS += $(HLIB)
+ LIBS += -lcrypto
+ LIBS += $(shell pkg-config --libs uuid)
+-LIBS += $(shell $(SQLCFG) --libs_r)
++LIBS += $(shell pkg-config --libs libmariadb)
  
  ### The name of the distribution archive:
  
@@ -150,7 +133,7 @@ diff -ru8bBw a/Makefile b/Makefile
     DEFINES += -DGIT_REV='"$(GIT_REV)"'
  endif
  
-@@ -134,17 +134,17 @@
+@@ -131,17 +131,17 @@
  install-i18n: $(I18Nmsgs)
  
  ### Targets:

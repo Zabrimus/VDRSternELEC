@@ -39,9 +39,9 @@ diff -ru8bBw a/Makefile b/Makefile
  CONFDEST = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
  HTTPDEST = $(CONFDEST)/http
  
- #
- 
  TMPDIR ?= /tmp
+ 
+ ### The version number of VDR's plugin API:
 @@ -133,17 +133,17 @@
  
  cbuild:

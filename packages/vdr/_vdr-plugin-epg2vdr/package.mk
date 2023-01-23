@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-epg2vdr"
-PKG_VERSION="c2a373bb23540a037dbc3969c3995d76e233a931"
-PKG_SHA256="2f1b1e6189bc9060920cf05fd918432a4c59ab66efee1768c0d91cdcc83ecfc0"
+PKG_VERSION="d701acfaa3654989ad7ce4f48105894b8794c833"
+PKG_SHA256="fc7949e9e98659b8258375e507e1bf0f19575683da535f2251ec0831de296a96"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/horchi/vdr-plugin-epg2vdr"
 PKG_URL="https://github.com/horchi/vdr-plugin-epg2vdr/archive/${PKG_VERSION}.zip"

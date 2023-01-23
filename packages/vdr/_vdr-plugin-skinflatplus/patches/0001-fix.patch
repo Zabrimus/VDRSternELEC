@@ -1,0 +1,28 @@
+From f490a483f3e76c230ecd21671ce77a97f708a03a Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Tue, 24 Jan 2023 18:00:17 +0100
+Subject: [PATCH] fix
+
+---
+ displaychannel.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/displaychannel.c b/displaychannel.c
+index b23019a7..67c6250a 100644
+--- a/displaychannel.c
++++ b/displaychannel.c
+@@ -479,9 +479,9 @@ void cFlatDisplayChannel::SetEvents(const cEvent *Present, const cEvent *Followi
+     if (!pScraper) // if it doesn't exit, try tvscraper
+         pScraper = cPluginManager::GetPlugin("tvscraper");
+     if (Config.TVScraperChanInfoShowPoster && pScraper) {
+-        ScraperGetPosterBanner call;
++        ScraperGetPosterBannerV2 call;
+         call.event = Present;
+-        if (pScraper->Service("GetPosterBanner", &call)) {
++        if (pScraper->Service("GetPosterBannerV2", &call)) {
+             if ((call.type == tSeries) && call.banner.path.size() > 0) {
+                 mediaWidth = call.banner.width * Config.TVScraperChanInfoPosterSize*100;
+                 mediaHeight = call.banner.height * Config.TVScraperChanInfoPosterSize*100;
+-- 
+2.30.2
+

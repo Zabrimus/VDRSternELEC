@@ -3,8 +3,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_DirectFB2-media-samples"
-PKG_VERSION="9705ec243705b83f2f49574da04d531d8dfaeb7e"
-PKG_SHA256="e3895b7c0c2abb50b5923e00b6eafd7c9fc5135302effb4b8c3572f08b9e6182"
+PKG_VERSION="369c22b8b1133a940f52c6ed91567a059f5ffda5"
+PKG_SHA256="e369fdc474ff050778926347ebf86a6d0043a54cf9b4dba46a59bff1f16d55f9"
 PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/directfb2/DirectFB-media-samples"
 PKG_URL="https://github.com/directfb2/DirectFB-media-samples/archive/${PKG_VERSION}.zip"

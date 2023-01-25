@@ -1,0 +1,42 @@
+From b0c3d2db618282a9964e6492a7aed96e7e5f370b Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Mon, 23 Jan 2023 11:23:28 +0100
+Subject: [PATCH] clean links
+
+---
+ mp_logos.conf.dist | 3 +++
+ mp_logos.sh        | 4 +++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/mp_logos.conf.dist b/mp_logos.conf.dist
+index 0b230ed..4d82390 100644
+--- a/mp_logos.conf.dist
++++ b/mp_logos.conf.dist
+@@ -11,6 +11,9 @@
+ # Skript automatisch aktualisieren. Auskommentieren falls nicht gewünscht
+ AUTO_UPDATE='true'
+ 
++# Alte und fehlerhafte Links nach Erstellen löschen
++CLEAN_LINKS='true'
++
+ # 'LOGODIR' ist der Ordner, wo die Symlinks angelegt werden und das Skin (Z. B. SkinflatPlus)
+ # die Kanallogos lädt. Verzeichnis ohne abschließendes '/'
+ LOGODIR='/usr/local/src/_div/flatpluslogos'  # Logos für VDR-Skin
+diff --git a/mp_logos.sh b/mp_logos.sh
+index 7c24992..81b6b22 100755
+--- a/mp_logos.sh
++++ b/mp_logos.sh
+@@ -284,7 +284,9 @@ for line in "${mapping[@]}" ; do
+ done
+ 
+ touch "${LOGODIR}/${LASTRUN}"                  # Zeitpunkt der letzten Starts speichern
+-find "$LOGODIR" -xtype l -print -delete >> "${LOGFILE:-/dev/null}"  # Alte (defekte) Symlinks löschen
++if [[ "$CLEAN_LINKS" == 'true' ]]; then
++  find "$LOGODIR" -xtype l -print -delete >> "${LOGFILE:-/dev/null}"  # Alte (defekte) Symlinks löschen
++fi
+ 
+ [[ -n "$PROV" ]] && f_log "==> ${NO_CHANNEL:-Keine} Kanäle ohne Provider (${PROV}) in LogoMapping.xml"
+ [[ -n "$CHANNELSCONF" && "$NOPROV" -gt 0 ]] && f_log "==> $NOPROV Kanäle ohne Provider wurden in der Kanalliste gefunden"
+-- 
+2.30.2
+

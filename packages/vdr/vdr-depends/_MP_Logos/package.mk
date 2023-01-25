@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_MP_Logos"
-PKG_VERSION="2e12ba4707295a5f3f48170117142d0c42505f7f"
-PKG_SHA256="79419c83b4ed6500306c4a10c28e3b7fad91fc6fa0afb68f1aa385abb9534426"
+PKG_VERSION="a3556cf9558f9232d9976216013907b9be5b2e1b"
+PKG_SHA256="44ffd67430e1fd28ff0b7e23713a7031b44d2ec12532df66e6f9083375c61b30"
 PKG_LICENSE="GPL3"
 PKG_SITE="https://github.com/MegaV0lt/MP_Logos"
 PKG_URL="https://github.com/MegaV0lt/MP_Logos/archive/${PKG_VERSION}.zip"
@@ -14,6 +14,7 @@ make_target() {
     export MP_LOGODIR="$(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logofiles"
     export MAPPING="$(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logofiles/LogoMapping.xml"
     export AUTO_UPDATE="false"
+    export CLEAN_LINKS="false"
     export TO_LOWER="A-Z"
 
     touch ${PKG_BUILD}/mp_logos.conf

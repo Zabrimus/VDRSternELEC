@@ -181,3 +181,9 @@
 28.01.2023 (plugin update)
 - update plugin
   tvscraper
+
+03.02.2023 (plugin update, several fixes)
+- update plugins
+  softhddevice, tvscraper
+- fixes some plugin dependencies
+- first sript to upgrade vdr plugin configuration for epg2vdr, scraper2vdr, live

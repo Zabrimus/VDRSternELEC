@@ -12,6 +12,9 @@ read_vdr_configuration () {
   echo "$param"
 }
 
+# start upgrade
+${BIN_DIR}/vdrsternupgrade.sh || true
+
 arg="vdr $(read_vdr_configuration) -P \"easyvdr -c /storage/.config/vdropt/conf.d/easyvdr.ini\""
 
 # kill splash image (CoreELEC)

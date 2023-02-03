@@ -17,6 +17,9 @@ read_vdr_configuration () {
   echo "$param"
 }
 
+# start upgrade
+${BIN_DIR}/vdrsternupgrade.sh || true
+
 arg="vdr $(read_vdr_configuration)"
 
 # read VDR plugin start parameters

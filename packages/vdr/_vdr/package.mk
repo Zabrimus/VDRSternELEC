@@ -94,6 +94,9 @@ makeinstall_target() {
   cat ${PKG_DIR}/bin/switch_kodi_vdr.sh | sed "${SED_SCRIPT}" > ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
   chmod +x ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
 
+  cat ${PKG_DIR}/bin/vdrsternupgrade.sh | sed "${SED_SCRIPT}" > ${INSTALL}/${PREFIX}/bin/vdrsternupgrade.sh
+  chmod +x ${INSTALL}/${PREFIX}/bin/vdrsternupgrade.sh
+
   # Create start parameters depending on the project
   cat<<EOF >> ${INSTALL}/${PREFIX}/bin/switch_kodi_vdr.sh
   if [ "\${START_PRG}" = "vdr" ]; then

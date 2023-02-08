@@ -1,6 +1,6 @@
 # one of BRANCH, TAG or REVISION is mandatory
 DISTRO=CoreELEC
-BRANCH=coreelec-20-5.4
+BRANCH=coreelec-21
 TAG=
 REVISION=
 

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-scraper2vdr"
-PKG_VERSION="43cbdd220b39a5f5e97046b036e3f1eee9d609d0"
-PKG_SHA256="c932cc69148fe45519f695d75247864c5b28497237f53f318216bad6726cd8de"
+PKG_VERSION="c3f3b44887492b188778d5815da1dddcb5d4e34b"
+PKG_SHA256="f1993ec67d1e8d8be9fe741e2006d82727c5af3deb82d0c37b2ca72f838ff8be"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/horchi/scraper2vdr"
 PKG_URL="https://github.com/horchi/scraper2vdr/archive/${PKG_VERSION}.zip"

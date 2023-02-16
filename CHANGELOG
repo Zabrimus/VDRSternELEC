@@ -187,3 +187,10 @@
   softhddevice, tvscraper
 - fixes some plugin dependencies
 - first sript to upgrade vdr plugin configuration for epg2vdr, scraper2vdr, live
+
+16.02.2023 (vdr patch, plugin updates)
+- added VDR patch
+  See https://www.vdr-portal.de/forum/index.php?thread/135395-announce-vdr-version-2-6-3-freigegeben/&postID=1356972#post1356972
+- update plugins
+  epg2vdr, live, osd2web, scraper2vdr, skinelchihd, skinflatplus, softhdcuvid, softhddevice, softhddrm, softhdvaapi,
+  tvscraper, vnsiserver

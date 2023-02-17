@@ -84,7 +84,26 @@ diff -ru8bBwd a/Make.config b/Make.config
  
 diff -ru8bBwd a/Makefile b/Makefile
 --- a/Makefile	2023-02-14 17:45:10.000000000 +0100
-+++ b/Makefile	2023-02-16 08:09:13.038908824 +0100
++++ b/Makefile	2023-02-17 07:50:13.145111641 +0100
+@@ -18,17 +18,17 @@
+ BRANCH      = $(shell git rev-parse --abbrev-ref HEAD)
+ GIT_REV = $(shell git describe --always 2>/dev/null)
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+ 
+-LIBDIR   = $(call PKGCFG,libdir)
++LIBDIR   ?= $(call PKGCFG,libdir)
+ LOCDIR   = $(call PKGCFG,locdir)
+ PLGCFG   = $(call PKGCFG,plgcfg)
+ CONFDEST = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
+ 
+ # autodetect related plugins
+ 
+ ifeq (exists, $(shell test -e ../graphtftng && echo exists))
+    WITH_GTFT = 1
 @@ -65,17 +65,17 @@
         timer.o recording.o recinfofile.o \
         status.o ttools.o svdrpclient.o \
@@ -123,3 +142,22 @@ diff -ru8bBwd a/Makefile b/Makefile
  endif
  
  ### The main target:
+@@ -162,17 +162,17 @@
+ install-i18n: $(I18Nmsgs)
+ 
+ ### Targets:
+ 
+ $(SOFILE): hlib $(OBJS)
+ 	$(CC) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+ 
+ install-lib: $(SOFILE)
+-	install -D -m644 $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
++	install -D -m644 $^ $(LIBDIR)/$^.$(APIVERSION)
+ 
+ install: install-lib install-i18n install-config
+ 
+ install-config:
+ 	if ! test -d $(DESTDIR)$(CONFDEST); then \
+ 	   mkdir -p $(DESTDIR)$(CONFDEST); \
+ 	   chmod a+rx $(DESTDIR)$(CONFDEST); \
+ 	fi

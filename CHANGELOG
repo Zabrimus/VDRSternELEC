@@ -194,3 +194,11 @@
 - update plugins
   epg2vdr, live, osd2web, scraper2vdr, skinelchihd, skinflatplus, softhdcuvid, softhddevice, softhddrm, softhdvaapi,
   tvscraper, vnsiserver
+
+17.02.2023 (vdr patches)
+- added VDR patch GetDevice_Impact.patch
+  See https://www.vdr-portal.de/forum/index.php?thread/135505-kurze-unterbrechung-der-aufnahme-da-getdevice-den-impact-falsch-bestimmt/&postID=1356984#post1356984
+- new optional dynamite patch
+  See https://www.vdr-portal.de/forum/index.php?thread/135508-vdr-plugin-dynamite-bug-fix/&postID=1357037#post1357037
+- update plugins
+  softhdcuvid, dynamite, softhdvaapi, softhddrm, softhdodroid

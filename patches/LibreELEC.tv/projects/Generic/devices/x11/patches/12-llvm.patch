@@ -1,0 +1,21 @@
+diff -ru8bBwd a/packages/lang/llvm/package.mk b/packages/lang/llvm/package.mk
+--- a/packages/lang/llvm/package.mk	2023-02-18 18:37:39.883278895 +0100
++++ b/packages/lang/llvm/package.mk	2023-02-18 18:38:20.806715576 +0100
+@@ -18,16 +18,17 @@
+                        -DLLVM_BUILD_UTILS=OFF \
+                        -DLLVM_BUILD_EXAMPLES=OFF \
+                        -DLLVM_INCLUDE_EXAMPLES=OFF \
+                        -DLLVM_BUILD_TESTS=OFF \
+                        -DLLVM_INCLUDE_TESTS=OFF \
+                        -DLLVM_INCLUDE_GO_TESTS=OFF \
+                        -DLLVM_BUILD_BENCHMARKS=OFF \
+                        -DLLVM_INCLUDE_BENCHMARKS=OFF \
++                       -DLLVM_ENABLE_LIBEDIT=OFF \
+                        -DLLVM_BUILD_DOCS=OFF \
+                        -DLLVM_INCLUDE_DOCS=OFF \
+                        -DLLVM_ENABLE_DOXYGEN=OFF \
+                        -DLLVM_ENABLE_SPHINX=OFF \
+                        -DLLVM_ENABLE_OCAMLDOC=OFF \
+                        -DLLVM_ENABLE_BINDINGS=OFF \
+                        -DLLVM_ENABLE_TERMINFO=OFF \
+                        -DLLVM_ENABLE_ASSERTIONS=OFF \

@@ -202,3 +202,8 @@
   See https://www.vdr-portal.de/forum/index.php?thread/135508-vdr-plugin-dynamite-bug-fix/&postID=1357037#post1357037
 - update plugins
   softhdcuvid, dynamite, softhdvaapi, softhddrm, softhdodroid
+
+18.02.2023 (vdr update, plugin updates)
+- update VDR to 2.6.4
+- update plugins
+  softhddrm, softhdvaapi, softhdcuvid

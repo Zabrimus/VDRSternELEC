@@ -47,7 +47,7 @@ checkout() {
   git submodule update --init -- $DISTRO || true
 
   cd $DISTRO
-  git reset --hard
+  git reset --hard origin/$BRANCH
   git clean -fd
 
   if [ ! "x$TAG" = "x" ]; then
@@ -161,7 +161,7 @@ build() {
 cleanup() {
   cd $ROOTDIR/$DISTRO
 
-  git reset --hard
+  git reset --hard origin/$BRANCH
 }
 
 read_extra() {

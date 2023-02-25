@@ -51,7 +51,6 @@ checkout() {
   # another attempt to really cleanup
   git stash
   git stash clear
-  # git reset --hard @{u}
 
   git reset --hard origin/$BRANCH
   git clean -fd
@@ -61,6 +60,7 @@ checkout() {
     BUILD_SUFFIX=$TAG
   elif [ ! "x$BRANCH" = "x" ]; then
     git checkout $BRANCH
+    git reset --hard @{u}
     git pull --all
     BUILD_SUFFIX=
   elif [ ! "x$REVISION" = "x" ]; then

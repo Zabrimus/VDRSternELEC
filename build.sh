@@ -51,6 +51,7 @@ checkout() {
   # another attempt to really cleanup
   git stash
   git stash clear
+  git reset --hard @{u}
 
   git reset --hard origin/$BRANCH
   git clean -fd

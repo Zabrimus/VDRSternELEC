@@ -207,3 +207,9 @@
 - update VDR to 2.6.4
 - update plugins
   softhddrm, softhdvaapi, softhdcuvid
+
+25.02.2023 (plugin updates)
+- update plugins
+  softhddevice, live
+- update
+  mediaportal-de-logos

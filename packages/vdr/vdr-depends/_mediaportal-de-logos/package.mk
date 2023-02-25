@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_mediaportal-de-logos"
-PKG_VERSION="88e665029d19a8e099c4b2bf8b670428d1e66c3a"
-PKG_SHA256="9b55b52e8a51d072ed18329f496fb39345e05734189e56599f377e8c8d0ef2e0"
+PKG_VERSION="8eabb30922657c839259795597d2cba35b8af18d"
+PKG_SHA256="d596081cfe38fcf51db9bb2a6b3f8bde178b48b67119ee89ede81bd11daeb4d0"
 PKG_LICENSE="?"
 PKG_SITE="https://github.com/Jasmeet181/mediaportal-de-logos"
 PKG_SOURCE_DIR="mediaportal-de-logos-${PKG_VERSION}"

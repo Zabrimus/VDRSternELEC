@@ -47,6 +47,11 @@ checkout() {
   git submodule update --init -- $DISTRO || true
 
   cd $DISTRO
+
+  # another attempt to really cleanup
+  git stash
+  git stash clear
+
   git reset --hard origin/$BRANCH
   git clean -fd
 

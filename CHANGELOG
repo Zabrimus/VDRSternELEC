@@ -213,3 +213,6 @@
   softhddevice, live
 - update
   mediaportal-de-logos
+
+05.03.2023 (package update)
+- update CE19 lirc to 0.10.2

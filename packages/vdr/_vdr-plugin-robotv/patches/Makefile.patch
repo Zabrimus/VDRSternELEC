@@ -1,9 +1,9 @@
-diff -u8bBw a/Makefile b/Makefile
---- a/Makefile	2021-05-19 13:41:19.000000000 +0200
-+++ b/Makefile	2022-03-25 18:13:02.762699245 +0100
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2023-03-03 12:14:54.000000000 +0100
++++ b/Makefile	2023-03-05 13:48:09.994416828 +0100
 @@ -18,17 +18,17 @@
  
- VERSION = 0.14.6
+ VERSION = 0.15.0
  
  
  ### The directory environment:
@@ -33,8 +33,8 @@ diff -u8bBw a/Makefile b/Makefile
 +	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
  
  install-conf:
- 	install -Dm644 $(PLUGIN)/allowed_hosts.conf $(DESTDIR)$(CFGDIR)/allowed_hosts.conf
- 	install -Dm644 $(PLUGIN)/$(PLUGIN).conf $(DESTDIR)$(CFGDIR)/$(PLUGIN).conf
+ 	install -Dm644 config/allowed_hosts.conf $(DESTDIR)$(CFGDIR)/allowed_hosts.conf
+ 	install -Dm644 config/$(PLUGIN).conf $(DESTDIR)$(CFGDIR)/$(PLUGIN).conf
  
  install: install-lib
  

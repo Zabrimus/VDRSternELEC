@@ -167,7 +167,7 @@ build() {
 cleanup() {
   cd $ROOTDIR/$DISTRO
 
-  git reset --hard origin/$BRANCH
+  git reset --hard origin/$BRANCH || true
 }
 
 read_extra() {

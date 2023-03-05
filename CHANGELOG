@@ -214,7 +214,9 @@
 - update
   mediaportal-de-logos
 
-05.03.2023 (package update)
+05.03.2023 (package updates, plugin updates)
 - update CE19 lirc to 0.10.2
 - added BL301 patch
   See https://www.vdr-portal.de/forum/index.php?thread/135544-vdr-elec-coreelec-mit-amlogic-und-wakeup/&postID=1357512#post1357512
+- update plugins
+  tvscraper, softhddevice, robotv, live

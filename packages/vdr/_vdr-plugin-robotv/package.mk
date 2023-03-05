@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0
 
 PKG_NAME="_vdr-plugin-robotv"
-PKG_VERSION="e9246b24cbdc855ff1bd87995f09b41cc77f41dc"
-PKG_SHA256="aac31332b31c0d35405f575ad9f805161acbc1c0115afa33ddaf67248523d25c"
+PKG_VERSION="4fe38e0ffa1014f34eeb941aada6fe0d31f72707"
+PKG_SHA256="e36783e0a15edcd33eb449569980d59abb51a805ea987c2c5ba5ff689a549dee"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/pipelka/vdr-plugin-robotv"
 PKG_URL="https://github.com/pipelka/vdr-plugin-robotv/archive/${PKG_VERSION}.zip"

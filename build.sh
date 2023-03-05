@@ -52,7 +52,7 @@ checkout() {
   git stash
   git stash clear
 
-  git reset --hard origin/$BRANCH
+  git reset --hard origin/$BRANCH || true
   git clean -fd
 
   if [ ! "x$TAG" = "x" ]; then

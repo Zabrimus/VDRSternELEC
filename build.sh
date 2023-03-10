@@ -44,7 +44,7 @@ checkout() {
      exit 1
   fi
 
-  git submodule update --init -- $DISTRO || true
+  git submodule update --init -- $DISTRO
 
   cd $DISTRO
 
@@ -167,7 +167,9 @@ build() {
 cleanup() {
   cd $ROOTDIR/$DISTRO
 
-  git reset --hard origin/$BRANCH || true
+  if [ -f .git ]; then
+      git reset --hard origin/$BRANCH
+  fi
 }
 
 read_extra() {

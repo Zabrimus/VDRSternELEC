@@ -12,12 +12,13 @@ PROGNAME=$0
 usage() {
   cat << EOF >&2
 Usage: $PROGNAME -config <name> [-extras <name,name> -addon <name,name>]
--config : Build the distribution defined in directory config/distro/<name>
--extra  : Build additional plugins / Use optional VDR patches / Use extra from config/extras.list
-          (option is followed by a comma-separated list of the available extras below)
--addon  : Build additional addons which will be pre-installed / Use addon from config/addons.list
-          (option is followed by a comma-separated list of the available addons below)
--help   : Show this help
+-config    : Build the distribution defined in directory config/distro/<name>
+-extra     : Build additional plugins / Use optional VDR patches / Use extra from config/extras.list
+             (option is followed by a comma-separated list of the available extras below)
+-addon     : Build additional addons which will be pre-installed / Use addon from config/addons.list
+             (option is followed by a comma-separated list of the available addons below)
+-subdevice : Build only images for the desired subdevice. This speeds up building images.
+-help      : Show this help
 EOF
   echo
   echo "Available configs:"
@@ -44,9 +45,15 @@ checkout() {
      exit 1
   fi
 
-  git submodule update --init -- $DISTRO
+  if [ ! -f $DISTRO/.git ]; then
+      git submodule update --init -- $DISTRO
+  fi
 
   cd $DISTRO
+
+  if [ -f .git ]; then
+     git reset --hard
+  fi
 
   # another attempt to really cleanup
   git stash
@@ -153,7 +160,20 @@ build_addons() {
 }
 
 build() {
+    if [ "${DISTRO}" = "CoreELEC" ]; then
+      build_ce
+    elif [ "${DISTRO}" = "LibreELEC.tv" ]; then
+      build_le
+    fi
+}
+
+build_ce() {
   cd $ROOTDIR/$DISTRO
+
+  if [ ! -z $SUB_DEVICE ]; then
+      # patch option to build only the desired subdevice
+      sed -i -e "s#SUBDEVICES=.*\$#SUBDEVICES=\"$SUB_DEVICE\"#" projects/Amlogic-ce/devices/Amlogic-ng/options
+  fi
 
   PROJECT="$PROJECT" \
     DEVICE="$DEVICE" \
@@ -162,6 +182,29 @@ build() {
     VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE" \
     VDR_INPUTDEVICE="$VDR_INPUTDEVICE" \
     make image
+}
+
+build_le() {
+  cd $ROOTDIR/$DISTRO
+
+  if [ -z $SUB_DEVICE ]; then
+      PROJECT="$PROJECT" \
+        DEVICE="$DEVICE" \
+        ARCH="$ARCH" \
+        BUILD_SUFFIX="$BUILD_SUFFIX" \
+        VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE" \
+        VDR_INPUTDEVICE="$VDR_INPUTDEVICE" \
+        make image
+  else
+      PROJECT="$PROJECT" \
+        DEVICE="$DEVICE" \
+        ARCH="$ARCH" \
+        BUILD_SUFFIX="$BUILD_SUFFIX" \
+        UBOOT_SYSTEM="${SUB_DEVICE}" \
+        VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE" \
+        VDR_INPUTDEVICE="$VDR_INPUTDEVICE" \
+        make image
+  fi
 }
 
 read_extra() {
@@ -201,6 +244,7 @@ while [[ "$#" -gt 0 ]]; do
         -config) shift; CONFIG=$1 ;;
         -extra) shift; read_extra $1 ;;
         -addon) shift; read_addon $1 ;;
+        -subdevice) shift; SUB_DEVICE=$1 ;;
         -help) shift; usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac
@@ -228,4 +272,3 @@ apply_patches
 prepare_sources
 build_addons
 build
-cleanup

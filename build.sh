@@ -164,14 +164,6 @@ build() {
     make image
 }
 
-cleanup() {
-  cd $ROOTDIR/$DISTRO
-
-  if [ -f .git ]; then
-      git reset --hard origin/$BRANCH
-  fi
-}
-
 read_extra() {
   extras=($(echo $1 | tr "," "\n"))
   for i in "${extras[@]}"; do
@@ -231,7 +223,6 @@ ROOTDIR=`pwd`
 echo "Read config $CONFIG"
 . config/distro/$CONFIG
 
-cleanup
 checkout
 apply_patches
 prepare_sources

@@ -228,3 +228,7 @@
 10.03.2023 (plugin update)
 - update plugin
   softhdodroid, softhddevice-drm-gles
+
+11.03.2023 (new plugin)
+- new plugin
+  pvrinput (unfinished, a kernel patch is needed)

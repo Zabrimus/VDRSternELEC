@@ -93,6 +93,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-recsearch"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-duplicates"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-nordlichtsepg"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-extrecmenung"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-pvrinput"
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"

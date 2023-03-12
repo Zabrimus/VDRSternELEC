@@ -18,6 +18,7 @@ Usage: $PROGNAME -config <name> [-extras <name,name> -addon <name,name>]
 -addon     : Build additional addons which will be pre-installed / Use addon from config/addons.list
              (option is followed by a comma-separated list of the available addons below)
 -subdevice : Build only images for the desired subdevice. This speeds up building images.
+-addononly : Build only the desired addons
 -help      : Show this help
 EOF
   echo
@@ -245,6 +246,7 @@ while [[ "$#" -gt 0 ]]; do
         -extra) shift; read_extra $1 ;;
         -addon) shift; read_addon $1 ;;
         -subdevice) shift; SUB_DEVICE=$1 ;;
+        -addononly) shift; ADDON_ONLY=true ;;
         -help) shift; usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac
@@ -271,4 +273,7 @@ checkout
 apply_patches
 prepare_sources
 build_addons
-build
+
+if [ ! "${ADDON_ONLY}" = "true" ]; then
+  build
+fi

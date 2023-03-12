@@ -113,6 +113,8 @@ Usage: ./build.sh -config <name> [-extras <name,name> -addon <name,name>]
           (option is followed by a comma-separated list of the available extras below)
 -addon  : Build additional addons which will be pre-installed / Use addon from config/addons.list
           (option is followed by a comma-separated list of the available addons below)
+-subdevice : Build only images for the desired subdevice. This speeds up building images.
+-addononly : Build only the desired addons          
 -help   : Show this help
 
 Available configs:

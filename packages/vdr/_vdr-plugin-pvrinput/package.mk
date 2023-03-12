@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-pvrinput"
-PKG_VERSION="48e557e84c3db85fe84f11645bb9e013303bb01e"
-PKG_SHA256="5751e7a6ddf73f15ed8eb1ebea7c68b74f3c318728e80198a62b3f014e07e252"
+PKG_VERSION="aef2954e20f55f585c892ba99d4d8b2f826e76bf"
+PKG_SHA256="eda417c85c4054a49c9714dedbbfb5f20f9d0befa10533f1b5f96989b4f78412"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-pvrinput"
-PKG_URL="https://github.com/vdr-projects/vdr-plugin-pvrinput/archive/${PKG_VERSION}.zip"
+PKG_URL="https://github.com/yavdr/vdr-plugin-pvrinput/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="vdr-plugin-pvrinput-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"

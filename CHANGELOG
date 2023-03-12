@@ -233,6 +233,8 @@
 - new plugin
   pvrinput (unfinished, a kernel patch is needed)
 
-12.02.2023 (dvb-latest, build.sh)
+12.02.2023 (dvb-latest, build.sh, plugin updates)
 - build addon dvb-latest with pvrusb2 module
 - enhanced build.sh
+- update plugins
+  softhddevice, softhdodroid

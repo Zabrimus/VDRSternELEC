@@ -1,0 +1,32 @@
+From 4470a70a3ca3d4dbce96a696f0ebdf2d0a616a9e Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Wed, 15 Mar 2023 10:21:38 +0100
+Subject: [PATCH] coreelec: fix RTL8821CU link
+
+---
+ .../packages/linux-drivers/RTL8821CU/package.mk           | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/projects/Amlogic-ce/packages/linux-drivers/RTL8821CU/package.mk b/projects/Amlogic-ce/packages/linux-drivers/RTL8821CU/package.mk
+index aec6e63a76..60263c66e5 100644
+--- a/projects/Amlogic-ce/packages/linux-drivers/RTL8821CU/package.mk
++++ b/projects/Amlogic-ce/packages/linux-drivers/RTL8821CU/package.mk
+@@ -2,11 +2,11 @@
+ # Copyright (C) 2018-present Team CoreELEC (https://coreelec.org)
+ 
+ PKG_NAME="RTL8821CU"
+-PKG_VERSION="a0c18978d1c9ab89f96083354f2c55cf15d483f7"
+-PKG_SHA256="de10eadfba30b339a061ea8141459f3e4b7316a0af14726155001d9a145ce2d8"
++PKG_VERSION="5a39cefab32093e3748aa0ac5fa3346a0d35ad37"
++PKG_SHA256="9178cd7d96d0861cb35b0c4f74bd795863ea378deea099715c944fb200b0bd4f"
+ PKG_LICENSE="GPL"
+-PKG_SITE="https://github.com/morrownr/8821cu-20210118"
+-PKG_URL="https://github.com/morrownr/8821cu-20210118/archive/$PKG_VERSION.tar.gz"
++PKG_SITE="https://github.com/morrownr/8821cu-20210916"
++PKG_URL="https://github.com/morrownr/8821cu-20210916/archive/$PKG_VERSION.tar.gz"
+ PKG_DEPENDS_TARGET="toolchain linux"
+ PKG_NEED_UNPACK="$LINUX_DEPENDS"
+ PKG_LONGDESC="Realtek RTL8821CU Linux driver"
+-- 
+2.30.2
+

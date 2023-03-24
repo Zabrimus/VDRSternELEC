@@ -1,0 +1,12 @@
+diff --git a/packages/lang/llvm/package.mk b/packages/lang/llvm/package.mk
+index fa4c0e9fcc..14be358d99 100644
+--- a/packages/lang/llvm/package.mk
++++ b/packages/lang/llvm/package.mk
+@@ -22,6 +22,7 @@ PKG_CMAKE_OPTS_COMMON="-DLLVM_INCLUDE_TOOLS=ON \
+                        -DLLVM_INCLUDE_TESTS=OFF \
+                        -DLLVM_BUILD_BENCHMARKS=OFF \
+                        -DLLVM_INCLUDE_BENCHMARKS=OFF \
++                       -DLLVM_ENABLE_LIBEDIT=OFF \
+                        -DLLVM_BUILD_DOCS=OFF \
+                        -DLLVM_INCLUDE_DOCS=OFF \
+                        -DLLVM_ENABLE_DOXYGEN=OFF \

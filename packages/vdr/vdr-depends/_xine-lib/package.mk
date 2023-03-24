@@ -3,8 +3,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_xine-lib"
-PKG_VERSION="135913a32b37"
-PKG_SHA256="d204befd5643d82f5cf402ed510fc0fd959c7baef1dea61518608baa0dfa0e69"
+PKG_VERSION="1.2.13"
+PKG_SHA256="12067c92fe6e7f10db02f566a40644058d4a5d8c9dd26b88e545523f78205a00"
 PKG_LICENSE="GPL LPGL"
 PKG_SITE="https://www.xine-project.org"
 PKG_URL="http://hg.code.sf.net/p/xine/xine-lib-1.2/archive/${PKG_VERSION}.tar.bz2"

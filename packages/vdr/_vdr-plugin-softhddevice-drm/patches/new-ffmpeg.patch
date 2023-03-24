@@ -1,0 +1,26 @@
+From c8e35b23a0623c9c9a4b8b8d7763173fc04e584f Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Mon, 6 Mar 2023 12:09:20 +0100
+Subject: [PATCH] mediaplayer: fix for newer ffmpeg versions
+
+Signed-off-by: Andreas Baierl <ichgeh@imkreisrum.de>
+---
+ mediaplayer.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/mediaplayer.cpp b/mediaplayer.cpp
+index 67fc13b..e310e3f 100644
+--- a/mediaplayer.cpp
++++ b/mediaplayer.cpp
+@@ -191,7 +191,11 @@ void cSoftHdPlayer::SetEntry(int index)
+ void cSoftHdPlayer::Player(const char *url)
+ {
+ 	AVPacket packet;
++#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(59,0,100)
+ 	AVCodec *video_codec;
++#else
++	const AVCodec *video_codec;
++#endif
+ 	int err = 0;
+ 	int audio_stream_index = 0;
+ 	int video_stream_index;

@@ -1,0 +1,17 @@
+# one of BRANCH, TAG or REVISION is mandatory
+DISTRO=LibreELEC.tv
+BRANCH=libreelec-11.0
+TAG=
+REVISION=
+
+# Use project variant
+VARIANT=
+
+# Build settings
+PROJECT=Amlogic
+DEVICE=AMLGX
+ARCH=arm
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhddevice-drm
+VDR_INPUTDEVICE=satip

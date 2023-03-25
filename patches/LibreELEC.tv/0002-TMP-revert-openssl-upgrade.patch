@@ -1,0 +1,24 @@
+From 526f223804868de091d50892e392904a88f90c07 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Wed, 15 Mar 2023 08:52:07 +0000
+Subject: [PATCH] openssl: update to 3.1.0
+
+---
+ packages/security/openssl/package.mk | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/packages/security/openssl/package.mk b/packages/security/openssl/package.mk
+index 49c22e2fa1d5..f3c1207bbdd9 100644
+--- a/packages/security/openssl/package.mk
++++ b/packages/security/openssl/package.mk
+@@ -3,8 +3,8 @@
+ # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
+ 
+ PKG_NAME="openssl"
+-PKG_VERSION="3.1.0"
+-PKG_SHA256="aaa925ad9828745c4cad9d9efeb273deca820f2cdcf2c3ac7d7c1212b7c497b4"
++PKG_VERSION="3.0.8"
++PKG_SHA256="6c13d2bf38fdf31eac3ce2a347073673f5d63263398f1f69d0df4a41253e4b3e"
+ PKG_LICENSE="Apache-2.0"
+ PKG_SITE="https://www.openssl.org"
+ PKG_URL="https://www.openssl.org/source/${PKG_NAME}-${PKG_VERSION}.tar.gz"

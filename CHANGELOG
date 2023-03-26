@@ -251,3 +251,7 @@
 - update plugins
   markad, osd2web, tvscraper, scraper2vdr, skinlcarsng
 - fix LibreELEC/x86_64 build
+
+26.03.2023 (plugin updates)
+- update plugins
+  tvscraper

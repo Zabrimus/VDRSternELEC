@@ -1,8 +1,6 @@
-# one of BRANCH, TAG or REVISION is mandatory
 DISTRO=CoreELEC
-BRANCH=coreelec-19
-TAG=
-REVISION=
+SHA=${COREELEC19}
+PATCHDIR=coreelec-19
 
 # Use project variant
 VARIANT=
@@ -15,4 +13,3 @@ ARCH=arm
 # VDR settings
 VDR_OUTPUTDEVICE=softhdodroid
 VDR_INPUTDEVICE=satip
-

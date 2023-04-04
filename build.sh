@@ -52,43 +52,24 @@ checkout() {
   fi
 
   cd $DISTRO
-
-  if [ -f .git ]; then
-     git reset --hard
-  fi
-
-  # another attempt to really cleanup
-  git stash
-  git stash clear
-
-  if [ ! "x$BRANCH" = "x" ]; then
-      git reset --hard origin/$BRANCH || true
-  fi
-
   git clean -fd
+  git reset --hard
 
-  if [ ! "x$TAG" = "x" ]; then
-    git checkout tags/$TAG
-    BUILD_SUFFIX=$TAG
-  elif [ ! "x$BRANCH" = "x" ]; then
-    git checkout $BRANCH
-    git reset --hard @{u}
-    git pull --all
-    BUILD_SUFFIX=
-  elif [ ! "x$REVISION" = "x" ]; then
-    git checkout $REVISION
-    BUILD_SUFFIX=$REVISION
+  cd ..
+  git submodule update --recursive --remote $DISTRO
+  BUILD_SUFFIX=
+
+  cd $DISTRO
+  # Checkout defined commit
+  if [ ! "x$SHA" = "x" ]; then
+    git checkout $SHA
   else
-    echo "No TAG, BRANCH or REVISION found"
+    echo "SHA not found"
     exit 1;
-  fi;
+  fi
 
   if [ ! "x$VARIANT" = "x" ]; then
-    if [ ! "x$BUILD_SUFFIX" = "x" ]; then
-      BUILD_SUFFIX="$BUILD_SUFFIX-$VARIANT"
-    else
-      BUILD_SUFFIX="$VARIANT"
-    fi
+    BUILD_SUFFIX="$VARIANT"
   fi
 }
 
@@ -106,7 +87,7 @@ apply_patches() {
     for i in `find ../patches -maxdepth 1 -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO} -maxdepth 1 -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/${BRANCH} -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}/${PATCHDIR} -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.patch' 2>/dev/null`; do
         echo "Apply patch $i"
         patch -p1 < $i
@@ -115,7 +96,7 @@ apply_patches() {
     for i in `find ../patches -maxdepth 1 -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO} -maxdepth 1 -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/${BRANCH} -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}/${PATCHDIR} -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.sh' 2>/dev/null`; do
         echo "Apply script $i"
         bash $i
@@ -271,8 +252,11 @@ fi
 
 ROOTDIR=`pwd`
 
+. config/versions
 echo "Read config $CONFIG"
 . config/distro/$CONFIG
+
+echo "Build $SHA on $DISTRO"
 
 checkout
 apply_patches

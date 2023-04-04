@@ -11,16 +11,18 @@ PROGNAME=$0
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME -config <name> [-extras <name,name> -addon <name,name>]
--config    : Build the distribution defined in directory config/distro/<name>
--extra     : Build additional plugins / Use optional VDR patches / Use extra from config/extras.list
-             (option is followed by a comma-separated list of the available extras below)
--addon     : Build additional addons which will be pre-installed / Use addon from config/addons.list
-             (option is followed by a comma-separated list of the available addons below)
--subdevice : Build only images for the desired subdevice. This speeds up building images.
--addononly : Build only the desired addons
--patchonly : Only apply patches and build nothing
--help      : Show this help
+Usage: $PROGNAME -config <name> [Options]
+-config            : Build the distribution defined in directory config/distro/<name> (mandatory)
+
+Options:
+-extra <name,name> : Build additional plugins / Use optional VDR patches / Use extra from config/extras.list
+                     (option is followed by a comma-separated list of the available extras below)
+-addon <name,name> : Build additional addons which will be pre-installed / Use addon from config/addons.list
+                     (option is followed by a comma-separated list of the available addons below)
+-subdevice         : Build only images for the desired subdevice. This speeds up building images.
+-addononly         : Build only the desired addons
+-patchonly         : Only apply patches and build nothing
+-help              : Show this help
 EOF
   echo
   echo "Available configs:"

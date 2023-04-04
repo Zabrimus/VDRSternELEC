@@ -146,51 +146,31 @@ build_addons() {
 }
 
 build() {
-    if [ "${DISTRO}" = "CoreELEC" ]; then
-      build_ce
-    elif [ "${DISTRO}" = "LibreELEC.tv" ]; then
-      build_le
-    fi
-}
-
-build_ce() {
   cd $ROOTDIR/$DISTRO
-
-  if [ ! -z $SUB_DEVICE ]; then
-      # patch option to build only the desired subdevice
-      sed -i -e "s#SUBDEVICES=.*\$#SUBDEVICES=\"$SUB_DEVICE\"#" projects/Amlogic-ce/devices/Amlogic-ng/options
+  echo "Build environment variables:"
+  echo "   PROJECT=$PROJECT"
+  echo "   DEVICE=$DEVICE"
+  echo "   ARCH=$ARCH"
+  if [ "${DISTRO}" = "CoreELEC" ] && [ ! -z $SUB_DEVICE ]; then
+    # patch option to build only the desired subdevice
+    sed -i -e "s#SUBDEVICES=.*\$#SUBDEVICES=\"$SUB_DEVICE\"#" projects/Amlogic-ce/devices/Amlogic-ng/options
+    echo "   SUBDEVICES=${SUB_DEVICE}"
+  elif [ "${DISTRO}" = "LibreELEC.tv" ] && [ ! -z $SUB_DEVICE ]; then
+    export UBOOT_SYSTEM="${SUB_DEVICE}"
+    echo "   UBOOT_SYSTEM=${SUB_DEVICE}"
   fi
+  echo "   BUILD_SUFFIX=$BUILD_SUFFIX"
+  echo "   VDR_OUTPUTDEVICE=$VDR_OUTPUTDEVICE"
+  echo "   VDR_INPUTDEVICE=$VDR_INPUTDEVICE"
+  echo "Start make image"
+  export PROJECT="$PROJECT"
+  export DEVICE="$DEVICE"
+  export ARCH="$ARCH"
+  export BUILD_SUFFIX="$BUILD_SUFFIX"
+  export VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE"
+  export VDR_INPUTDEVICE="$VDR_INPUTDEVICE"
 
-  PROJECT="$PROJECT" \
-    DEVICE="$DEVICE" \
-    ARCH="$ARCH" \
-    BUILD_SUFFIX="$BUILD_SUFFIX" \
-    VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE" \
-    VDR_INPUTDEVICE="$VDR_INPUTDEVICE" \
-    make image
-}
-
-build_le() {
-  cd $ROOTDIR/$DISTRO
-
-  if [ -z $SUB_DEVICE ]; then
-      PROJECT="$PROJECT" \
-        DEVICE="$DEVICE" \
-        ARCH="$ARCH" \
-        BUILD_SUFFIX="$BUILD_SUFFIX" \
-        VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE" \
-        VDR_INPUTDEVICE="$VDR_INPUTDEVICE" \
-        make image
-  else
-      PROJECT="$PROJECT" \
-        DEVICE="$DEVICE" \
-        ARCH="$ARCH" \
-        BUILD_SUFFIX="$BUILD_SUFFIX" \
-        UBOOT_SYSTEM="${SUB_DEVICE}" \
-        VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE" \
-        VDR_INPUTDEVICE="$VDR_INPUTDEVICE" \
-        make image
-  fi
+  make image
 }
 
 read_extra() {

@@ -1,8 +1,6 @@
-# one of BRANCH, TAG or REVISION is mandatory
 DISTRO=CoreELEC
-BRANCH=
-TAG=19.4-Matrix
-REVISION=
+SHA=${COREELEC19_4}
+PATCHDIR=coreelec-19_4
 
 # Use project variant
 VARIANT=

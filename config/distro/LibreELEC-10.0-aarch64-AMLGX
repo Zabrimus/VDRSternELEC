@@ -1,8 +1,6 @@
-# one of BRANCH, TAG or REVISION is mandatory
 DISTRO=LibreELEC.tv
-BRANCH=libreelec-10.0
-TAG=
-REVISION=
+SHA=${LIBREELEC10}
+PATCHDIR=libreelec-10
 
 # Use project variant
 VARIANT=

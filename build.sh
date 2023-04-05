@@ -11,16 +11,18 @@ PROGNAME=$0
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME -config <name> [-extras <name,name> -addon <name,name>]
--config    : Build the distribution defined in directory config/distro/<name>
--extra     : Build additional plugins / Use optional VDR patches / Use extra from config/extras.list
-             (option is followed by a comma-separated list of the available extras below)
--addon     : Build additional addons which will be pre-installed / Use addon from config/addons.list
-             (option is followed by a comma-separated list of the available addons below)
--subdevice : Build only images for the desired subdevice. This speeds up building images.
--addononly : Build only the desired addons
--patchonly : Only apply patches and build nothing
--help      : Show this help
+Usage: $PROGNAME -config <name> [Options]
+-config            : Build the distribution defined in directory config/distro/<name> (mandatory)
+
+Options:
+-extra <name,name> : Build additional plugins / Use optional VDR patches / Use extra from config/extras.list
+                     (option is followed by a comma-separated list of the available extras below)
+-addon <name,name> : Build additional addons which will be pre-installed / Use addon from config/addons.list
+                     (option is followed by a comma-separated list of the available addons below)
+-subdevice         : Build only images for the desired subdevice. This speeds up building images.
+-addononly         : Build only the desired addons
+-patchonly         : Only apply patches and build nothing
+-help              : Show this help
 EOF
   echo
   echo "Available configs:"
@@ -52,43 +54,24 @@ checkout() {
   fi
 
   cd $DISTRO
-
-  if [ -f .git ]; then
-     git reset --hard
-  fi
-
-  # another attempt to really cleanup
-  git stash
-  git stash clear
-
-  if [ ! "x$BRANCH" = "x" ]; then
-      git reset --hard origin/$BRANCH || true
-  fi
-
   git clean -fd
+  git reset --hard
 
-  if [ ! "x$TAG" = "x" ]; then
-    git checkout tags/$TAG
-    BUILD_SUFFIX=$TAG
-  elif [ ! "x$BRANCH" = "x" ]; then
-    git checkout $BRANCH
-    git reset --hard @{u}
-    git pull --all
-    BUILD_SUFFIX=
-  elif [ ! "x$REVISION" = "x" ]; then
-    git checkout $REVISION
-    BUILD_SUFFIX=$REVISION
+  cd ..
+  git submodule update --recursive --remote $DISTRO
+  BUILD_SUFFIX=
+
+  cd $DISTRO
+  # Checkout defined commit
+  if [ ! "x$SHA" = "x" ]; then
+    git checkout $SHA
   else
-    echo "No TAG, BRANCH or REVISION found"
+    echo "SHA not found"
     exit 1;
-  fi;
+  fi
 
   if [ ! "x$VARIANT" = "x" ]; then
-    if [ ! "x$BUILD_SUFFIX" = "x" ]; then
-      BUILD_SUFFIX="$BUILD_SUFFIX-$VARIANT"
-    else
-      BUILD_SUFFIX="$VARIANT"
-    fi
+    BUILD_SUFFIX="$VARIANT"
   fi
 }
 
@@ -106,7 +89,7 @@ apply_patches() {
     for i in `find ../patches -maxdepth 1 -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO} -maxdepth 1 -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/${BRANCH} -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}/${PATCHDIR} -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.patch' 2>/dev/null`; do
         echo "Apply patch $i"
         patch -p1 < $i
@@ -115,7 +98,7 @@ apply_patches() {
     for i in `find ../patches -maxdepth 1 -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO} -maxdepth 1 -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/${BRANCH} -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}/${PATCHDIR} -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.sh' 2>/dev/null`; do
         echo "Apply script $i"
         bash $i
@@ -165,51 +148,31 @@ build_addons() {
 }
 
 build() {
-    if [ "${DISTRO}" = "CoreELEC" ]; then
-      build_ce
-    elif [ "${DISTRO}" = "LibreELEC.tv" ]; then
-      build_le
-    fi
-}
-
-build_ce() {
   cd $ROOTDIR/$DISTRO
-
-  if [ ! -z $SUB_DEVICE ]; then
-      # patch option to build only the desired subdevice
-      sed -i -e "s#SUBDEVICES=.*\$#SUBDEVICES=\"$SUB_DEVICE\"#" projects/Amlogic-ce/devices/Amlogic-ng/options
+  echo "Build environment variables:"
+  echo "   PROJECT=$PROJECT"
+  echo "   DEVICE=$DEVICE"
+  echo "   ARCH=$ARCH"
+  if [ "${DISTRO}" = "CoreELEC" ] && [ ! -z $SUB_DEVICE ]; then
+    # patch option to build only the desired subdevice
+    sed -i -e "s#SUBDEVICES=.*\$#SUBDEVICES=\"$SUB_DEVICE\"#" projects/Amlogic-ce/devices/Amlogic-ng/options
+    echo "   SUBDEVICES=${SUB_DEVICE}"
+  elif [ "${DISTRO}" = "LibreELEC.tv" ] && [ ! -z $SUB_DEVICE ]; then
+    export UBOOT_SYSTEM="${SUB_DEVICE}"
+    echo "   UBOOT_SYSTEM=${SUB_DEVICE}"
   fi
+  echo "   BUILD_SUFFIX=$BUILD_SUFFIX"
+  echo "   VDR_OUTPUTDEVICE=$VDR_OUTPUTDEVICE"
+  echo "   VDR_INPUTDEVICE=$VDR_INPUTDEVICE"
+  echo "Start make image"
+  export PROJECT="$PROJECT"
+  export DEVICE="$DEVICE"
+  export ARCH="$ARCH"
+  export BUILD_SUFFIX="$BUILD_SUFFIX"
+  export VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE"
+  export VDR_INPUTDEVICE="$VDR_INPUTDEVICE"
 
-  PROJECT="$PROJECT" \
-    DEVICE="$DEVICE" \
-    ARCH="$ARCH" \
-    BUILD_SUFFIX="$BUILD_SUFFIX" \
-    VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE" \
-    VDR_INPUTDEVICE="$VDR_INPUTDEVICE" \
-    make image
-}
-
-build_le() {
-  cd $ROOTDIR/$DISTRO
-
-  if [ -z $SUB_DEVICE ]; then
-      PROJECT="$PROJECT" \
-        DEVICE="$DEVICE" \
-        ARCH="$ARCH" \
-        BUILD_SUFFIX="$BUILD_SUFFIX" \
-        VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE" \
-        VDR_INPUTDEVICE="$VDR_INPUTDEVICE" \
-        make image
-  else
-      PROJECT="$PROJECT" \
-        DEVICE="$DEVICE" \
-        ARCH="$ARCH" \
-        BUILD_SUFFIX="$BUILD_SUFFIX" \
-        UBOOT_SYSTEM="${SUB_DEVICE}" \
-        VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE" \
-        VDR_INPUTDEVICE="$VDR_INPUTDEVICE" \
-        make image
-  fi
+  make image
 }
 
 read_extra() {
@@ -271,8 +234,11 @@ fi
 
 ROOTDIR=`pwd`
 
+. config/versions
 echo "Read config $CONFIG"
 . config/distro/$CONFIG
+
+echo "Build $SHA on $DISTRO"
 
 checkout
 apply_patches

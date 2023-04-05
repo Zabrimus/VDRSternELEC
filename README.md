@@ -13,6 +13,7 @@ The images include a full-featured CoreELEC or LibreELEC distribution, where it'
     + :file_folder: **distro** - includes predefined build configurations  
     + **addons.list** - lists all available pre-buildable KODI addons  
     + **extras.list** - lists all available extras (patches, plugins)  
+    + **versions** - sets the commit/branch/tag to use for LibreELEC/CoreELEC  
 :file_folder: **package_patches** - these patches are copied to LE/CE packages folders before build  
 :file_folder: **packages** - packages, that will be added to upstream CE/LE  
 :file_folder: **patches** - these patches are applied to CE/LE directory itself before build  
@@ -38,7 +39,7 @@ You can choose between downloading a prebuilt image like the official CE/LE ones
 The eaysiest way is to use a prebuilt image. These images are periodically available in the [releases](https://github.com/Zabrimus/VDRSternELEC/releases) section of this repository. Choose the image matching your hardware and write it to SD-Card or USB. You can also use these images as an update image for your existing CE/LE installation.
 
 ## Manual build
-*Refer to [LibreELEC](https://wiki.libreelec.tv/development-1/build-basics) or [CoreELEC](https://wiki.coreelec.org/coreelec:build_ce) building dependencies.  
+*Refer to [LibreELEC](https://wiki.libreelec.tv/development/build-basics) or [CoreELEC](https://wiki.coreelec.org/coreelec:build_ce) building dependencies.  
 The following description is based on Debian or Ubuntu as the host system.*
 ### Install all dependencies
 ```
@@ -55,11 +56,9 @@ Several configurations are already provided in [config/distro](config/distro). I
 
 A sample configuration file looks like this:
 ```
-# one of BRANCH, TAG or REVISION is mandatory
 DISTRO=CoreELEC
-BRANCH=coreelec-20
-TAG=
-REVISION=
+SHA=${COREELEC20}
+PATCHDIR=coreelec-20
 
 # Use project variant
 VARIANT=
@@ -75,11 +74,8 @@ VDR_INPUTDEVICE=satip
 ```
 **Environment variables:**
 - DISTRO: can be either ```CoreELEC``` or ```LibreELEC```
-- BRANCH: The existing branch to use  
-or  
-- TAG: use a git tag to build  
-or  
-- REVISION: you can build with a specific revision.
+- SHA: The commit/branch/tag from CoreELEC/LibreELEC to use (see [config/versions](config/versions))
+- PATCHDIR: This is used for additional patches (patches/$DISTRO/$PATCHDIR)
 - VARIANT: specify some variant of the project, e.g. for choosing different patches
 - PROJECT: 
   - CoreELEC: ```Amlogic-ce```
@@ -107,23 +103,30 @@ Building the extras with ```build.sh``` can be triggered by adding them with the
 After choosing an existing configuration or creating a new one, the build script can be called:
 ```
 $ ./build.sh
-Usage: ./build.sh -config <name> [-extras <name,name> -addon <name,name>]
--config : Build the distribution defined in directory config/distro/<name>
--extra  : Build additional plugins / Use optional VDR patches / Use extra from config/extras.list
-          (option is followed by a comma-separated list of the available extras below)
--addon  : Build additional addons which will be pre-installed / Use addon from config/addons.list
-          (option is followed by a comma-separated list of the available addons below)
--subdevice : Build only images for the desired subdevice. This speeds up building images.
--addononly : Build only the desired addons          
--help   : Show this help
+Usage: ./build.sh -config <name> [Options]
+-config            : Build the distribution defined in directory config/distro/<name> (mandatory)
+
+Options:
+-extra <name,name> : Build additional plugins / Use optional VDR patches / Use extra from config/extras.list
+                     (option is followed by a comma-separated list of the available extras below)
+-addon <name,name> : Build additional addons which will be pre-installed / Use addon from config/addons.list
+                     (option is followed by a comma-separated list of the available addons below)
+-subdevice         : Build only images for the desired subdevice. This speeds up building images.
+-addononly         : Build only the desired addons
+-patchonly         : Only apply patches and build nothing
+-help              : Show this help
 
 Available configs:
 CoreELEC-19
 CoreELEC-19.4-Matrix
-CoreELEC-20
+CoreELEC-20-ne
+CoreELEC-20-ng
+CoreELEC-21-ne
+CoreELEC-21-ng
 LibreELEC-10.0-aarch64-AMLGX
 LibreELEC-10.0-arm-AMLGX
 LibreELEC-10.0-x86_64
+LibreELEC-11-arm-AMLGX
 LibreELEC-master-aarch64
 LibreELEC-master-arm-Allwinner-A64
 LibreELEC-master-arm-Allwinner-H3
@@ -142,9 +145,9 @@ Available extras:
 directfb
 directfbsamples
 dynamite
-channellogos
 easyvdr
 permashift
+channellogos
 
 Available addons:
 crazycat

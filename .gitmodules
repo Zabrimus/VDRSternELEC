@@ -4,3 +4,4 @@
 [submodule "CoreELEC"]
 	path = CoreELEC
 	url = https://github.com/CoreELEC/CoreELEC
+	branch = coreelec-19

@@ -259,3 +259,12 @@
 01.04.2023 (plugin update)
 - update plugins
   tvscraper, softhddevice
+
+05.04.2023 (build improvements, thanks to @rellla)
+- check build.sh, README and build Configs
+
+06.04.2023 (plugin updates)
+- update plugins
+  tvscraper
+
+

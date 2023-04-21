@@ -274,3 +274,8 @@
 15.04.2023 (plugin update)
 - update plugins
   skinlcarsng, softhdodroid
+
+21.04.2023 (plugin update, update CE/LE)
+- update plugins
+  tvscraper, softhdcuvid, softhdvaapi, softhddrm, markad
+- update CE/LE to the latest version

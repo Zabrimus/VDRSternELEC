@@ -279,3 +279,7 @@
 - update plugins
   tvscraper, softhdcuvid, softhdvaapi, softhddrm, markad
 - update CE/LE to the latest version
+
+30.04.2023 (plugin updates, update CE/LE)
+- update plugins
+  tvscraper, softhdcuvid, softhdvaapi, softhddrm, markad, softhddevice-drm-gles

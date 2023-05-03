@@ -9,39 +9,21 @@ PKG_URL="https://github.com/jowi24/vdr-fritz/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
 PKG_SOURCE_DIR="vdr-fritz-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _libconvpp _libfritzpp _liblogpp _libnetpp boost"
+PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="TODO"
-PKG_TOOLCHAIN="manual"
-
-pre_configure_target() {
-  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
 
 pre_make_target() {
+  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+
    # reorganize build directory
    FRITZ_DIR=$(get_build_dir _vdr-plugin-fritzbox)
-   cd ..
-
    rm -rf "${FRITZ_DIR}/libconv++" "${FRITZ_DIR}/libfritz++" "${FRITZ_DIR}/liblog++" "${FRITZ_DIR}/libnet++"
    ln -s $(get_build_dir _libnetpp) ${FRITZ_DIR}/libnet++
    ln -s $(get_build_dir _libconvpp) ${FRITZ_DIR}/libconv++
    ln -s $(get_build_dir _liblogpp) ${FRITZ_DIR}/liblog++
    ln -s $(get_build_dir _libfritzpp) ${FRITZ_DIR}/libfritz++
-}
-
-make_target() {
-  cd $(get_build_dir _vdr-plugin-fritzbox)
-
-  VDR_DIR=$(get_build_dir _vdr)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
-  make
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" install
 }
 
 post_makeinstall_target() {

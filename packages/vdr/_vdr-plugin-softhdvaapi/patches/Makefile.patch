@@ -1,35 +1,8 @@
-diff -u8bBwd a/Makefile b/Makefile
---- a/Makefile	2022-07-09 12:52:28.000000000 +0200
-+++ b/Makefile	2022-08-28 12:33:05.135833345 +0200
-@@ -101,17 +101,17 @@
- VERSION = $(shell grep 'static const char \*const VERSION *=' softhdcuvid.cpp | awk '{ print $$7 }' | sed -e 's/[";]//g')
- GIT_REV = $(shell git describe --always 2>/dev/null)
- ### The name of the distribution archive:
- 
- ### The directory environment:
- 
- # Use package data if installed...otherwise assume we're under the VDR source directory:
- PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
--LIBDIR = $(call PKGCFG,libdir)
-+LIBDIR ?= $(call PKGCFG,libdir)
- LOCDIR = $(call PKGCFG,locdir)
- PLGCFG = $(call PKGCFG,plgcfg)
- #
- TMPDIR ?= /tmp
- 
- ### The compiler options:
- 
- export CFLAGS	= $(call PKGCFG,cflags)
-@@ -261,23 +261,24 @@
- 
- #_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm)
- #LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm)
- _CFLAGS += $(shell pkg-config --cflags x11 x11-xcb xcb xcb-icccm)
- LIBS += -lrt $(shell pkg-config --libs x11 x11-xcb xcb xcb-icccm)
- 
- _CFLAGS += -I./opengl -I./
- 
--LIBS += -L/usr/lib64
+diff --git a/Makefile b/Makefile
+index f5d2491..c07c0bf 100644
+--- a/Makefile
++++ b/Makefile
+@@ -270,6 +270,7 @@ LIBS += -L/usr/lib64
  
  
  ifeq ($(CUVID),1)
@@ -37,34 +10,3 @@ diff -u8bBwd a/Makefile b/Makefile
  LIBS += -lcuda -lnvcuvid
  endif
  
-+LIBS += -L$(SYSROOT)/usr/lib64
- LIBS += -lGLEW -lGLU  -ldl -lglut
- 
- ### Includes and Defines (add further entries here):
- 
- INCLUDES +=
- 
- DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"' -D_GNU_SOURCE $(CONFIG) \
- 	$(if $(GIT_REV), -DGIT_REV='"$(GIT_REV)"')
-@@ -347,17 +348,17 @@
- ### Targets:
- 
- $(OBJS): Makefile
- 
- $(SOFILE): $(OBJS) shaders.h
- 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared  $(OBJS) $(LIBS) -o $@
- 
- install-lib: $(SOFILE)
--	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
-+	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
- 
- install: install-lib install-i18n
- 
- dist: $(I18Npo) clean
- 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
- 	@mkdir $(TMPDIR)/$(ARCHIVE)
- 	@cp -a * $(TMPDIR)/$(ARCHIVE)
- 	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)
-Gemeinsame Unterverzeichnisse: a/patches und b/patches.
-Gemeinsame Unterverzeichnisse: a/po und b/po.
-Gemeinsame Unterverzeichnisse: a/shaders und b/shaders.

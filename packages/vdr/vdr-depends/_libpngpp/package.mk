@@ -11,13 +11,8 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="PNG++ aims to provide simple yet powerful C++ interface to libpng, the PNG reference implementation library."
 PKG_TOOLCHAIN="manual"
 
-pre_configure_target() {
-  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-post_make_target() {
+make_target() {
 	# reorganize build folder
-	DIR=$(get_build_dir _libpngpp)
-	mkdir ${DIR}/png++
-	cp *.hpp ${DIR}/png++
+	mkdir $(get_build_dir _libpngpp)/png++
+	cp *.hpp $(get_build_dir _libpngpp)/png++
 }

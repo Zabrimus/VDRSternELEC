@@ -94,6 +94,8 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-duplicates"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-nordlichtsepg"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-extrecmenung"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-pvrinput"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"
@@ -106,13 +108,6 @@ fi
 if [ "${EXTRA_PERMASHIFT}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-permashift"
 fi
-
-# Warning: Compiled without libcdio, libcdio_paranoia, libcdda due to compile problems for the mentioned libs
-PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
-
-# Makfile muss angepasst werden
-# PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
-
 
 # DirectFB2
 if [ "${EXTRA_DIRECTFB2}" = "y" ]; then

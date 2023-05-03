@@ -7,25 +7,15 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/manio/vdr-plugin-dvbapi"
 PKG_URL="https://github.com/manio/vdr-plugin-dvbapi/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain _vdr _libdvbcsa"
+PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="VDR dvbapi plugin for use with OSCam"
-PKG_TOOLCHAIN="manual"
+PKG_MAKE_OPTS_TARGET="LIBDVBCSA_NEW=1"
+PKG_MAKEINSTALL_OPTS_TARGET="LIBDVBCSA=1"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
-  make LIBDVBCSA_NEW=1
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" LIBDVBCSA=1 install
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
 
 post_makeinstall_target() {

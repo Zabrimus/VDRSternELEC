@@ -9,26 +9,14 @@ PKG_URL="https://github.com/flensrocker/vdr-plugin-dbus2vdr/archive/${PKG_VERSIO
 PKG_BRANCH="master"
 PKG_SOURCE_DIR="vdr-plugin-dbus2vdr-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _libpngpp dbus glib libjpeg-turbo"
+PKG_DEPENDS_CONFIG="_vdr _libpngpp"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr _libpngpp)"
 PKG_LONGDESC="This plugin will expose some methods via DBus to control the vdr."
-PKG_TOOLCHAIN="manual"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  LIBPNGPP_DIR=$(get_build_dir _libpngpp)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include:${LIBPNGPP_DIR}
-
-  make
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" install
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export CPLUS_INCLUDE_PATH=$(get_build_dir _libpngpp)
 }
 
 post_makeinstall_target() {

@@ -9,26 +9,13 @@ PKG_URL="https://gitlab.com/kamel5/tvguideng/-/archive/${PKG_VERSION}/tvguideng-
 PKG_BRANCH="master"
 PKG_SOURCE_DIR="tvguideng-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _vdr-plugin-skindesigner"
+PKG_DEPENDS_CONFIG="_vdr _vdr-plugin-skindesigner"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="TODO"
-PKG_TOOLCHAIN="manual"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  SKINDESIGNER_DIR=$(get_install_dir _vdr-plugin-skindesigner)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${SKINDESIGNER_DIR}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
-  make
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" install
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
 
 post_makeinstall_target() {

@@ -10,28 +10,14 @@ PKG_BRANCH="drm-atomic-gles"
 PKG_LICENSE="GPL"
 PKG_SOURCE_DIR="vdr-plugin-softhddevice-drm-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain glm alsa freetype ffmpeg _vdr libdrm mesa"
+PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="VDR Output Device (softhddevice-drm-gles)"
-PKG_TOOLCHAIN="manual"
+PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib -L${SYSROOT_PREFIX}/usr/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
-  make GLES=1
-}
-
-makeinstall_target() {
-  LOC_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)
-  LIB_DIR=${LOC_DIR}/../../lib/vdr
-  VDRDIR=${VDR_DIR}
-
-  make VDRDIR=${VDR_DIR} LOCDIR="${LOC_DIR}" LIBDIR="${LIB_DIR}" GLES=1 install
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
 
 post_makeinstall_target() {

@@ -8,9 +8,11 @@ PKG_SITE="https://github.com/jojo61/vdr-plugin-softhdodroid"
 PKG_URL="https://github.com/jojo61/vdr-plugin-softhdodroid/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="vdr-plugin-softhdodroid-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain glm alsa freetype ffmpeg _vdr libdrm"
+PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="VDR Output Device (softhdodroid)"
-PKG_TOOLCHAIN="manual"
+PKG_MAKE_OPTS_TARGET="KODIBUILD=1"
+PKG_MAKEINSTALL_OPTS_TARGET="KODIBUILD=1"
 
 if [ "${DISTRO}" = LibreELEC  ]; then
 	PKG_DEPENDS_TARGET+=" mesa"
@@ -18,24 +20,9 @@ elif [ "${DISTRO}" = CoreELEC  ]; then
 	PKG_DEPENDS_TARGET+=" opengl-meson"
 fi;
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib -L${SYSROOT_PREFIX}/usr/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
-  make KODIBUILD=1
-}
-
-makeinstall_target() {
-  LOC_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)
-  LIB_DIR=${LOC_DIR}/../../lib/vdr
-  VDRDIR=${VDR_DIR}
-
-  make VDRDIR=${VDR_DIR} LOCDIR="${LOC_DIR}" LIBDIR="${LIB_DIR}" KODIBUILD=1 install
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
 
 post_makeinstall_target() {

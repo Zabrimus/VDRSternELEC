@@ -81,25 +81,6 @@ diff -ru8bBw a/Makefile b/Makefile
  include Make.config
  
  ### The version number of this plugin (taken from the main source file):
-@@ -21,17 +21,17 @@
- LASTTAG     = $(shell git describe --tags --abbrev=0)
- BRANCH      = $(shell git rev-parse --abbrev-ref HEAD)
- GIT_REV = $(shell git describe --always 2>/dev/null)
- 
- ### The directory environment:
- 
- # Use package data if installed...otherwise assume we're under the VDR source directory:
- PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
--LIBDIR = $(call PKGCFG,libdir)
-+LIBDIR ?= $(call PKGCFG,libdir)
- LOCDIR = $(call PKGCFG,locdir)
- PLGCFG = $(call PKGCFG,plgcfg)
- CONFDEST = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
- 
- TMPDIR ?= /tmp
- 
- ### The compiler options:
- 
 @@ -44,30 +44,30 @@
  
  ### Allow user defined options to overwrite defaults:
@@ -133,22 +114,3 @@ diff -ru8bBw a/Makefile b/Makefile
     DEFINES += -DGIT_REV='"$(GIT_REV)"'
  endif
  
-@@ -131,17 +131,17 @@
- install-i18n: $(I18Nmsgs)
- 
- ### Targets:
- 
- $(SOFILE): hlib $(OBJS)
- 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
- 
- install-lib: $(SOFILE)
--	install -D -m644 $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
-+	install -D -m644 $^ $(LIBDIR)/$^.$(APIVERSION)
- 
- install: install-lib install-i18n install-config
- 
- install-config:
- 	if ! test -d $(DESTDIR)$(CONFDEST); then \
- 	   mkdir -p $(DESTDIR)$(CONFDEST); \
- 	   chmod a+rx $(DESTDIR)$(CONFDEST); \
- 	fi

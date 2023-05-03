@@ -1,25 +1,6 @@
 diff -ru8bBw a/Makefile b/Makefile
 --- a/Makefile	2022-05-27 12:35:29.949392282 +0200
 +++ b/Makefile	2022-05-27 12:36:56.257534072 +0200
-@@ -10,17 +10,17 @@
- 			grep -v GIT | awk '{ print $$6 }' | sed -e 's/[";]//g')
- 
- GIT_REV = $(shell git describe --always 2>/dev/null)
- 
- ### The directory environment:
- 
- # Use package data if installed...otherwise assume we're under the VDR source directory:
- PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
--LIBDIR = $(call PKGCFG,libdir)
-+LIBDIR ?= $(call PKGCFG,libdir)
- LOCDIR = $(call PKGCFG,locdir)
- PLGCFG = $(call PKGCFG,plgcfg)
- #
- TMPDIR ?= /tmp
- 
- ### The compiler options:
- 
- export CFLAGS   = $(call PKGCFG,cflags)
 @@ -40,21 +40,18 @@
  PACKAGE = vdr-$(ARCHIVE)
  
@@ -44,25 +25,6 @@ diff -ru8bBw a/Makefile b/Makefile
  
  -include sources.mk
  
-@@ -107,17 +104,17 @@
- install-i18n: $(I18Nmsgs)
- 
- ### Targets:
- 
- $(SOFILE): $(OBJS)
- 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
- 
- install-lib: $(SOFILE)
--	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
-+	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
- 
- install: install-lib install-i18n
- 
- dist: $(I18Npo) clean
- 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
- 	@mkdir $(TMPDIR)/$(ARCHIVE)
- 	@cp -a * $(TMPDIR)/$(ARCHIVE)
- 	@tar czf $(PACKAGE).tar.gz -C $(TMPDIR) --exclude .gitignore --exclude debian --exclude .git $(ARCHIVE)
 diff -ru8bBw a/src/MenuConfigurationRepository.cpp b/src/MenuConfigurationRepository.cpp
 --- a/src/MenuConfigurationRepository.cpp	2022-05-27 12:35:29.949392282 +0200
 +++ b/src/MenuConfigurationRepository.cpp	2022-05-27 12:38:27.953686474 +0200

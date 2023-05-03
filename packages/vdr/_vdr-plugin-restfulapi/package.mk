@@ -8,27 +8,16 @@ PKG_SITE="https://github.com/yavdr/vdr-plugin-restfulapi"
 PKG_URL="https://github.com/yavdr/vdr-plugin-restfulapi/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
 PKG_DEPENDS_TARGET="toolchain _vdr cxxtools _vdr-plugin-wirbelscan"
+PKG_DEPENDS_CONFIG="_vdr"
 PKG_SOURCE_DIR="vdr-plugin-restfulapi-${PKG_VERSION}"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory _vdr-plugin-wirbelscan)"
 PKG_LONGDESC="Allows to access many internals of the VDR via a restful API."
-PKG_TOOLCHAIN="manual"
+PKG_MAKE_OPTS_TARGET="USE_LIBMAGICKPLUSPLUS=0"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
   cp $(get_build_dir _vdr-plugin-wirbelscan)/wirbelscan_services.h ${PKG_BUILD}/wirbelscan/
-  make USE_LIBMAGICKPLUSPLUS=0 INCLUDES="-I${SYSROOT_PREFIX}/usr/local/include"
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" install
 }
 
 post_makeinstall_target() {

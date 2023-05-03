@@ -8,23 +8,16 @@ PKG_SITE="https://github.com/vdr-projects/vdr-plugin-mp3"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-mp3/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="vdr-plugin-mp3-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _libmad libsndfile libvorbis _libid3tag"
+PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="TODO"
-PKG_TOOLCHAIN="manual"
+PKG_MAKE_OPTS_TARGET="VDRDIR=$(get_build_dir _vdr)"
+PKG_MAKEINSTALL_OPTS_TARGET="VDRDIR=$(get_build_dir _vdr)"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-
-  mkdir -p ${LIB_DIR}
-  make VDRDIR="${VDR_DIR}" DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" SHELL="sh -x"
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  CXXFLAGS="$CXXFLAGS -fPIC"
 }
 
 post_makeinstall_target() {

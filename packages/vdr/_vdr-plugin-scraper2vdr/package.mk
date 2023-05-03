@@ -9,9 +9,9 @@ PKG_URL="https://github.com/horchi/scraper2vdr/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
 PKG_SOURCE_DIR="scraper2vdr-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _mariadb-connector-c _graphicsmagick"
+PKG_DEPENDS_CONFIG="_vdr _mariadb-connector-c _graphicsmagick"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory Python3) $(get_pkg_directory _mariadb-connector-c)"
 PKG_LONGDESC="scraper2vdr acts as client and provides scraped metadata for tvshows and movies from epgd to other plugins via its service interface."
-PKG_TOOLCHAIN="manual"
 
 post_unpack() {
 	# Copy patches.cond
@@ -22,24 +22,9 @@ post_unpack() {
 	fi;
 }
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  PYTHON_DIR=(get_install_dir Python3)
-  MARIADB_DIR=(get_install_dir _mariadb-connector-c)
-
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PYTHON_DIR}/usr/lib/pkgconfig:${MARIADB_DIR}/usr/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
-  make
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" install
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
 
 post_makeinstall_target() {

@@ -1,31 +1,17 @@
-diff -ru8bBwd a/Makefile b/Makefile
---- a/Makefile	2016-06-08 21:27:25.000000000 +0200
-+++ b/Makefile	2022-09-11 11:35:04.712425444 +0200
-@@ -12,17 +12,17 @@
- ### The version number of this plugin (taken from the main source file):
- 
- VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
- 
- ### The directory environment:
- 
- # Use package data if installed...otherwise assume we're under the VDR source directory:
- PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
--LIBDIR = $(call PKGCFG,libdir)
-+LIBDIR ?= $(call PKGCFG,libdir)
- LOCDIR = $(call PKGCFG,locdir)
- PLGCFG = $(call PKGCFG,plgcfg)
- #
- TMPDIR ?= /tmp
- 
- ### The compiler options:
- 
- export CFLAGS   = $(call PKGCFG,cflags)
-@@ -104,23 +104,23 @@
- .PHONY: i18n
- i18n: $(I18Nmo) $(I18Npot)
- 
- install-i18n: $(I18Nmsgs)
- 
+From e3947492a183a9c566dd091c7ada607d8b729c2f Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Mon, 8 May 2023 17:29:06 +0200
+Subject: [PATCH] fix
+
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 251ca2f..4592e47 100644
+--- a/Makefile
++++ b/Makefile
+@@ -109,7 +109,7 @@ install-i18n: $(I18Nmsgs)
  ### Targets:
  
  mpg2c: mpg2c.c
@@ -34,15 +20,6 @@ diff -ru8bBwd a/Makefile b/Makefile
  
  $(SOFILE): $(OBJS) $(OBJS_MPG)
  	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(OBJS_MPG) -o $@
- 
- install-lib: $(SOFILE)
--	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
-+	install -D $^ $(LIBDIR)/$^.$(APIVERSION)
- 
- install: install-lib install-i18n
- 
- dist: $(I18Npo) clean
- 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
- 	@mkdir $(TMPDIR)/$(ARCHIVE)
- 	@cp -a * $(TMPDIR)/$(ARCHIVE)
- 	@tar czf $(PACKAGE).tgz --exclude=CVS -C $(TMPDIR) $(ARCHIVE)
+-- 
+2.30.2
+

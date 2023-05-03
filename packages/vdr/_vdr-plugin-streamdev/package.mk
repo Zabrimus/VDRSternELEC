@@ -8,37 +8,22 @@ PKG_SITE="https://github.com/vdr-projects/vdr-plugin-streamdev"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-streamdev/archive/${PKG_VERSION}.tar.gz"
 PKG_BRANCH="master"
 PKG_DEPENDS_TARGET="toolchain _vdr openssl"
+PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="This PlugIn is a VDR implementation of Video Transfer and a basic HTTP Streaming Protocol."
-PKG_TOOLCHAIN="manual"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
 
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}"
-}
-
-makeinstall_target() {
-  LOC_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" LOCDIR="${LOC_DIR}"  install
-
-  # Copy libstreamdev-client.so to enable multiple streamdev-clients (e.g. for PIP or using multiple servers)
-  PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
+post_makeinstall_target() {
   APIVERSION=$(pkg-config --variable=apiversion vdr)
 
   cp ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client.so.${APIVERSION} ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client2.so.${APIVERSION}
   cp ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client.so.${APIVERSION} ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client3.so.${APIVERSION}
   cp ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client.so.${APIVERSION} ${INSTALL}/usr/local/lib/vdr/libvdr-streamdev-client4.so.${APIVERSION}
-}
 
-post_makeinstall_target() {
   mkdir -p ${INSTALL}/storage/.config/vdropt-sample/conf.d
   cp -PR ${PKG_DIR}/conf.d/* ${INSTALL}/storage/.config/vdropt-sample/conf.d/
 

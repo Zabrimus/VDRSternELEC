@@ -7,28 +7,14 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://www.gen2vdr.de/wirbel/easyvdr/index2.html"
 PKG_URL="https://www.gen2vdr.de/wirbel/easyvdr/vdr-easyvdr-${PKG_VERSION}.tgz"
 PKG_SOURCE_DIR="easyvdr-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain _vdr"
+PKG_DEPENDS_TARGET="toolchain _vdr Python3"
+PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory Python3) $(get_pkg_directory _mariadb-connector-c)"
 PKG_LONGDESC="This plugin is used to retrieve EPG data into the VDR. The EPG data was loaded from a mariadb database."
-PKG_TOOLCHAIN="manual"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-make_target() {
-  PYTHON_INSTALL_DIR=$(get_install_dir Python3)
-  VDR_DIR=$(get_build_dir _vdr)
-
-  export PKG_CONFIG_PATH=${VDR_DIR}:${PYTHON_INSTALL_DIR}/usr/lib/pgkconfig:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
-  make
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" install
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
 
 post_makeinstall_target() {

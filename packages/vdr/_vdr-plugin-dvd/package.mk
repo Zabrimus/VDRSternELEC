@@ -8,31 +8,14 @@ PKG_SITE="https://github.com/vdr-projects/vdr-plugin-dvd"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-dvd/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="vdr-plugin-dvd-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _libdvdnav _libdvdread _a52dec"
+PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="TODO"
-PKG_TOOLCHAIN="manual"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  DVDNAV_DIR=$(get_install_dir _libdvdnav)
-  DVDREAD_DIR=$(get_install_dir _libdvdread)
-  A52DEC_DIR=$(get_install_dir _a52dec)
-
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include:${DVDNAV_DIR}/usr/local/include:${DVDREAD_DIR}/usr/local/include:${A52DEC_DIR}/usr/local/include
-
-  make
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" install
-}
-
 post_makeinstall_target() {
   mkdir -p ${INSTALL}/storage/.config/vdropt-sample/conf.d
   cp -PR ${PKG_DIR}/conf.d/* ${INSTALL}/storage/.config/vdropt-sample/conf.d/

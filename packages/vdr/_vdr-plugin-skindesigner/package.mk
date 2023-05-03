@@ -7,39 +7,16 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/kamel5/skindesigner.git"
 PKG_URL="https://gitlab.com/kamel5/skindesigner/-/archive/${PKG_VERSION}/skindesigner-${PKG_VERSION}.tar.gz"
 PKG_BRANCH="master"
-PKG_DEPENDS_TARGET="toolchain _vdr cairo _librsvg _fonts libXext"
+PKG_DEPENDS_TARGET="toolchain _vdr cairo _librsvg _fonts libXext pango shared-mime-info"
+PKG_DEPENDS_CONFIG="_vdr _vdr-plugin-skindesigner _librsvg cairo shared-mime-info pango"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="A VDR skinning engine that displays XML based Skins"
-PKG_TOOLCHAIN="manual"
+PKG_MAKE_OPTS_TARGET="SKINDESIGNER_SCRIPTDIR=/storage/.config/vdropt/plugins/skindesigner/scripts"
+PKG_MAKEINSTALL_OPTS_TARGET="PLGRES_DIR=${INSTALL}/storage/.config/vdropt-sample/plugins/skindesigner SKINDESIGNER_SCRIPTDIR=/storage/.config/vdropt/plugins/skindesigner/scripts"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-
-  export PKG_CONFIG_PATH=${VDR_DIR}:"$(get_build_dir _vdr-plugin-skindesigner)":"${SYSROOT_PREFIX}/usr/local/lib/pkgconfig":"$(get_install_dir shared-mime-info)/usr/share/pkgconfig":"$(get_install_dir pango)/usr/lib/pkgconfig":"$(get_install_dir libXft)/usr/lib/pkgconfig":${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-  export PATH="${SYSROOT_PREFIX}/usr/local/bin":$PATH
-  SKINDESIGNER_SCRIPTDIR="/storage/.config/vdropt/plugins/skindesigner/scripts"
-
-  make SKINDESIGNER_SCRIPTDIR="${SKINDESIGNER_SCRIPTDIR}" INCDIR="/usr/local/include"
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  PLGRES_DIR="${INSTALL}/storage/.config/vdropt-sample/plugins/skindesigner"
-  SKINDESIGNER_SCRIPTDIR="/storage/.config/vdropt/plugins/skindesigner/scripts"
-  SKINDESIGNER_DIR=$(get_install_dir _vdr-plugin-skindesigner)
-
-  make PREFIX="/usr/local" DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" PLGRESDIR="${PLGRES_DIR}" SKINDESIGNER_SCRIPTDIR="${SKINDESIGNER_SCRIPTDIR}" install
-
-  # ugly hack. Similar to the one in _vdr
-  mkdir -p ${SKINDESIGNER_DIR}/usr/local/usr/local
-  cd ${SKINDESIGNER_DIR}/usr/local/usr/local
-  ln -s ../../include include
-  cd $(get_build_dir _vdr_plugin_skindesigner)
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
 
 post_makeinstall_target() {

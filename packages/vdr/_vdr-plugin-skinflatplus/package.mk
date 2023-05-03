@@ -9,25 +9,15 @@ PKG_URL="https://github.com/MegaV0lt/vdr-plugin-skinflatplus/archive/${PKG_VERSI
 PKG_BRANCH="master"
 PKG_SOURCE_DIR="vdr-plugin-skinflatplus-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _graphicsmagick"
+PKG_DEPENDS_CONFIG="_vdr _graphicsmagick"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
 PKG_LONGDESC="TODO"
-PKG_TOOLCHAIN="manual"
+PKG_MAKE_OPTS_TARGET="IMAGELIB=graphicsmagick"
+PKG_MAKEINSTALL_OPTS_TARGET="SKINFLATPLUS_WIDGETDIR=/storage/.config/vdropt-sample/plugins/skinflatplus"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
-
-  IMAGELIB=graphicsmagick make
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" SKINFLATPLUS_WIDGETDIR="${INSTALL}/storage/.config/vdropt-sample/plugins/skinflatplus" install
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
 
 post_makeinstall_target() {
@@ -43,5 +33,5 @@ post_makeinstall_target() {
   VERSION=$(pkg-config --variable=apiversion vdr)
   cd ${INSTALL}
   mkdir -p ${INSTALL}/usr/local/config/
-  zip -qrum9 "${INSTALL}/usr/local/config/skinflatplus-sample-config.zip" storage
+  zip -yqrum9 "${INSTALL}/usr/local/config/skinflatplus-sample-config.zip" storage
 }

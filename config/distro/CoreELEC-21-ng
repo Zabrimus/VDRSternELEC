@@ -8,7 +8,7 @@ VARIANT=
 # Build settings
 PROJECT=Amlogic-ce
 DEVICE=Amlogic-ng
-ARCH=aarch64
+ARCH=arm
 
 # VDR settings
 VDR_OUTPUTDEVICE=softhdodroid

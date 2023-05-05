@@ -288,6 +288,6 @@
 - update plugins
   markad
 
-05.05.2023 (CE21 change)
-- Switch CE21 to aarch64 (see https://discourse.coreelec.org/t/21-0-omega-alpha1-may-1st-2023/21471)
-  An update from CE20 is impossible, a new installation is required!
+05.05.2023 (CE21-ne change)
+- Switch CE21-ne to aarch64 (see https://discourse.coreelec.org/t/21-0-omega-alpha1-may-1st-2023/21471)
+  An update from CE20-ne is impossible, a new installation is required!

@@ -1,0 +1,24 @@
+From fc9afffaf1d7c4cd578340cfd3a7d38b359b4722 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Mon, 8 May 2023 11:52:22 +0200
+Subject: [PATCH] fix
+
+---
+ Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 8800c83..2d242c8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -31,7 +31,6 @@ URL = https://github.com/wirbel-at-vdr-portal/librepfunc
+ #/******************************************************************************
+ # * if you prefer verbose non-coloured build messages, remove the '@' here:
+ # *****************************************************************************/
+-CXX = @g++
+ CXXFLAGS += -g -O3 -fPIC -Wall -Wextra -Werror=overloaded-virtual -Wfatal-errors
+ DEFINES   = -D_POSIX_C_SOURCE
+ 
+-- 
+2.30.2
+

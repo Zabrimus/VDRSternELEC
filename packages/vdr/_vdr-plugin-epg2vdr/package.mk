@@ -8,9 +8,9 @@ PKG_SITE="https://github.com/horchi/vdr-plugin-epg2vdr"
 PKG_URL="https://github.com/horchi/vdr-plugin-epg2vdr/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
 PKG_SOURCE_DIR="vdr-plugin-epg2vdr-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain _vdr Python3 util-linux _mariadb-connector-c _jansson tinyxml2 libarchive"
+PKG_DEPENDS_TARGET="toolchain _vdr Python3 util-linux _mariadb-connector-c _jansson tinyxml2 libarchive vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr _mariadb-connector-c"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory Python3) $(get_pkg_directory _mariadb-connector-c)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr Python3 _mariadb-connector-c vdr-helper)"
 PKG_LONGDESC="This plugin is used to retrieve EPG data into the VDR. The EPG data was loaded from a mariadb database."
 
 post_unpack() {
@@ -28,19 +28,7 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
-  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/conf.d
-  cp -PR ${PKG_DIR}/conf.d/* ${INSTALL}/storage/.config/vdropt-sample/conf.d/
-
-  if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | read; then
-    cp -ar ${INSTALL}/storage/.config/vdropt/* ${INSTALL}/storage/.config/vdropt-sample
-    rm -Rf ${INSTALL}/storage/.config/vdropt
-  fi
-
-  # create config.zip
-  VERSION=$(pkg-config --variable=apiversion vdr)
-  cd ${INSTALL}
-  mkdir -p ${INSTALL}/usr/local/config/
-  zip -qrum9 "${INSTALL}/usr/local/config/epg2vdr-sample-config.zip" storage
+  $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN} epg2vdr
 
   rm -f ${PKG_DIR}/patches/uint64_t.patch
 }

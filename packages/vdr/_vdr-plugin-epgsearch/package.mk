@@ -7,9 +7,9 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-epgsearch"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-epgsearch/archive/${PKG_VERSION}.tar.gz"
 PKG_BRANCH="master"
-PKG_DEPENDS_TARGET="toolchain _vdr pcre2"
+PKG_DEPENDS_TARGET="toolchain _vdr pcre2 vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
 PKG_LONGDESC="EPGSearch is a plugin for the Video-Disc-Recorder (VDR)."
 
 pre_make_target() {
@@ -18,17 +18,5 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
-  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/conf.d
-  cp -PR ${PKG_DIR}/conf.d/* ${INSTALL}/storage/.config/vdropt-sample/conf.d/
-
-  if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | read; then
-    cp -ar ${INSTALL}/storage/.config/vdropt/* ${INSTALL}/storage/.config/vdropt-sample
-    rm -Rf ${INSTALL}/storage/.config/vdropt
-  fi
-
-  # create config.zip
-  VERSION=$(pkg-config --variable=apiversion vdr)
-  cd ${INSTALL}
-  mkdir -p ${INSTALL}/usr/local/config/
-  zip -qrum9 "${INSTALL}/usr/local/config/epgsearch-sample-config.zip" storage
+  $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} epgsearch
 }

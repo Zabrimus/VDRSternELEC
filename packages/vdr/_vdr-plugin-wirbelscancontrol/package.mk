@@ -6,9 +6,9 @@ PKG_SHA256="93418d31bb757cccea9f81edd13a3e84ca0cf239c30252afbf0ced68e9ef6bd5"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.gen2vdr.de/wirbel/wirbelscancontrol/index2.html"
 PKG_URL="https://www.gen2vdr.de/wirbel/wirbelscancontrol/vdr-wirbelscancontrol-${PKG_VERSION}.tgz"
-PKG_DEPENDS_TARGET="toolchain _vdr gettext:host _vdr-plugin-wirbelscan"
+PKG_DEPENDS_TARGET="toolchain _vdr gettext:host _vdr-plugin-wirbelscan vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory _vdr-plugin-wirbelscan)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr _vdr-plugin-wirbelscan vdr-helper)"
 PKG_LONGDESC="Adds menu entry for wirbelscan at VDR."
 
 pre_build_target() {
@@ -22,17 +22,6 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
-  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/conf.d
-  cp -PR ${PKG_DIR}/conf.d/* ${INSTALL}/storage/.config/vdropt-sample/conf.d/
-
-  if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | read; then
-    cp -ar ${INSTALL}/storage/.config/vdropt/* ${INSTALL}/storage/.config/vdropt-sample
-    rm -Rf ${INSTALL}/storage/.config/vdropt
-  fi
-
-  # create config.zip
-  VERSION=$(pkg-config --variable=apiversion vdr)
-  cd ${INSTALL}
-  mkdir -p ${INSTALL}/usr/local/config/
-  zip -qrum9 "${INSTALL}/usr/local/config/wirbelscancontrol-sample-config.zip" storage
+  PLUGIN="$(cat ${PKG_BUILD}/Makefile | grep 'PLUGIN = ' | cut -d ' ' -f 3)"
+  $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN}
 }

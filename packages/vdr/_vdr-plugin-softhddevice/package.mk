@@ -8,9 +8,9 @@ PKG_SITE="https://github.com/ua0lnj/vdr-plugin-softhddevice"
 PKG_URL="https://github.com/ua0lnj/vdr-plugin-softhddevice/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="vdpau+vaapi+cuvid"
 PKG_SOURCE_DIR="vdr-plugin-softhddevice-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain _vdr libglvnd nvidia glm alsa freetype ffmpeg libdrm mesa libva _xcb-util-wm _libxcb glu libXi libXxf86vm"
+PKG_DEPENDS_TARGET="toolchain _vdr libglvnd nvidia glm alsa freetype ffmpeg libdrm mesa libva _xcb-util-wm _libxcb glu libXi libXxf86vm vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
 PKG_LONGDESC="A software and GPU emulated UHD output device plugin for VDR."
 PKG_MAKE_OPTS_TARGET="CUVID=$(cat $(get_build_dir ffmpeg)/config.h | grep CUVID | cut -d ' ' -f 3)"
 PKG_MAKEINSTALL_OPTS_TARGET="CUVID=$(cat $(get_build_dir ffmpeg)/config.h | grep CUVID | cut -d ' ' -f 3)"
@@ -23,17 +23,6 @@ pre_make_target() {
 post_makeinstall_target() {
   mkdir -p ${INSTALL}/storage/.config/vdropt-sample/plugins/softhddevice
 
-  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/conf.d
-  cp -PR ${PKG_DIR}/conf.d/* ${INSTALL}/storage/.config/vdropt-sample/conf.d/
-
-  if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | read; then
-    cp -ar ${INSTALL}/storage/.config/vdropt/* ${INSTALL}/storage/.config/vdropt-sample
-    rm -Rf ${INSTALL}/storage/.config/vdropt
-  fi
-
-  # create config.zip
-  VERSION=$(pkg-config --variable=apiversion vdr)
-  cd ${INSTALL}
-  mkdir -p ${INSTALL}/usr/local/config/
-  zip -qrum9 "${INSTALL}/usr/local/config/softhddevice-sample-config.zip" storage
+  PLUGIN="$(cat ${PKG_BUILD}/Makefile | grep 'PLUGIN = ' | cut -d ' ' -f 3)"
+  $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN}
 }

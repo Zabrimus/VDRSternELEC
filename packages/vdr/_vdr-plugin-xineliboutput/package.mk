@@ -7,9 +7,9 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://sourceforge.net/projects/xineliboutput"
 PKG_URL="https://salsa.debian.org/vdr-team/vdr-plugin-xineliboutput/-/archive/debian/${PKG_VERSION}/vdr-plugin-xineliboutput-debian-${PKG_VERSION}.tar.gz"
 PKG_SOURCE_DIR="vdr-plugin-xineliboutput-debian-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain _vdr glibc _xine-lib libX11 mesa _xcb-util-wm _libxcb _freeglut libXi libXxf86vm _directfb2"
+PKG_DEPENDS_TARGET="toolchain _vdr glibc _xine-lib libX11 mesa _xcb-util-wm _libxcb _freeglut libXi libXxf86vm _directfb2 vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
 PKG_LONGDESC="An output device which depends on xinelib"
 PKG_TOOLCHAIN="make"
 
@@ -23,18 +23,9 @@ make_target() {
 }
 
 post_makeinstall_target() {
-  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/conf.d
-  cp -PR ${PKG_DIR}/conf.d/* ${INSTALL}/storage/.config/vdropt-sample/conf.d/
+  mkdir -p ${INSTALL}/storage/.config/vdropt-sample
   cp  ${PKG_DIR}/conf/* ${INSTALL}/storage/.config/vdropt-sample/
 
-  if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | read; then
-    cp -ar ${INSTALL}/storage/.config/vdropt/* ${INSTALL}/storage/.config/vdropt-sample
-    rm -Rf ${INSTALL}/storage/.config/vdropt
-  fi
-
-  # create config.zip
-  VERSION=$(pkg-config --variable=apiversion vdr)
-  cd ${INSTALL}
-  mkdir -p ${INSTALL}/usr/local/config/
-  zip -qrum9 "${INSTALL}/usr/local/config/xineliboutput-config.zip" storage
+  PLUGIN="$(cat ${PKG_BUILD}/Makefile | grep 'PLUGIN = ' | cut -d ' ' -f 3)"
+  $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN}
 }

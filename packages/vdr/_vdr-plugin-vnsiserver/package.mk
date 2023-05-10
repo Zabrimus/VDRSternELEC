@@ -7,14 +7,19 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-vnsiserver"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-vnsiserver/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
-PKG_DEPENDS_TARGET="toolchain _vdr _vdr-plugin-wirbelscan vdr-helper"
+if [ "${DISTRO}" = "CoreELEC" ]; then
+  WIRBELSCAN="_vdr-plugin-wirbelscan-ce"
+else
+  WIRBELSCAN="_vdr-plugin-wirbelscan"
+fi
+PKG_DEPENDS_TARGET="toolchain _vdr ${WIRBELSCAN} vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_SOURCE_DIR="vdr-plugin-vnsiserver-${PKG_VERSION}"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr _vdr-plugin-wirbelscan vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr ${WIRBELSCAN} vdr-helper)"
 PKG_LONGDESC="VDR plugin to handle Kodi clients."
 
 pre_build_target() {
-  WIRBELSCAN_DIR=$(get_build_dir _vdr-plugin-wirbelscan)
+  WIRBELSCAN_DIR=$(get_build_dir ${WIRBELSCAN})
   ln -sf ${WIRBELSCAN_DIR}/wirbelscan_services.h ${PKG_BUILD}
 }
 

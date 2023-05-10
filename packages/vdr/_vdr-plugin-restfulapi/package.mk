@@ -7,10 +7,15 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/yavdr/vdr-plugin-restfulapi"
 PKG_URL="https://github.com/yavdr/vdr-plugin-restfulapi/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
-PKG_DEPENDS_TARGET="toolchain _vdr cxxtools _vdr-plugin-wirbelscan vdr-helper"
+if [ "${DISTRO}" = "CoreELEC" ]; then
+  WIRBELSCAN="_vdr-plugin-wirbelscan-ce"
+else
+  WIRBELSCAN="_vdr-plugin-wirbelscan"
+fi
+PKG_DEPENDS_TARGET="toolchain _vdr cxxtools vdr-helper ${WIRBELSCAN}"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_SOURCE_DIR="vdr-plugin-restfulapi-${PKG_VERSION}"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr _vdr-plugin-wirbelscan vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr ${WIRBELSCAN} vdr-helper)"
 PKG_LONGDESC="Allows to access many internals of the VDR via a restful API."
 PKG_MAKE_OPTS_TARGET="USE_LIBMAGICKPLUSPLUS=0"
 

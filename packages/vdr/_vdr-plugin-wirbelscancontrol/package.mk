@@ -6,13 +6,18 @@ PKG_SHA256="93418d31bb757cccea9f81edd13a3e84ca0cf239c30252afbf0ced68e9ef6bd5"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.gen2vdr.de/wirbel/wirbelscancontrol/index2.html"
 PKG_URL="https://www.gen2vdr.de/wirbel/wirbelscancontrol/vdr-wirbelscancontrol-${PKG_VERSION}.tgz"
-PKG_DEPENDS_TARGET="toolchain _vdr gettext:host _vdr-plugin-wirbelscan vdr-helper"
+if [ "${DISTRO}" = "CoreELEC" ]; then
+  WIRBELSCAN="_vdr-plugin-wirbelscan-ce"
+else
+  WIRBELSCAN="_vdr-plugin-wirbelscan-ce"
+fi
+PKG_DEPENDS_TARGET="toolchain _vdr gettext:host ${WIRBELSCAN} vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr _vdr-plugin-wirbelscan vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr ${WIRBELSCAN} vdr-helper)"
 PKG_LONGDESC="Adds menu entry for wirbelscan at VDR."
 
 pre_build_target() {
-  WIRBELSCAN_DIR=$(get_build_dir _vdr-plugin-wirbelscan)
+  WIRBELSCAN_DIR=$(get_build_dir ${WIRBELSCAN})
   ln -sf ${WIRBELSCAN_DIR}/wirbelscan_services.h ${PKG_BUILD}
 }
 

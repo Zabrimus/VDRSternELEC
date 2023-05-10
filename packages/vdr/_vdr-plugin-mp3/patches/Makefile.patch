@@ -1,12 +1,17 @@
-diff -ru8bBw a/Makefile b/Makefile
---- a/Makefile	2021-05-25 15:27:50.000000000 +0200
-+++ b/Makefile	2022-04-27 09:32:33.393807441 +0200
-@@ -18,54 +18,54 @@
- # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- # Or, point your browser to http://www.gnu.org/copyleft/gpl.html
- 
- # You can change the compile options here or create a Make.config
- # in the VDR directory an set them there.
+From e4abf7f1ef42c9dd6644a6d8200f10f11085502c Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Mon, 8 May 2023 10:37:24 +0200
+Subject: [PATCH] Makefile
+
+---
+ Makefile | 144 +++++++++++++++++++++----------------------------------
+ 1 file changed, 55 insertions(+), 89 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f6f4a6d..6f75ccc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -23,7 +23,7 @@
  
  ### uncomment one of these lines, if you don't want one of the plugins
  #WITHOUT_MP3=1
@@ -15,37 +20,29 @@ diff -ru8bBw a/Makefile b/Makefile
  
  ### uncomment the following line, if you don't have libsndfile installed
  #WITHOUT_LIBSNDFILE=1
- 
- ### uncomment the following line, if you don't have libvorbisfile installed
- #WITHOUT_LIBVORBISFILE=1
- 
- ### uncomment the following line, if you want OSS sound output
- #WITH_OSS_OUTPUT=1
- 
- ### uncomment the following line, if you want to include debug symbols
+@@ -38,7 +38,7 @@
  #DBG=1
  
  ### The C++ compiler and options:
 -CXX      ?= g++
--CXXFLAGS ?= -O2 -fPIC -Wall -Woverloaded-virtual
 +CXX      ?= ${CXX}
-+CXXFLAGS += -O2 -fPIC -Wall -Woverloaded-virtual
+ CXXFLAGS ?= -O2 -fPIC -Wall -Woverloaded-virtual
  
  ###############################################
- ###############################################
- #
- # no user configurable options below this point
- #
- ###############################################
- ###############################################
+@@ -51,16 +51,19 @@ CXXFLAGS ?= -O2 -fPIC -Wall -Woverloaded-virtual
  
  ### The directory environment:
  
 -VDRDIR = ../../..
 -LIBDIR = ../../lib
+-TMPDIR = /tmp
++# Use package data if installed...otherwise assume we're under the VDR source directory:
++PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
++LIBDIR = $(call PKGCFG,libdir)
++LIBDIR = $(call PKGCFG,locdir)
++#
++TMPDIR ?= /tmp
 +VDRDIR ?= ../../..
-+LIBDIR ?= ../../lib
- TMPDIR = /tmp
  
  # The official name of this plugin.
  # This name will be used in the '-P...' option of VDR to load the plugin.
@@ -53,148 +50,186 @@ diff -ru8bBw a/Makefile b/Makefile
  #
  PLUGIN  = mp3
 -PLUGIN2 = mplayer
-+#PLUGIN2 = mplayer
  
  ### Allow user defined options to overwrite defaults:
  
- -include $(VDRDIR)/Make.config
- -include Make.config
+@@ -96,6 +99,8 @@ endif
+ ARCHIVE = $(PLUGIN)-$(RELEASE)
+ PACKAGE = vdr-$(ARCHIVE)
  
- ### The version number of this plugin:
++SOFILE = libvdr-$(PLUGIN).so
++
+ ### Includes and Defines (add further entries here):
  
-@@ -121,89 +121,89 @@
- endif
- ifdef WITH_OSS_OUTPUT
-   DEFINES += -DWITH_OSS
- endif
- ifdef BROKEN_PCM
+ INCLUDES += -I$(VDRDIR)/include
+@@ -126,123 +131,84 @@ ifdef BROKEN_PCM
    DEFINES += -DBROKEN_PCM
  endif
  
 -OBJS2    = $(PLUGIN2).o $(COM_OBJS)\
 -            setup-mplayer.o player-mplayer.o
 -LIBS2    = 
-+#OBJS2    = $(PLUGIN2).o $(COM_OBJS)\
-+#            setup-mplayer.o player-mplayer.o
-+#LIBS2    =
- 
+-
  ifdef DBG
    CXXFLAGS += -g
  endif
  
 -ifneq ($(shell if test $(APIVERSNUM) -ge 010703; then echo "*"; fi),)
-+#ifneq ($(shell if test $(APIVERSNUM) -ge 010703; then echo "*"; fi),)
-   DEFINES += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
+-  DEFINES += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
 -endif
-+#endif
++DEFINES += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
  
- ### Internationalization (I18N):
+-### Internationalization (I18N):
++### The main target:
  
- PODIR     = po
- I18Npot   = $(PODIR)/mp3-mplayer.pot
- I18Npots  := $(notdir $(foreach file, $(wildcard $(PODIR)/*.po), $(basename $(file))))
- ifeq ($(strip $(APIVERSION)),1.5.7)
-   I18Nmo  = $(PLUGIN).mo
+-PODIR     = po
+-I18Npot   = $(PODIR)/mp3-mplayer.pot
+-I18Npots  := $(notdir $(foreach file, $(wildcard $(PODIR)/*.po), $(basename $(file))))
+-ifeq ($(strip $(APIVERSION)),1.5.7)
+-  I18Nmo  = $(PLUGIN).mo
 -  I18Nmo2 = $(PLUGIN2).mo
-+  #I18Nmo2 = $(PLUGIN2).mo
- else
-   I18Nmo  = vdr-$(PLUGIN).mo
+-else
+-  I18Nmo  = vdr-$(PLUGIN).mo
 -  I18Nmo2 = vdr-$(PLUGIN2).mo
-+  #18Nmo2 = vdr-$(PLUGIN2).mo
- endif
- LOCALEDIR = $(VDRDIR)/locale
- I18Nmsgs  := $(addprefix $(LOCALEDIR)/,$(addsuffix /LC_MESSAGES/$(I18Nmo),$(I18Npots)))
+-endif
+-LOCALEDIR = $(VDRDIR)/locale
+-I18Nmsgs  := $(addprefix $(LOCALEDIR)/,$(addsuffix /LC_MESSAGES/$(I18Nmo),$(I18Npots)))
 -I18Nmsgs2 := $(addprefix $(LOCALEDIR)/,$(addsuffix /LC_MESSAGES/$(I18Nmo2),$(I18Npots)))
-+#I18Nmsgs2 := $(addprefix $(LOCALEDIR)/,$(addsuffix /LC_MESSAGES/$(I18Nmo2),$(I18Npots)))
++all: $(SOFILE) i18n
  
- HASLOCALE = $(shell grep -l 'I18N_DEFAULT_LOCALE' $(VDRDIR)/include/vdr/i18n.h)
- ifeq ($(strip $(HASLOCALE)),)
-   COM_OBJS += i18n.o
- endif
+-HASLOCALE = $(shell grep -l 'I18N_DEFAULT_LOCALE' $(VDRDIR)/include/vdr/i18n.h)
+-ifeq ($(strip $(HASLOCALE)),)
+-  COM_OBJS += i18n.o
+-endif
++### Implicit rules:
  
- ### Targets:
- 
- ifndef WITHOUT_MP3
-   ALL += libvdr-$(PLUGIN).so
-   ifneq ($(strip $(HASLOCALE)),)
-     ALL += i18n-$(PLUGIN)
-   endif
- endif
+-### Targets:
+-
+-ifndef WITHOUT_MP3
+-  ALL += libvdr-$(PLUGIN).so
+-  ifneq ($(strip $(HASLOCALE)),)
+-    ALL += i18n-$(PLUGIN)
+-  endif
+-endif
 -ifndef WITHOUT_MPLAYER
 -  ALL += libvdr-$(PLUGIN2).so
 -  ifneq ($(strip $(HASLOCALE)),)
 -    ALL += i18n-$(PLUGIN2)
 -  endif
 -endif
-+#ifndef WITHOUT_MPLAYER
-+#  ALL += libvdr-$(PLUGIN2).so
-+#  ifneq ($(strip $(HASLOCALE)),)
-+#    ALL += i18n-$(PLUGIN2)
-+#  endif
-+#endif
++%.o: %.c
++	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) -o $@ $<
  
- all: $(ALL)
+-all: $(ALL)
 -.PHONY: i18n-$(PLUGIN) i18n-$(PLUGIN2)
-+.PHONY: i18n-$(PLUGIN) #i18n-$(PLUGIN2)
++version.c: FORCE
++	@echo >$@.new "/* this file will be overwritten without warning */"; \
++	 echo >>$@.new 'const char *PluginVersion =' '"'$(VERSION)'";'; \
++	 diff $@.new $@ >$@.diff 2>&1; \
++	 if test -s $@.diff; then mv -f $@.new $@; fi; \
++	 rm -f $@.new $@.diff;
  
- # Dependencies:
+-# Dependencies:
++### Dependencies:
  
- MAKEDEP = g++ -MM -MG
+-MAKEDEP = g++ -MM -MG
++MAKEDEP = $(CXX) -MM -MG
  DEPFILE = .dependencies
 -DEPFILES = $(subst i18n.c,,$(subst version.c,,$(OBJS:%.o=%.c) $(OBJS2:%.o=%.c)))
-+DEPFILES = $(subst i18n.c,,$(subst version.c,,$(OBJS:%.o=%.c) #$(OBJS2:%.o=%.c)))
- $(DEPFILE): Makefile $(DEPFILES) $(wildcard *.h)
- 	@$(MAKEDEP) $(DEFINES) $(INCLUDES) $(DEPFILES) > $@
+-$(DEPFILE): Makefile $(DEPFILES) $(wildcard *.h)
+-	@$(MAKEDEP) $(DEFINES) $(INCLUDES) $(DEPFILES) > $@
++$(DEPFILE): Makefile
++	@$(MAKEDEP) $(CXXFLAGS) $(DEFINES) $(INCLUDES) $(OBJS:%.o=%.c) > $@
  
  -include $(DEPFILE)
  
- # Rules
- 
- %.o: %.c
+-# Rules
+-
+-%.o: %.c
 -	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) $<
-+	$(CXX) $(CXXFLAGS) -fPIC -c $(DEFINES) $(INCLUDES) $<
++### Internationalization (I18N):
  
- libvdr-$(PLUGIN).so: $(OBJS)
- 	$(CXX) $(CXXFLAGS) -shared $(OBJS) $(LIBS) -o $@
- 	@cp $@ $(LIBDIR)/$@.$(APIVERSION)
+-libvdr-$(PLUGIN).so: $(OBJS)
+-	$(CXX) $(CXXFLAGS) -shared $(OBJS) $(LIBS) -o $@
+-	@cp $@ $(LIBDIR)/$@.$(APIVERSION)
++PODIR     = po
++I18Npo    = $(wildcard $(PODIR)/*.po)
++I18Nmo    = $(addsuffix .mo, $(foreach file, $(I18Npo), $(basename $(file))))
++I18Nmsgs  = $(addprefix $(DESTDIR)$(LOCDIR)/, $(addsuffix /LC_MESSAGES/vdr-$(PLUGIN).mo, $(notdir $(foreach file, $(I18Npo), $(basename $(file))))))
++I18Npot   = $(PODIR)/$(PLUGIN).pot
  
 -libvdr-$(PLUGIN2).so: $(OBJS2)
 -	$(CXX) $(CXXFLAGS) -shared $(OBJS2) $(LIBS2) -o $@
 -	@cp $@ $(LIBDIR)/$@.$(APIVERSION)
-+#libvdr-$(PLUGIN2).so: $(OBJS2)
-+#	$(CXX) $(CXXFLAGS) -shared $(OBJS2) $(LIBS2) -o $@
-+#	@cp $@ $(LIBDIR)/$@.$(APIVERSION)
++%.mo: %.po
++	msgfmt -c -o $@ $<
  
- $(I18Npot): $(shell grep -rl '\(tr\|trNOOP\)(\".*\")' *.c )
- 	xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --msgid-bugs-address='<s.huelswitt@gmx.de>' -o $@ $^
+-$(I18Npot): $(shell grep -rl '\(tr\|trNOOP\)(\".*\")' *.c )
+-	xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --msgid-bugs-address='<s.huelswitt@gmx.de>' -o $@ $^
++$(I18Npot): $(wildcard *.c)
++	xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --package-name=vdr-$(PLUGIN) --package-version=$(VERSION) --msgid-bugs-address='<see README>' -o $@ `ls $^`
  
  %.po: $(I18Npot)
- 	msgmerge -U --no-wrap --no-location --backup=none -q $@ $<
+-	msgmerge -U --no-wrap --no-location --backup=none -q $@ $<
++	msgmerge -U --no-wrap --no-location --backup=none -q -N $@ $<
  	@touch $@
  
-@@ -211,21 +211,21 @@
- 	msgfmt -c -o $@ $<
+-%.mo: %.po
+-	msgfmt -c -o $@ $<
++$(I18Nmsgs): $(DESTDIR)$(LOCDIR)/%/LC_MESSAGES/vdr-$(PLUGIN).mo: $(PODIR)/%.mo
++	install -D -m644 $< $@
  
- $(I18Nmsgs): $(LOCALEDIR)/%/LC_MESSAGES/$(I18Nmo): $(PODIR)/%.mo
- 	@mkdir -p $(dir $@)
- 	cp $< $@
+-$(I18Nmsgs): $(LOCALEDIR)/%/LC_MESSAGES/$(I18Nmo): $(PODIR)/%.mo
+-	@mkdir -p $(dir $@)
+-	cp $< $@
++.PHONY: i18n
++i18n: $(I18Nmo) $(I18Npot)
  
- i18n-$(PLUGIN): $(I18Nmsgs)
+-i18n-$(PLUGIN): $(I18Nmsgs)
++install-i18n: $(I18Nmsgs)
  
 -$(I18Nmsgs2): $(LOCALEDIR)/%/LC_MESSAGES/$(I18Nmo2): $(PODIR)/%.mo
 -	@mkdir -p $(dir $@)
 -	cp $< $@
-+#$(I18Nmsgs2): $(LOCALEDIR)/%/LC_MESSAGES/$(I18Nmo2): $(PODIR)/%.mo
-+#	@mkdir -p $(dir $@)
-+#	cp $< $@
++### Targets:
  
 -i18n-$(PLUGIN2): $(I18Nmsgs2)
-+#i18n-$(PLUGIN2): $(I18Nmsgs2)
++$(SOFILE): $(OBJS)
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LDADD) -o $@
  
- i18n.c: $(PODIR)/*.po i18n-template.c po2i18n.pl
- 	perl ./po2i18n.pl <i18n-template.c >i18n.c
+-i18n.c: $(PODIR)/*.po i18n-template.c po2i18n.pl
+-	perl ./po2i18n.pl <i18n-template.c >i18n.c
++install-lib: $(SOFILE)
++	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
  
- version.c: FORCE
- 	@echo >$@.new "/* this file will be overwritten without warning */"; \
- 	 echo >>$@.new 'const char *PluginVersion =' '"'$(VERSION)'";'; \
- 	 diff $@.new $@ >$@.diff 2>&1; \
+-version.c: FORCE
+-	@echo >$@.new "/* this file will be overwritten without warning */"; \
+-	 echo >>$@.new 'const char *PluginVersion =' '"'$(VERSION)'";'; \
+-	 diff $@.new $@ >$@.diff 2>&1; \
+-	 if test -s $@.diff; then mv -f $@.new $@; fi; \
+-	 rm -f $@.new $@.diff;
++install: install-lib install-i18n
+ 
+-dist: clean
++dist: $(I18Npo) clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a * $(TMPDIR)/$(ARCHIVE)
+-	@tar czf $(PACKAGE).tar.gz -C $(TMPDIR) $(ARCHIVE)
++	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+-	@echo Distribution package created as $(PACKAGE).tar.gz
++	@echo Distribution package created as $(PACKAGE).tgz
+ 
+ clean:
+-	@-rm -f $(OBJS) $(OBJS2) $(DEPFILE) libvdr-*.so $(PACKAGE).tar.gz core* *~
+-	@-rm -f version.c i18n.c
+-	@-rm -f $(PODIR)/*.mo
++	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot
++	@-rm -f version.c
++	@-rm -f $(OBJS) $(DEPFILE) *.so *.tgz core* *~
+ 
+ FORCE:
+-- 
+2.30.2
+

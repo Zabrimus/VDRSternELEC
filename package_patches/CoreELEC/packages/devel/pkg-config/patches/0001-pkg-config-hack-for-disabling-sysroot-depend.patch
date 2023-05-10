@@ -1,0 +1,26 @@
+From e7f140d7ee17b82d56b04fc827c1db197ae89483 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Wed, 3 May 2023 17:03:17 +0200
+Subject: [PATCH 1/2] pkg-config: hack for disabling sysroot depend
+
+Signed-off-by: Andreas Baierl <ichgeh@imkreisrum.de>
+---
+ pkg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pkg.c b/pkg.c
+index ecae401..476c9bd 100644
+--- a/pkg.c
++++ b/pkg.c
+@@ -1127,7 +1127,7 @@ packages_get_var (GList      *pkgs,
+         {
+           if (str->len > 0)
+             g_string_append_c (str, ' ');
+-          if (sysroot->len && (!strcmp(varname, "includedir") || !strcmp(varname, "libdir")) && strncmp(var, sysroot->str, sysroot->len))
++          if ((g_getenv ("PKG_CONFIG_DISABLE_SYSROOT_PREPEND") == NULL) && sysroot->len && (!strcmp(varname, "includedir") || !strcmp(varname, "libdir")) && strncmp(var, sysroot->str, sysroot->len))
+             g_string_append(str, sysroot->str);
+           g_string_append (str, var);
+           g_free (var);
+-- 
+2.30.2
+

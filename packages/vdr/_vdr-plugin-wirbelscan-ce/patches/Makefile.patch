@@ -1,0 +1,21 @@
+diff -u8bBw a/Makefile b/Makefile
+--- a/Makefile	2021-03-07 17:11:12.000000000 +0100
++++ b/Makefile	2022-03-30 18:18:49.645055361 +0200
+@@ -4,16 +4,16 @@
+ # !! It *may* or *may not* build/install this plugin.
+ #
+  
+ 
+ 
+ 
+           
+ PWD = $(shell pwd)
+-PLUGIN = $(shell basename $(PWD) | cut -d- -f1)
++PLUGIN = wirbelscan
+ OBJS = $(shell ls *.c | sed -e 's/\.c/\.o/g')
+ 
+ 
+ ### The version number of this plugin (taken from the main source file):
+ VERSION = $(shell grep 'static const char \*WIRBELSCAN_VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ 

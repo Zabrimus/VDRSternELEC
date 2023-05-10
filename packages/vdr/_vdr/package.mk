@@ -12,11 +12,10 @@ PKG_URL="http://git.tvdr.de/?p=vdr.git;a=snapshot;h=refs/tags/${PKG_VERSION};sf=
 PKG_SOURCE_NAME="${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain bzip2 fontconfig freetype libcap libiconv libjpeg-turbo"
 PKG_LONGDESC="A DVB TV server application."
-PKG_TOOLCHAIN="manual"
 
 post_unpack() {
   rm -rf ${PKG_BUILD}/PLUGINS/src/skincurses
-  rm -f ${PKG_DIR}/patches/vdr-2.4.6-dynamite.patch
+  rm -f ${PKG_DIR}/patches/vdr-2.6.3-dynamite.patch
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   rm -f ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch
 
@@ -25,7 +24,7 @@ post_unpack() {
   fi
 
   if [ "${EXTRA_DYNAMITE}" = "y" ]; then
-  	cp ${PKG_DIR}/optional/vdr-2.4.6-dynamite.patch ${PKG_DIR}/patches/vdr-2.4.6-dynamite.patch
+  	cp ${PKG_DIR}/optional/vdr-2.6.3-dynamite.patch ${PKG_DIR}/patches/vdr-2.6.3-dynamite.patch
   fi
 
   if [ "${EXTRA_PERMASHIFT}" = "y" ]; then
@@ -33,13 +32,10 @@ post_unpack() {
   fi
 }
 
-pre_configure_target() {
-  # test if prefix is set
-  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/lib/iconv -liconv"
-}
-
 pre_make_target() {
-  PREFIX="/usr/local/"
+  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/lib/iconv -liconv"
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  PREFIX="/usr/local"
 
   cat > Make.config <<EOF
 PREFIX = ${PREFIX}
@@ -52,21 +48,9 @@ CACHEDIR = /storage/.cache/vdr
 LIBS += -liconv
 VDR_USER=root
 EOF
-
-  # Ein ganz übler Hack. Es ist nicht gelungen pkg-config zu überreden, bei --cflags oder --libs (aber nur nur bei bestimmten Libs),
-  # nicht(!) den Wert */sysroot/opt/vdr/opt/vdr zurückzugeben, den es eigentlich nicht geben darf und der beim compile und beim linken
-  # ziemliche Problem macht.
-  mkdir -p ${SYSROOT_PREFIX}/usr/local/opt
-  cd ${SYSROOT_PREFIX}/usr/local/opt
-  ln -f -s ../../vdr/ vdr
-  cd $(get_build_dir _vdr)
 }
 
-make_target() {
-  make vdr vdr.pc
-}
-
-makeinstall_target() {
+post_makeinstall_target() {
   PREFIX="/usr/local"
   CONFDIR="/storage/.config/vdropt"
   LDPRELOADMALI=""
@@ -74,8 +58,6 @@ makeinstall_target() {
   if [ "${PROJECT}" = "Amlogic-ce" ]; then
      LDPRELOADMALI="/usr/lib/libMali.so"
   fi
-
-  make DESTDIR="${INSTALL}" install
 
   SED_SCRIPT="s#XXCONFDIRXX#${CONFDIR}# ; s#XXBINDIRXX#${PREFIX}/bin# ; s#XXVERSIONXX#${PKG_VERSION}# ; s#XXLIBDIRXX#${PREFIX}/lib# ; s#XXPREFIXXX#${PREFIX}# ; s#XXPREFIXCONFXX#${PREFIX}/config# ; s#XXLDPRELOADMALIXX#${LDPRELOADMALI}#"
 
@@ -151,10 +133,7 @@ EOF
   # copy sysctl.d folder
   mkdir -p ${INSTALL}/${PREFIX}/sysctl.d
   cp ${PKG_DIR}/_sysctl.d/* ${INSTALL}/${PREFIX}/sysctl.d
-}
 
-post_makeinstall_target() {
-  PREFIX="/usr/local"
   VDR_DIR=$(get_install_dir _vdr)
 
   # move configuration to another folder to prevent overwriting existing configuration after installation
@@ -183,7 +162,7 @@ EOF
   # copy sample XML (PowerMenu for Kodi which includes a Button to switch to VDR)
   cat ${PKG_DIR}/config/DialogButtonMenu.xml | sed "s#XXBINDIRXX#${PREFIX}/bin#" > ${INSTALL}/${PREFIX}/config/DialogButtonMenu.xml
 
-  rm -f ${PKG_DIR}/patches/vdr-2.4.6-dynamite.patch
+  rm -f ${PKG_DIR}/patches/vdr-2.6.3-dynamite.patch
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   rm -f ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch
 }

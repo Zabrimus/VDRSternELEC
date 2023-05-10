@@ -22,6 +22,7 @@ Options:
 -subdevice         : Build only images for the desired subdevice. This speeds up building images.
 -addononly         : Build only the desired addons
 -patchonly         : Only apply patches and build nothing
+-package <name>    : Build a single package
 -help              : Show this help
 EOF
   echo
@@ -164,7 +165,6 @@ build() {
   echo "   BUILD_SUFFIX=$BUILD_SUFFIX"
   echo "   VDR_OUTPUTDEVICE=$VDR_OUTPUTDEVICE"
   echo "   VDR_INPUTDEVICE=$VDR_INPUTDEVICE"
-  echo "Start make image"
   export PROJECT="$PROJECT"
   export DEVICE="$DEVICE"
   export ARCH="$ARCH"
@@ -172,7 +172,13 @@ build() {
   export VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE"
   export VDR_INPUTDEVICE="$VDR_INPUTDEVICE"
 
-  make image
+  if [ ! "${PACKAGE_ONLY}" = "" ]; then
+    echo "Build ${PACKAGE_ONLY}"
+    scripts/build ${PACKAGE_ONLY}
+  else
+    echo "Start make image"
+    make image
+  fi
 }
 
 read_extra() {
@@ -215,6 +221,7 @@ while [[ "$#" -gt 0 ]]; do
         -subdevice) shift; SUB_DEVICE=$1 ;;
         -addononly) shift; ADDON_ONLY=true ;;
         -patchonly) shift; PATCH_ONLY=true ;;
+        -package) shift; PACKAGE_ONLY=$1 ;;
         -help) shift; usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac

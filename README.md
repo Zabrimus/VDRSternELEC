@@ -114,6 +114,7 @@ Options:
 -subdevice         : Build only images for the desired subdevice. This speeds up building images.
 -addononly         : Build only the desired addons
 -patchonly         : Only apply patches and build nothing
+-package <name>    : Build a single package
 -help              : Show this help
 
 Available configs:

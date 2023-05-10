@@ -8,27 +8,15 @@ PKG_SITE="https://github.com/flensrocker/vdr-plugin-dbus2vdr"
 PKG_URL="https://github.com/flensrocker/vdr-plugin-dbus2vdr/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
 PKG_SOURCE_DIR="vdr-plugin-dbus2vdr-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain _vdr _libpngpp dbus glib libjpeg-turbo"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr _libpngpp)"
+PKG_DEPENDS_TARGET="toolchain _vdr _libpngpp dbus glib libjpeg-turbo vdr-helper"
+PKG_DEPENDS_CONFIG="_vdr _libpngpp"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr _libpngpp vdr-helper)"
 PKG_LONGDESC="This plugin will expose some methods via DBus to control the vdr."
-PKG_TOOLCHAIN="manual"
 
-pre_configure_target() {
+pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-}
-
-make_target() {
-  VDR_DIR=$(get_build_dir _vdr)
-  LIBPNGPP_DIR=$(get_build_dir _libpngpp)
-  export PKG_CONFIG_PATH=${VDR_DIR}:${SYSROOT_PREFIX}/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include:${LIBPNGPP_DIR}
-
-  make
-}
-
-makeinstall_target() {
-  LIB_DIR=${INSTALL}/$(pkg-config --variable=locdir vdr)/../../lib/vdr
-  make DESTDIR="${INSTALL}" LIBDIR="${LIB_DIR}" install
+  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export CPLUS_INCLUDE_PATH=$(get_build_dir _libpngpp)
 }
 
 post_makeinstall_target() {
@@ -42,17 +30,6 @@ post_makeinstall_target() {
 
   cp $(get_pkg_directory _vdr-plugin-dbus2vdr)/config/de.tvdr.vdr.conf ${INSTALL}/etc/dbus-1/system.d/de.tvdr.vdr.conf
 
-  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/conf.d
-  cp -PR ${PKG_DIR}/conf.d/* ${INSTALL}/storage/.config/vdropt-sample/conf.d/
-
-  if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | read; then
-    cp -ar ${INSTALL}/storage/.config/vdropt/* ${INSTALL}/storage/.config/vdropt-sample
-    rm -Rf ${INSTALL}/storage/.config/vdropt
-  fi
-
-  # create config.zip
-  VERSION=$(pkg-config --variable=apiversion vdr)
-  cd ${INSTALL}
-  mkdir -p ${INSTALL}/usr/local/config/
-  zip -qrum9 "${INSTALL}/usr/local/config/dbus2vdr-sample-config.zip" storage
+  PLUGIN="$(cat ${PKG_BUILD}/Makefile | grep 'PLUGIN = ' | cut -d ' ' -f 3)"
+  $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN}
 }

@@ -15,6 +15,6 @@ for i in $(ls config/distro); do
   . config/distro/$i
 
   (cd $DISTRO
-    PROJECT=$PROJECT ARCH=$ARCH DEVICE=$DEVICE scripts/clean $1
+    PROJECT=$PROJECT ARCH=$ARCH DEVICE=$DEVICE scripts/clean $1 || true
   )
 done

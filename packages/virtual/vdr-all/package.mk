@@ -13,10 +13,8 @@ PKG_DEPENDS_TARGET+=" _vdr"
 
 if [ "${VDR_OUTPUTDEVICE}" = "softhdodroid" ]; then
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid"
-elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ]; then
-   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
-elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm-gles" ]; then
-   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
+elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ] || [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm-gles" ]; then
+   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm _vdr-plugin-softhddevice-drm-gles"
 fi
 
 if [ "${ARCH}" = "x86_64" ]; then
@@ -42,7 +40,11 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-restfulapi"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-robotv"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-streamdev"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-vnsiserver"
-PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscan"
+if [ "${DISTRO}" = "CoreELEC" ]; then
+  PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscan-ce"
+else
+  PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscan"
+fi
 PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscancontrol"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-osdteletext"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-zaphistory"
@@ -94,6 +96,9 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-duplicates"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-nordlichtsepg"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-extrecmenung"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-pvrinput"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-vompserver"
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"
@@ -106,13 +111,6 @@ fi
 if [ "${EXTRA_PERMASHIFT}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-permashift"
 fi
-
-# Warning: Compiled without libcdio, libcdio_paranoia, libcdda due to compile problems for the mentioned libs
-PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
-
-# Makfile muss angepasst werden
-# PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
-
 
 # DirectFB2
 if [ "${EXTRA_DIRECTFB2}" = "y" ]; then

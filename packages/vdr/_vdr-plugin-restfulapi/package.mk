@@ -22,7 +22,12 @@ PKG_MAKE_OPTS_TARGET="USE_LIBMAGICKPLUSPLUS=0"
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
-  cp $(get_build_dir _vdr-plugin-wirbelscan)/wirbelscan_services.h ${PKG_BUILD}/wirbelscan/
+
+  if [ "${DISTRO}" = "CoreELEC" ]; then
+    cp $(get_build_dir _vdr-plugin-wirbelscan-ce)/wirbelscan_services.h ${PKG_BUILD}/wirbelscan/
+  else
+    cp $(get_build_dir _vdr-plugin-wirbelscan)/wirbelscan_services.h ${PKG_BUILD}/wirbelscan/
+  fi
 }
 
 post_makeinstall_target() {

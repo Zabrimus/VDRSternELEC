@@ -13,10 +13,8 @@ PKG_DEPENDS_TARGET+=" _vdr"
 
 if [ "${VDR_OUTPUTDEVICE}" = "softhdodroid" ]; then
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid"
-elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ]; then
-   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
-elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm-gles" ]; then
-   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
+elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ] || [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm-gles" ]; then
+   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm _vdr-plugin-softhddevice-drm-gles"
 fi
 
 if [ "${ARCH}" = "x86_64" ]; then

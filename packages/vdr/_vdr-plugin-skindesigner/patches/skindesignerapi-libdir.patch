@@ -1,0 +1,24 @@
+diff -ru8bBwd a/libskindesignerapi/Makefile b/libskindesignerapi/Makefile
+--- a/libskindesignerapi/Makefile	2022-11-09 13:44:27.000000000 +0100
++++ b/libskindesignerapi/Makefile	2023-05-11 11:22:12.716255065 +0200
+@@ -5,18 +5,18 @@
+ MAJOR = 0
+ MINOR = 1.2
+ VERSION = $(MAJOR).$(MINOR)
+  
+ SONAME = $(LIBNAME).so.$(MAJOR)
+ TARGET_LIB = $(SONAME).$(MINOR)
+ 
+ PREFIX ?= /usr/local
+-INCDIR ?= $(PREFIX)/include
+-LIBDIR ?= $(PREFIX)/lib
++INCDIR ?= $(PREFIX)/include/vdr
++LIBDIR ?= $(PREFIX)/lib/vdr
+ PCDIR  ?= $(PREFIX)/lib/pkgconfig
+ TMPDIR ?= /tmp
+ 
+ ### The name of the distribution archive:
+ ARCHIVE = $(LIBNAME)-$(VERSION)
+ 
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --silence-errors --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --silence-errors --variable=$(1) vdr || pkg-config --variable=$(1) ../../../../vdr.pc))
+ CXXFLAGS = $(call PKGCFG,cxxflags)

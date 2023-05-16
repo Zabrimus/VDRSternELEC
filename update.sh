@@ -5,6 +5,14 @@ get_pkg_directory() {
   echo "H"
 }
 
+get_build_dir() {
+  echo "B"
+}
+
+get_install_dir() {
+  echo "I"
+}
+
 target_has_feature() {
   return 1
 }

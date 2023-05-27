@@ -3,6 +3,7 @@
 INSTALL=$1
 PKG_DIR=$2
 PLUGIN=$3
+APIVERSION=$4
 
 # create default ${PLUGIN}.conf // will be overwritten, if we have something in the plugin directory
 mkdir -p ${INSTALL}/storage/.config/vdropt-sample/conf.d/
@@ -33,6 +34,14 @@ if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | 
   cp -ar ${INSTALL}/storage/.config/vdropt/* ${INSTALL}/storage/.config/vdropt-sample
   rm -Rf ${INSTALL}/storage/.config/vdropt
  fi
+
+# create links for libs
+if [ -n "$APIVERSION" ]; then
+  mkdir -p ${INSTALL}/storage/.config/vdrlibs/save
+  mv ${INSTALL}/usr/local/lib/vdr/libvdr-${PLUGIN}.so.${APIVERSION} ${INSTALL}/storage/.config/vdrlibs/save/libvdr-${PLUGIN}.so.${APIVERSION}
+  ln -s /storage/.config/vdrlibs/libvdr-${PLUGIN}.so.${APIVERSION} ${INSTALL}/usr/local/lib/vdr/libvdr-${PLUGIN}.so.${APIVERSION}
+  ln -s /storage/.config/vdrlibs/save/libvdr-${PLUGIN}.so.${APIVERSION} ${INSTALL}/storage/.config/vdrlibs/libvdr-${PLUGIN}.so.${APIVERSION}
+fi
 
 # create config.zip
 cd ${INSTALL}

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-epgsearch"
-PKG_VERSION="7f7f9f6569bd50946166fe23463879c16378b651"
-PKG_SHA256="b2793c96fa5d1eede2ab60be28fa26a38da76bdfa0af84f956bf2ee0d46abdff"
+PKG_VERSION="71fb722e2a04d9865d009478ea09d4b45039215f"
+PKG_SHA256="e8455f583ac02012773b58a71028af3f2348b95d0c923f7cbd1b128c39b8233f"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-epgsearch"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-epgsearch/archive/${PKG_VERSION}.tar.gz"

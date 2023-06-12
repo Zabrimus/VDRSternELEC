@@ -19,6 +19,11 @@ upgrade() {
 
   # delete old sample configuration if it exists and extract the new one
   rm -Rf /storage/.config/vdropt-sample
+  # delete existing development links and files and reset them to default
+  # manual changes on the links are erased
+  # TODO: find a better solution
+  rm -Rf /storage/.config/vdrlibs/save/*
+  rm -Rf /storage/.config/vdrlibs/libvdr-*
 
   cd /
     for i in `ls ${CONF_DIR}/*-sample-config.zip`; do

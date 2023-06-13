@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-wirbelscan"
-PKG_VERSION="2023.02.19"
-PKG_SHA256="239dbf4e4f93addaed2326895a547d2f6d4d0bcbe6fc0c5a05301789e6cbb9d2"
+PKG_VERSION="2023.06.04"
+PKG_SHA256="22bfd788c280c7da27c7372c57440561d1577f745df52a8965599a912480fb74"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.gen2vdr.de/wirbel/wirbelscan/index2.html"
 PKG_URL="https://www.gen2vdr.de/wirbel/wirbelscan/vdr-wirbelscan-${PKG_VERSION}.tgz"

@@ -99,6 +99,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-pvrinput"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-vompserver"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-web"
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"

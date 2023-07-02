@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-duplicates"
-PKG_VERSION="68739fd72beb9745b3e47b9e466311ef23a8ca97"
-PKG_SHA256="635f9ece98e6ee21690075b2a69bc6be6fa4303641a10dcfb54099f69c265a17"
+PKG_VERSION="2f692faf2d8277663fd4a90d2a4a0c95d8954d25"
+PKG_SHA256="49f7c3e9bbf351f3e8520e11623a84a3cf8b88061dcb9c16b3c670c9df3e32ac"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-duplicates"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-duplicates/archive/${PKG_VERSION}.zip"

@@ -257,6 +257,18 @@ scp target/CoreELEC-Amlogic-ng.arm-*.tar root@<ip address>:/storage/.update
 reboot
 ```
 
+# vdr-plugin-web / HbbTV
+To be able to use this plugin several manual tasks are necessary.
+- Install cefbrowser
+
+  A sample installation/configuration are described in the repository https://github.com/Zabrimus/cefbrowser in section 
+```VDR*ELEC, CoreELEC-19 (sample installation/configuration)```
+- Install remotetranscoder 
+
+  The remotetranscoder is used to stream transcoded videos to VDR. Installation on a fast system or a system with a hardware encoder is desired.
+  The repository can be found at https://github.com/Zabrimus/remotetranscode
+- The plugin vdr-plugin-web is already part of VDR*ELEC.
+
 # Several notes and additional hints
 ## Skindesigner repository
 Skindesigner uses a git repository to install custom skins. To be able to use this feature installing git is necessary.

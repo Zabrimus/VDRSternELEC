@@ -1,0 +1,21 @@
+diff -ru8bBwd a/coders/jpeg.c b/coders/jpeg.c
+--- a/coders/jpeg.c	2022-12-26 17:56:04.000000000 +0100
++++ b/coders/jpeg.c	2023-07-07 07:31:50.262263377 +0200
+@@ -2891,16 +2891,17 @@
+ #else
+   if (image->logging)
+     (void) LogMagickEvent(CoderEvent,GetMagickModule(),
+       "Interlace:  nonprogressive");
+ #endif
+   if ((image->compression == LosslessJPEGCompression) ||
+       (quality > 100))
+     {
++#undef C_LOSSLESS_SUPPORTED
+ #if defined(C_LOSSLESS_SUPPORTED)
+       if (quality < 100)
+         ThrowException(&image->exception,CoderWarning,
+                        LosslessToLossyJPEGConversion,(char *) NULL);
+       else
+         {
+           int
+             point_transform,

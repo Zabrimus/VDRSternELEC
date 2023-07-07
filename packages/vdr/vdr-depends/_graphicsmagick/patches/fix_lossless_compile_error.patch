@@ -1,7 +1,25 @@
 diff -ru8bBwd a/coders/jpeg.c b/coders/jpeg.c
 --- a/coders/jpeg.c	2022-12-26 17:56:04.000000000 +0100
-+++ b/coders/jpeg.c	2023-07-07 07:31:50.262263377 +0200
-@@ -2891,16 +2891,17 @@
++++ b/coders/jpeg.c	2023-07-07 07:37:19.512288547 +0200
+@@ -1455,16 +1455,17 @@
+         (void) LogMagickEvent(CoderEvent,GetMagickModule(),
+                               "Requested Scaling Denominator: %d "
+                               "(scale_num=%d, scale_denom=%d)",
+                               (int) image_info->subrange,
+                               jpeg_info.scale_num,jpeg_info.scale_denom);
+ 
+     }
+ #endif
++#undef D_LOSSLESS_SUPPORTED
+ #if (JPEG_LIB_VERSION >= 61) && defined(D_PROGRESSIVE_SUPPORTED)
+ #ifdef D_LOSSLESS_SUPPORTED
+   image->interlace=
+     jpeg_info.process == JPROC_PROGRESSIVE ? LineInterlace : NoInterlace;
+   image->compression=jpeg_info.process == JPROC_LOSSLESS ?
+     LosslessJPEGCompression : JPEGCompression;
+   if (jpeg_info.data_precision > 8)
+     MagickError2(OptionError,
+@@ -2891,16 +2892,17 @@
  #else
    if (image->logging)
      (void) LogMagickEvent(CoderEvent,GetMagickModule(),

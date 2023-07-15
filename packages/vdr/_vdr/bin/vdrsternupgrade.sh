@@ -23,7 +23,7 @@ upgrade() {
   # manual changes on the links are erased
   # TODO: find a better solution
   rm -Rf /storage/.config/vdrlibs/save/*
-  rm -Rf /storage/.config/vdrlibs/libvdr-*
+  rm -Rf /storage/.config/vdrlibs/bin/*
 
   cd /
     for i in `ls ${CONF_DIR}/*-sample-config.zip`; do

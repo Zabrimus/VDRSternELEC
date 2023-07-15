@@ -38,9 +38,10 @@ if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | 
 # create links for libs
 if [ -n "$APIVERSION" ]; then
   mkdir -p ${INSTALL}/storage/.config/vdrlibs/save
+  mkdir -p ${INSTALL}/storage/.config/vdrlibs/bin
   mv ${INSTALL}/usr/local/lib/vdr/libvdr-${PLUGIN}.so.${APIVERSION} ${INSTALL}/storage/.config/vdrlibs/save/libvdr-${PLUGIN}.so.${APIVERSION}
-  ln -s /storage/.config/vdrlibs/libvdr-${PLUGIN}.so.${APIVERSION} ${INSTALL}/usr/local/lib/vdr/libvdr-${PLUGIN}.so.${APIVERSION}
-  ln -s /storage/.config/vdrlibs/save/libvdr-${PLUGIN}.so.${APIVERSION} ${INSTALL}/storage/.config/vdrlibs/libvdr-${PLUGIN}.so.${APIVERSION}
+  ln -s /storage/.config/vdrlibs/save/libvdr-${PLUGIN}.so.${APIVERSION} ${INSTALL}/storage/.config/vdrlibs/bin/libvdr-${PLUGIN}.so.${APIVERSION}
+  ln -s /storage/.config/vdrlibs/bin/libvdr-${PLUGIN}.so.${APIVERSION} ${INSTALL}/usr/local/lib/vdr/libvdr-${PLUGIN}.so.${APIVERSION}
 fi
 
 # create config.zip

@@ -347,3 +347,8 @@
 21.07.2023 (plugin update)
 - update plugins
   softhdcuvid, softhddevice, softhdvaapi, softhddrm, skinlcarsng, softhdodroid, live, web, skinflatplus
+
+23.07.2023 (update CE/LE, plugin updates)
+- update CoreELEC/LibreELEC to the latest version
+- update plugins
+  softhddevice, markad, web

@@ -7,10 +7,17 @@
 # For all other VDR frontend plugins, the script needs to be adapted
 
 if [ "$1" = "attach" ]; then
-    echo 4 > /sys/module/amvdec_h264/parameters/dec_control
-    /usr/local/bin/svdrpsend REMO on
-    /usr/local/bin/svdrpsend PLUG cecremote CONN
-    /usr/local/bin/svdrpsend PLUG softhdodroid ATTA -a hw:CARD=AMLAUGESOUND,DEV=2
+    systemctl is-active --quiet vdropt
+    if [ $? -ne 0 ]; then
+      # VDR is not running, start
+      systemctl start vdropt
+    else
+      # Attach to running VDR
+      echo 4 > /sys/module/amvdec_h264/parameters/dec_control
+      /usr/local/bin/svdrpsend REMO on
+      /usr/local/bin/svdrpsend PLUG cecremote CONN
+      /usr/local/bin/svdrpsend PLUG softhdodroid ATTA -a hw:CARD=AMLAUGESOUND,DEV=2
+    fi
 elif [ "$1" = "detach" ]; then
     /usr/local/bin/svdrpsend PLUG softhdodroid DETA
     /usr/local/bin/svdrpsend REMO off

@@ -352,3 +352,7 @@
 - update CoreELEC/LibreELEC to the latest version
 - update plugins
   softhddevice, markad, web
+
+24.07.2023 (plugin updates)
+- update plugins
+  web, softhddevice, softhdodroid

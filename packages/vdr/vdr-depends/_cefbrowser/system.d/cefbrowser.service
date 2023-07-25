@@ -1,0 +1,20 @@
+[Unit]
+Description=cefbrowser
+Requires=network-online.target
+After=network-online.target
+StartLimitIntervalSec=400
+StartLimitBurst=5
+
+[Service]
+WorkingDirectory=/storage/cefbrowser
+ExecStart=/storage/cefbrowser/cefbrowser --config /storage/.config/vdropt/sockets.ini --ozone-platform=headless
+Restart=always
+RestartSec=30
+Environment=LD_LIBRARY_PATH="/storage/cefbrowser"
+StartLimitInterval=0
+TimeoutStartSec=30
+TimeoutStopSec=30
+LimitNOFILE=16384
+
+[Install]
+WantedBy=vdropt.target

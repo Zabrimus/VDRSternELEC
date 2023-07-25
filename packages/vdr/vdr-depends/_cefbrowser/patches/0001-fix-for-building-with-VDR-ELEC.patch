@@ -1,0 +1,111 @@
+From ee257ba1966f9e87dfbdd79a35da30fc1ed05b5c Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Tue, 4 Jul 2023 16:21:34 +0200
+Subject: [PATCH] fix for building with VDR*ELEC
+
+---
+ meson.build                                   | 24 ++++++++++++-------
+ meson_options.txt                             |  1 +
+ .../packagefiles/mini-0.9.14/meson.build      |  2 +-
+ .../meson.build                               |  2 +-
+ 4 files changed, 18 insertions(+), 11 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index a612fe5..f0faaee 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,11 +1,13 @@
+ project('cefbrowser', 'cpp', 'c',
+   version : '0.1',
+   default_options : ['warning_level=1', 'cpp_std=c++17', 'default_library=static', 'optimization=3' ],
+-  meson_version: '>=0.63.0')
++  meson_version: '>=0.57.1')
+ 
+ add_global_arguments('-O3', language : 'cpp')
+ 
+-arch=get_option('arch')
++arch = get_option('arch')
++subarch = '-march=' + get_option('subarch')
++install_prefix = get_option('prefix')
+ 
+ cmake = import('cmake')
+ CXX = meson.get_compiler('cpp')
+@@ -22,8 +24,12 @@ cef_opt_var = cmake.subproject_options()
+ 
+ if arch == 'arm'
+     cef_opt_var.add_cmake_defines({'PROJECT_ARCH': 'armhf'})
++    cef_opt_var.add_cmake_defines({'CMAKE_CXX_FLAGS': subarch})
++    cef_opt_var.add_cmake_defines({'CMAKE_C_FLAGS': subarch})
+ elif arch == 'arm64'
+     cef_opt_var.add_cmake_defines({'PROJECT_ARCH': 'aarch64'})
++    cef_opt_var.add_cmake_defines({'CMAKE_CXX_FLAGS': '-march=armv8-a'})
++    cef_opt_var.add_cmake_defines({'CMAKE_C_FLAGS': '-march=armv8-a'})
+ endif
+ 
+ cef_opt_var.append_compile_args('cpp', '-Wno-unused-variable')
+@@ -78,7 +84,7 @@ exe = executable('cefbrowser', 'main.cpp', 'mainapp.cpp', 'logger.cpp',
+                  'httplib.cpp',
+                  cpp_args : ['-DPHTTPLIB_ZLIB_SUPPORT', '-DCPPHTTPLIB_OPENSSL_SUPPORT'],
+                  install : true,
+-                 install_dir : meson.current_build_dir() + '/Release',
++                 link_args: '-lrt',
+                  dependencies: [mini_dep, cef_lib, spdlog_dep, deps, sqlite3_dep, dep_ssl, dep_crypto])
+ 
+ exe = executable('vdrclient', 'test-tools/vdr_tool.cpp', 'logger.cpp', 'sharedmemory.cpp', 'test-tools/common.cpp',
+@@ -86,14 +92,14 @@ exe = executable('vdrclient', 'test-tools/vdr_tool.cpp', 'logger.cpp', 'sharedme
+                 'httplib.cpp',
+                  cpp_args : ['-DCLIENT_ONLY', '-DPHTTPLIB_ZLIB_SUPPORT', '-DCPPHTTPLIB_OPENSSL_SUPPORT'],
+                  install : true,
+-                 install_dir : meson.current_build_dir() + '/Release',
++                 link_args: '-lrt',
+                  dependencies: [mini_dep, spdlog_dep, deps, tiny_process_library_dep, dep_ssl, dep_crypto])
+ 
+ #
+ # install static content
+ #
+-install_subdir('static-content/js', install_dir : meson.current_build_dir() + '/Release')
+-install_subdir('static-content/css', install_dir : meson.current_build_dir() + '/Release')
+-install_subdir('static-content/movie', install_dir : meson.current_build_dir() + '/Release')
+-install_subdir('static-content/database', install_dir : meson.current_build_dir() + '/Release')
+-install_subdir('static-content/application', install_dir : meson.current_build_dir() + '/Release')
++install_subdir('static-content/js', install_dir : 'cefbrowser')
++install_subdir('static-content/css', install_dir : 'cefbrowser')
++install_subdir('static-content/movie', install_dir : 'cefbrowser')
++install_subdir('static-content/database', install_dir : 'cefbrowser')
++install_subdir('static-content/application', install_dir : 'cefbrowser')
+diff --git a/meson_options.txt b/meson_options.txt
+index f1b0b7b..b571a75 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -1 +1,2 @@
+ option('arch', type : 'combo', choices : ['x86', 'arm', 'arm64'], value : 'x86')
++option('subarch', type : 'string', value : 'armv8-a')
+diff --git a/subprojects/packagefiles/mini-0.9.14/meson.build b/subprojects/packagefiles/mini-0.9.14/meson.build
+index 9136107..c4f7f36 100644
+--- a/subprojects/packagefiles/mini-0.9.14/meson.build
++++ b/subprojects/packagefiles/mini-0.9.14/meson.build
+@@ -4,7 +4,7 @@ project(
+   version: '0.8.5',
+   license: 'Apache-2.0 license',
+   default_options: ['cpp_std=c++17'],
+-  meson_version: '>=0.63.0',
++  meson_version: '>=0.57.1',
+ )
+ 
+ inc = include_directories('src')
+diff --git a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build
+index 4d0e048..815d8f6 100644
+--- a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build
++++ b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build
+@@ -4,7 +4,7 @@ project(
+   version: '4bf0e59e64f18d3080a1ce4e853775de2181e993',
+   license: 'MIT',
+   default_options: ['cpp_std=c++17'],
+-  meson_version: '>=0.63.0',
++  meson_version: '>=0.57.1',
+ )
+ 
+ src = files(
+-- 
+2.30.2
+

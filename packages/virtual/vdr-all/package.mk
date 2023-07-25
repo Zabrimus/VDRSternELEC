@@ -131,6 +131,14 @@ if [ "${EXTRA_CHANNELLOGOS}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _MP_Logos"
 fi
 
+if [ "${EXTRA_CEFBROWSER}" = "y" ]; then
+	PKG_DEPENDS_TARGET+=" _cefbrowser"
+fi
+
+if [ "${EXTRA_REMOTETRANSCODE}" = "y" ]; then
+	PKG_DEPENDS_TARGET+=" _remotetranscode"
+fi
+
 post_install() {
   if [ "${PROJECT} = "Amlogic-ce" ] || [ "${PROJECT} = "Amlogic" ]; then
      # Fix some links

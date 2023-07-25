@@ -1,0 +1,55 @@
+From ae8aa5d6700403fb27538dea741dd073f39746ac Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Wed, 26 Jul 2023 11:09:25 +0200
+Subject: [PATCH] fix build for VE
+
+---
+ ffmpeghandler.cpp | 2 +-
+ meson.build       | 7 ++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/ffmpeghandler.cpp b/ffmpeghandler.cpp
+index 67e3050..3604710 100644
+--- a/ffmpeghandler.cpp
++++ b/ffmpeghandler.cpp
+@@ -197,7 +197,7 @@ bool FFmpegHandler::probe(const std::string& url) {
+     // get stream infos
+     DEBUG("Starte ffprobe");
+     std::vector<std::string> callStr {
+-        "ffprobe", "-y", "-i", url,
++        "ffprobe", "-i", url,
+         "-loglevel", "quiet",
+         "-print_format", "csv",
+         "-show_entries", "format=duration",
+diff --git a/meson.build b/meson.build
+index 9a2ea1e..7640906 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,9 +1,10 @@
+ project('remotetranscode', 'cpp', 'c',
+   version : '0.1',
+   default_options : ['warning_level=1', 'c_std=c17', 'cpp_std=c++17'],
+-  meson_version: '>=0.63.0')
++  meson_version: '>=0.56.2')
+ 
+ add_global_arguments(language : 'cpp')
++install_prefix = get_option('prefix')
+ 
+ cmake = import('cmake')
+ cpp = meson.get_compiler('cpp')
+@@ -29,10 +30,10 @@ mini_dep = mini_proj.get_variable('mini_dep')
+ 
+ 
+ exe = executable('remotrans', 'main.cpp', 'logger.cpp', 'ffmpeghandler.cpp', 'browserclient.cpp',
+-                 install : false,
++                 install : true,
+                  dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep])
+ 
+ #
+ # install static content
+ #
+-install_subdir('static-content/movie', install_dir : meson.current_build_dir())
++install_subdir('static-content/movie', install_dir : 'remotetranscode')
+-- 
+2.30.2
+

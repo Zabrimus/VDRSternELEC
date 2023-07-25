@@ -1,0 +1,41 @@
+diff --git a/webosdpage.cpp b/webosdpage.cpp
+index 2c056bd..96d9972 100644
+--- a/webosdpage.cpp
++++ b/webosdpage.cpp
+@@ -245,6 +245,27 @@ bool WebOSDPage::scaleAndPaint(uint8_t* image, int x, int y, int width, int heig
+     double scalex = disp_width / 1280.0;
+     double scaley = disp_height / 720.0;
+ 
++    // calculate coordinates
++    int osd_x = (int)lround(scalex * x);
++    int osd_y = (int)lround(scaley * y);
++    const cImage recImage(cSize(width, height), (const tColor *)image);
++
++    if (pixmap != nullptr) {
++        LOCK_PIXMAPS;
++        pixmap->DrawImageScaled(cPoint(osd_x, osd_y), recImage, scalex, scaley);
++    } else {
++        esyslog("[vdrweb] Pixmap is null. OSD not available");
++    }
++
++    if (osd != nullptr) {
++        osd->Flush();
++    }
++
++#if 0
++    // calculate scale factor
++    double scalex = disp_width / 1280.0;
++    double scaley = disp_height / 720.0;
++
+     // calculate coordinates
+     int osd_x = (int)lround(scalex * x);
+     int osd_y = (int)lround(scaley * y);
+@@ -292,7 +313,7 @@ bool WebOSDPage::scaleAndPaint(uint8_t* image, int x, int y, int width, int heig
+     if (osd != nullptr) {
+         osd->Flush();
+     }
+-
++#endif
+     return true;
+ }
+ 

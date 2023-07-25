@@ -1,0 +1,73 @@
+From 6f588e415d6be94c1f43b061137bf11719d8f156 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Sun, 16 Jul 2023 22:04:16 +0200
+Subject: [PATCH] implement DrawImageScaled()
+
+---
+ osd.c | 11 +++++++++++
+ osd.h |  6 ++++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/osd.c b/osd.c
+index 47bda686..f9fb0701 100644
+--- a/osd.c
++++ b/osd.c
+@@ -1259,6 +1259,11 @@ void cPixmapMemory::DrawImage(const cPoint &Point, int ImageHandle)
+   Unlock();
+ }
+ 
++void cPixmapMemory::DrawImageScaled(const cPoint &Point, const cImage &Image, double FactorX, double FactorY)
++{
++  DrawImage(Point, Image);
++}
++
+ void cPixmapMemory::DrawPixel(const cPoint &Point, tColor Color)
+ {
+   Lock();
+@@ -2118,6 +2123,12 @@ void cOsd::DrawImage(const cPoint &Point, int ImageHandle)
+      pixmaps[0]->DrawImage(Point, ImageHandle);
+ }
+ 
++void cOsd::DrawImageScaled(const cPoint &Point, const cImage &Image, double FactorX, double FactorY)
++{
++  if (isTrueColor)
++     pixmaps[0]->DrawImageScaled(Point, Image, FactorX, FactorY);
++}
++
+ void cOsd::DrawPixel(int x, int y, tColor Color)
+ {
+   if (isTrueColor)
+diff --git a/osd.h b/osd.h
+index 77722662..456cb9cc 100644
+--- a/osd.h
++++ b/osd.h
+@@ -602,6 +602,8 @@ public:
+        ///< the given Point. ImageHandle must be a value that has previously been
+        ///< returned by a call to cOsdProvider::StoreImage(). If ImageHandle
+        ///< has an invalid value, nothing happens.
++  virtual void DrawImageScaled(const cPoint &Point, const cImage &Image, double FactorX = 1.0f, double FactorY = 1.0f) = 0;
++       ///< Draws the given Image into this pixmap at the given Point and scale it.
+   virtual void DrawPixel(const cPoint &Point, tColor Color) = 0;
+        ///< Sets the pixel at the given Point to the given Color, which is
+        ///< a full 32 bit ARGB value. If the alpha value of Color is not 0xFF
+@@ -700,6 +702,7 @@ public:
+   virtual void Fill(tColor Color);
+   virtual void DrawImage(const cPoint &Point, const cImage &Image);
+   virtual void DrawImage(const cPoint &Point, int ImageHandle);
++  virtual void DrawImageScaled(const cPoint &Point, const cImage &Image, double FactorX = 1.0, double FactorY = 1.0);
+   virtual void DrawPixel(const cPoint &Point, tColor Color);
+   virtual void DrawBlendedPixel(const cPoint &Point, tColor Color, uint8_t AlphaLayer = ALPHA_OPAQUE);
+   virtual void DrawBitmap(const cPoint &Point, const cBitmap &Bitmap, tColor ColorFg = 0, tColor ColorBg = 0, bool Overlay = false);
+@@ -857,6 +860,9 @@ public:
+        ///< returned by a call to cOsdProvider::StoreImage(). If ImageHandle
+        ///< has an invalid value, nothing happens.
+        ///< If this is not a true color OSD, this function does nothing.
++  virtual void DrawImageScaled(const cPoint &Point, const cImage &Image, double FactorX = 1.0, double FactorY = 1.0);
++       ///< Draws the given Image on this OSD at the given Point and scale it.
++       ///< If this is not a true color OSD, this function does nothing.
+   virtual eOsdError CanHandleAreas(const tArea *Areas, int NumAreas);
+        ///< Checks whether the OSD can display the given set of sub-areas.
+        ///< The return value indicates whether a call to SetAreas() with this
+-- 
+2.30.2
+

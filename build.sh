@@ -171,8 +171,6 @@ build_addons() {
   # delete old build artifacts
   rm -Rf target/*
 
-  ADDON_LOCALE=locale
-
   # addons must be build before the final build is started
   for i in $(env | grep ^ADDON_); do
     TMP=$(echo $i | cut -d "=" -f 1)

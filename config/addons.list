@@ -31,3 +31,6 @@ sundtek-mediatv:ADDON_SUNDTEK_MEDIATV
 
 # Install addon system-tools
 system-tools:ADDON_SYSTEM_TOOLS
+
+# Install locale addon
+locale:ADDON_LOCALE

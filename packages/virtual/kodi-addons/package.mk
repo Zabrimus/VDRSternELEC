@@ -12,8 +12,8 @@ PKG_LONGDESC="Preinstall kodi addons"
 post_install() {
   mkdir -p $INSTALL/usr/share/kodi/storage_addons
 
-  for i in $(ls ${TARGET_IMG}/${ADDONS}/${ADDON_VERSION}/${PROJECT}/${TARGET_ARCH}); do
-	cp ${TARGET_IMG}/${ADDONS}/${ADDON_VERSION}/${PROJECT}/${TARGET_ARCH}/$i/*.zip $INSTALL/usr/share/kodi/storage_addons
+  for i in $(ls ${TARGET_IMG}/${ADDONS}/${ADDON_VERSION}/${DEVICE}/${TARGET_ARCH}); do
+	cp ${TARGET_IMG}/${ADDONS}/${ADDON_VERSION}/${DEVICE}/${TARGET_ARCH}/$i/*.zip $INSTALL/usr/share/kodi/storage_addons
 
   	# update addon manifest / enable addon in Kodi
   	ADDON_MANIFEST=$INSTALL/usr/share/kodi/system/addon-manifest.xml

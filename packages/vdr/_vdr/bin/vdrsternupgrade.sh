@@ -27,7 +27,7 @@ upgrade() {
 
   cd /
     for i in `ls ${CONF_DIR}/*-sample-config.zip`; do
-      unzip $i
+      unzip -o $i
     done
 
   # upgrade epg2vdr

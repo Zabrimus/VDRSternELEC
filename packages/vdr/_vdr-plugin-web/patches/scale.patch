@@ -1,5 +1,5 @@
 diff --git a/webosdpage.cpp b/webosdpage.cpp
-index 2c056bd..96d9972 100644
+index 2c056bd..2c35cad 100644
 --- a/webosdpage.cpp
 +++ b/webosdpage.cpp
 @@ -245,6 +245,27 @@ bool WebOSDPage::scaleAndPaint(uint8_t* image, int x, int y, int width, int heig
@@ -9,11 +9,11 @@ index 2c056bd..96d9972 100644
 +    // calculate coordinates
 +    int osd_x = (int)lround(scalex * x);
 +    int osd_y = (int)lround(scaley * y);
-+    const cImage recImage(cSize(width, height), (const tColor *)image);
++    const cImage recImage(cSize(width, height), (const tColor *)image, scalex, scaley);
 +
 +    if (pixmap != nullptr) {
 +        LOCK_PIXMAPS;
-+        pixmap->DrawImageScaled(cPoint(osd_x, osd_y), recImage, scalex, scaley);
++        pixmap->DrawImage(cPoint(osd_x, osd_y), recImage);
 +    } else {
 +        esyslog("[vdrweb] Pixmap is null. OSD not available");
 +    }

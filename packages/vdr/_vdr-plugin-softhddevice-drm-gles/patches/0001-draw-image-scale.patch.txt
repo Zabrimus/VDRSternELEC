@@ -1,0 +1,45 @@
+From df9b3acc304cca79d2364718a4b033f53219c568 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Wed, 26 Jul 2023 17:49:41 +0200
+Subject: [PATCH] draw image scale
+
+Signed-off-by: Andreas Baierl <ichgeh@imkreisrum.de>
+---
+ openglosd.cpp | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/openglosd.cpp b/openglosd.cpp
+index 3c424c4..4c3b8a4 100644
+--- a/openglosd.cpp
++++ b/openglosd.cpp
+@@ -1903,8 +1903,8 @@ bool cOglCmdDrawImage::Execute(void) {
+ 
+     GLfloat x1 = x;          //left
+     GLfloat y1 = y;          //top
+-    GLfloat x2 = x + width;  //right
+-    GLfloat y2 = y + height; //bottom
++    GLfloat x2 = x + width * scalex;  //right
++    GLfloat y2 = y + height * scaley; //bottom
+ 
+     GLfloat quadVertices[] = {
+         x1, y2,   0.0, 1.0,     // left bottom
+@@ -2426,13 +2426,13 @@ void cOglPixmap::DrawImage(const cPoint &Point, const cImage &Image) {
+         return;
+     memcpy(argb, Image.Data(), sizeof(tColor) * Image.Width() * Image.Height());
+ 
+-    oglThread->DoCmd(new cOglCmdDrawImage(fb, argb, Image.Width(), Image.Height(), Point.X(), Point.Y()));
++    oglThread->DoCmd(new cOglCmdDrawImage(fb, argb, Image.Width(), Image.Height(), Point.X(), Point.Y(), true, Image.FactorX(), Image.FactorY()));
+ #ifdef GRIDRECT
+-    DrawGridRect(cRect(Point.X(), Point.Y(), Image.Width(), Image.Height()), GRIDPOINTOFFSET, GRIDPOINTSIZE, GRIDPOINTCLR, GRIDPOINTBG, tinyfont);
++    DrawGridRect(cRect(Point.X(), Point.Y(), Image.Width() * Image.FactorX(), Image.Height() * Image.FactorY()), GRIDPOINTOFFSET, GRIDPOINTSIZE, GRIDPOINTCLR, GRIDPOINTBG, tinyfont);
+ #endif
+ 
+     SetDirty();
+-    MarkDrawPortDirty(cRect(Point, cSize(Image.Width(), Image.Height())).Intersected(DrawPort().Size()));
++    MarkDrawPortDirty(cRect(Point, cSize(Image.Width() * Image.FactorX(), Image.Height() * Image.FactorY())).Intersected(DrawPort().Size()));
+ }
+ 
+ void cOglPixmap::DrawImage(const cPoint &Point, int ImageHandle) {
+-- 
+2.30.2
+

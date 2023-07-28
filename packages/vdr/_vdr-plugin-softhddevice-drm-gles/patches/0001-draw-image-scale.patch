@@ -18,8 +18,8 @@ index 3c424c4..4c3b8a4 100644
      GLfloat y1 = y;          //top
 -    GLfloat x2 = x + width;  //right
 -    GLfloat y2 = y + height; //bottom
-+    GLfloat x2 = x + width * scalex;  //right
-+    GLfloat y2 = y + height * scaley; //bottom
++    GLfloat x2 = x + width * scaleX;  //right
++    GLfloat y2 = y + height * scaleY; //bottom
  
      GLfloat quadVertices[] = {
          x1, y2,   0.0, 1.0,     // left bottom

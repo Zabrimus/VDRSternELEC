@@ -99,6 +99,11 @@ Building the addons with ```build.sh``` can be triggered by adding them with the
 It's also possible to build some additional plugins or apply some patches on VDR during build process. All available extras are listed in [extras.list](config/extras.list).  
 Building the extras with ```build.sh``` can be triggered by adding them with the ```-extra``` option and a comma separated list.
 
+#### Release/ Update
+If you want to create a "real" release, which can be used to update from kodi GUI, use the ```-release``` option. You need to fetch the release-scripts repository from LE oder CE first  
+and adapt build.sh accordingly. Set up a webserver which is available at ```$RELEASE_SERVER``` and let it point to ```RELEASEDIR```.  
+Go to kodi settings and add the server as an update channel.
+
 ### Building the image
 After choosing an existing configuration or creating a new one, the build script can be called:
 ```
@@ -115,6 +120,7 @@ Options:
 -addononly         : Build only the desired addons
 -patchonly         : Only apply patches and build nothing
 -package <name>    : Build a single package
+-release           : Create release for update
 -help              : Show this help
 
 Available configs:

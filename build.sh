@@ -9,6 +9,16 @@ RESET='\033[0m'
 
 PROGNAME=$0
 
+ROOTDIR=`pwd`
+
+# update server address - needs to be changed!
+# this is the kodi update channel address
+RELEASE_SERVER=""
+# path to https://github.com/LibreELEC.tv/release-scripts
+RELEASESCRIPTDIR="$ROOTDIR/../release-scripts"
+# releases directory
+RELEASEDIR="$ROOTDIR/releases"
+
 usage() {
   cat << EOF >&2
 Usage: $PROGNAME -config <name> [Options]
@@ -23,6 +33,7 @@ Options:
 -addononly         : Build only the desired addons
 -patchonly         : Only apply patches and build nothing
 -package <name>    : Build a single package
+-release           : Create release for update
 -help              : Show this help
 EOF
   echo
@@ -169,6 +180,10 @@ build() {
   export DEVICE="$DEVICE"
   export ARCH="$ARCH"
   export BUILD_SUFFIX="$BUILD_SUFFIX"
+  if [ -e "$RELEASESCRIPTDIR/releases.py" ] && [ "$DORELEASE" == "true" ]; then
+    export BUILD_PERIODIC="nightly"
+    echo "   BUILD_PERIODIC=nightly"
+  fi
   export VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE"
   export VDR_INPUTDEVICE="$VDR_INPUTDEVICE"
 
@@ -222,6 +237,7 @@ while [[ "$#" -gt 0 ]]; do
         -addononly) shift; ADDON_ONLY=true ;;
         -patchonly) shift; PATCH_ONLY=true ;;
         -package) shift; PACKAGE_ONLY=$1 ;;
+        -release) shift; DORELEASE=true ;;
         -help) shift; usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac
@@ -239,8 +255,6 @@ if [ ! -f config/distro/$CONFIG ]; then
     usage
 fi
 
-ROOTDIR=`pwd`
-
 . config/versions
 echo "Read config $CONFIG"
 . config/distro/$CONFIG
@@ -256,5 +270,17 @@ if [ ! "${PATCH_ONLY}" = "true" ]; then
 
     if [ ! "${ADDON_ONLY}" = "true" ]; then
       build
+    fi
+
+    if [ -e "$RELEASESCRIPTDIR/releases.py" ] && [ "$DORELEASE" == "true" ]; then
+       echo "Prepare Release for $RELEASE_SERVER in $RELEASEDIR"
+       mkdir -p $RELEASEDIR
+       for i in `find $DISTRO/target -name '*.tar' 2>/dev/null` \
+                `find $DISTRO/target -name '*.tar.sha256' 2>/dev/null` \
+                `find $DISTRO/target -name '*.img.gz' 2>/dev/null` \
+                `find $DISTRO/target -name '*.img.gz.sha256' 2>/dev/null`; do
+           mv -f $i $RELEASEDIR
+       done
+       python3 $RELEASESCRIPTDIR/releases.py -i $RELEASEDIR -u $RELEASE_SERVER -o $RELEASEDIR
     fi
 fi

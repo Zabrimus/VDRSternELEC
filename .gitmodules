@@ -5,3 +5,6 @@
 	path = CoreELEC
 	url = https://github.com/CoreELEC/CoreELEC
 	branch = coreelec-19
+[submodule "release-scripts"]
+	path = release-scripts
+	url = https://github.com/LibreELEC/release-scripts

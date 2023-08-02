@@ -15,7 +15,7 @@ ROOTDIR=`pwd`
 # this is the kodi update channel address
 RELEASE_SERVER=""
 # path to https://github.com/LibreELEC.tv/release-scripts
-RELEASESCRIPTDIR="$ROOTDIR/../release-scripts"
+RELEASESCRIPTDIR="release-scripts"
 # releases directory
 RELEASEDIR="$ROOTDIR/releases"
 
@@ -85,6 +85,31 @@ checkout() {
   if [ ! "x$VARIANT" = "x" ]; then
     BUILD_SUFFIX="$VARIANT"
   fi
+}
+
+checkout_release_script() {
+  cd $ROOTDIR
+
+  if [ ! -f $RELEASESCRIPTDIR/.git ]; then
+      git submodule update --init -- $RELEASESCRIPTDIR
+  fi
+
+  cd $RELEASESCRIPTDIR
+  git clean -fd
+  git reset --hard
+
+  cd ..
+  git submodule update --recursive --remote $RELEASESCRIPTDIR
+
+  cd $RELEASESCRIPTDIR
+  # Checkout defined commit
+  if [ ! "x$RELEASESHA" = "x" ]; then
+    git checkout $RELEASESHA
+  else
+    echo "SHA not found"
+    exit 1;
+  fi
+  cd ..
 }
 
 apply_patches() {
@@ -272,15 +297,18 @@ if [ ! "${PATCH_ONLY}" = "true" ]; then
       build
     fi
 
-    if [ -e "$RELEASESCRIPTDIR/releases.py" ] && [ "$DORELEASE" == "true" ]; then
-       echo "Prepare Release for $RELEASE_SERVER in $RELEASEDIR"
-       mkdir -p $RELEASEDIR
-       for i in `find $DISTRO/target -name '*.tar' 2>/dev/null` \
-                `find $DISTRO/target -name '*.tar.sha256' 2>/dev/null` \
-                `find $DISTRO/target -name '*.img.gz' 2>/dev/null` \
-                `find $DISTRO/target -name '*.img.gz.sha256' 2>/dev/null`; do
-           mv -f $i $RELEASEDIR
-       done
-       python3 $RELEASESCRIPTDIR/releases.py -i $RELEASEDIR -u $RELEASE_SERVER -o $RELEASEDIR
+    if [ "$DORELEASE" == "true" ]; then
+       checkout_release_script
+       if [ -e "$RELEASESCRIPTDIR/releases.py" ]; then
+          echo "Prepare Release for $RELEASE_SERVER in $RELEASEDIR"
+          mkdir -p $RELEASEDIR
+          for i in `find $DISTRO/target -name '*.tar' 2>/dev/null` \
+                   `find $DISTRO/target -name '*.tar.sha256' 2>/dev/null` \
+                   `find $DISTRO/target -name '*.img.gz' 2>/dev/null` \
+                   `find $DISTRO/target -name '*.img.gz.sha256' 2>/dev/null`; do
+              mv -f $i $RELEASEDIR
+          done
+          python3 $RELEASESCRIPTDIR/releases.py -i $RELEASEDIR -u $RELEASE_SERVER -o $RELEASEDIR
+       fi
     fi
 fi

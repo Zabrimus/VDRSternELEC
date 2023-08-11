@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-softhddevice"
-PKG_VERSION="4424f4fc49495b9f266ecc34a169c2db96300a66"
-PKG_SHA256="0a7b1432c678f6754a905bc8c55df4af06c15db13a92543e5d91745267f56449"
+PKG_VERSION="143d4f6a6899f0ee94b17b6ed3845919da6f688b"
+PKG_SHA256="0a2ce16987a96b5e359044e2dc8970be2d22c58361b5b40f554b6a6b9dfb6a57"
 PKG_LICENSE="AGPLv3"
 PKG_SITE="https://github.com/ua0lnj/vdr-plugin-softhddevice"
 PKG_URL="https://github.com/ua0lnj/vdr-plugin-softhddevice/archive/${PKG_VERSION}.zip"

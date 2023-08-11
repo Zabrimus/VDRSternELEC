@@ -361,3 +361,7 @@
 - update plugins
   tvscraper, softhdcuvid, softhddevice, softhdvaapi, softhddrm, softhddevice-drm-gles, _cefbrowser, _remotetranscode,
   softhdodroid, web, skinflatplus
+
+11.08.2023 (plugin update)
+- update plugins
+  tvscraper, softhddevice, softhddevice-drm-gles, skinflatplus

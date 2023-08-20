@@ -2,8 +2,8 @@
 
 PKG_NAME="_vdr-plugin-softhddevice-drm"
 
-PKG_VERSION="fb8209749bd7d927a4f586e89810911f8c6e36e8"
-PKG_SHA256="57bbcde7a5c751233f0076484b027563af20249c1193440986f0a3d8a36a4d0f"
+PKG_VERSION="c1cd90ceb88c5a1e46a42b7378cf58ff391abbc5"
+PKG_SHA256="f7e5c6445659f2b8d30b23fedda235a6fc45a6c7fd3cac76dfb61e179825a356"
 PKG_SITE="https://github.com/zillevdr/vdr-plugin-softhddevice-drm"
 PKG_URL="https://github.com/zillevdr/vdr-plugin-softhddevice-drm/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="drm"

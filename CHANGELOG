@@ -369,3 +369,7 @@
 20.08.2023 (plugin updates, update CE/LE)
 - update plugins
   skindesigner, tvscraper, softhddevice-drm, softhddevice, markad, skinflatplus
+
+25.08.2023 (plugin updates)
+- update plugins
+  tvscraper, softhdcuvid, skinnopacity, softhdvaapi, softhddrm, markad, _cefbrowser, _remotetranscode, softhdodroid, web, skinflatplus

@@ -1,0 +1,30 @@
+From cab8d7844035a0490261877b01c1b9f1cdeef282 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Tue, 26 Sep 2023 12:52:19 +0200
+Subject: [PATCH] scale
+
+---
+ webosdpage.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/webosdpage.cpp b/webosdpage.cpp
+index b280a36..05be678 100644
+--- a/webosdpage.cpp
++++ b/webosdpage.cpp
+@@ -304,11 +304,11 @@ bool WebOSDPage::scaleAndPaint(uint8_t* image, int render_width, int render_heig
+ #ifdef ENABLE_FAST_SCALE
+     if (useOutputDeviceScale) {
+         // dsyslog("[vdrweb] scaling using outputdevice");
+-        const cImage recImage(cSize(width, height), (const tColor *)image, scalex, scaley);
++        const cImage recImage(cSize(width, height), (const tColor *)image);
+ 
+         if (pixmap != nullptr) {
+             LOCK_PIXMAPS;
+-            pixmap->DrawImage(recPoint, recImage);
++            pixmap->DrawScaledImage(recPoint, recImage, scalex, scaley);
+         } else {
+             esyslog("[vdrweb] Pixmap is null. OSD not available");
+         }
+-- 
+2.30.2
+

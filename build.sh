@@ -161,6 +161,11 @@ prepare_sources() {
 }
 
 build_addons() {
+  if [ ! "${PACKAGE_ONLY}" = "" ]; then
+    echo "Building single package, skip addons"
+    return
+  fi
+
   cd $ROOTDIR/$DISTRO
 
   # delete old build artifacts
@@ -205,12 +210,12 @@ build() {
   export DEVICE="$DEVICE"
   export ARCH="$ARCH"
   export BUILD_SUFFIX="$BUILD_SUFFIX"
-  if [ -e "$RELEASESCRIPTDIR/releases.py" ] && [ "$DORELEASE" == "true" ]; then
-    export BUILD_PERIODIC="nightly"
-    echo "   BUILD_PERIODIC=nightly"
-  fi
   export VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE"
   export VDR_INPUTDEVICE="$VDR_INPUTDEVICE"
+  if [ "$DORELEASE" = "true" ] && [ -n "${RELEASE_SERVER}" ]; then
+    echo "   BUILD_PERIODIC=nightly"
+    export BUILD_PERIODIC="nightly"
+  fi
 
   if [ ! "${PACKAGE_ONLY}" = "" ]; then
     echo "Build ${PACKAGE_ONLY}"
@@ -297,7 +302,12 @@ if [ ! "${PATCH_ONLY}" = "true" ]; then
       build
     fi
 
-    if [ "$DORELEASE" == "true" ]; then
+    if [ "$DORELEASE" = "true" ] && [ "${RELEASE_SERVER}" = "" ]; then
+      echo "RELEASE_SERVER missing, skip making release"
+      DORELEASE="false"
+    fi
+
+    if [ "$DORELEASE" = "true" ]; then
        checkout_release_script
        if [ -e "$RELEASESCRIPTDIR/releases.py" ]; then
           echo "Prepare Release for $RELEASE_SERVER in $RELEASEDIR"

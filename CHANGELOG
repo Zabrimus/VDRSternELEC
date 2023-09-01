@@ -375,6 +375,11 @@
   tvscraper, softhdcuvid, skinnopacity, softhdvaapi, softhddrm, markad, _cefbrowser, _remotetranscode, softhdodroid,
   web, skinflatplus, skinnopacity, tvguide, skinflatplus
 
+29.08.2023 (plugin updates)
+- update plugins
+  softhddevice-drm-gles (update and repo rename)
+
+
 01.09.2023 (plugin updates)
 - update plugins
   tvscraper, softhddevice, softhddevice-drm-gles, skinflatplus

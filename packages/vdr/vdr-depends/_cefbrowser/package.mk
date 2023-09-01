@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_cefbrowser"
-PKG_VERSION="43126b9a5e03d310ac29eeef50026900fa6b50e1"
-PKG_SHA256="44544756ed3f1a260068dba245e84d03720055bba04cb3729e128b9fc964cce0"
+PKG_VERSION="fb23c4352d5c487e13c9db954f94a4d430ccc4bc"
+PKG_SHA256="ad5033b522c77cbd112804b0b84a06485e976e4c9a1b7f94bf3634e00f6c55fa"
 PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/Zabrimus/cefbrowser"
 PKG_URL="https://github.com/Zabrimus/cefbrowser/archive/${PKG_VERSION}.zip"

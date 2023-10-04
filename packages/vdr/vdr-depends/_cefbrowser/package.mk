@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_cefbrowser"
-PKG_VERSION="1e932497fa4b592e4a1b6369f28f0360f0838b86"
-PKG_SHA256="7e74152d9be25007b209ecae8d38e30a7ebc9ddf2e58851c9a54b76e046b0515"
+PKG_VERSION="ae8c0327cb6896f520a4bc76d96a026177f61f54"
+PKG_SHA256="8336a223465ee35b56cd82cb8cbeb2bf5eae414529dbb98e5e633a52ca800979"
 PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/Zabrimus/cefbrowser"
 PKG_URL="https://github.com/Zabrimus/cefbrowser/archive/${PKG_VERSION}.zip"
@@ -36,6 +36,7 @@ PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} \
 
 pre_configure_target() {
    export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system
+   rm -rf ${PKG_BUILD}/subprojects/cef
    ln -s $(get_build_dir _cef)/cefbrowser ${PKG_BUILD}/subprojects/cef
 }
 

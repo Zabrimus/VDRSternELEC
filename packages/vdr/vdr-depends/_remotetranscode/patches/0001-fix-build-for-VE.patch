@@ -4,23 +4,9 @@ Date: Wed, 26 Jul 2023 11:09:25 +0200
 Subject: [PATCH] fix build for VE
 
 ---
- ffmpeghandler.cpp | 2 +-
  meson.build       | 7 ++++---
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ 1 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/ffmpeghandler.cpp b/ffmpeghandler.cpp
-index 67e3050..3604710 100644
---- a/ffmpeghandler.cpp
-+++ b/ffmpeghandler.cpp
-@@ -197,7 +197,7 @@ bool FFmpegHandler::probe(const std::string& url) {
-     // get stream infos
-     DEBUG("Starte ffprobe");
-     std::vector<std::string> callStr {
--        "ffprobe", "-y", "-i", url,
-+        "ffprobe", "-i", url,
-         "-loglevel", "quiet",
-         "-print_format", "csv",
-         "-show_entries", "format=duration",
 diff --git a/meson.build b/meson.build
 index 9a2ea1e..7640906 100644
 --- a/meson.build
@@ -40,7 +26,7 @@ index 9a2ea1e..7640906 100644
 @@ -29,10 +30,10 @@ mini_dep = mini_proj.get_variable('mini_dep')
  
  
- exe = executable('remotrans', 'main.cpp', 'logger.cpp', 'ffmpeghandler.cpp', 'browserclient.cpp',
+ exe = executable('remotrans', 'main.cpp', 'logger.cpp', 'ffmpeghandler.cpp', 'browserclient.cpp', 'transcodeconfig.cpp',
 -                 install : false,
 +                 install : true,
                   dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep])

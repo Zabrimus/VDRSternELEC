@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-tvscraper"
-PKG_VERSION="312748d57701cc33c037c5952d8505bd919826d2"
-PKG_SHA256="e1f6d3886df3313f0899733a3a73799b765ee9b581b43e10e60fc9880e742316"
+PKG_VERSION="ef8055eb6c50c697bb07d5d2e6867715764780a6"
+PKG_SHA256="6af5ff94de91b2d38f4fcf89346adc7b27a81d2a745981b16c8bec9bb78545b1"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/MarkusEh/vdr-plugin-tvscraper"
 PKG_URL="https://github.com/MarkusEh/vdr-plugin-tvscraper/archive/${PKG_VERSION}.zip"

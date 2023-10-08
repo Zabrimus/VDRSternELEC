@@ -1,0 +1,16 @@
+diff --git a/packages/network/nfs-utils/package.mk b/packages/network/nfs-utils/package.mk
+index 5b785d8ee6..7cf97a522c 100644
+--- a/packages/network/nfs-utils/package.mk
++++ b/packages/network/nfs-utils/package.mk
+@@ -43,6 +43,11 @@ pre_configure_host() {
+     --disable-tirpc \
+     --without-systemd \
+     --without-tcp-wrappers"
++
++  # for Ubuntu 22 with libntirpc-dev package installed
++  if [ -d /usr/include/tirpc ]; then
++    CFLAGS+=" -I/usr/include/tirpc"
++  fi
+ }
+
+ pre_configure_target() {

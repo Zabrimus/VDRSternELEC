@@ -11,9 +11,6 @@ PROGNAME=$0
 
 ROOTDIR=`pwd`
 
-# update server address - needs to be changed!
-# this is the kodi update channel address
-RELEASE_SERVER=""
 # path to https://github.com/LibreELEC.tv/release-scripts
 RELEASESCRIPTDIR="release-scripts"
 # releases directory
@@ -32,8 +29,8 @@ Options:
 -subdevice         : Build only images for the desired subdevice. This speeds up building images.
 -addononly         : Build only the desired addons
 -patchonly         : Only apply patches and build nothing
--package <name>    : Build a single package
--release           : Create release for update
+-package <name>    : Build <name> as a single package
+-release <server>  : Create release for update, accessible at <server>
 -help              : Show this help
 EOF
   echo
@@ -56,10 +53,6 @@ EOF
 checkout() {
   cd $ROOTDIR
 
-  if [ ! -d $DISTRO ]; then
-     echo "Distribution '$DISTRO' cannot be found."
-     exit 1
-  fi
 
   if [ ! -f $DISTRO/.git ]; then
       git submodule update --init -- $DISTRO
@@ -78,7 +71,7 @@ checkout() {
   if [ ! "x$SHA" = "x" ]; then
     git checkout $SHA
   else
-    echo "SHA not found"
+    echo -e "${RED}ERROR: ${DISTRO} SHA not found${RESET}"
     exit 1;
   fi
 
@@ -106,7 +99,7 @@ checkout_release_script() {
   if [ ! "x$RELEASESHA" = "x" ]; then
     git checkout $RELEASESHA
   else
-    echo "SHA not found"
+    echo -e "${RED}ERROR: release-scripts SHA not found${RESET}"
     exit 1;
   fi
   cd ..
@@ -114,12 +107,6 @@ checkout_release_script() {
 
 apply_patches() {
     cd $ROOTDIR
-
-    if [ ! -d $DISTRO ]; then
-       echo "Distribution '$DISTRO' cannot be found."
-       exit 1
-    fi
-
     cd $DISTRO
 
     # Apply patches and sed scripts in ./patches
@@ -210,16 +197,19 @@ build() {
   export BUILD_SUFFIX="$BUILD_SUFFIX"
   export VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE"
   export VDR_INPUTDEVICE="$VDR_INPUTDEVICE"
-  if [ "$DORELEASE" = "true" ] && [ -n "${RELEASE_SERVER}" ]; then
+  if [ "$DORELEASE" = "true" ]; then
     echo "   BUILD_PERIODIC=nightly"
     export BUILD_PERIODIC="nightly"
   fi
-
   if [ ! "${PACKAGE_ONLY}" = "" ]; then
     echo "Build ${PACKAGE_ONLY}"
     scripts/build ${PACKAGE_ONLY}
   else
-    echo "Start make image"
+    RELEASE_STRING="Start make image"
+    if [ "$DORELEASE" = "true" ]; then
+      RELEASE_STRING="${RELEASE_STRING} and release it to ${RELEASE_SERVER}"
+    fi
+    echo "${RELEASE_STRING}"
     make image
   fi
 }
@@ -232,7 +222,8 @@ read_extra() {
       export $(echo ${extra[1]})=y
       echo "extras: use '$i', set environment variable $(env | grep ${extra[1]})"
     else
-      echo "extras: '$i' not found"
+      echo -e "${RED}ERROR: extras: '$i' not found, stopping build${RESET}"
+      exit 1
     fi
   done
 }
@@ -251,7 +242,8 @@ read_addon() {
       export $(echo ${addon[1]})=$(echo ${addon[0]})
       echo "addons: use '$i', set environment variable $(env | grep ${addon[1]})"
     else
-      echo "addons: '$i' not found"
+      echo -e "${RED}ERROR: addons: '$i' not found, stopping build${RESET}"
+      exit 1
     fi
   done
 }
@@ -265,7 +257,7 @@ while [[ "$#" -gt 0 ]]; do
         -addononly) shift; ADDON_ONLY=true ;;
         -patchonly) shift; PATCH_ONLY=true ;;
         -package) shift; PACKAGE_ONLY=$1 ;;
-        -release) shift; DORELEASE=true ;;
+        -release) shift; RELEASE_SERVER=$1; DORELEASE=true ;;
         -help) shift; usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac
@@ -278,7 +270,7 @@ if [ "x$CONFIG" = "x" ]; then
 fi
 
 if [ ! -f config/distro/$CONFIG ]; then
-    echo "Config file '$CONFIG' not found"
+    echo -e "${RED}Config file '$CONFIG' not found${RESET}"
     echo
     usage
 fi
@@ -287,8 +279,17 @@ fi
 echo "Read config $CONFIG"
 . config/distro/$CONFIG
 
-echo "Build $SHA on $DISTRO"
+if [ ! -d $DISTRO ]; then
+  echo -e "${RED}ERROR: Distribution '$DISTRO' cannot be found.${RESET}"
+  exit 1
+fi
 
+if [ "$DORELEASE" = "true" ] && [ -z "${RELEASE_SERVER}" ]; then
+  echo -e "${RED}ERROR: Building a release was triggered, but RELEASE_SERVER is missing. Stopping build!${RESET}"
+  exit 1
+fi
+
+echo "Build $SHA on $DISTRO"
 checkout
 apply_patches
 prepare_sources
@@ -298,11 +299,6 @@ if [ ! "${PATCH_ONLY}" = "true" ]; then
 
     if [ ! "${ADDON_ONLY}" = "true" ]; then
       build
-    fi
-
-    if [ "$DORELEASE" = "true" ] && [ "${RELEASE_SERVER}" = "" ]; then
-      echo "RELEASE_SERVER missing, skip making release"
-      DORELEASE="false"
     fi
 
     if [ "$DORELEASE" = "true" ]; then

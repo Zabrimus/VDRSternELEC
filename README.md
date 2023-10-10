@@ -17,23 +17,18 @@ The images include a full-featured CoreELEC or LibreELEC distribution, where it'
 :file_folder: **package_patches** - these patches are copied to LE/CE packages folders before build  
 :file_folder: **packages** - packages, that will be added to upstream CE/LE  
 :file_folder: **patches** - these patches are applied to CE/LE directory itself before build  
+:file_folder: **release-scripts** - LibreELEC's release-scripts repo included as a git submodule  
++ **build.sh** - main build script  
++ **clean-package.sh** - helper script to clean single packages  
++ **convert_ova_to_qcow2.sh** - helper script to convert ova image to qcow2 format  
++ **update.sh** - helper script to update packages  
 
-## Current status of VDR and plugins:
-The following patches are already applied to VDR
-```
-svdrp_lstc_lcn.patch
-vdr-2.3.9-hide-first-recording-level-v2.patch
-vdr-2.4.0_zapcockpit-v2.patch
-vdr-2.6.1-undelete.patch
-vdr-menuorg-2.3.x.patch
-vdr-2.6.1-fix-check-still-recording-02.patch
-vdr-2.6.1-fix-svdrp-poll-timers-timeout.patch
-```
-
+## Current status of VDR and plugins
+[These patches](packages/vdr/_vdr/patches) are already applied to VDR.
 [These plugins](packages/vdr) are successfully built and part of the VDR tar.
 
 # Get an image file
-You can choose between downloading a prebuilt image like the official CE/LE ones or building a customized image on your own.
+You can choose between downloading a prebuilt image like you do it with official CE/LE images or building a customized image on your own.
 
 ## Prebuilt images
 The eaysiest way is to use a prebuilt image. These images are periodically available in the [releases](https://github.com/Zabrimus/VDRSternELEC/releases) section of this repository. Choose the image matching your hardware and write it to SD-Card or USB. You can also use these images as an update image for your existing CE/LE installation.
@@ -75,16 +70,16 @@ VDR_INPUTDEVICE=satip
 **Environment variables:**
 - DISTRO: can be either ```CoreELEC``` or ```LibreELEC```
 - SHA: The commit/branch/tag from CoreELEC/LibreELEC to use (see [config/versions](config/versions))
-- PATCHDIR: This is used for additional patches (patches/$DISTRO/$PATCHDIR)
+- PATCHDIR: This is used for additional patches (located patches/$DISTRO/$PATCHDIR)
 - VARIANT: specify some variant of the project, e.g. for choosing different patches
 - PROJECT: 
-  - CoreELEC: ```Amlogic-ce```
-  - LibreELEC: ```Allwinner``` or another supported PROJECT for LibreELEC
+  - CoreELEC: ```Amlogic-ce``` or any of [CoreELEC/projects](https://github.com/CoreELEC/CoreELEC/tree/master/projects)
+  - LibreELEC: ```Allwinner``` or any of [LibreELEC.tv/projects](https://github.com/LibreELEC/LibreELEC.tv/tree/master/projects)
 - DEVICE: 
-  - CoreELEC: ```Amlogic-ng```
-  - LibreELEC: ```H6``` or another supported DEVICE for LibreELEC.
+  - CoreELEC: ```Amlogic-ng``` or another supported DEVICE for CoreELEC
+  - LibreELEC: ```H6``` or another supported DEVICE for LibreELEC
 - ARCH: 
-  - CoreELEC: ```arm```
+  - CoreELEC: ```arm``` or another supported ARCH for CoreELEC
   - LibreELEC: ```arm``` or another supported ARCH for LibreELEC
 - VDR_OUTPUTDEVICE: VDR output device, which is enabled by default, e.g. ```softhdodroid```, ```softhddevice-drm```, ```softhddevice-drm-gles``` or another one from the [available packages](packages/vdr)
 - VDR_INPUTDEVICE: VDR input device, which is enabled by default, e.g. ```satip``` or ```streamdev-client```
@@ -93,15 +88,15 @@ VDR_INPUTDEVICE=satip
 It's possible to build some KODI addons and pre-install them to the image. All available addons are listed in [addons.list](config/addons.list).  
 Building the addons with ```build.sh``` can be triggered by adding them with the ```-addon``` option and a comma separated list.
 
-*Probably not all addons can be compiled for LibreELEC/master. Mainly dvb-latest and crazycat are candidates to fail, because of the frequently updated linux kernel.*
+*Probably not all addons can be compiled for every LibreELEC/CoreELEC version. Mainly dvb-latest and crazycat are candidates to fail, because of the frequently updated linux kernel.*
 
 #### Extras
 It's also possible to build some additional plugins or apply some patches on VDR during build process. All available extras are listed in [extras.list](config/extras.list).  
 Building the extras with ```build.sh``` can be triggered by adding them with the ```-extra``` option and a comma separated list.
 
 #### Release/ Update
-If you want to create a "real" release, which can be used to update from kodi GUI, use the ```-release``` option. You need to fetch the release-scripts repository from LE oder CE first  
-and adapt build.sh accordingly. Set up a webserver which is available at ```$RELEASE_SERVER``` and let it point to ```RELEASEDIR```.  
+If you want to create a "real" release, which can be used to update from kodi GUI, use the ```-release <RELEASE_SERVER>``` option.  
+Set up a webserver which is available at ```$RELEASE_SERVER``` and let it point to ```RELEASEDIR``` (sse build.sh).  
 Go to kodi settings and add the server as an update channel.
 
 ### Building the image
@@ -119,8 +114,8 @@ Options:
 -subdevice         : Build only images for the desired subdevice. This speeds up building images.
 -addononly         : Build only the desired addons
 -patchonly         : Only apply patches and build nothing
--package <name>    : Build a single package
--release           : Create release for update
+-package <name>    : Build <name> as a single package
+-release <server>  : Create release for update, accessible at <server>
 -help              : Show this help
 
 Available configs:
@@ -155,6 +150,8 @@ dynamite
 easyvdr
 permashift
 channellogos
+cefbrowser
+remotetranscode
 
 Available addons:
 crazycat
@@ -168,7 +165,7 @@ system-tools
 ```
 Example call:  ```./build.sh -config CoreELEC-19 -extra easyvdr```  
 
-If everything worked fine, the desired images can be found in either  ```CoreELEC/target``` or ```LibreELEC/target```.
+If everything worked fine, the desired images can be found in either  ```CoreELEC/target```, ```LibreELEC/target``` or ```releases```.
 
 # Creating bootable media
 Write your image file to an SD-Card like you are used to do it with [LibreELEC](https://wiki.libreelec.tv/installation/create-media) or [CoreELEC](https://wiki.coreelec.org/coreelec:bootmedia#step_2) and boot your device.
@@ -178,7 +175,7 @@ Write your image file to an SD-Card like you are used to do it with [LibreELEC](
 The first boot will come up with KODI gui. Follow the dialog and choose your language and network settings. It's very helpful to enable ssh service, to be able to access the device from outside. You also want to set your time/timezone in the KODI settings now. This would also be the time, which is used in VDR afterwards.
 
 ## Install KODI addons
-This would be a good time to install the KODI addons of your choice. E.g. ```system-tools addon``` (if not pre-installed) can be very helpful, because it makes mc available on the device. In order to be able to get the right language within VDR you should also install the ```locale addon``` (if not pre-installed) and configure the addon with your desired language (e.g. de_DE).
+Now it would be a good time to install the KODI addons of your choice. E.g. ```system-tools addon``` (if not pre-installed) can be very helpful, because it makes mc available on the device. In order to be able to get the right language within VDR you should also install the ```locale addon``` (if not pre-installed) and configure the addon with your desired language (e.g. de_DE).
 
 ## Directory structure
 - ```/usr/local/lib```  
@@ -262,8 +259,8 @@ Example for getting your image onto the device with scp:
 scp target/CoreELEC-Amlogic-ng.arm-*.tar root@<ip address>:/storage/.update
 reboot
 ```
-
-# vdr-plugin-web / HbbTV
+# Several notes and additional hints (to be updated)
+## vdr-plugin-web / HbbTV
 To be able to use this plugin several manual tasks are necessary.
 - Install cefbrowser
 
@@ -275,7 +272,6 @@ To be able to use this plugin several manual tasks are necessary.
   The repository can be found at https://github.com/Zabrimus/remotetranscode
 - The plugin vdr-plugin-web is already part of VDR*ELEC.
 
-# Several notes and additional hints
 ## Skindesigner repository
 Skindesigner uses a git repository to install custom skins. To be able to use this feature installing git is necessary.
 - Install entware (see https://wiki.coreelec.org/coreelec:entware)

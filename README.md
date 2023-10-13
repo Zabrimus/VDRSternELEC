@@ -248,6 +248,13 @@ LibreELEC and CoreELEC use kernel built-in remote support as default. See [Libre
 After basic configuration is done you probably need to adapt VDR's conf files.  
 VDR configuration is located in ```/storage/.config/vdropt```. The ```channels.conf``` and the other files need to be edited according to your needs.
 
+### CoreELEC 20 and above: Wakeup via remote
+Since CoreELEC 20 it could be necessary to enable the systemd script ```/storage/.config/system.d/setup_bl301.service``` if the system boots directly VDR.
+If you observe problems starting your system via remote and you are using CoreELEC 20 or above, then try to enable the systemd script via
+```
+systemctl daemon-reload; systemctl enable setup_bl301.service; systemctl start setup_bl301.service 
+```
+
 # Reboot
 Once configuration is completed, your device should start into VDR after a reboot.
 

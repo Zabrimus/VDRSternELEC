@@ -1,0 +1,9 @@
+[Unit]
+Description=Transfer IR code to bl301 blob
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'echo 1 > /sys/class/bl301_manager/setup_bl301'
+
+[Install]
+WantedBy=default.target

@@ -252,7 +252,10 @@ VDR configuration is located in ```/storage/.config/vdropt```. The ```channels.c
 Since CoreELEC 20 it could be necessary to enable the systemd script ```/storage/.config/system.d/setup_bl301.service``` if the system boots directly VDR.
 If you observe problems starting your system via remote and you are using CoreELEC 20 or above, then try to enable the systemd script via
 ```
-systemctl daemon-reload; systemctl enable setup_bl301.service; systemctl start setup_bl301.service 
+cp /usr/local/system.d/setup_bl301.service /storage/.config/system.d
+systemctl daemon-reload
+systemctl enable setup_bl301.service
+systemctl start setup_bl301.service 
 ```
 
 # Reboot

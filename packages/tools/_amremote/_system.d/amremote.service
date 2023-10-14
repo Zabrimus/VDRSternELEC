@@ -1,0 +1,13 @@
+[Unit]
+Description=Start amremote
+Requires=multi-user.target graphical.target network-online.target
+After=network-online.target graphical.target eventlircd
+Before=vdropt.target
+AllowIsolate=yes
+
+[Service]
+ExecStart=/usr/local/bin/start_ps3remote.sh
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

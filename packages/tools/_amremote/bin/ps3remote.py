@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env /usr/bin/python3
+#
 # vim: set fileencoding=utf-8
 # Copyright (C) 2018 Alexander Grothe
 # 
@@ -23,6 +24,8 @@ import os
 import pwd
 import sys
 from argparse import ArgumentParser
+
+sys.path.append(r'/usr/lib/python')
 
 from evdev import UInput, InputDevice, ecodes, categorize
 

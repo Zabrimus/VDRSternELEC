@@ -9,4 +9,4 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="virtual"
 PKG_LONGDESC="Tools which can be useful"
 
-PKG_DEPENDS_TARGET+=" _triggerhappy _python-evdev"
+PKG_DEPENDS_TARGET+=" _triggerhappy _python-evdev _amremote"

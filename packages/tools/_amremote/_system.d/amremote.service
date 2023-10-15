@@ -1,0 +1,11 @@
+[Unit]
+Description=Start amremote
+After=eventlircd.service
+Before=vdropt.service
+AllowIsolate=yes
+
+[Service]
+ExecStart=/usr/local/bin/start_ps3remote.sh
+
+[Install]
+WantedBy=basic.target

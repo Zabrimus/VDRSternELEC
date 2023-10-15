@@ -1,0 +1,2 @@
+KERNEL=="event?", ATTRS{name}=="aml_keypad", \
+SYMLINK="input/meson-remote" , ENV{eventlircd_enable}="false"

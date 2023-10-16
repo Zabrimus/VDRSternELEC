@@ -29,7 +29,19 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
+  cd ${INSTALL}
+
+  # install binary in /usr/local/bin
+  mkdir -p ${INSTALL}/usr/local/bin
+  cp storage/remotetranscode/remotrans ${INSTALL}/usr/local/bin
+  rm storage/remotetranscode/remotrans
+
+  # copy system.d start script
+  mkdir -p ${INSTALL}/storage/.config/system.d
+  cp ${PKG_DIR}/_system.d/remotetranscode.service ${INSTALL}/storage/.config/system.d
+
+  # zip remotranscode static files
   mkdir -p ${INSTALL}/usr/local/config
   cd ${INSTALL}
-  zip -qrum9 ${INSTALL}/usr/local/config/remotetranscode-sample-config.zip storage/remotetranscode
+  zip -qrum9 ${INSTALL}/usr/local/config/web-remotetranscode.zip storage
 }

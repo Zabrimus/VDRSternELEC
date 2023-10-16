@@ -8,13 +8,14 @@ BIN_DIR="XXBINDIRXX"
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME [-install-config] [-boot kodi|vdr]
+Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w]
 
 -i      : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
 -C      : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
 -b kodi : Kodi will be started after booting
 -b vdr  : VDR will be started after booting
 -T      : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
+-w      : install/update web components (remotetranscoder, XXX)
 EOF
   exit 1
 }
@@ -87,13 +88,17 @@ install_triggerhappy() {
   systemctl start triggerhappy.service
 }
 
+install_web() {
+  cd /
+      unzip -fo ${CONF_DIR}/web-remotetranscode.zip
+}
+
 install_copy() {
   install
 
   cp -a /storage/.config/vdropt/* /storage/.config/vdropt-sample/
   cp -a /storage/.config/vdropt-sample/* /storage/.config/vdropt/
 }
-
 
 boot() {
   if [ "$1" = "kodi" ]; then
@@ -120,12 +125,13 @@ if [ "$#" = "0" ]; then
     usage
 fi
 
-while getopts b:iTC o; do
+while getopts b:iTCw o; do
   case $o in
     (i) install;;
     (C) install_copy;;
     (b) boot "$OPTARG";;
     (T) install_triggerhappy;;
+    (w) install_web;;
     (*) usage
   esac
 done

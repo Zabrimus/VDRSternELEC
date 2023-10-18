@@ -31,6 +31,7 @@ Options:
 -patchonly         : Only apply patches and build nothing
 -package <name>    : Build <name> as a single package
 -release <server>  : Create release for update, accessible at <server>
+-cef               : Include cef binaries into release, otherwise deploy it as an external package
 -help              : Show this help
 EOF
   echo
@@ -175,6 +176,7 @@ build_addons() {
 }
 
 build() {
+  # export project variables
   cd $ROOTDIR/$DISTRO
   echo "Build environment variables:"
   echo "   PROJECT=$PROJECT"
@@ -201,6 +203,18 @@ build() {
     echo "   BUILD_PERIODIC=nightly"
     export BUILD_PERIODIC="nightly"
   fi
+
+  # resize system partition if we want to include the cef binaries
+  export CEF_BINARIES="$CEF_BINARIES"
+  if [ "${DISTRO}" = "CoreELEC" ] && [ ! "${CEF_BINARIES}" = "" ]; then
+    sed -i -e "s#SYSTEM_SIZE=.*\$#SYSTEM_SIZE=1024#" distributions/CoreELEC/options
+    echo "   SYSTEM_SIZE=768"
+  elif [ "${DISTRO}" = "LibreELEC.tv" ] && [ ! "${CEF_BINARIES}" = "" ]; then
+    sed -i -e "s#SYSTEM_SIZE=.*\$#SYSTEM_SIZE=1024#" distributions/LibreELEC/options
+    echo "   SYSTEM_SIZE=768"
+  fi
+
+  # build
   if [ ! "${PACKAGE_ONLY}" = "" ]; then
     echo "Build ${PACKAGE_ONLY}"
     scripts/build ${PACKAGE_ONLY}
@@ -258,6 +272,7 @@ while [[ "$#" -gt 0 ]]; do
         -patchonly) shift; PATCH_ONLY=true ;;
         -package) shift; PACKAGE_ONLY=$1 ;;
         -release) shift; RELEASE_SERVER=$1; DORELEASE=true ;;
+        -cef) shift; CEF_BINARIES=true ;;
         -help) shift; usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac

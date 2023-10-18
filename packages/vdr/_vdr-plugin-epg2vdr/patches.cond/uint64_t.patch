@@ -148,11 +148,11 @@ diff -ru8bBw a/parameters.h b/parameters.h
        int setParameter(const char* owner, const char* name, const char* value);
        int setParameter(const char* owner, const char* name, long int value);
 +      int setParameter(const char* owner, const char* name, int64_t value);
-       
+ 
     protected:
  
-       cDbTable* parametersDb;
-       cDbStatement* selectParameters;
+       cDbTable* parametersDb {};
+       cDbStatement* selectParameters {};
  
        static Parameter parameters[];
        static Parameter* getDefinition(const char* owner, const char* name);

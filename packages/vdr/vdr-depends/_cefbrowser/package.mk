@@ -38,7 +38,7 @@ PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} \
 pre_configure_target() {
    export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system
    rm -rf ${PKG_BUILD}/subprojects/cef
-   ln -s $(get_build_dir _cef)/cefbrowser ${PKG_BUILD}/subprojects/cef
+   ln -s $(get_build_dir _cef) ${PKG_BUILD}/subprojects/cef
 }
 
 pre_make_target() {
@@ -48,8 +48,8 @@ pre_make_target() {
 
 post_makeinstall_target() {
   rm -rf ${INSTALL}/usr/lib
-
+  rm -rf ${INSTALL}/storage/cefbrowser/pkgconfig
   mkdir -p ${INSTALL}/usr/local/config
   cd ${INSTALL}
-  zip -qrum9 ${INSTALL}/usr/local/config/cef-sample-config.zip storage/cefbrowser
+  zip -qrum9 ${INSTALL}/usr/local/config/web-cefbrowser.zip storage
 }

@@ -11,6 +11,7 @@ PKG_TOOLCHAIN="manual"
 PKG_BUILD_FLAGS="+speed"
 
 makeinstall_target() {
+  CEF_DIR="${PKG_BUILD}/../../../../cef"
   CEF_PREFIX="/storage"
   CEF_URL="https://cef-builds.spotifycdn.com/"
   CEF_FILE_X86="cef_binary_114.2.11%2Bg87c8807%2Bchromium-114.0.5735.134_linux64_minimal.tar.bz2"
@@ -29,13 +30,25 @@ makeinstall_target() {
       curl -L ${CEF_URL}${CEF_FILE} -o ${PKG_BUILD}/../../../sources/${PKG_NAME}/${CEF_FILE}
   fi
   tar -C ${PKG_BUILD}/ -xf ${PKG_BUILD}/../../../sources/${PKG_NAME}/${CEF_FILE}
-  mv ${PKG_BUILD}/cef_binary* ${PKG_BUILD}/cefbrowser
+  mv ${PKG_BUILD}/cef_binary*/* ${PKG_BUILD}
+  rm -rf ${PKG_BUILD}/cef_binary*
 
-  # copy cef binaries to root/cef
-  mkdir -p ${PKG_BUILD}/../../../../cef
-  rm -f ${PKG_BUILD}/../../../../cef/cef-${ARCH}.tar.bz2
-  tar cjvf ${PKG_BUILD}/../../../../cef/cef-${ARCH}.tar.bz2 -C ${PKG_BUILD} cefbrowser/Release/* cefbrowser/Resources/*
+  # install cef binaries
+  mkdir -p ${INSTALL}/storage/cefbrowser
+  cp -R ${PKG_BUILD}/Release/* ${INSTALL}/storage/cefbrowser
+  cp -R ${PKG_BUILD}/Resources/* ${INSTALL}/storage/cefbrowser
+
+  # package cef binaries
+  cd ${INSTALL}
+  if [ ${CEF_BINARIES} ]; then
+    mkdir -p ${INSTALL}/usr/local/config
+    zip -qrum9 ${INSTALL}/usr/local/config/cef-${ARCH}.zip storage
+  else
+    mkdir -p ${CEF_DIR}
+    rm -f ${CEF_DIR}/cef-${ARCH}.zip
+    zip -qrum9 ${CEF_DIR}/cef-${ARCH}.zip storage
+  fi
 
   # coreelec-19 needs this
-  sed -i "s/VERSION 3.21/VERSION 3.19/" ${PKG_BUILD}/cefbrowser/CMakeLists.txt
+  sed -i "s/VERSION 3.21/VERSION 3.19/" ${PKG_BUILD}/CMakeLists.txt
 }

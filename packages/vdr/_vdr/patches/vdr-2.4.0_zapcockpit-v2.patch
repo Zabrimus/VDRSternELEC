@@ -1105,15 +1105,13 @@ diff -ru8bBwd a/po/de_DE.po b/po/de_DE.po
  msgstr "SVDRP Standardmaschine"
  
  msgid "Setup.Miscellaneous$Zap timeout (s)"
--msgstr "Mindestzeit für vorherigen Kanal (s)"
-+msgstr "Mindestzeit fÃ¼r vorherigen Kanal (s)"
+ msgstr "Mindestzeit für vorherigen Kanal (s)"
  
  msgid "Setup.Miscellaneous$Channel entry timeout (ms)"
--msgstr "Zeitlimit für Kanaleingabe (ms)"
-+msgstr "Zeitlimit fÃ¼r Kanaleingabe (ms)"
+ msgstr "Zeitlimit für Kanaleingabe (ms)"
 +
 +msgid "Setup.Miscellaneous$Zapcockpit: enabled"
-+msgstr ""
++msgstr "Zapcockpit: aktiviert"
 +
 +msgid "Setup.Miscellaneous$Zapcockpit: 2nd ok shows info"
 +msgstr "Zapcockpit: zweites OK zeigt Info"
@@ -1128,11 +1126,10 @@ diff -ru8bBwd a/po/de_DE.po b/po/de_DE.po
 +msgstr "Zapcockpit: letzte Kanalgruppe ausblenden"
 +
 +msgid "Setup.Miscellaneous$Zapcockpit: Show \"All Channels\" Item in Group List"
-+msgstr "Zapcockpit: Zeige \"Alle KanÃ¤le\" in Kanalgruppen Liste"
++msgstr "Zapcockpit: Zeige \"Alle Kanäle\" in Kanalgruppen Liste"
  
  msgid "Setup.Miscellaneous$Remote control repeat delay (ms)"
--msgstr "Fernbedienung Wiederholverzögerung (ms)"
-+msgstr "Fernbedienung WiederholverzÃ¶gerung (ms)"
+ msgstr "Fernbedienung Wiederholverzögerung (ms)"
  
  msgid "Setup.Miscellaneous$Remote control repeat delta (ms)"
  msgstr "Fernbedienung Wiederholintervall (ms)"
@@ -1151,7 +1148,7 @@ diff -ru8bBwd a/po/de_DE.po b/po/de_DE.po
  msgstr "Bearbeitung abbrechen?"
  
 +msgid "Setup.Miscellaneous$All Channels"
-+msgstr "Alle Kanï¿½le"
++msgstr "Alle Kanäle"
 +
  msgid "No audio available!"
  msgstr "Kein Audio verfügbar!"

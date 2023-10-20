@@ -39,6 +39,8 @@ pre_make_target() {
   PREFIX="/usr/local"
 
   cat > Make.config <<EOF
+CFLAGS += -O3
+CXXFLAGS += -O3
 PREFIX = ${PREFIX}
 VIDEODIR = /storage/videos
 CONFDIR = /storage/.config/vdropt

@@ -9,3 +9,4 @@ PKG_URL="https://github.com/wirbel-at-vdr-portal/librepfunc/archive/${PKG_VERSIO
 PKG_SOURCE_DIR="librepfunc-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="librepfunc - a collection of function, classes and so on"
+PKG_BUILD_FLAGS="+speed"

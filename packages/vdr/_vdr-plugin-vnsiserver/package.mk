@@ -17,6 +17,7 @@ PKG_DEPENDS_CONFIG="_vdr"
 PKG_SOURCE_DIR="vdr-plugin-vnsiserver-${PKG_VERSION}"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr ${WIRBELSCAN} vdr-helper)"
 PKG_LONGDESC="VDR plugin to handle Kodi clients."
+PKG_BUILD_FLAGS="+speed"
 
 pre_build_target() {
   WIRBELSCAN_DIR=$(get_build_dir ${WIRBELSCAN})

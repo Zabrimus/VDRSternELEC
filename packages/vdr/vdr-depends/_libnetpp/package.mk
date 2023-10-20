@@ -10,6 +10,7 @@ PKG_SOURCE_DIR="libnetpp-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _liblogpp boost"
 PKG_LONGDESC="TODO"
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="+speed"
 
 pre_configure_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"

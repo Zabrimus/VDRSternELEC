@@ -13,6 +13,7 @@ PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
 PKG_LONGDESC="TODO"
 PKG_MAKE_OPTS_TARGET="VDRDIR=$(get_build_dir _vdr)"
 PKG_MAKEINSTALL_OPTS_TARGET="VDRDIR=$(get_build_dir _vdr)"
+PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"

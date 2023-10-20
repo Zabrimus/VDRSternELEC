@@ -10,6 +10,7 @@ PKG_DEPENDS_TARGET="toolchain _vdr curl vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
 PKG_LONGDESC="vdr-iptv is an IPTV plugin for the Video Disk Recorder (VDR)"
+PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"

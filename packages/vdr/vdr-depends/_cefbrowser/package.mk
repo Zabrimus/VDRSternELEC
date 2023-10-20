@@ -12,6 +12,7 @@ PKG_DEPENDS_TARGET="toolchain atk libxml2 cef-at-spi2-atk cups cef-at-spi2-core 
 PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
 PKG_LONGDESC="cefbrowser"
 PKG_TOOLCHAIN="meson"
+PKG_BUILD_FLAGS="+speed"
 
 CEF_PREFIX="/storage"
 

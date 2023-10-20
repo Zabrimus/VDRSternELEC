@@ -13,6 +13,7 @@ PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
 PKG_LONGDESC="VDR Output Device (softhdodroid)"
 PKG_MAKE_OPTS_TARGET="KODIBUILD=1"
 PKG_MAKEINSTALL_OPTS_TARGET="KODIBUILD=1"
+PKG_BUILD_FLAGS="+speed"
 
 if [ "${DISTRO}" = LibreELEC  ]; then
 	PKG_DEPENDS_TARGET+=" mesa"

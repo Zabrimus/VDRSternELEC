@@ -14,6 +14,7 @@ PKG_NEED_UNPACK="${LINUX_DEPENDS}"
 #PKG_IS_KERNEL_PKG="yes"
 PKG_SOURCE_DIR="linux-fusion-${PKG_VERSION}"
 PKG_TOOLCHAIN="make"
+PKG_BUILD_FLAGS="+speed"
 
 make_target() {
 	KERNEL_VER=$(echo $(basename $(get_install_dir linux)) | sed -e 's/linux-//')

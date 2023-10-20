@@ -10,6 +10,7 @@ PKG_SOURCE_DIR="libcddb-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="TODO"
 PKG_TOOLCHAIN="configure"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 						   --bindir=/usr/local/bin \

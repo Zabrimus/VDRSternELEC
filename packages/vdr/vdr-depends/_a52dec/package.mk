@@ -9,6 +9,7 @@ PKG_URL="https://liba52.sourceforge.io/files/a52dec-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain _libdvdread"
 PKG_LONGDESC="liba52 - a free ATSC A/52 stream decoder"
 PKG_TOOLCHAIN="auto"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 						   --bindir=/usr/local/bin \

@@ -10,6 +10,7 @@ PKG_URL="${SOURCEFORGE_SRC}/mad/libmad-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="A high-quality MPEG audio decoder."
 PKG_TOOLCHAIN="autotools"
+PKG_BUILD_FLAGS="+speed"
 
 # package specific configure options
 PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared"

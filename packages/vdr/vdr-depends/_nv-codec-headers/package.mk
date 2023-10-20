@@ -9,3 +9,4 @@ PKG_URL="https://github.com/FFmpeg/nv-codec-headers/releases/download/n${PKG_VER
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="FFmpeg version of headers required to interface with Nvidias codec APIs. Corresponds to Video Codec SDK version 11.1.5."
 PKG_TOOLCHAIN="make"
+PKG_BUILD_FLAGS="+speed"

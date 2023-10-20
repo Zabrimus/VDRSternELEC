@@ -10,6 +10,7 @@ PKG_SITE="https://www.underbit.com/products/mad/"
 PKG_URL="ftp://ftp.mars.org/pub/mpeg/libid3tag-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain zlib"
 PKG_LONGDESC="A library for id3 tagging."
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-static \
                            --disable-shared"

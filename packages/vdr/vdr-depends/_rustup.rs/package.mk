@@ -10,3 +10,4 @@ PKG_URL="https://github.com/rust-lang-nursery/rustup.rs/archive/${PKG_VERSION}.t
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="The Rust toolchain installer."
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="+speed"

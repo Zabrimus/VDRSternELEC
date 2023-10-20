@@ -10,7 +10,7 @@ PKG_SITE="https://github.com/google/shaderc"
 PKG_URL="https://github.com/google/shaderc/archive/refs/tags/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain glslang"
 PKG_LONGDESC="A collection of tools, libraries and tests for shader compilation."
-PKG_BUILD_FLAGS="+pic"
+PKG_BUILD_FLAGS="+pic +speed"
 
 PKG_CMAKE_OPTS_TARGET="-DSHADERC_SKIP_TESTS=on \
     				  "

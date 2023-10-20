@@ -12,6 +12,7 @@ PKG_DEPENDS_CONFIG="_vdr"
 PKG_SOURCE_DIR="vdr-plugin-robotv-${PKG_VERSION}"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
 PKG_LONGDESC="RoboTV is a Android TV based frontend for VDR."
+PKG_BUILD_FLAGS="+speed"
 
 post_unpack() {
   mv ${PKG_BUILD}/CMakeLists.txt ${PKG_BUILD}/Original-CMakeLists.txt

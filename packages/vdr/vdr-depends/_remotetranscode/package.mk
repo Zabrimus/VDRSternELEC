@@ -10,6 +10,7 @@ PKG_SOURCE_DIR="remotetranscode-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain ffmpeg"
 PKG_LONGDESC="remotetranscode"
 PKG_TOOLCHAIN="meson"
+PKG_BUILD_FLAGS="+speed"
 
 RT_PREFIX="/storage"
 

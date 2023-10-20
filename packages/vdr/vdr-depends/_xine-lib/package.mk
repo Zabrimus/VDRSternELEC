@@ -13,6 +13,7 @@ PKG_LONGDESC="Multimedia playback engine"
 PKG_BUILD_FLAGS="+pic"
 PKG_SOURCE_DIR="xine-lib-1-2-${PKG_VERSION}"
 PKG_TOOLCHAIN="configure"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 						   --enable-directfb \

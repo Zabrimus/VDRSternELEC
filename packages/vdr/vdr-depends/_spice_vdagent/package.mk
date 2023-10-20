@@ -9,6 +9,7 @@ PKG_URL="https://gitlab.freedesktop.org/spice/linux/vd_agent/-/archive/${PKG_VER
 PKG_DEPENDS_TARGET="toolchain _spice-protocol libXext libXrandr libXinerama dbus"
 PKG_LONGDESC="Spice agent for Linux"
 PKG_TOOLCHAIN="configure"
+PKG_BUILD_FLAGS="+speed"
 
 KG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 						   --bindir=/usr/local/bin \

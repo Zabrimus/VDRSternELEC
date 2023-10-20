@@ -10,6 +10,7 @@ PKG_SOURCE_DIR="libcdio-paranoia-release-10.2-2.0.1"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="TODO"
 PKG_TOOLCHAIN="autotools"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
                            --bindir=/usr/local/bin \

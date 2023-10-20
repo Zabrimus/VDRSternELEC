@@ -12,6 +12,7 @@ PKG_DEPENDS_TARGET="toolchain _vdr _mariadb-connector-c _graphicsmagick vdr-help
 PKG_DEPENDS_CONFIG="_vdr _mariadb-connector-c _graphicsmagick"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr Python3 _mariadb-connector-c vdr-helper)"
 PKG_LONGDESC="scraper2vdr acts as client and provides scraped metadata for tvshows and movies from epgd to other plugins via its service interface."
+PKG_BUILD_FLAGS="+speed"
 
 post_unpack() {
 	# Copy patches.cond

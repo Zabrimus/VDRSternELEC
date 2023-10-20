@@ -10,7 +10,7 @@ PKG_SITE="http://xcb.freedesktop.org"
 PKG_URL="http://xcb.freedesktop.org/dist/libxcb-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain util-macros Python3:host xcb-proto libpthread-stubs libXau"
 PKG_LONGDESC="X C-language Bindings library."
-PKG_BUILD_FLAGS="+pic"
+PKG_BUILD_FLAGS="+pic +speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local"
 

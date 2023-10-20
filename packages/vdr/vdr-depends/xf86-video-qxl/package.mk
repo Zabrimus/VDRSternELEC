@@ -12,6 +12,7 @@ PKG_URL="https://www.x.org/releases/individual/driver/xf86-video-qxl-${PKG_VERSI
 PKG_DEPENDS_TARGET="toolchain libdrm xorg-server _spice_vd_agent _spice-protocol"
 PKG_LONGDESC="Xorg driver for KVM QXL GPUs using the qxl kernel driver."
 PKG_TOOLCHAIN="autotools"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-udev \
                            --enable-glamor \

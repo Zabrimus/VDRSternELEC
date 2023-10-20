@@ -15,6 +15,7 @@ PKG_DEPENDS_TARGET="toolchain _vdr gettext:host ${WIRBELSCAN} vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr ${WIRBELSCAN} vdr-helper)"
 PKG_LONGDESC="Adds menu entry for wirbelscan at VDR."
+PKG_BUILD_FLAGS="+speed"
 
 pre_build_target() {
   WIRBELSCAN_DIR=$(get_build_dir ${WIRBELSCAN})

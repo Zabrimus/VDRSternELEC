@@ -8,7 +8,7 @@ PKG_SITE="https://mariadb.org/"
 PKG_URL="https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain zlib openssl"
 PKG_LONGDESC="mariadb-connector: library to conntect to mariadb/mysql database server"
-PKG_BUILD_FLAGS="-gold"
+PKG_BUILD_FLAGS="-gold +speed"
 
 PKG_CMAKE_OPTS_TARGET="-DINSTALL_LIBDIR=lib \
                        -DINSTALL_PLUGINDIR=lib \

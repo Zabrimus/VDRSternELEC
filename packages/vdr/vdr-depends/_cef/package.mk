@@ -8,6 +8,7 @@ PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="Chromium Embedded Framework"
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="+speed"
 
 makeinstall_target() {
   CEF_PREFIX="/storage"

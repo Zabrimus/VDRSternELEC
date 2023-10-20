@@ -7,6 +7,7 @@ PKG_LICENSE="Apache License"
 PKG_SITE="https://github.com/Zabrimus/fonts"
 PKG_URL="https://github.com/Zabrimus/fonts/archive/${PKG_VERSION}.zip"
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="+speed"
 
 unpack() {
   mkdir -p ${PKG_BUILD}/

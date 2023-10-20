@@ -10,7 +10,7 @@ PKG_SITE="http://xcb.freedesktop.org"
 PKG_URL="https://xcb.freedesktop.org/dist/xcb-util-wm-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="The XCB util modules provides a number of libraries which sit on top of libxcb"
-PKG_BUILD_FLAGS="+pic"
+PKG_BUILD_FLAGS="+pic +speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local"
 

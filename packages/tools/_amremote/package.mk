@@ -13,6 +13,7 @@ PKG_SOURCE_NAME=""
 PKG_DEPENDS_TARGET="toolchain _python-evdev"
 PKG_LONGDESC="amremote"
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="+speed"
 
 post_makeinstall_target() {
   PREFIX="/usr/local"

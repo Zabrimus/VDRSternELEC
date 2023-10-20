@@ -10,6 +10,7 @@ PKG_SOURCE_DIR="portaudio-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain alsa"
 PKG_LONGDESC="PortAudio is a cross-platform, open-source C language library for real-time audio input and output. "
 PKG_TOOLCHAIN="configure"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 						   --bindir=/usr/local/bin \

@@ -10,6 +10,7 @@ PKG_SOURCE_DIR="boblight-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _portaudio"
 PKG_LONGDESC="Boblight with BlinkStick support"
 PKG_TOOLCHAIN="configure"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 						   --bindir=/usr/local/bin \

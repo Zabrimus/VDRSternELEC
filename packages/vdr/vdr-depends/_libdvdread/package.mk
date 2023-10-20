@@ -9,6 +9,7 @@ PKG_URL="https://download.videolan.org/pub/videolan/libdvdread/${PKG_VERSION}/li
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="libdvdread is a library which provides a simple foundation for reading DVDs."
 PKG_TOOLCHAIN="auto"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 						   --bindir=/usr/local/bin \

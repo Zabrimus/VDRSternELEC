@@ -10,6 +10,7 @@ PKG_DEPENDS_TARGET="toolchain libXext"
 PKG_LONGDESC="Use GraphiksMagick to create, edit, compose, or convert digital images."
 PKG_SOURCE_DIR="GraphicsMagick-${PKG_VERSION}"
 # PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-openmp \
                            --prefix=/usr/local \

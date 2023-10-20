@@ -10,6 +10,7 @@ PKG_SOURCE_DIR="png++-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="PNG++ aims to provide simple yet powerful C++ interface to libpng, the PNG reference implementation library."
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="+speed"
 
 make_target() {
 	# reorganize build folder

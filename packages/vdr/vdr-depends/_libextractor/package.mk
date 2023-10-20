@@ -10,7 +10,7 @@ PKG_SITE="https://www.gnu.org/software/libextractor"
 PKG_URL="https://ftp.gnu.org/gnu/libextractor/libextractor-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="GNU Libextractor is a library used to extract meta data from files."
-PKG_BUILD_FLAGS="+pic"
+PKG_BUILD_FLAGS="+pic +speed"
 # PKG_SOURCE_DIR="xine-lib-1-2-${PKG_VERSION}"
 PKG_TOOLCHAIN="configure"
 

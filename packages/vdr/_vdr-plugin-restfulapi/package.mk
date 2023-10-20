@@ -18,6 +18,7 @@ PKG_SOURCE_DIR="vdr-plugin-restfulapi-${PKG_VERSION}"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr ${WIRBELSCAN} vdr-helper)"
 PKG_LONGDESC="Allows to access many internals of the VDR via a restful API."
 PKG_MAKE_OPTS_TARGET="USE_LIBMAGICKPLUSPLUS=0"
+PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"

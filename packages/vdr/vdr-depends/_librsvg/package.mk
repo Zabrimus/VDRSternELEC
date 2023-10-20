@@ -16,7 +16,7 @@ PKG_DEPENDS_TARGET="toolchain cairo _rust gdk-pixbuf pango glib libjpeg-turbo li
 PKG_DEPENDS_CONFIG="shared-mime-info pango gdk-pixbuf pango libXft"
 PKG_LONGDESC="A library to render SVG images to Cairo surfaces."
 PKG_TOOLCHAIN="configure"
-PKG_BUILD_FLAGS=""
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="ac_cv_lib_z_zlibVersion=yes \
                            --enable-shared \

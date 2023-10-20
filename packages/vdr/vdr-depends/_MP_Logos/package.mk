@@ -9,6 +9,7 @@ PKG_URL="https://github.com/MegaV0lt/MP_Logos/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="MP_Logos-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _mediaportal-de-logos"
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="+speed"
 
 make_target() {
     export MP_LOGODIR="$(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logofiles"

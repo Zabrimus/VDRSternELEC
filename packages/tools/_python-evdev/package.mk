@@ -11,6 +11,7 @@ PKG_DEPENDS_TARGET="toolchain libevdev Python3 distutilscross:host"
 PKG_SOURCE_DIR="python-evdev-${PKG_VERSION}"
 PKG_LONGDESC="Python bindings for the Linux input subsystem"
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="+speed"
 
 pre_configure_target() {
   export LDSHARED="${CC} -shared"

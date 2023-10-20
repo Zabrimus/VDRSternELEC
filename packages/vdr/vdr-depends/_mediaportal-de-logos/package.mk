@@ -9,6 +9,7 @@ PKG_SOURCE_DIR="mediaportal-de-logos-${PKG_VERSION}"
 PKG_URL="https://github.com/Jasmeet181/mediaportal-de-logos/archive/${PKG_VERSION}.zip"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="+speed"
 
 make_target() {
     INSTALLPATH="${INSTALL}/usr/local/vdrshare/logofiles"

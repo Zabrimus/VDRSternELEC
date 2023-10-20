@@ -9,6 +9,7 @@ PKG_URL="https://download.videolan.org/pub/libdvdcss/${PKG_VERSION}/libdvdcss-${
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="libdvdcss is a simple library designed for accessing DVDs as a block device without having to bother about the decryption."
 PKG_TOOLCHAIN="auto"
+PKG_BUILD_FLAGS="+speed"
 
 make_target() {
   make CXXFLAGS="-fPIC"

@@ -9,6 +9,7 @@ PKG_URL="https://download.videolan.org/pub/videolan/libdvdnav/${PKG_VERSION}/lib
 PKG_DEPENDS_TARGET="toolchain _libdvdread"
 PKG_LONGDESC="libdvdnav is a library that allows easy use of sophisticated DVD navigation features such as DVD menus, multiangle playback and even interactive DVD games."
 PKG_TOOLCHAIN="auto"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 						   --bindir=/usr/local/bin \

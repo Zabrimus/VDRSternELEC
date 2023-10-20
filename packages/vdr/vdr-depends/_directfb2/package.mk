@@ -16,6 +16,7 @@ PKG_LONGDESC="DirectFB (Direct Frame Buffer) is a set of graphics APIs implement
 PKG_BUILD_FLAGS="+pic"
 PKG_SOURCE_DIR="DirectFB2-${PKG_VERSION}"
 PKG_TOOLCHAIN="meson"
+PKG_BUILD_FLAGS="+speed"
 
 # disabled until a build of linux-fusion is successful
 # PKG_MESON_OPTS_TARGET="-Dmulti=true"

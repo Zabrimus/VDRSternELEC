@@ -12,6 +12,7 @@ PKG_URL="http://git.tvdr.de/?p=vdr.git;a=snapshot;h=refs/tags/${PKG_VERSION};sf=
 PKG_SOURCE_NAME="${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain bzip2 fontconfig freetype libcap libiconv libjpeg-turbo"
 PKG_LONGDESC="A DVB TV server application."
+PKG_BUILD_FLAGS="+speed"
 
 post_unpack() {
   rm -rf ${PKG_BUILD}/PLUGINS/src/skincurses

@@ -13,6 +13,7 @@ PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
 PKG_LONGDESC="VDR Output Device (softhdcuvid)"
 PKG_MAKE_OPTS_TARGET="NVIDIA="$(get_install_dir nvidia)"
 PKG_MAKEINSTALL_OPTS_TARGET="NVIDIA="$(get_install_dir nvidia)"
+PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"

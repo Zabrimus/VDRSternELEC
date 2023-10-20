@@ -10,6 +10,7 @@ PKG_URL=""
 PKG_DEPENDS_UNPACK+=" at-spi2-core"
 PKG_DEPENDS_TARGET+=" libXtst"
 #PKG_BUILD_FLAGS="-sysroot"
+PKG_BUILD_FLAGS="+speed"
 
 unpack() {
   mkdir -p ${PKG_BUILD}

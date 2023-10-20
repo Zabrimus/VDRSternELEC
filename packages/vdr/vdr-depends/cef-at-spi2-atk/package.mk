@@ -9,6 +9,7 @@ PKG_LONGDESC="A GTK+ module that bridges ATK to D-Bus at-spi, built for cef."
 PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain cef-at-spi2-core atk libxml2"
 PKG_DEPENDS_UNPACK+=" at-spi2-atk"
+PKG_BUILD_FLAGS="+speed"
 
 unpack() {
   mkdir -p ${PKG_BUILD}

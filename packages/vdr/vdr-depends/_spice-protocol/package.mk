@@ -10,6 +10,7 @@ PKG_BRANCH="master"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="The protocol definition for SPICE project"
 PKG_TOOLCHAIN="auto"
+PKG_BUILD_FLAGS="+speed"
 
 pre_configure_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"

@@ -9,6 +9,7 @@ PKG_URL="https://github.com/libxmlplusplus/libxmlplusplus/releases/download/${PK
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="libxml++"
 PKG_TOOLCHAIN="meson"
+PKG_BUILD_FLAGS="+speed"
 
 PKG_MESON_OPTS_TARGET="--prefix=/usr/local \
 					   --bindir=/usr/local/bin \

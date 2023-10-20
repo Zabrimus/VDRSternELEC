@@ -8,7 +8,7 @@ PKG_SITE="http://freeglut.sourceforge.net/"
 PKG_URL="https://github.com/FreeGLUTProject/freeglut/releases/download/v${PKG_VERSION}/freeglut-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libglvnd libXi glu"
 PKG_LONGDESC="freeglut is a free-software/open-source alternative to the OpenGL Utility Toolkit (GLUT) library."
-PKG_BUILD_FLAGS="+pic"
+PKG_BUILD_FLAGS="+pic +speed"
 # PKG_TOOLCHAIN="manual"
 
 PKG_CMAKE_OPTS_TARGET="-DOpenGL_GL_PREFERENCE=GLVND \

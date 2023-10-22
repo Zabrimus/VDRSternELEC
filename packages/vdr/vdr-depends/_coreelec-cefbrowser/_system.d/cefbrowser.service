@@ -1,0 +1,26 @@
+[Unit]
+Description=cefbrowser
+Requires=network-online.target graphical.target docker.service
+StartLimitIntervalSec=400
+StartLimitBurst=5
+
+[Service]
+RestartSec=30
+Restart=always
+StandardOutput=file:/storage/browser/browser.log
+StandardError=file:/storage/browser/browser-error.log
+TimeoutStartSec=0
+ExecStop=/storage/.kodi/addons/service.system.docker/bin/docker container stop --time=2 cefbrowser
+ExecStartPre=-/storage/.kodi/addons/service.system.docker/bin/docker exec cefbrowser stop
+ExecStartPre=-/storage/.kodi/addons/service.system.docker/bin/docker rm cefbrowser
+ExecStartPre=/storage/.kodi/addons/service.system.docker/bin/docker pull ghcr.io/zabrimus/cefbrowser-base:latest
+ExecStart=/storage/.kodi/addons/service.system.docker/bin/docker run --rm --name cefbrowser \
+    -v /storage/browser:/app \
+    -v /dev/shm:/dev/shm \
+    --ipc="host" \
+    --net=host \
+    ghcr.io/zabrimus/cefbrowser-base:latest \
+    -ini sockets.ini
+
+[Install]
+WantedBy=multi-user.target

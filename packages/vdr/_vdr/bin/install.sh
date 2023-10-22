@@ -15,7 +15,6 @@ Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w]
 -b kodi : Kodi will be started after booting
 -b vdr  : VDR will be started after booting
 -T      : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
--w      : install/update web components (remotetranscoder, XXX)
 EOF
   exit 1
 }
@@ -88,11 +87,6 @@ install_triggerhappy() {
   systemctl start triggerhappy.service
 }
 
-install_web() {
-  cd /
-      unzip -fo ${CONF_DIR}/web-remotetranscode.zip
-}
-
 install_copy() {
   install
 
@@ -131,7 +125,6 @@ while getopts b:iTCw o; do
     (C) install_copy;;
     (b) boot "$OPTARG";;
     (T) install_triggerhappy;;
-    (w) install_web;;
     (*) usage
   esac
 done

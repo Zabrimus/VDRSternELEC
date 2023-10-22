@@ -139,6 +139,10 @@ if [ "${EXTRA_REMOTETRANSCODE}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _remotetranscode"
 fi
 
+if [ "${DISTRO}" = "CoreELEC" ]; then
+	PKG_DEPENDS_TARGET+=" _coreelec-cefbrowser"
+fi
+
 post_install() {
   if [ "${PROJECT} = "Amlogic-ce" ] || [ "${PROJECT} = "Amlogic" ]; then
      # Fix some links

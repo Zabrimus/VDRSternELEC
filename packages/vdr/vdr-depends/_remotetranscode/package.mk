@@ -7,7 +7,7 @@ PKG_LICENSE="unknown"
 PKG_SITE="https://github.com/Zabrimus/remotetranscode"
 PKG_URL="https://github.com/Zabrimus/remotetranscode/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="remotetranscode-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain ffmpeg"
+PKG_DEPENDS_TARGET="toolchain ffmpeg-tools"
 PKG_LONGDESC="remotetranscode"
 PKG_TOOLCHAIN="meson"
 

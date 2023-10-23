@@ -53,3 +53,6 @@ fi
 if [ ! -f /storage/.config/vdropt/sockets.ini ]; then
     cp ${BROWSER_DIR}/sockets.ini /storage/.config/vdropt/sockets.ini
 fi
+
+systemctl daemon-reload
+systemctl enable cefbrowser

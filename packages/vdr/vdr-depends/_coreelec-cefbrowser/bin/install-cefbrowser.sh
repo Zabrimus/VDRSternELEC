@@ -56,3 +56,4 @@ fi
 
 systemctl daemon-reload
 systemctl enable cefbrowser
+systemctl enable remotetranscode

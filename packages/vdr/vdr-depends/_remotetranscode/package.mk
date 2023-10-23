@@ -35,6 +35,7 @@ post_makeinstall_target() {
   mkdir -p ${INSTALL}/usr/local/bin
   cp storage/remotetranscode/remotrans ${INSTALL}/usr/local/bin
   rm storage/remotetranscode/remotrans
+  cp ${PKG_DIR}/bin/start_remotetranscode.sh ${INSTALL}/usr/local/bin
 
   # copy system.d start script
   mkdir -p ${INSTALL}/storage/.config/system.d

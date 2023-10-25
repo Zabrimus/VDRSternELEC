@@ -1,17 +1,17 @@
-From ee257ba1966f9e87dfbdd79a35da30fc1ed05b5c Mon Sep 17 00:00:00 2001
+From c3fb7fae0f3f8efeaffdff1d44e4984221b0abdd Mon Sep 17 00:00:00 2001
 From: Andreas Baierl <ichgeh@imkreisrum.de>
 Date: Tue, 4 Jul 2023 16:21:34 +0200
 Subject: [PATCH] fix for building with VDR*ELEC
 
 ---
- meson.build                                   | 24 ++++++++++++-------
+ meson.build                                   | 22 ++++++++++++-------
  meson_options.txt                             |  1 +
  .../packagefiles/mini-0.9.14/meson.build      |  2 +-
  .../meson.build                               |  2 +-
- 4 files changed, 18 insertions(+), 11 deletions(-)
+ 4 files changed, 17 insertions(+), 10 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index a612fe5..f0faaee 100644
+index 2f6c487..2d70960 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -1,11 +1,13 @@
@@ -52,7 +52,7 @@ index a612fe5..f0faaee 100644
                   dependencies: [mini_dep, cef_lib, spdlog_dep, deps, sqlite3_dep, dep_ssl, dep_crypto])
  
  exe = executable('vdrclient', 'test-tools/vdr_tool.cpp', 'logger.cpp', 'sharedmemory.cpp', 'test-tools/common.cpp',
-@@ -86,14 +92,14 @@ exe = executable('vdrclient', 'test-tools/vdr_tool.cpp', 'logger.cpp', 'sharedme
+@@ -86,13 +92,13 @@ exe = executable('vdrclient', 'test-tools/vdr_tool.cpp', 'logger.cpp', 'sharedme
                  'httplib.cpp',
                   cpp_args : ['-DCLIENT_ONLY', '-DPHTTPLIB_ZLIB_SUPPORT', '-DCPPHTTPLIB_OPENSSL_SUPPORT'],
                   install : true,
@@ -65,12 +65,10 @@ index a612fe5..f0faaee 100644
  #
 -install_subdir('static-content/js', install_dir : meson.current_build_dir() + '/Release')
 -install_subdir('static-content/css', install_dir : meson.current_build_dir() + '/Release')
--install_subdir('static-content/movie', install_dir : meson.current_build_dir() + '/Release')
 -install_subdir('static-content/database', install_dir : meson.current_build_dir() + '/Release')
 -install_subdir('static-content/application', install_dir : meson.current_build_dir() + '/Release')
 +install_subdir('static-content/js', install_dir : 'cefbrowser')
 +install_subdir('static-content/css', install_dir : 'cefbrowser')
-+install_subdir('static-content/movie', install_dir : 'cefbrowser')
 +install_subdir('static-content/database', install_dir : 'cefbrowser')
 +install_subdir('static-content/application', install_dir : 'cefbrowser')
 diff --git a/meson_options.txt b/meson_options.txt

@@ -19,6 +19,8 @@ upgrade() {
 
   # delete old sample configuration if it exists and extract the new one
   rm -Rf /storage/.config/vdropt-sample
+  rm -Rf /storage/.config/cefbrowser-sample
+  rm -Rf /storage/.config/remotetranscode-sample
   # delete existing development links and files and reset them to default
   # manual changes on the links are erased
   # TODO: find a better solution
@@ -27,6 +29,10 @@ upgrade() {
 
   cd /
     for i in `ls ${CONF_DIR}/*-sample-config.zip`; do
+      unzip -o $i
+    done
+
+    for i in `ls ${CONF_DIR}/*-sample.zip`; do
       unzip -o $i
     done
 

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_cefbrowser"
-PKG_VERSION="b29900e77338a19edbdd4a081cdf6f0bb8b64fcd"
-PKG_SHA256="58491c1abe56b5d3b81b7d6e24356e8b8eb89d10ed332a486d7efeae55daf229"
+PKG_VERSION="95e301a971ffee274b4c992491cca993abc2dc9a"
+PKG_SHA256="b286521cebcee7a65f686999b27f2bbd58cb26d338dcae56ffaaf19d75ac0bfc"
 PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/Zabrimus/cefbrowser"
 PKG_URL="https://github.com/Zabrimus/cefbrowser/archive/${PKG_VERSION}.zip"
@@ -10,11 +10,15 @@ PKG_SOURCE_DIR="cefbrowser-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain atk libxml2 cef-at-spi2-atk cups cef-at-spi2-core \
                     libXcomposite libXdamage libXfixes libXrandr libXi libXft openssl _cef"
 PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
+PKG_DEPENDS_CONFIG="_cef"
 PKG_LONGDESC="cefbrowser"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed"
 
-CEF_PREFIX="/storage"
+CEF_PREFIX="/usr/local"
+CEF_DIR="$(get_build_dir _cef)/../../../../cef"
+CEF_VERSION_FILE="$(get_build_dir _cef)/VERSION"
+CEF_VERSION="$(cat ${CEF_VERSION_FILE})"
 
 case "${ARCH}" in
   arm)     DARCH="arm";;
@@ -30,15 +34,12 @@ esac
 
 PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} \
                        --prefix=${CEF_PREFIX} \
-                       --bindir=${CEF_PREFIX}/cefbrowser \
-                       --libexecdir=${CEF_PREFIX}/cefbrowser \
-                       --sbindir=${CEF_PREFIX}/cefbrowser \
-                       --libdir=${CEF_PREFIX}/cefbrowser"
+                       --bindir=${CEF_PREFIX}/bin"
 
 pre_configure_target() {
    export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system
    rm -rf ${PKG_BUILD}/subprojects/cef
-   ln -s $(get_build_dir _cef) ${PKG_BUILD}/subprojects/cef
+   ln -s ${CEF_DIR}/cef-${CEF_VERSION}-${DARCH} ${PKG_BUILD}/subprojects/cef
 }
 
 pre_make_target() {
@@ -48,8 +49,14 @@ pre_make_target() {
 
 post_makeinstall_target() {
   rm -rf ${INSTALL}/usr/lib
-  rm -rf ${INSTALL}/storage/cefbrowser/pkgconfig
+  mkdir -p ${INSTALL}/storage/cefbrowser-sample/data
+  mv ${INSTALL}/usr/local/cefbrowser/* ${INSTALL}/storage/cefbrowser-sample/data
+  mkdir -p ${INSTALL}/storage/.config/vdropt-sample
+  cp -r ${PKG_BUILD}/config/* ${INSTALL}/storage/.config/vdropt-sample
+  mkdir -p ${INSTALL}/usr/local/system.d
+  cp ${PKG_DIR}/_system.d/* ${INSTALL}/usr/local/system.d
   mkdir -p ${INSTALL}/usr/local/config
   cd ${INSTALL}
-  zip -qrum9 ${INSTALL}/usr/local/config/web-cefbrowser.zip storage
+  zip -qrum9 ${INSTALL}/usr/local/config/web-cefbrowser-sample.zip storage/cefbrowser-sample
+  zip -qrum9 ${INSTALL}/usr/local/config/cefbrowser-sample-config.zip storage/.config
 }

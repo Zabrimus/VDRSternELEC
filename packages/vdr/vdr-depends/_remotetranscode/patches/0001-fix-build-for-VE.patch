@@ -35,7 +35,7 @@ index 9a2ea1e..7640906 100644
  # install static content
  #
 -install_subdir('static-content/movie', install_dir : meson.current_build_dir())
-+install_subdir('static-content/movie', install_dir : 'remotetranscode')
++install_subdir('static-content/movie', install_dir : '')
 -- 
 2.30.2
 

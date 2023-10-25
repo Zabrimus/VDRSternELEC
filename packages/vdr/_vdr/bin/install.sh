@@ -8,13 +8,15 @@ BIN_DIR="XXBINDIRXX"
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME [-install-config] [-boot kodi|vdr]
+Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-c (url)]
 
--i      : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
--C      : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
--b kodi : Kodi will be started after booting
--b vdr  : VDR will be started after booting
--T      : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
+-i       : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
+-C       : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
+-b kodi  : Kodi will be started after booting
+-b vdr   : VDR will be started after booting
+-T       : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
+-w       : install/update web components (remotetranscode, cefbrowser)
+-c (url) : install/update cef binary lib (located at url or within /storage/.update or at /usr/local/config)
 EOF
   exit 1
 }
@@ -22,15 +24,31 @@ EOF
 install() {
   # delete old sample configuration if it exists and extract the new one
   rm -Rf /storage/.config/vdropt-sample
+  rm -Rf /storage/cefbrowser-sample
+  rm -Rf /storage/remotetranscode-sample
 
   cd /
-    for i in `ls ${CONF_DIR}/*-sample-config.zip`; do
-       unzip $i
-    done
+  for i in `ls ${CONF_DIR}/*-sample-config.zip`; do
+     unzip $i
+  done
 
+  for i in `ls ${CONF_DIR}/*-sample.zip`; do
+     unzip $i
+  done
+
+  # copy samples to final directory
   if [ ! -d /storage/.config/vdropt ]; then
-    # copy samples to final directory
     cp -a /storage/.config/vdropt-sample /storage/.config/vdropt
+  fi
+
+  # copy cefbrowser files to final directory
+  if [ ! -d /storage/cefbrowser ]; then
+    cp -a /storage/cefbrowser-sample /storage/cefbrowser
+  fi
+
+  # copy remotetranscode files to final directory
+  if [ ! -d /storage/remotetranscode ]; then
+    cp -a /storage/remotetranscode-sample /storage/remotetranscode
   fi
 
   cp -a XXPREFIXXX/system.d/* /storage/.config/system.d
@@ -87,6 +105,65 @@ install_triggerhappy() {
   systemctl start triggerhappy.service
 }
 
+install_web() {
+  if [ ! -f "/storage/cef/libcef.so" ]; then
+    echo "libcef.so is missing, install cef first!"
+    echo "   -> install.sh -c [url]"
+    exit 1
+  fi
+
+  mkdir -p /storage/cefbrowser
+  mkdir -p /storage/remotetranscode
+  cp -a /storage/cefbrowser-sample/* /storage/cefbrowser/
+  cp -a /storage/remotetranscode-sample/* /storage/remotetranscode/
+
+  # copy system.d files
+  mkdir -p /storage/.config/system.d
+  cp /usr/local/system.d/* /storage/.config/system.d
+  systemctl daemon-reload
+  systemctl enable cefbrowser.service
+  systemctl enable remotetranscode.service
+}
+
+install_cef() {
+  rm -Rf /storage/tmpcef
+  mkdir /storage/tmpcef
+  cd /storage/tmpcef
+
+  # Get zip file
+  # 1. try downloading
+  if [ -n "$1" ]; then
+    echo "Download cef libs from $1"
+    if wget -q "$1" -O cef.zip; then
+      echo "$1 saved to /storage"
+    else
+      echo "Error downloading $1"
+      exit 1
+    fi
+  # 2. read from /storage/.update/cef.zip
+  else if [ -e "/storage/.update/cef.zip" ]; then
+    echo "Move /storage/.update/cef.zip"
+    mv "/storage/.update/cef.zip" "/storage/tmpcef/cef.zip"
+  # 3. read from /usr/local/config/cef.zip
+  else if [ -e "/usr/local/config/cef.zip" ]
+    echo "Copy /usr/local/config/cef.zip"
+    cp "/usr/local/config/cef.zip" "/storage/tmpcef/cef.zip"
+  else
+    echo "No cef library file found, exiting"
+    exit 1
+  fi
+
+  # unzip cef.zip
+  if [ -e "/storage/tmpcef/cef.zip" ]; then
+    cd /
+    echo "Unzip cef.zip"
+    unzip -o "/storage/tmpcef/cef.zip"
+  else
+    echo "No cef zip found, exiting"
+    exit 1
+  fi
+}
+
 install_copy() {
   install
 
@@ -120,12 +197,14 @@ if [ "$#" = "0" ]; then
     usage
 fi
 
-while getopts b:iTC o; do
+while getopts b:iTCwc: o; do
   case $o in
     (i) install;;
     (C) install_copy;;
     (b) boot "$OPTARG";;
     (T) install_triggerhappy;;
+    (w) install_web;;
+    (c) install_cef "$OPTARG";;
     (*) usage
   esac
 done

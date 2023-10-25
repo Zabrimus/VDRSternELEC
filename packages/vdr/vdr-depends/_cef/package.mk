@@ -24,31 +24,41 @@ makeinstall_target() {
     x86_64)  CEF_FILE=${CEF_FILE_X86};;
   esac
 
-  # download cef
+# download cef if necessary
   if [ ! -e ${PKG_BUILD}/../../../sources/${PKG_NAME}/${CEF_FILE} ]; then
-      mkdir -p ${PKG_BUILD}/../../../sources/${PKG_NAME}
-      curl -L ${CEF_URL}${CEF_FILE} -o ${PKG_BUILD}/../../../sources/${PKG_NAME}/${CEF_FILE}
+    mkdir -p ${PKG_BUILD}/../../../sources/${PKG_NAME}
+    curl -L ${CEF_URL}${CEF_FILE} -o ${PKG_BUILD}/../../../sources/${PKG_NAME}/${CEF_FILE}
   fi
-  tar -C ${PKG_BUILD}/ -xf ${PKG_BUILD}/../../../sources/${PKG_NAME}/${CEF_FILE}
-  mv ${PKG_BUILD}/cef_binary*/* ${PKG_BUILD}
-  rm -rf ${PKG_BUILD}/cef_binary*
 
-  # install cef binaries
-  mkdir -p ${INSTALL}/storage/cefbrowser
-  cp -R ${PKG_BUILD}/Release/* ${INSTALL}/storage/cefbrowser
-  cp -R ${PKG_BUILD}/Resources/* ${INSTALL}/storage/cefbrowser
+# unpack if necessary
+  if [ ! -e ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Release/libcef.so ]; then
+    mkdir -p "${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}"
+    tar -C ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/ -xf ${PKG_BUILD}/../../../sources/${PKG_NAME}/${CEF_FILE}
+    mv ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/cef_binary*/* ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}
+    rm -rf ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/cef_binary*
+  fi
 
-  # package cef binaries
-  cd ${INSTALL}
+  mkdir -p ${INSTALL}/usr/local/share/cef/locales
+  cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Resources/locales/* ${INSTALL}/usr/local/share/cef/locales
+
+# package cef binaries external
+  if [ ! -e ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip ]; then
+    mkdir -p ${INSTALL}/storage/cef
+    cd ${INSTALL}
+    cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Release/* ${INSTALL}/storage/cef
+    cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Resources/* ${INSTALL}/storage/cef
+    rm -rf ${INSTALL}/storage/cef/locales
+    zip -qrum9 ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip storage
+  fi
+
+# package cef binaries into image if wanted
   if [ ${CEF_BINARIES} ]; then
     mkdir -p ${INSTALL}/usr/local/config
-    zip -qrum9 ${INSTALL}/usr/local/config/cef-${ARCH}.zip storage
-  else
-    mkdir -p ${CEF_DIR}
-    rm -f ${CEF_DIR}/cef-${ARCH}.zip
-    zip -qrum9 ${CEF_DIR}/cef-${ARCH}.zip storage
+    cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip ${INSTALL}/usr/local/config/cef-binaries.zip
   fi
 
-  # coreelec-19 needs this
-  sed -i "s/VERSION 3.21/VERSION 3.19/" ${PKG_BUILD}/CMakeLists.txt
+  echo "${PKG_VERSION}" > ${PKG_BUILD}/VERSION
+
+# coreelec-19 needs this
+  sed -i "s/VERSION 3.21/VERSION 3.19/" ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/CMakeLists.txt
 }

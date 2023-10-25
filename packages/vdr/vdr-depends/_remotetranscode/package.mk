@@ -12,13 +12,10 @@ PKG_LONGDESC="remotetranscode"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed"
 
-RT_PREFIX="/storage"
+RT_PREFIX="/usr/local"
 
 PKG_MESON_OPTS_TARGET="--prefix=${RT_PREFIX} \
-                       --bindir=${RT_PREFIX}/remotetranscode \
-                       --libexecdir=${RT_PREFIX}/remotetranscode \
-                       --sbindir=${RT_PREFIX}/remotetranscode \
-                       --libdir=${RT_PREFIX}/remotetranscode"
+                       --bindir=${RT_PREFIX}/bin"
 
 pre_configure_target() {
    export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system
@@ -30,7 +27,14 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
+  mkdir -p ${INSTALL}/storage/remotetranscode-sample
+  mv ${INSTALL}/usr/local/movie ${INSTALL}/storage/remotetranscode-sample
+  mkdir -p ${INSTALL}/storage/.config/vdropt-sample
+  cp -r ${PKG_BUILD}/config/* ${INSTALL}/storage/.config/vdropt-sample
+  mkdir -p ${INSTALL}/usr/local/system.d
+  cp ${PKG_DIR}/_system.d/* ${INSTALL}/usr/local/system.d
   mkdir -p ${INSTALL}/usr/local/config
   cd ${INSTALL}
-  zip -qrum9 ${INSTALL}/usr/local/config/remotetranscode-sample-config.zip storage/remotetranscode
+  zip -qrum9 ${INSTALL}/usr/local/config/web-remotetranscode-sample.zip storage/remotetranscode-sample
+  zip -qrum9 ${INSTALL}/usr/local/config/remotetranscode-sample-config.zip storage/.config
 }

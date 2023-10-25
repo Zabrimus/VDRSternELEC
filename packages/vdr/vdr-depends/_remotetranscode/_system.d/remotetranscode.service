@@ -7,7 +7,7 @@ StartLimitBurst=5
 
 [Service]
 WorkingDirectory=/storage/remotetranscode
-ExecStart=/storage/remotetranscode/remotrans -c /storage/.config/vdropt/sockets.ini
+ExecStart=/usr/local/bin/remotrans -c /storage/.config/vdropt/sockets.ini -m /storage/remotetranscode/movie
 Restart=always
 RestartSec=30
 StartLimitInterval=0
@@ -16,4 +16,4 @@ TimeoutStopSec=30
 LimitNOFILE=16384
 
 [Install]
-WantedBy=vdropt.target
+WantedBy=multi-user.target

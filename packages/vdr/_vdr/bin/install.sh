@@ -135,17 +135,18 @@ install_cef() {
   if [ -n "$1" ]; then
     echo "Download cef libs from $1"
     if wget -q "$1" -O cef.zip; then
+      sync
       echo "$1 saved to /storage"
     else
       echo "Error downloading $1"
       exit 1
     fi
   # 2. read from /storage/.update/cef.zip
-  else if [ -e "/storage/.update/cef.zip" ]; then
+  elif [ -e "/storage/.update/cef.zip" ]; then
     echo "Move /storage/.update/cef.zip"
     mv "/storage/.update/cef.zip" "/storage/tmpcef/cef.zip"
   # 3. read from /usr/local/config/cef.zip
-  else if [ -e "/usr/local/config/cef.zip" ]
+  elif [ -e "/usr/local/config/cef.zip" ]; then
     echo "Copy /usr/local/config/cef.zip"
     cp "/usr/local/config/cef.zip" "/storage/tmpcef/cef.zip"
   else
@@ -204,7 +205,13 @@ while getopts b:iTCwc: o; do
     (b) boot "$OPTARG";;
     (T) install_triggerhappy;;
     (w) install_web;;
-    (c) install_cef "$OPTARG";;
+    (c) eval url=\${$OPTIND}
+        if [ -n $url ]; then
+          install_cef "$url"
+        else
+          install_cef
+        fi
+        ;;
     (*) usage
   esac
 done

@@ -34,7 +34,10 @@ esac
 
 PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} \
                        --prefix=${CEF_PREFIX} \
-                       --bindir=${CEF_PREFIX}/bin"
+                       --bindir=${CEF_PREFIX}/bin \
+                       --libdir=${CEF_PREFIX}/lib \
+                       --libexecdir=${CEF_PREFIX}/lib \
+                       --sbindir=${CEF_PREFIX}/bin"
 
 pre_configure_target() {
    export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system

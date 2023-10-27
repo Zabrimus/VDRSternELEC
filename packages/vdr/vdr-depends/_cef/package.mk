@@ -38,16 +38,12 @@ makeinstall_target() {
     rm -rf ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/cef_binary*
   fi
 
-  mkdir -p ${INSTALL}/usr/local/share/cef/locales
-  cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Resources/locales/* ${INSTALL}/usr/local/share/cef/locales
-
 # package cef binaries external
   if [ ! -e ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip ]; then
     mkdir -p ${INSTALL}/storage/cef
     cd ${INSTALL}
     cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Release/* ${INSTALL}/storage/cef
     cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Resources/* ${INSTALL}/storage/cef
-    rm -rf ${INSTALL}/storage/cef/locales
     zip -qrum9 ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip storage
   fi
 

@@ -42,7 +42,7 @@ PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} \
 pre_configure_target() {
    export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system
    rm -rf ${PKG_BUILD}/subprojects/cef
-   ln -s ${CEF_DIR}/cef-${CEF_VERSION}-${DARCH} ${PKG_BUILD}/subprojects/cef
+   ln -s ${CEF_DIR}/cef-${CEF_VERSION}-${ARCH} ${PKG_BUILD}/subprojects/cef
 }
 
 pre_make_target() {

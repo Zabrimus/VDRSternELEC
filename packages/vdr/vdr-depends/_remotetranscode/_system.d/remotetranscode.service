@@ -7,7 +7,7 @@ StartLimitBurst=5
 
 [Service]
 WorkingDirectory=/storage/remotetranscode
-ExecStart=/usr/local/bin/start_remotetranscode.sh
+ExecStart=/usr/local/bin/remotrans -c /storage/.config/vdropt/sockets.ini -m /storage/remotetranscode/movie
 Restart=always
 RestartSec=30
 StartLimitInterval=0

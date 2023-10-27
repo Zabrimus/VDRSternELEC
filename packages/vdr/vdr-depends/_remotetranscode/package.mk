@@ -7,7 +7,7 @@ PKG_LICENSE="unknown"
 PKG_SITE="https://github.com/Zabrimus/remotetranscode"
 PKG_URL="https://github.com/Zabrimus/remotetranscode/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="remotetranscode-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain ffmpeg-tools"
+PKG_DEPENDS_TARGET="toolchain ffmpeg"
 PKG_LONGDESC="remotetranscode"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed"
@@ -35,10 +35,6 @@ post_makeinstall_target() {
   mv ${INSTALL}/usr/local/movie ${INSTALL}/storage/remotetranscode-sample
   mkdir -p ${INSTALL}/storage/.config/vdropt-sample
   cp -r ${PKG_BUILD}/config/* ${INSTALL}/storage/.config/vdropt-sample
-
-  # install binary in /usr/local/bin
-  mkdir -p ${INSTALL}/usr/local/bin
-  cp ${PKG_DIR}/bin/start_remotetranscode.sh ${INSTALL}/usr/local/bin
 
   # copy systemd services
   mkdir -p ${INSTALL}/usr/local/system.d

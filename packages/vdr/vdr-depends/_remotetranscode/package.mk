@@ -30,12 +30,21 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
+  # prepare sample archive
   mkdir -p ${INSTALL}/storage/remotetranscode-sample
   mv ${INSTALL}/usr/local/movie ${INSTALL}/storage/remotetranscode-sample
   mkdir -p ${INSTALL}/storage/.config/vdropt-sample
   cp -r ${PKG_BUILD}/config/* ${INSTALL}/storage/.config/vdropt-sample
+
+  # install binary in /usr/local/bin
+  mkdir -p ${INSTALL}/usr/local/bin
+  cp ${PKG_DIR}/bin/start_remotetranscode.sh ${INSTALL}/usr/local/bin
+
+  # copy systemd services
   mkdir -p ${INSTALL}/usr/local/system.d
   cp ${PKG_DIR}/_system.d/* ${INSTALL}/usr/local/system.d
+
+  # zip everything
   mkdir -p ${INSTALL}/usr/local/config
   cd ${INSTALL}
   zip -qrum9 ${INSTALL}/usr/local/config/web-remotetranscode-sample.zip storage/remotetranscode-sample

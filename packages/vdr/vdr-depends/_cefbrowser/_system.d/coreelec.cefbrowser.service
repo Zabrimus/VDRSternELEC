@@ -1,21 +1,27 @@
 [Unit]
 Description=cefbrowser
-Requires=network-online.target
-After=network-online.target
+Requires=network-online.target graphical.target docker.service
 StartLimitIntervalSec=400
 StartLimitBurst=5
 
 [Service]
-WorkingDirectory=/storage/cefbrowser/data
-ExecStart=/usr/local/bin/cefbrowser --config /storage/.config/vdropt/sockets.ini --ozone-platform=headless --locales-dir-path=/storage/cef/locales --log-file=/storage/.cache/cefbrowser/cefbrowser.log --cachePath=/storage/.cache/cefbrowser --profilePath=/storage/.cache/cefbrowser --staticPath=/storage/cefbrowser/data
-Restart=always
 RestartSec=30
-Environment=LD_LIBRARY_PATH="/storage/cef"
-Environment=BROWSER_DB_PATH="/storage/.cache/cefbrowser"
-StartLimitInterval=0
-TimeoutStartSec=30
-TimeoutStopSec=30
-LimitNOFILE=16384
+Restart=always
+StandardOutput=file:/storage/browser/browser.log
+StandardError=file:/storage/browser/browser-error.log
+TimeoutStartSec=0
+ExecStop=/storage/.kodi/addons/service.system.docker/bin/docker container stop --time=2 cefbrowser
+ExecStart=/storage/.kodi/addons/service.system.docker/bin/docker run --rm --name cefbrowser \
+    -v /usr/local/bin:/app_bin \
+    -v /storage/cef:/app_cef \
+    -v /storage/.cache/cefbrowser:/app_cache \
+    -v /storage/cefbrowser/data:/app_data \
+    -v /dev/shm:/dev/shm \
+    -v /storage/.config/vdropt:/app_ini \
+    --ipc="host" \
+    --net=host \
+    ghcr.io/zabrimus/cefbrowser-base:latest \
+    -ini /app_ini/sockets.ini
 
 [Install]
 WantedBy=multi-user.target

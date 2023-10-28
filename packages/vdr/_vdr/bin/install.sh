@@ -119,7 +119,8 @@ install_web() {
 
   # copy system.d files
   mkdir -p /storage/.config/system.d
-  cp /usr/local/system.d/* /storage/.config/system.d
+  cp /usr/local/system.d/cefbrowser.service /storage/.config/system.d
+  cp /usr/local/system.d/remotetranscode.service /storage/.config/system.d
   systemctl daemon-reload
   systemctl enable cefbrowser.service
   systemctl enable remotetranscode.service
@@ -205,7 +206,7 @@ while getopts b:iTCwc: o; do
     (b) boot "$OPTARG";;
     (T) install_triggerhappy;;
     (w) install_web;;
-    (c) eval url=\${$OPTIND}
+    (c) eval url=\${$(( $OPTIND -1 ))}
         if [ -n $url ]; then
           install_cef "$url"
         else

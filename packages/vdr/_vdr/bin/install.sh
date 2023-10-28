@@ -119,7 +119,14 @@ install_web() {
 
   # copy system.d files
   mkdir -p /storage/.config/system.d
-  cp /usr/local/system.d/cefbrowser.service /storage/.config/system.d
+
+  . /etc/os-release
+  if [ "$NAME" == "CoreELEC" ]; then
+    cp /usr/local/system.d/coreelec.cefbrowser.service /storage/.config/system.d/cefbrowser.service
+  else
+    cp /usr/local/system.d/libreelec.cefbrowser.service /storage/.config/system.d/cefbrowser.service
+  fi
+
   cp /usr/local/system.d/remotetranscode.service /storage/.config/system.d
   systemctl daemon-reload
   systemctl enable cefbrowser.service

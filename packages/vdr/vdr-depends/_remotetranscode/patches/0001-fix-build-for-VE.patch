@@ -1,22 +1,9 @@
-From ae8aa5d6700403fb27538dea741dd073f39746ac Mon Sep 17 00:00:00 2001
-From: Andreas Baierl <ichgeh@imkreisrum.de>
-Date: Wed, 26 Jul 2023 11:09:25 +0200
-Subject: [PATCH] fix build for VE
-
----
- meson.build       | 7 ++++---
- 1 files changed, 4 insertions(+), 3 deletions(-)
-
 diff --git a/meson.build b/meson.build
-index 9a2ea1e..7640906 100644
+index c7af562..8ac2339 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1,9 +1,10 @@
- project('remotetranscode', 'cpp', 'c',
-   version : '0.1',
-   default_options : ['warning_level=1', 'c_std=c17', 'cpp_std=c++17'],
--  meson_version: '>=0.56.2')
-+  meson_version: '>=0.56.2')
+@@ -4,6 +4,7 @@ project('remotetranscode', 'cpp', 'c',
+   meson_version: '>=0.56.2')
  
  add_global_arguments(language : 'cpp')
 +install_prefix = get_option('prefix')
@@ -26,7 +13,7 @@ index 9a2ea1e..7640906 100644
 @@ -29,10 +30,10 @@ mini_dep = mini_proj.get_variable('mini_dep')
  
  
- exe = executable('remotrans', 'main.cpp', 'logger.cpp', 'ffmpeghandler.cpp', 'browserclient.cpp', 'transcodeconfig.cpp',
+ exe = executable('remotrans', 'main.cpp', 'logger.cpp', 'ffmpeghandler.cpp', 'browserclient.cpp', 'transcodeconfig.cpp', 'vdrclient.cpp',
 -                 install : false,
 +                 install : true,
                   dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep])
@@ -36,6 +23,3 @@ index 9a2ea1e..7640906 100644
  #
 -install_subdir('static-content/movie', install_dir : meson.current_build_dir())
 +install_subdir('static-content/movie', install_dir : '')
--- 
-2.30.2
-

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_remotetranscode"
-PKG_VERSION="1773d9cf7f0625cc664b4b177cba72fa583cd5b5"
-PKG_SHA256="f7b68189ba3921b8d8b6f4b1a127cffcc004c1cf95984afc5b56d94a4706ae5f"
+PKG_VERSION="bdb8bfa28ee205166be702e013bd1366c9ba01c5"
+PKG_SHA256="2b82c2a334b475deffaae9c2a29f2391ce05f1d8b41047bd619be3d9a691a169"
 PKG_LICENSE="unknown"
 PKG_SITE="https://github.com/Zabrimus/remotetranscode"
 PKG_URL="https://github.com/Zabrimus/remotetranscode/archive/${PKG_VERSION}.zip"
@@ -31,8 +31,8 @@ pre_make_target() {
 
 post_makeinstall_target() {
   # prepare sample archive
-  mkdir -p ${INSTALL}/storage/remotetranscode-sample
-  mv ${INSTALL}/usr/local/movie ${INSTALL}/storage/remotetranscode-sample
+  # mkdir -p ${INSTALL}/storage/remotetranscode-sample
+  # mv ${INSTALL}/usr/local/movie ${INSTALL}/storage/remotetranscode-sample
   mkdir -p ${INSTALL}/storage/.config/vdropt-sample
   cp -r ${PKG_BUILD}/config/* ${INSTALL}/storage/.config/vdropt-sample
 
@@ -43,6 +43,6 @@ post_makeinstall_target() {
   # zip everything
   mkdir -p ${INSTALL}/usr/local/config
   cd ${INSTALL}
-  zip -qrum9 ${INSTALL}/usr/local/config/web-remotetranscode-sample.zip storage/remotetranscode-sample
+  # zip -qrum9 ${INSTALL}/usr/local/config/web-remotetranscode-sample.zip storage/remotetranscode-sample
   zip -qrum9 ${INSTALL}/usr/local/config/remotetranscode-sample-config.zip storage/.config
 }

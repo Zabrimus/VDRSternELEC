@@ -25,7 +25,6 @@ install() {
   # delete old sample configuration if it exists and extract the new one
   rm -Rf /storage/.config/vdropt-sample
   rm -Rf /storage/cefbrowser-sample
-  rm -Rf /storage/remotetranscode-sample
 
   cd /
   for i in `ls ${CONF_DIR}/*-sample-config.zip`; do
@@ -44,11 +43,6 @@ install() {
   # copy cefbrowser files to final directory
   if [ ! -d /storage/cefbrowser ]; then
     cp -a /storage/cefbrowser-sample /storage/cefbrowser
-  fi
-
-  # copy remotetranscode files to final directory
-  if [ ! -d /storage/remotetranscode ]; then
-    cp -a /storage/remotetranscode-sample /storage/remotetranscode
   fi
 
   cp -a XXPREFIXXX/system.d/* /storage/.config/system.d
@@ -113,9 +107,7 @@ install_web() {
   fi
 
   mkdir -p /storage/cefbrowser
-  mkdir -p /storage/remotetranscode
   cp -a /storage/cefbrowser-sample/* /storage/cefbrowser/
-  cp -a /storage/remotetranscode-sample/* /storage/remotetranscode/
 
   # copy system.d files
   mkdir -p /storage/.config/system.d

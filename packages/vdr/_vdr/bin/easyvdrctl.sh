@@ -1,7 +1,7 @@
 #!/bin/sh
 
-CONF_DIR="XXCONFDIRXX/conf.d"
-BIN_DIR="XXBINDIRXX"
-LIB_DIR="XXLIBDIRXX/vdr"
+CONF_DIR="/storage/.config/vdropt/conf.d"
+BIN_DIR="/usr/local/bin"
+LIB_DIR="/usr/local/lib/vdr"
 
 ${BIN_DIR}/easyvdrctl --plugindir "${LIB_DIR}" --inidir "${CONF_DIR}" $@

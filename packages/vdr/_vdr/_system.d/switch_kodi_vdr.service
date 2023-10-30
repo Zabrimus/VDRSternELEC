@@ -1,6 +1,6 @@
-[Service]  
-Type=simple  
-ExecStart=XXBINDIRXX/switch_kodi_vdr.sh
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/switch_kodi_vdr.sh
 
 [Install]
 WantedBy=multi-user.target

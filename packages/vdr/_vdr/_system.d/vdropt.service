@@ -4,7 +4,7 @@ Requires=network-online.target graphical.target
 After=network-online.target graphical.target
 
 [Service]
-ExecStart=XXBINDIRXX/start_vdr.sh
+ExecStart=/usr/local/bin/start_vdr.sh
 Restart=always
 RestartSec=2
 StartLimitInterval=0

@@ -3,8 +3,8 @@
 set -e
 
 CONF_DIR="/storage/.config/vdropt"
-BIN_DIR="XXBINDIRXX"
-LIB_DIR="XXLIBDIRXX"
+BIN_DIR="/usr/local/bin"
+LIB_DIR="/usr/local/lib"
 LD_PRELOAD_MALI="XXLDPRELOADMALIXX"
 
 read_vdr_configuration () {

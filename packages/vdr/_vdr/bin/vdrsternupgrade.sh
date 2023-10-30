@@ -4,9 +4,9 @@ set -e
 
 PROGNAME=$0
 
-PREFIX="XXPREFIXXX"
-CONF_DIR="XXPREFIXCONFXX"
-BIN_DIR="XXBINDIRXX"
+PREFIX="/usr/local"
+CONF_DIR="${PREFIX}/config"
+BIN_DIR="${PREFIX}/bin"
 
 VERSION_FILE=/storage/.config/vdropt/os-release
 

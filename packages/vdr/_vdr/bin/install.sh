@@ -2,13 +2,13 @@
 
 PROGNAME=$0
 
-PREFIX="XXPREFIXXX"
-CONF_DIR="XXPREFIXCONFXX"
-BIN_DIR="XXBINDIRXX"
+PREFIX="/usr/local"
+CONF_DIR="${PREFIX}/config"
+BIN_DIR="${PREFIX}/bin"
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-c (url)]
+Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-c (url)] [-p (url)]
 
 -i       : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
 -C       : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
@@ -17,6 +17,7 @@ Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-c (url)]
 -T       : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
 -w       : install/update web components (remotetranscode, cefbrowser)
 -c (url) : install/update cef binary lib (located at url or within /storage/.update or at /usr/local/config)
+-p (url) : install/update private configs (located at url or within /storage/.update)
 EOF
   exit 1
 }
@@ -28,11 +29,11 @@ install() {
 
   cd /
   for i in `ls ${CONF_DIR}/*-sample-config.zip`; do
-     unzip $i
+     unzip -o $i
   done
 
   for i in `ls ${CONF_DIR}/*-sample.zip`; do
-     unzip $i
+     unzip -o $i
   done
 
   # copy samples to final directory
@@ -45,22 +46,22 @@ install() {
     cp -a /storage/cefbrowser-sample /storage/cefbrowser
   fi
 
-  cp -a XXPREFIXXX/system.d/* /storage/.config/system.d
+  cp -a /usr/local/system.d/* /storage/.config/system.d
   systemctl daemon-reload
 
   # disable everything. This is important and shall not be changed!
-  for i in `ls XXPREFIXXX/system.d/*`; do
+  for i in `ls /usr/local/system.d/*`; do
      systemctl disable $(basename $i)
   done
 
   # copy sysctl.d files
-  cp -a XXPREFIXXX/sysctl.d/* /storage/.config/sysctl.d
+  cp -a /usr/local/sysctl.d/* /storage/.config/sysctl.d
 
   # create autostart.sh if it does not exists
   if [ ! -f /storage/.config/autostart.sh ]; then
 cat > /storage/.config/autostart.sh<< EOF
 #!/bin/sh
-XXBINDIRXX/autostart.sh
+/usr/local/bin/autostart.sh
 EOF
 
   chmod +x /storage/.config/autostart.sh
@@ -126,9 +127,9 @@ install_web() {
 }
 
 install_cef() {
-  rm -Rf /storage/tmpcef
-  mkdir /storage/tmpcef
-  cd /storage/tmpcef
+  rm -Rf /storage/tmp
+  mkdir /storage/tmp
+  cd /storage/tmp
 
   # Get zip file
   # 1. try downloading
@@ -136,7 +137,7 @@ install_cef() {
     echo "Download cef libs from $1"
     if wget -q "$1" -O cef.zip; then
       sync
-      echo "$1 saved to /storage"
+      echo "$1 saved to /storage/tmp"
     else
       echo "Error downloading $1"
       exit 1
@@ -144,23 +145,59 @@ install_cef() {
   # 2. read from /storage/.update/cef.zip
   elif [ -e "/storage/.update/cef.zip" ]; then
     echo "Move /storage/.update/cef.zip"
-    mv "/storage/.update/cef.zip" "/storage/tmpcef/cef.zip"
+    mv "/storage/.update/cef.zip" "/storage/tmp/cef.zip"
   # 3. read from /usr/local/config/cef.zip
   elif [ -e "/usr/local/config/cef.zip" ]; then
     echo "Copy /usr/local/config/cef.zip"
-    cp "/usr/local/config/cef.zip" "/storage/tmpcef/cef.zip"
+    cp "/usr/local/config/cef.zip" "/storage/tmp/cef.zip"
   else
     echo "No cef library file found, exiting"
     exit 1
   fi
 
   # unzip cef.zip
-  if [ -e "/storage/tmpcef/cef.zip" ]; then
+  if [ -e "/storage/tmp/cef.zip" ]; then
     cd /
     echo "Unzip cef.zip"
-    unzip -o "/storage/tmpcef/cef.zip"
+    unzip -o "/storage/tmp/cef.zip"
   else
     echo "No cef zip found, exiting"
+    exit 1
+  fi
+}
+
+install_private() {
+  rm -Rf /storage/tmp
+  mkdir /storage/tmp
+  cd /storage/tmp
+
+  # Get zip file
+  # 1. try downloading
+  if [ -n "$1" ]; then
+    echo "Download private confs from $1"
+    if wget -q "$1" -O ve-private-conf.zip; then
+      sync
+      echo "$1 saved to /storage/tmp"
+    else
+      echo "Error downloading $1"
+      exit 1
+    fi
+  # 2. read from /storage/.update/ve-private-conf.zip
+  elif [ -e "/storage/.update/ve-private-conf.zip" ]; then
+    echo "Move /storage/.update/ve-private-conf.zip"
+    mv "/storage/.update/ve-private-conf.zip" "/storage/tmp/ve-private-conf.zip"
+  else
+    echo "No private conf file found, exiting"
+    exit 1
+  fi
+
+  # unzip ve-private-conf.tar.bz2
+  if [ -e "/storage/tmp/ve-private-conf.zip" ]; then
+    cd /
+    echo "Unzip cef.zip"
+    unzip -o "/storage/tmp/ve-private-conf.zip"
+  else
+    echo "No private conf zip found, exiting"
     exit 1
   fi
 }
@@ -198,7 +235,7 @@ if [ "$#" = "0" ]; then
     usage
 fi
 
-while getopts b:iTCwc: o; do
+while getopts b:iTCwc:p: o; do
   case $o in
     (i) install;;
     (C) install_copy;;
@@ -210,6 +247,13 @@ while getopts b:iTCwc: o; do
           install_cef "$url"
         else
           install_cef
+        fi
+        ;;
+    (p) eval url=\${$(( $OPTIND -1 ))}
+        if [ -n $url ]; then
+          install_private "$url"
+        else
+          install_private
         fi
         ;;
     (*) usage

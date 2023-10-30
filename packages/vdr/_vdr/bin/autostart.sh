@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# 
+#
 # This script will be started once after boot just before Kodi starts
-# 
+#
 # Default: Start Kodi
 #
 

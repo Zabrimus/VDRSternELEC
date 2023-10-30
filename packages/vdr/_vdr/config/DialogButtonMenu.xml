@@ -87,7 +87,7 @@
 					</item>
 					<item>
 						<label>VDR</label>
-						<onclick>System.Exec("XXBINDIRXX/switch_to_vdr.sh")</onclick>
+						<onclick>System.Exec("/usr/local/bin/switch_to_vdr.sh")</onclick>
 					</item>
 				</content>
 			</control>

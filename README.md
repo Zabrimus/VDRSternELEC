@@ -193,13 +193,16 @@ Now it would be a good time to install the KODI addons of your choice. E.g. ```s
 Now it's time to run the install script ```/usr/local/bin/install.sh``` from within the console (e.g. via ssh):
 ```
 # /usr/local/bin/install.sh
-Usage: /usr/local/bin/install.sh [-install-config] [-boot kodi|vdr]
+Usage: /usr/local/bin/install.sh [-i] [-b kodi|vdr] [-T] [-w] [-c (url)] [-p (url)]
 
--i      : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
--C      : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
--b kodi : Kodi will be started after booting
--b vdr  : VDR will be started after booting
--T      : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
+-i       : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
+-C       : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
+-b kodi  : Kodi will be started after booting
+-b vdr   : VDR will be started after booting
+-T       : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
+-w       : install/update web components (remotetranscode, cefbrowser)
+-c (url) : install/update cef binary lib (located at url or within /storage/.update or at /usr/local/config)
+-p (url) : install/update private configs (located at url or within /storage/.update)
 ```
 If you are at the first boot, the minimum you have to do is running the script with the ```-i``` option, which will copy the default configuration to the right place. If you also want, that VDR will start as default, these are the commands of your choice:
 ```

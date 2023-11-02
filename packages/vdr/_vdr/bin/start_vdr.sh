@@ -26,8 +26,10 @@ arg="vdr $(read_vdr_configuration)"
 file=$(cat ${CONF_DIR}/enabled_plugins)
 
 for line in $file; do
-  pluginarg="$(read_plugin_configuration $line)"
-  arg="$arg $pluginarg"
+  if [[ ! $line = \#* ]] ; then
+    pluginarg="$(read_plugin_configuration $line)"
+    arg="$arg $pluginarg"
+  fi
 done
 
 # kill splash image (CoreELEC)

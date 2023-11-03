@@ -11,5 +11,5 @@ DEVICE=AMLGX
 ARCH=arm
 
 # VDR settings
-VDR_OUTPUTDEVICE=softhddevice-drm
+VDR_OUTPUTDEVICE=softhddevice-drm-gles
 VDR_INPUTDEVICE=satip

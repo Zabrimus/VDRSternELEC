@@ -2,7 +2,7 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_rust"
-PKG_VERSION="1.60.0"
+PKG_VERSION="1.73.0"
 PKG_LICENSE="MIT"
 PKG_SITE="https://www.rust-lang.org"
 PKG_DEPENDS_TARGET="toolchain _rustup.rs"
@@ -19,7 +19,7 @@ make_target() {
       RUST_TARGET_TRIPLE="aarch64-unknown-linux-gnu"
       ;;
     arm)
-      RUST_TARGET_TRIPLE="arm-unknown-linux-gnueabihf"
+      RUST_TARGET_TRIPLE="armv7-unknown-linux-gnueabihf"
       ;;
     x86_64)
       RUST_TARGET_TRIPLE="x86_64-unknown-linux-gnu"

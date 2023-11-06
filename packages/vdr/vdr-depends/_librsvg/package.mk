@@ -34,7 +34,7 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_lib_z_zlibVersion=yes \
 PKG_CONFIGURE_OPTS_HOST="-disable-static --enable-shared"
 
 if [ "${TARGET_ARCH}" = arm  ]; then
-	PKG_CONFIGURE_OPTS_TARGET+=" --target=arm-unknown-linux-gnueabihf --host=arm-unknown-linux-gnueabihf "
+	PKG_CONFIGURE_OPTS_TARGET+=" --target=armv7-unknown-linux-gnueabihf --host=armv7-unknown-linux-gnueabihf "
 elif [ "${TARGET_ARCH}" = aarch64  ]; then
 	PKG_CONFIGURE_OPTS_TARGET+=" --target=aarch64-unknown-linux-gnu --host=aarch64-unknown-linux-gnu "
 elif [ "${TARGET_ARCH}" = x86_64  ]; then

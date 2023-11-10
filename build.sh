@@ -130,9 +130,18 @@ apply_patches() {
     done
 
     # Copy package patches to LE/CE directory structure
-    if [ -d ../package_patches/$DISTRO ]; then
-      cp -r ../package_patches/$DISTRO/* .
-    fi
+    cd $ROOTDIR
+    for i in `find package_patches/${DISTRO} -type f 2>/dev/null`; do
+        if [ ! -d $(echo $i | sed -e s/^"package_patches\/"// -e s/$(basename $i)$//) ]; then
+            mkdir -p $(echo $i | sed -e s/^"package_patches\/"// -e s/$(basename $i)$//)
+            echo "Create directory $(echo $i | sed -e s/^"package_patches\/"// -e s/$(basename $i)$//)"
+        fi
+        if cp -r $i $(echo $i | sed -e s/^"package_patches\/"//); then
+            echo "Copy $(basename $i) to $(echo $i | sed -e s/^"package_patches\/"//)"
+        else
+            echo "ERROR copying $(basename $i) to $(echo $i | sed -e s/^"package_patches\/"//)"
+        fi
+    done
 }
 
 prepare_sources() {

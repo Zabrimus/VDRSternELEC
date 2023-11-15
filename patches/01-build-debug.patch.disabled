@@ -1,0 +1,24 @@
+From 3a136515157527a4987f58f370c1182ac4bf83b0 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Wed, 15 Nov 2023 10:37:34 +0100
+Subject: [PATCH] build debug
+
+---
+ config/multithread | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/config/multithread b/config/multithread
+index dcc8911be4..9f789ca74d 100644
+--- a/config/multithread
++++ b/config/multithread
+@@ -59,6 +59,7 @@ start_multithread_build() {
+         --plan "${THREAD_CONTROL}"/plan.json \
+         --joblog "${THREAD_CONTROL}"/joblog \
+         --loadstats "${THREAD_CONTROL}"/loadstats \
++        --progress --verbose \
+         --max-procs ${THREADCOUNT} ${buildopts} || result=1
+ 
+     [ ${result} -eq 0 -a -f "${THREAD_CONTROL}"/history ] && echo && cat "${THREAD_CONTROL}"/history | ${ROOT}/tools/mtstats.py
+-- 
+2.30.2
+

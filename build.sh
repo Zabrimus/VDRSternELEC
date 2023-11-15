@@ -32,6 +32,7 @@ Options:
 -package <name>    : Build <name> as a single package
 -release <server>  : Create release for update, accessible at <server>
 -cef               : Include cef binaries into release, otherwise deploy it as an external package
+-verbose           : Enable verbose outputs while building LE/CE packages
 -help              : Show this help
 EOF
   echo
@@ -109,6 +110,11 @@ checkout_release_script() {
 apply_patches() {
     cd $ROOTDIR
     cd $DISTRO
+
+    rm -f ../patches/${DISTRO}/01-build-debug.patch
+    if [ $VERBOSEBUILD ]; then
+      cp ../patches/01-build-debug.patch.disabled ../patches/${DISTRO}/01-build-debug.patch
+    fi
 
     # Apply patches and sed scripts in ./patches
     for i in `find ../patches -maxdepth 1 -name '*.patch' 2>/dev/null` \
@@ -284,6 +290,7 @@ while [[ "$#" -gt 0 ]]; do
         -package) shift; PACKAGE_ONLY=$1 ;;
         -release) shift; RELEASE_SERVER=$1; DORELEASE=true ;;
         -cef) shift; CEF_BINARIES=true ;;
+        -verbose) shift; VERBOSEBUILD=true ;;
         -help) shift; usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac

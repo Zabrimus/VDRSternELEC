@@ -185,6 +185,21 @@ build_addons() {
 }
 
 build() {
+  # build
+  if [ ! "${PACKAGE_ONLY}" = "" ]; then
+    echo "Build ${PACKAGE_ONLY}"
+    scripts/build ${PACKAGE_ONLY}
+  else
+    RELEASE_STRING="Start make image"
+    if [ "$DORELEASE" = "true" ]; then
+      RELEASE_STRING="${RELEASE_STRING} and release it to ${RELEASE_SERVER}"
+    fi
+    echo "${RELEASE_STRING}"
+    make image
+  fi
+}
+
+set_env() {
   # export project variables
   cd $ROOTDIR/$DISTRO
   echo "Build environment variables:"
@@ -221,19 +236,6 @@ build() {
   elif [ "${DISTRO}" = "LibreELEC.tv" ] && [ ! "${CEF_BINARIES}" = "" ]; then
     sed -i -e "s#SYSTEM_SIZE=.*\$#SYSTEM_SIZE=1024#" distributions/LibreELEC/options
     echo "   SYSTEM_SIZE=768"
-  fi
-
-  # build
-  if [ ! "${PACKAGE_ONLY}" = "" ]; then
-    echo "Build ${PACKAGE_ONLY}"
-    scripts/build ${PACKAGE_ONLY}
-  else
-    RELEASE_STRING="Start make image"
-    if [ "$DORELEASE" = "true" ]; then
-      RELEASE_STRING="${RELEASE_STRING} and release it to ${RELEASE_SERVER}"
-    fi
-    echo "${RELEASE_STRING}"
-    make image
   fi
 }
 
@@ -317,6 +319,7 @@ echo "Build $SHA on $DISTRO"
 checkout
 apply_patches
 prepare_sources
+set_env
 
 if [ ! "${PATCH_ONLY}" = "true" ]; then
     build_addons

@@ -135,6 +135,9 @@ apply_patches() {
         bash $i
     done
 
+    # delete patch after it was applied to not accidently push it
+    rm -f ../patches/${DISTRO}/01-build-debug.patch
+
     # Copy package patches to LE/CE directory structure
     cd $ROOTDIR
     for i in `find package_patches/${DISTRO} -type f 2>/dev/null`; do

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-tvguideng"
-PKG_VERSION="51da4fcf963e363bc5198b6cefda5b9ac87b593b"
-PKG_SHA256="1d1bc55ccb675c51bcefa3785fd21e2022022ce583f983c693f3e7c3fd4f771c"
+PKG_VERSION="0266610c5c23053716617468840900222e0c3cbc"
+PKG_SHA256="320069625ee92bb42bebac4f00d1e7849ceb1e9b6ed3af2c4ce8268d95498b17"
 PKG_LICENSE="GPL2"
 PKG_SITE="https://gitlab.com/kamel5/tvguideng.git"
 PKG_URL="https://gitlab.com/kamel5/tvguideng/-/archive/${PKG_VERSION}/tvguideng-${PKG_VERSION}.tar.gz"

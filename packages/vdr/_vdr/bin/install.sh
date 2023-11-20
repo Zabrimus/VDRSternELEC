@@ -49,10 +49,12 @@ install() {
   cp -a /usr/local/system.d/* /storage/.config/system.d
   systemctl daemon-reload
 
-  # disable everything. This is important and shall not be changed!
-  for i in `ls /usr/local/system.d/*`; do
-     systemctl disable $(basename $i)
-  done
+  # disable some services. This is important and shall not be changed!
+  # use a whitelist
+  systemctl disable switch_kodi_vdr.path
+  systemctl disable switch_kodi_vdr.service
+  systemctl disable vdropt.service
+  systemctl disable vdropt.target
 
   # copy sysctl.d files
   cp -a /usr/local/sysctl.d/* /storage/.config/sysctl.d

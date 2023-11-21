@@ -28,6 +28,7 @@ Usage: $PROGNAME [-a|-t|-s PKG_NAME|-r PKG_NAME]
 
 Options
 -a          : Check and update all packages
+-p          : Update Plugins only
 -t          : Do a dry run for updating all packages
 -s PKG_NAME : Check and update single package PKG_NAME
 -r PKG_NAME : reset package PKG_NAME to HEAD

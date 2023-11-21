@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_remotetranscode"
-PKG_VERSION="cb0255c039a22e528a8f0b7ef0fae3b3dd46e61c"
-PKG_SHA256="3e304233229b34b0bf39f9616c3afa8fe97079a54706f7da11ded4c94215e8fe"
+PKG_VERSION="04abfb2e582a21fb0f8215dce2fe9451a78aff2b"
+PKG_SHA256="d350402ef41e334bc5b39b315ab026ee7e45527090c28aa8734651813dc9435d"
 PKG_LICENSE="unknown"
 PKG_SITE="https://github.com/Zabrimus/remotetranscode"
 PKG_URL="https://github.com/Zabrimus/remotetranscode/archive/${PKG_VERSION}.zip"

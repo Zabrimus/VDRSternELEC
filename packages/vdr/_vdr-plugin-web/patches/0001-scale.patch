@@ -21,7 +21,7 @@ index b280a36..05be678 100644
          if (pixmap != nullptr) {
              LOCK_PIXMAPS;
 -            pixmap->DrawImage(recPoint, recImage);
-+            pixmap->DrawScaledImage(recPoint, recImage, scalex, scaley);
++            pixmap->DrawScaledImage(recPoint, recImage, scalex, scaley, true);
          } else {
              esyslog("[vdrweb] Pixmap is null. OSD not available");
          }

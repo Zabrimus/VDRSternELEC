@@ -7,13 +7,23 @@ PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/Zabrimus/cefbrowser"
 PKG_URL="https://github.com/Zabrimus/cefbrowser/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="cefbrowser-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain atk libxml2 cef-at-spi2-atk cups cef-at-spi2-core \
+PKG_DEPENDS_TARGET="toolchain atk libxml2 cups cef-at-spi2-core \
                     libXcomposite libXdamage libXfixes libXrandr libXi libXft openssl _cef"
 PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
 PKG_DEPENDS_CONFIG="_cef"
 PKG_LONGDESC="cefbrowser"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed"
+
+# CoreELEC >= 21
+if [ "${DISTRONAME}" = "CoreELEC" ] && [ ${OS_MAJOR} -ge 21 ]; then
+   PKG_DEPENDS_TARGET += "cef-at-spi2-atk"
+fi
+
+# LibreELEC >= 12
+if [ "${DISTRONAME}" = "LibreELEC" ] && [ ${OS_MAJOR} -ge 12 ]; then
+   PKG_DEPENDS_TARGET += "cef-at-spi2-atk"
+fi
 
 CEF_PREFIX="/usr/local"
 CEF_DIR="$(get_build_dir _cef)/../../../../cef"

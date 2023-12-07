@@ -33,3 +33,4 @@ pre_configure_target() {
 make_target() {
   make CFLAGS="-fPIC"
 }
+

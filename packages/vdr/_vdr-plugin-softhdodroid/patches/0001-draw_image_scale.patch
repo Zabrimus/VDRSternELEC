@@ -1,20 +1,22 @@
-From 13b0e1086fd417d79f05fb7ec523a7349366ba8d Mon Sep 17 00:00:00 2001
-From: Andreas Baierl <ichgeh@imkreisrum.de>
-Date: Thu, 12 Oct 2023 10:57:16 +0200
-Subject: [PATCH] draw_image_scale
-
----
- openglosd.cpp    | 36 ++++++++++++++++++++++++------------
- openglosd.h      |  5 ++++-
- softhdodroid.cpp |  2 ++
- 3 files changed, 30 insertions(+), 13 deletions(-)
-
 diff --git a/openglosd.cpp b/openglosd.cpp
-index 6f7cd32..01acf7f 100644
+index 885e37a..fcd8bc2 100644
 --- a/openglosd.cpp
 +++ b/openglosd.cpp
-@@ -1738,8 +1738,8 @@ bool cOglCmdDrawImage::Execute(void)
+@@ -1728,12 +1728,19 @@ bool cOglCmdDrawImage::Execute(void)
  
+     GlxCheck();
+ //  pthread_mutex_unlock(&OSDMutex);
+-
+-
++    if (x + width * scaleX > VideoWindowWidth) {
++	      // printf("Scaling over the Width edge %f\n",x + width * scaleX);
++         scaleX = 1.0;
++    }
++    if (y + height * scaleY > VideoWindowHeight) {
++	      // printf("Scaling over the Height edge %f\n",x + height * scaleY);
++         scaleY = 1.0;
++    }
++	
      GLfloat x1 = x;                     //left
      GLfloat y1 = y;                     //top
 -    GLfloat x2 = x + width;             //right
@@ -24,7 +26,7 @@ index 6f7cd32..01acf7f 100644
  
      GLfloat quadVertices[] = {
          x1, y2, 0.0, 1.0,               // left bottom
-@@ -1773,21 +1773,23 @@ bool cOglCmdDrawImage::Execute(void)
+@@ -1767,21 +1774,23 @@ bool cOglCmdDrawImage::Execute(void)
  }
  
  //------------------ cOglCmdDrawTexture --------------------
@@ -53,19 +55,19 @@ index 6f7cd32..01acf7f 100644
  
      GLfloat quadVertices[] = {
          // Pos    // TexCoords
-@@ -2371,6 +2373,11 @@ void cOglPixmap::Fill(tColor Color)
+@@ -2365,6 +2374,11 @@ void cOglPixmap::Fill(tColor Color)
  }
  
  void cOglPixmap::DrawImage(const cPoint & Point, const cImage & Image)
 +{
-+    DrawScaledImage(Point, Image);
++    DrawScaledImage(Point, Image, 1.0, 1.0);
 +}
 +
 +void cOglPixmap::DrawScaledImage(const cPoint & Point, const cImage & Image, double FactorX, double FactorY, bool AntiAlias)
  {
      if (!oglThread->Active())
          return;
-@@ -2380,12 +2387,17 @@ void cOglPixmap::DrawImage(const cPoint & Point, const cImage & Image)
+@@ -2374,12 +2388,17 @@ void cOglPixmap::DrawImage(const cPoint & Point, const cImage & Image)
          return;
      memcpy(argb, Image.Data(), sizeof(tColor) * Image.Width() * Image.Height());
  
@@ -78,14 +80,14 @@ index 6f7cd32..01acf7f 100644
  
  void cOglPixmap::DrawImage(const cPoint & Point, int ImageHandle)
 +{
-+    DrawScaledImage(Point, ImageHandle);
++    DrawScaledImage(Point, ImageHandle, 1.0, 1.0);
 +}
 +
 +void cOglPixmap::DrawScaledImage(const cPoint & Point, int ImageHandle, double FactorX, double FactorY, bool AntiAlias)
  {
      if (!oglThread->Active())
          return;
-@@ -2393,7 +2405,9 @@ void cOglPixmap::DrawImage(const cPoint & Point, int ImageHandle)
+@@ -2387,7 +2406,9 @@ void cOglPixmap::DrawImage(const cPoint & Point, int ImageHandle)
      if (ImageHandle < 0 && oglThread->GetImageRef(ImageHandle)) {
          sOglImage *img = oglThread->GetImageRef(ImageHandle);
  
@@ -96,7 +98,7 @@ index 6f7cd32..01acf7f 100644
      }
      /*
         Fallback to VDR implementation, needs to separate cSoftOsdProvider from softhddevice.cpp
-@@ -2402,8 +2416,6 @@ void cOglPixmap::DrawImage(const cPoint & Point, int ImageHandle)
+@@ -2396,8 +2417,6 @@ void cOglPixmap::DrawImage(const cPoint & Point, int ImageHandle)
         DrawImage(Point, *cSoftOsdProvider::GetImageData(ImageHandle));
         }
       */
@@ -105,11 +107,20 @@ index 6f7cd32..01acf7f 100644
  }
  
  void cOglPixmap::DrawPixel(const cPoint & Point, tColor Color)
+@@ -2432,7 +2451,7 @@ void cOglPixmap::DrawBitmap(const cPoint & Point, const cBitmap & Bitmap, tColor
+                     1 ? ColorFg : Bitmap.Color(index)) : Bitmap.Color(index));
+         }
+ 
+-    oglThread->DoCmd(new cOglCmdDrawImage(fb, argb, Bitmap.Width(), Bitmap.Height(), Point.X(), Point.Y(), true));
++    oglThread->DoCmd(new cOglCmdDrawImage(fb, argb, Bitmap.Width(), Bitmap.Height(), Point.X(), Point.Y(), true, 1.0, 1.0));
+     SetDirty();
+     MarkDrawPortDirty(cRect(Point, cSize(Bitmap.Width(), Bitmap.Height())).Intersected(DrawPort().Size()));
+ }
 diff --git a/openglosd.h b/openglosd.h
-index 0529700..1985725 100644
+index 41af14b..9f1a358 100644
 --- a/openglosd.h
 +++ b/openglosd.h
-@@ -555,8 +555,9 @@ class cOglCmdDrawTexture:public cOglCmd
+@@ -554,8 +554,9 @@ class cOglCmdDrawTexture:public cOglCmd
    private:
      sOglImage * imageRef;
      GLint x, y;
@@ -120,7 +131,7 @@ index 0529700..1985725 100644
       virtual ~ cOglCmdDrawTexture(void)
      {
      };
-@@ -682,6 +683,8 @@ class cOglPixmap:public cPixmap
+@@ -681,6 +682,8 @@ class cOglPixmap:public cPixmap
      virtual void Fill(tColor Color);
      virtual void DrawImage(const cPoint & Point, const cImage & Image);
      virtual void DrawImage(const cPoint & Point, int ImageHandle);
@@ -130,7 +141,7 @@ index 0529700..1985725 100644
      virtual void DrawBitmap(const cPoint & Point, const cBitmap & Bitmap, tColor ColorFg = 0, tColor ColorBg =
          0, bool Overlay = false);
 diff --git a/softhdodroid.cpp b/softhdodroid.cpp
-index d34baa9..7625609 100644
+index 47a89cc..7625609 100644
 --- a/softhdodroid.cpp
 +++ b/softhdodroid.cpp
 @@ -644,6 +644,8 @@ public:
@@ -142,6 +153,4 @@ index d34baa9..7625609 100644
      virtual void DrawPixel(const cPoint &Point, tColor Color) { (void)Point; (void)Color; }
      virtual void DrawBitmap(const cPoint &Point, const cBitmap &Bitmap, tColor ColorFg = 0, tColor ColorBg = 0, bool Overlay = false) {
          (void) Point; (void)Bitmap; (void)ColorFg; (void)ColorBg; (void)Overlay; }
--- 
-2.30.2
 

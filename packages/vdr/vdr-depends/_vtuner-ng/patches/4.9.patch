@@ -19,6 +19,19 @@ index d7dedf1..23a539d 100644
  
  clean:
  	rm -f *.a
+diff --git a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
+index 7ba5753..81cfd92 100644
+--- a/kernel/vtunerc_ctrldev.c
++++ b/kernel/vtunerc_ctrldev.c
+@@ -24,7 +24,7 @@
+ #include <linux/dvb/frontend.h>
+ #include "vtunerc_priv.h"
+ 
+-#define VTUNERC_CTRLDEV_MAJOR	266
++#define VTUNERC_CTRLDEV_MAJOR	267
+ #define VTUNERC_CTRLDEV_NAME	"vtunerc"
+ 
+ #define VTUNER_MSG_LEN (sizeof(struct vtuner_message))
 diff --git a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
 index 5c81519..00121ee 100644
 --- a/kernel/vtunerc_main.c

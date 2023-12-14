@@ -1,0 +1,111 @@
+diff --git a/kernel/Makefile b/kernel/Makefile
+index d7dedf1..23a539d 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -17,15 +17,10 @@ ccflags-y += -Iinclude/media
+ ccflags-y += -DVTUNERC_MAX_ADAPTERS=$(VTUNERC_MAX_ADAPTERS)
+ 
+ # for external compilation
+-ifeq ($(shell make -sC /usr/src/linux kernelversion 2> /dev/null),)
+-       KDIR := /lib/modules/$(shell uname -r)
+-else
+-       KDIR := /lib/modules/$(shell make -sC /usr/src/linux kernelversion)
+-endif
+ PWD := $(shell pwd)
+ 
+ default:
+-	$(MAKE) -C $(KDIR)/build M=$(PWD) modules
++	$(MAKE) -C $(KDIR)/build modules
+ 
+ clean:
+ 	rm -f *.a
+diff --git a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
+index 5c81519..00121ee 100644
+--- a/kernel/vtunerc_main.c
++++ b/kernel/vtunerc_main.c
+@@ -25,12 +25,12 @@
+ #include <linux/seq_file.h>
+ #include "vtunerc_priv.h"
+ 
+-#include <media/demux.h>
+-#include <media/dmxdev.h>
+-#include <media/dvb_demux.h>
+-#include <media/dvb_frontend.h>
+-#include <media/dvb_net.h>
+-#include <media/dvbdev.h>
++#include "demux.h"
++#include "dmxdev.h"
++#include "dvb_demux.h"
++#include "dvb_frontend.h"
++#include "dvb_net.h"
++#include "dvbdev.h"
+ 
+ #define VTUNERC_MODULE_VERSION "2.0"
+ 
+diff --git a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
+index e455fa4..4e752cb 100644
+--- a/kernel/vtunerc_priv.h
++++ b/kernel/vtunerc_priv.h
+@@ -23,18 +23,14 @@
+ #include <linux/cdev.h>
+ #include <linux/version.h>
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,16,0)
+- #error linux kernel version 4.16 or newer required
+-#endif
+-
+ #define HZ_FREQUENCIES
+ 
+-#include <media/demux.h>
+-#include <media/dmxdev.h>
+-#include <media/dvb_demux.h>
+-#include <media/dvb_frontend.h>
+-#include <media/dvb_net.h>
+-#include <media/dvbdev.h>
++#include "demux.h"
++#include "dmxdev.h"
++#include "dvb_demux.h"
++#include "dvb_frontend.h"
++#include "dvb_net.h"
++#include "dvbdev.h"
+ 
+ #include "vtuner.h"
+ 
+diff --git a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
+index c00974c..c1da5c6 100644
+--- a/kernel/vtunerc_proxyfe.c
++++ b/kernel/vtunerc_proxyfe.c
+@@ -21,7 +21,7 @@
+ 
+ #include "vtunerc_priv.h"
+ 
+-#include <media/dvb_frontend.h>
++#include "dvb_frontend.h"
+ 
+ #if (DVB_API_VERSION << 8 | DVB_API_VERSION_MINOR) < 0x0505
+  #error ========================================================================
+@@ -177,7 +177,7 @@ static int dvb_proxyfe_set_frontend(struct dvb_frontend *fe)
+ 	if (memcmp(&msg.body.fe_params, &ctx->fe_params, sizeof(struct fe_params))==0) return 0; // no change
+ 
+ 	ctx->stat_time = ktime_get_seconds();
+-	ctx->signal.status = FE_NONE;
++	ctx->signal.status = 0;
+ 
+ 	msg.type = MSG_SET_FRONTEND;
+ 	vtunerc_ctrldev_xchange_message(ctx, &msg, 1);
+@@ -277,10 +277,11 @@ static struct dvb_frontend_ops dvb_proxyfe_ops = {
+         .delsys = { SYS_DVBT, SYS_DVBC_ANNEX_A, SYS_DVBS, SYS_DVBS2 },
+ 	.info = {
+ 		.name			= "vTuner proxyFE DVB-Multi",
+-		.frequency_min_hz	= 51 * MHz,
+-		.frequency_max_hz	= 2150 * MHz,
+-		.frequency_stepsize_hz	= 62.5 * kHz,
+-		.frequency_tolerance_hz	= 29500 * kHz,
++        .type = FE_QAM, // ???
++        .frequency_min		= 51000000,
++        .frequency_max		= 863250000,
++        .frequency_stepsize	= 62500,
++        .frequency_tolerance	= 29500,
+ 		.symbol_rate_min	= 450000,
+ 		.symbol_rate_max	= 45000000,
+ 		.caps = FE_CAN_INVERSION_AUTO | FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 | FE_CAN_FEC_4_5 |

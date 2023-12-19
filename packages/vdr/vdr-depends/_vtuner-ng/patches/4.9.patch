@@ -20,7 +20,7 @@ index d7dedf1..23a539d 100644
  clean:
  	rm -f *.a
 diff --git a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
-index 7ba5753..81cfd92 100644
+index 7d0a696..d3b4f41 100644
 --- a/kernel/vtunerc_ctrldev.c
 +++ b/kernel/vtunerc_ctrldev.c
 @@ -24,7 +24,7 @@
@@ -33,7 +33,7 @@ index 7ba5753..81cfd92 100644
  
  #define VTUNER_MSG_LEN (sizeof(struct vtuner_message))
 diff --git a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
-index 5c81519..00121ee 100644
+index ab9141a..fca93df 100644
 --- a/kernel/vtunerc_main.c
 +++ b/kernel/vtunerc_main.c
 @@ -25,12 +25,12 @@
@@ -56,7 +56,7 @@ index 5c81519..00121ee 100644
  #define VTUNERC_MODULE_VERSION "2.0"
  
 diff --git a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
-index e455fa4..4e752cb 100644
+index aa1f26e..f277dbf 100644
 --- a/kernel/vtunerc_priv.h
 +++ b/kernel/vtunerc_priv.h
 @@ -23,18 +23,14 @@
@@ -85,7 +85,7 @@ index e455fa4..4e752cb 100644
  #include "vtuner.h"
  
 diff --git a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
-index c00974c..c1da5c6 100644
+index 784a926..d3d1f45 100644
 --- a/kernel/vtunerc_proxyfe.c
 +++ b/kernel/vtunerc_proxyfe.c
 @@ -21,7 +21,7 @@
@@ -97,16 +97,16 @@ index c00974c..c1da5c6 100644
  
  #if (DVB_API_VERSION << 8 | DVB_API_VERSION_MINOR) < 0x0505
   #error ========================================================================
-@@ -177,7 +177,7 @@ static int dvb_proxyfe_set_frontend(struct dvb_frontend *fe)
+@@ -178,7 +178,7 @@ static int dvb_proxyfe_set_frontend(struct dvb_frontend *fe)
  	if (memcmp(&msg.body.fe_params, &ctx->fe_params, sizeof(struct fe_params))==0) return 0; // no change
  
  	ctx->stat_time = ktime_get_seconds();
 -	ctx->signal.status = FE_NONE;
 +	ctx->signal.status = 0;
  
- 	msg.type = MSG_SET_FRONTEND;
- 	vtunerc_ctrldev_xchange_message(ctx, &msg, 1);
-@@ -277,10 +277,11 @@ static struct dvb_frontend_ops dvb_proxyfe_ops = {
+ 	dprintk(ctx, "MSG_SET_FRONTEND\n");
+ 
+@@ -297,10 +297,11 @@ static struct dvb_frontend_ops dvb_proxyfe_ops = {
          .delsys = { SYS_DVBT, SYS_DVBC_ANNEX_A, SYS_DVBS, SYS_DVBS2 },
  	.info = {
  		.name			= "vTuner proxyFE DVB-Multi",
@@ -121,4 +121,13 @@ index c00974c..c1da5c6 100644
 +        .frequency_tolerance	= 29500,
  		.symbol_rate_min	= 450000,
  		.symbol_rate_max	= 45000000,
- 		.caps = FE_CAN_INVERSION_AUTO | FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 | FE_CAN_FEC_4_5 |
+ 		.caps = FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 | FE_CAN_FEC_4_5 |
+@@ -313,7 +314,7 @@ static struct dvb_frontend_ops dvb_proxyfe_ops = {
+ 	.release = dvb_proxyfe_release,
+ 
+ 	.init = dvb_proxyfe_init,
+-	.detach = dvb_proxyfe_detach,
++// .detach = dvb_proxyfe_detach,
+ 	.sleep = dvb_proxyfe_sleep,
+ 
+ 	.get_frontend_algo = dvb_proxyfe_get_frontend_algo,

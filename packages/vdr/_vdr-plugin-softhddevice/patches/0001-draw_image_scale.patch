@@ -6,6 +6,7 @@ Subject: [PATCH] draw_image_scale
 ---
  openglosd.cpp    | 38 ++++++++++++++++++++++++--------------
  openglosd.h      |  5 ++++-
+ openglosd.h      |  5 ++++-
  softhddevice.cpp |  2 ++
  3 files changed, 30 insertions(+), 15 deletions(-)
 
@@ -80,7 +81,7 @@ index dc3f1bd..e01388b 100644
 +    DrawScaledImage(Point, ImageHandle);
 +}
 +
-+void cOglPixmap::DrawImage(const cPoint &Point, int ImageHandle, double FactorX, double FactorY, bool AntiAlias) {
++void cOglPixmap::DrawScaledImage(const cPoint &Point, int ImageHandle, double FactorX, double FactorY, bool AntiAlias) {
      if (!oglThread->Active())
          return;
      if (ImageHandle < 0 && oglThread->GetImageRef(ImageHandle)) {
@@ -109,7 +110,7 @@ index 9039bc7..b82c77f 100644
  private:
      sOglImage *imageRef;
      GLint x, y;
-+    GLfloat scaleX, scaleY,
++    GLfloat scaleX, scaleY;
  public:
 -    cOglCmdDrawTexture(cOglFb *fb, sOglImage *imageRef, GLint x, GLint y);
 +    cOglCmdDrawTexture(cOglFb *fb, sOglImage *imageRef, GLint x, GLint y, double scaleX = 1.0f, double scaleY = 1.0f);

@@ -361,6 +361,70 @@ It is possible to add libraries to be preloaded if needed by setting a variable 
 VDR_LD_PRELOAD=/path/to/lib1.so:/path/to/lib2.so
 ```
 
+## Start LibreELEC in incus (fork of lxd) (x86_64)
+It is possible to start a local virtual machine in [incus](https://linuxcontainers.org/incus/) for LibreELEC/x86_64.
+At first you need to build the image and `extras` Parameter if desired.
+```
+./build.sh -config LibreELEC-master-x86_64-x11-qemu
+```
+After the build an `ova` Image is available in folder LibreELEC.tv/target/. This image needs to be converted to a `qcow2` image.
+
+The script `convert_ova_to_qcow2.sh` can be used, e.g.
+```
+./convert_ova_to_qcow2.sh LibreELEC.tv/target/LibreELEC-x11.x86_64-12.0-devel-20231221191352-db968f9.ova
+```
+
+Create a file `metadata.yaml` with content
+```
+architecture: x86_64
+creation_date: 1701385200
+properties:
+  description: LibreELEC 12
+  os: LE
+  release: 12
+```
+and tar this file
+```
+tar cf metadata.tar metadata.yaml
+```
+
+Now you can add the `qcow2` image to `incus`
+```
+incus image import metadata.tar <filename>.qcow2 --alias LE12
+```
+
+Create a new container using the newly added image:
+```
+incus create LE12 libreelec --vm -c security.secureboot=false -c limits.cpu=2 -c limits.memory=4GiB
+```
+
+Start the virtual machine
+```
+incus start libreelec
+```
+
+Connect to the running virtual machine to get a graphical view: 
+```
+incus console libreelec --type vga
+```
+### Troubleshooting
+#### Failed creating instance
+It is possible that you get an error message while trying to create a virtual machine
+```
+incus create LE12 libreelec --vm -c security.secureboot=false -c limits.cpu=2 -c limits.memory=4GiB
+Creating libreelec
+Error: Failed creating instance record: Failed initialising instance: Invalid config: No uid/gid allocation configured. In this mode, only privileged containers are supported
+```
+To solve this add the line (as root) to both files
+`/etc/subgid` and `/etc/subuid`
+```
+root:1000000:65536
+```
+Possibly a reboot is necessary.
+
+#### High CPU usage after connecting to vga console
+This is work in progress. Kodi is using the `mesa softpipe` driver, which is relatively slow.
+
 ## Delete
 If you don't want to use these images anymore, you can simply install a new core CoreELEC/LibreELEC image and
 delete the directories

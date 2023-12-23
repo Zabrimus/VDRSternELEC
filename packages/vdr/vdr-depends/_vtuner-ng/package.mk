@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vtuner-ng"
-PKG_VERSION="18f22fa9be5ea07a839bbddd3a3f9c152e49a981"
-PKG_SHA256="4fc8009bdf253c9485ed37a862305f211622fc6ba7d47eb6f1fe320860098f1d"
+PKG_VERSION="a4334320215a716998be9b74cd5b946d79bbf9ac"
+PKG_SHA256="fe08b26f9f4f3271d65a7ffb4029ae59a9921711946c781033f21b0fce736fea"
 PKG_LICENSE=""
 PKG_SITE="https://github.com/joed74/vtuner-ng"
 PKG_URL="https://github.com/joed74/vtuner-ng/archive/${PKG_VERSION}.zip"

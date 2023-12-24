@@ -1,0 +1,12 @@
+[Unit]
+Description=vtuner-ng
+Requires=network-online.target graphical.target
+
+[Service]
+Type=forking
+ExecStop=/usr/bin/bash /storage/.config/stop_vtuner.sh
+ExecStart=/usr/bin/bash /storage/.config/start_vtuner.sh
+
+[Install]
+WantedBy=multi-user.target
+

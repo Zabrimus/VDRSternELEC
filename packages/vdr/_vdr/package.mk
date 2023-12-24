@@ -130,3 +130,4 @@ EOF
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   rm -f ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch
 }
+

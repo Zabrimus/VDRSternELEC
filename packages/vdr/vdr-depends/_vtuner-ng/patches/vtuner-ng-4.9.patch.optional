@@ -1,0 +1,133 @@
+diff --git a/kernel/Makefile b/kernel/Makefile
+index d7dedf1..23a539d 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -17,15 +17,10 @@ ccflags-y += -Iinclude/media
+ ccflags-y += -DVTUNERC_MAX_ADAPTERS=$(VTUNERC_MAX_ADAPTERS)
+ 
+ # for external compilation
+-ifeq ($(shell make -sC /usr/src/linux kernelversion 2> /dev/null),)
+-       KDIR := /lib/modules/$(shell uname -r)
+-else
+-       KDIR := /lib/modules/$(shell make -sC /usr/src/linux kernelversion)
+-endif
+ PWD := $(shell pwd)
+ 
+ default:
+-	$(MAKE) -C $(KDIR)/build M=$(PWD) modules
++	$(MAKE) -C $(KDIR)/build modules
+ 
+ clean:
+ 	rm -f *.a
+diff --git a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
+index 7d0a696..d3b4f41 100644
+--- a/kernel/vtunerc_ctrldev.c
++++ b/kernel/vtunerc_ctrldev.c
+@@ -24,7 +24,7 @@
+ #include <linux/dvb/frontend.h>
+ #include "vtunerc_priv.h"
+ 
+-#define VTUNERC_CTRLDEV_MAJOR	266
++#define VTUNERC_CTRLDEV_MAJOR	267
+ #define VTUNERC_CTRLDEV_NAME	"vtunerc"
+ 
+ #define VTUNER_MSG_LEN (sizeof(struct vtuner_message))
+diff --git a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
+index ab9141a..fca93df 100644
+--- a/kernel/vtunerc_main.c
++++ b/kernel/vtunerc_main.c
+@@ -25,12 +25,12 @@
+ #include <linux/seq_file.h>
+ #include "vtunerc_priv.h"
+ 
+-#include <media/demux.h>
+-#include <media/dmxdev.h>
+-#include <media/dvb_demux.h>
+-#include <media/dvb_frontend.h>
+-#include <media/dvb_net.h>
+-#include <media/dvbdev.h>
++#include "demux.h"
++#include "dmxdev.h"
++#include "dvb_demux.h"
++#include "dvb_frontend.h"
++#include "dvb_net.h"
++#include "dvbdev.h"
+ 
+ #define VTUNERC_MODULE_VERSION "2.0"
+ 
+diff --git a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
+index aa1f26e..f277dbf 100644
+--- a/kernel/vtunerc_priv.h
++++ b/kernel/vtunerc_priv.h
+@@ -23,18 +23,14 @@
+ #include <linux/cdev.h>
+ #include <linux/version.h>
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,16,0)
+- #error linux kernel version 4.16 or newer required
+-#endif
+-
+ #define HZ_FREQUENCIES
+ 
+-#include <media/demux.h>
+-#include <media/dmxdev.h>
+-#include <media/dvb_demux.h>
+-#include <media/dvb_frontend.h>
+-#include <media/dvb_net.h>
+-#include <media/dvbdev.h>
++#include "demux.h"
++#include "dmxdev.h"
++#include "dvb_demux.h"
++#include "dvb_frontend.h"
++#include "dvb_net.h"
++#include "dvbdev.h"
+ 
+ #include "vtuner.h"
+ 
+diff --git a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
+index 784a926..d3d1f45 100644
+--- a/kernel/vtunerc_proxyfe.c
++++ b/kernel/vtunerc_proxyfe.c
+@@ -21,7 +21,7 @@
+ 
+ #include "vtunerc_priv.h"
+ 
+-#include <media/dvb_frontend.h>
++#include "dvb_frontend.h"
+ 
+ #if (DVB_API_VERSION << 8 | DVB_API_VERSION_MINOR) < 0x0505
+  #error ========================================================================
+@@ -178,7 +178,7 @@ static int dvb_proxyfe_set_frontend(struct dvb_frontend *fe)
+ 	if (memcmp(&msg.body.fe_params, &ctx->fe_params, sizeof(struct fe_params))==0) return 0; // no change
+ 
+ 	ctx->stat_time = ktime_get_seconds();
+-	ctx->signal.status = FE_NONE;
++	ctx->signal.status = 0;
+ 
+ 	dprintk(ctx, "MSG_SET_FRONTEND\n");
+ 
+@@ -297,10 +297,11 @@ static struct dvb_frontend_ops dvb_proxyfe_ops = {
+         .delsys = { SYS_DVBT, SYS_DVBC_ANNEX_A, SYS_DVBS, SYS_DVBS2 },
+ 	.info = {
+ 		.name			= "vTuner proxyFE DVB-Multi",
+-		.frequency_min_hz	= 51 * MHz,
+-		.frequency_max_hz	= 2150 * MHz,
+-		.frequency_stepsize_hz	= 62.5 * kHz,
+-		.frequency_tolerance_hz	= 29500 * kHz,
++        .type = FE_QAM, // ???
++        .frequency_min		= 51000000,
++        .frequency_max		= 863250000,
++        .frequency_stepsize	= 62500,
++        .frequency_tolerance	= 29500,
+ 		.symbol_rate_min	= 450000,
+ 		.symbol_rate_max	= 45000000,
+ 		.caps = FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 | FE_CAN_FEC_4_5 |
+@@ -313,7 +314,7 @@ static struct dvb_frontend_ops dvb_proxyfe_ops = {
+ 	.release = dvb_proxyfe_release,
+ 
+ 	.init = dvb_proxyfe_init,
+-	.detach = dvb_proxyfe_detach,
++// .detach = dvb_proxyfe_detach,
+ 	.sleep = dvb_proxyfe_sleep,
+ 
+ 	.get_frontend_algo = dvb_proxyfe_get_frontend_algo,

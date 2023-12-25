@@ -1,0 +1,12 @@
+diff -uNrbBrw a/libskindesignerapi/libskindesignerapi.pc b/libskindesignerapi/libskindesignerapi.pc
+--- a/libskindesignerapi/libskindesignerapi.pc	1970-01-01 01:00:00.000000000 +0100
++++ b/libskindesignerapi/libskindesignerapi.pc	2023-12-25 12:02:33.556624093 +0100
+@@ -0,0 +1,8 @@
++includedir=/usr/local/include/vdr
++libdir=/usr/local/lib/vdr
++
++Name: libskindesignerapi
++Description: skindesigner API Library
++Version: 0.1.2
++Cflags: -I/usr/local/include/vdr
++Libs: -L/usr/local/lib/vdr -lskindesignerapi

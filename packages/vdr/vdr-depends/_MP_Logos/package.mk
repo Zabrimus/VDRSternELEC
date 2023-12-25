@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_MP_Logos"
-PKG_VERSION="a3556cf9558f9232d9976216013907b9be5b2e1b"
-PKG_SHA256="44ffd67430e1fd28ff0b7e23713a7031b44d2ec12532df66e6f9083375c61b30"
+PKG_VERSION="9a70788143ab148f02a96afa607bf9d9553b12e8"
+PKG_SHA256="6b41a8853fdb0024901a18af366eceee77c8fd4c4e46af5dbfd2db6767d98226"
 PKG_LICENSE="GPL3"
 PKG_SITE="https://github.com/MegaV0lt/MP_Logos"
 PKG_URL="https://github.com/MegaV0lt/MP_Logos/archive/${PKG_VERSION}.zip"

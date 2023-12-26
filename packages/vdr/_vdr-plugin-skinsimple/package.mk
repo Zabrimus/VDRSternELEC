@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-skinsimple"
-PKG_VERSION="89ef0f6e114ad943d94d153f1001c820f699a878"
-PKG_SHA256="38c7ffe87c296130502f6761def6822d4836a325e78822b4fba94ec990baae17"
+PKG_VERSION="196816ff46e48338c52a6a1c4f02aa25154d404e"
+PKG_SHA256="0fb54f4dd798209a2ea5988c37be007cb5f2004a8702b7ef8a673216c6c1b647"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/kamel5/skinsimple"
 PKG_URL="https://gitlab.com/kamel5/skinsimple/-/archive/${PKG_VERSION}/skinsimple-${PKG_VERSION}.tar.gz"

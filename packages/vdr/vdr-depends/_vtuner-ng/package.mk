@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vtuner-ng"
-PKG_VERSION="973c0d9cce36711eeeb8d5041957e2cf69fc7ffc"
-PKG_SHA256="39b4dda12bb5dce86e7adeccbe98fee32d95c5b98b70fd61d10183b6d108b045"
+PKG_VERSION="872d3afca6998e798ae01c726b9542db7a623ff8"
+PKG_SHA256="3c1c8b708588fe245619a1c4a6451ea88db34939e7d592260ae79e3653ef4ed0"
 PKG_LICENSE=""
 PKG_SITE="https://github.com/joed74/vtuner-ng"
 PKG_URL="https://github.com/joed74/vtuner-ng/archive/${PKG_VERSION}.zip"
@@ -15,6 +15,11 @@ PKG_TOOLCHAIN="make"
 PKG_BUILD_FLAGS="+speed"
 
 post_unpack() {
+    # sanity check. It's possible that the former build was interrupted and the optional patch file has not yet be renamed
+    if [ -e ${PKG_DIR}/patches/vtuner-ng-4.9.patch ]; then
+    	mv ${PKG_DIR}/patches/vtuner-ng-4.9.patch ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional
+    fi
+
     if [ "${DEVICE}" == "Amlogic-ng" ]; then
         mv ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional ${PKG_DIR}/patches/vtuner-ng-4.9.patch
     fi

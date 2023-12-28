@@ -16,7 +16,7 @@ SATIP_HOST_4=192.168.178.236
 /usr/sbin/modprobe vtunerc devices=${DEVICES}
 
 # create 4 satip processes
-/usr/local/bin/satip -h ${SATIP_HOST_1} -d /dev/vtunerc0 -m 2 -l 4 2> /tmp/satip0.log &
-/usr/local/bin/satip -h ${SATIP_HOST_2} -d /dev/vtunerc1 -m 2 -l 4 2> /tmp/satip1.log &
-/usr/local/bin/satip -h ${SATIP_HOST_3} -d /dev/vtunerc2 -m 2 -l 4 2> /tmp/satip2.log &
-/usr/local/bin/satip -h ${SATIP_HOST_4} -d /dev/vtunerc3 -m 2 -l 4 2> /tmp/satip3.log &
+/usr/local/bin/satip -s ${SATIP_HOST_1} -d /dev/vtunerc0 -m 2 -l 4 2> /tmp/satip0.log &
+/usr/local/bin/satip -s ${SATIP_HOST_2} -d /dev/vtunerc1 -m 2 -l 4 2> /tmp/satip1.log &
+/usr/local/bin/satip -s ${SATIP_HOST_3} -d /dev/vtunerc2 -m 2 -l 4 2> /tmp/satip2.log &
+/usr/local/bin/satip -s ${SATIP_HOST_4} -d /dev/vtunerc3 -m 2 -l 4 2> /tmp/satip3.log &

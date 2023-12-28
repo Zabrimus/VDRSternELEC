@@ -1,16 +1,16 @@
-diff --git a/kernel/Makefile b/kernel/Makefile
-index d7dedf1..23a539d 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -17,15 +17,10 @@ ccflags-y += -Iinclude/media
- ccflags-y += -DVTUNERC_MAX_ADAPTERS=$(VTUNERC_MAX_ADAPTERS)
+diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
+--- a/kernel/Makefile	2023-12-27 14:21:21.000000000 +0100
++++ b/kernel/Makefile	2023-12-27 16:55:25.393123323 +0100
+@@ -18,21 +18,20 @@
  
  # for external compilation
--ifeq ($(shell make -sC /usr/src/linux kernelversion 2> /dev/null),)
--       KDIR := /lib/modules/$(shell uname -r)
--else
--       KDIR := /lib/modules/$(shell make -sC /usr/src/linux kernelversion)
--endif
+ ifeq ($(shell make -sC /usr/src/linux kernelversion 2> /dev/null),)
+        KVER := $(shell uname -r)
+ else
+        KVER := $(shell make -sC /usr/src/linux kernelversion)
+ endif
+ 
+-KDIR := /lib/modules/$(KVER)
  PWD := $(shell pwd)
  
  default:
@@ -19,11 +19,20 @@ index d7dedf1..23a539d 100644
  
  clean:
  	rm -f *.a
-diff --git a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
-index 7d0a696..d3b4f41 100644
---- a/kernel/vtunerc_ctrldev.c
-+++ b/kernel/vtunerc_ctrldev.c
-@@ -24,7 +24,7 @@
+ 	rm -f *.o
+ 	rm -f *.ko
+ 	rm -f *.mod.c
+ 	rm -f *.mod
+ 	rm -f .*.cmd
+diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
+--- a/kernel/vtunerc_ctrldev.c	2023-12-27 14:21:21.000000000 +0100
++++ b/kernel/vtunerc_ctrldev.c	2023-12-27 16:54:24.249076520 +0100
+@@ -19,17 +19,17 @@
+ #include <linux/module.h>
+ #include <linux/fs.h>
+ #include <linux/delay.h>
+ #include <linux/time.h>
+ #include <linux/poll.h>
  #include <linux/dvb/frontend.h>
  #include "vtunerc_priv.h"
  
@@ -32,11 +41,20 @@ index 7d0a696..d3b4f41 100644
  #define VTUNERC_CTRLDEV_NAME	"vtunerc"
  
  #define VTUNER_MSG_LEN (sizeof(struct vtuner_message))
-diff --git a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
-index ab9141a..fca93df 100644
---- a/kernel/vtunerc_main.c
-+++ b/kernel/vtunerc_main.c
-@@ -25,12 +25,12 @@
+ #define VTUNER_SIG_LEN (sizeof(struct vtuner_signal))
+ 
+ static ssize_t vtunerc_ctrldev_write(struct file *filp, const char *buff, size_t len, loff_t *off)
+ {
+ 	struct vtunerc_ctx *ctx = filp->private_data;
+diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
+--- a/kernel/vtunerc_main.c	2023-12-27 14:21:21.000000000 +0100
++++ b/kernel/vtunerc_main.c	2023-12-27 16:54:24.249076520 +0100
+@@ -20,22 +20,22 @@
+ #include <linux/proc_fs.h>
+ #include <linux/init.h>
+ #include <linux/i2c.h>
+ #include <asm/uaccess.h>
+ #include <linux/delay.h>
  #include <linux/seq_file.h>
  #include "vtunerc_priv.h"
  
@@ -55,11 +73,20 @@ index ab9141a..fca93df 100644
  
  #define VTUNERC_MODULE_VERSION "2.0"
  
-diff --git a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
-index aa1f26e..f277dbf 100644
---- a/kernel/vtunerc_priv.h
-+++ b/kernel/vtunerc_priv.h
-@@ -23,18 +23,14 @@
+ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
+ 
+ #define DRIVER_NAME	"vTuner proxy"
+ 
+ #define VTUNERC_PROC_FILENAME	"vtunerc%i"
+diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
+--- a/kernel/vtunerc_priv.h	2023-12-27 14:21:21.000000000 +0100
++++ b/kernel/vtunerc_priv.h	2023-12-27 16:54:24.249076520 +0100
+@@ -18,28 +18,24 @@
+ #define _VTUNERC_PRIV_H
+ 
+ #include <linux/module.h>	/* Specifically, a module */
+ #include <linux/kernel.h>	/* We're doing kernel work */
+ #include <linux/time.h>
  #include <linux/cdev.h>
  #include <linux/version.h>
  
@@ -84,11 +111,20 @@ index aa1f26e..f277dbf 100644
  
  #include "vtuner.h"
  
-diff --git a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
-index 784a926..d3d1f45 100644
---- a/kernel/vtunerc_proxyfe.c
-+++ b/kernel/vtunerc_proxyfe.c
-@@ -21,7 +21,7 @@
+ struct vtunerc_config {
+ 
+ 	int debug;
+ 	int tscheck;
+ 	int devices;
+diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
+--- a/kernel/vtunerc_proxyfe.c	2023-12-27 14:21:21.000000000 +0100
++++ b/kernel/vtunerc_proxyfe.c	2023-12-27 16:57:31.658989451 +0100
+@@ -16,17 +16,17 @@
+ 
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/string.h>
+ #include <linux/slab.h>
  
  #include "vtunerc_priv.h"
  
@@ -97,16 +133,36 @@ index 784a926..d3d1f45 100644
  
  #if (DVB_API_VERSION << 8 | DVB_API_VERSION_MINOR) < 0x0505
   #error ========================================================================
-@@ -178,7 +178,7 @@ static int dvb_proxyfe_set_frontend(struct dvb_frontend *fe)
- 	if (memcmp(&msg.body.fe_params, &ctx->fe_params, sizeof(struct fe_params))==0) return 0; // no change
+  #error Version 5.5 or newer of DVB API is required (see at linux/dvb/version.h)
+  #error You can find it in kernel version >= 3.3.0
+  #error ========================================================================
+ #endif
  
- 	ctx->stat_time = ktime_get_seconds();
--	ctx->signal.status = FE_NONE;
-+	ctx->signal.status = 0;
+@@ -122,17 +122,17 @@
+ 	default:
+ 		printk(KERN_ERR "vtunerc%d: unregognized tuner type = %d\n", ctx->idx, c->delivery_system);
+ 		return -EINVAL;
+ 	}
  
- 	dprintk(ctx, "MSG_SET_FRONTEND\n");
+ 	if (memcmp(&msg.body.fe_params, &ctx->fe_params, sizeof(struct fe_params))!=0) {
  
-@@ -297,10 +297,11 @@ static struct dvb_frontend_ops dvb_proxyfe_ops = {
+ 		ctx->stat_time = ktime_get_seconds();
+-		ctx->signal.status = FE_NONE;
++		ctx->signal.status = 0;
+ 		ctx->tuning = 1;
+ 
+ 		dprintk(ctx, "MSG_SET_FRONTEND\n");
+ 
+ 		msg.type = MSG_SET_FRONTEND;
+ 		vtunerc_ctrldev_xchange_message(ctx, &msg, 1);
+ 		memcpy(&ctx->fe_params, &msg.body.fe_params, sizeof(struct fe_params));
+ 
+@@ -241,33 +241,34 @@
+ 
+ 	return fe;
+ }
+ 
+ static struct dvb_frontend_ops dvb_proxyfe_ops = {
          .delsys = { SYS_DVBT, SYS_DVBC_ANNEX_A, SYS_DVBS, SYS_DVBS2 },
  	.info = {
  		.name			= "vTuner proxyFE DVB-Multi",
@@ -122,7 +178,12 @@ index 784a926..d3d1f45 100644
  		.symbol_rate_min	= 450000,
  		.symbol_rate_max	= 45000000,
  		.caps = FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 | FE_CAN_FEC_4_5 |
-@@ -313,7 +314,7 @@ static struct dvb_frontend_ops dvb_proxyfe_ops = {
+ 			FE_CAN_FEC_5_6 | FE_CAN_FEC_6_7 | FE_CAN_FEC_7_8 | FE_CAN_FEC_8_9 | FE_CAN_QPSK | FE_CAN_RECOVER |
+ 			FE_CAN_FEC_AUTO | FE_CAN_QAM_16 | FE_CAN_QAM_64 | FE_CAN_QAM_AUTO | FE_CAN_TRANSMISSION_MODE_AUTO |
+ 			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO | FE_CAN_QAM_128 | FE_CAN_QAM_256 | FE_CAN_FEC_AUTO |
+ 			FE_CAN_INVERSION_AUTO | FE_CAN_2G_MODULATION | FE_CAN_MULTISTREAM
+ 	},
+ 
  	.release = dvb_proxyfe_release,
  
  	.init = dvb_proxyfe_init,
@@ -131,3 +192,8 @@ index 784a926..d3d1f45 100644
  	.sleep = dvb_proxyfe_sleep,
  
  	.get_frontend_algo = dvb_proxyfe_get_frontend_algo,
+ 	.set_frontend = dvb_proxyfe_set_frontend,
+ 	.tune = dvb_proxyfe_tune,
+ 
+ 	.read_status = dvb_proxyfe_read_status,
+ 	.read_ber = dvb_proxyfe_read_ber,

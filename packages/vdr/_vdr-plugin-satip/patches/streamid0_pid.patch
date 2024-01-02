@@ -1,0 +1,25 @@
+Patch from jojo61 @ vdr-portal:
+https://www.vdr-portal.de/forum/index.php?thread/135978-satip-plugin-am-exip-418/&postID=1365259#post1365259
+
+diff --git a/tuner.c b/tuner.c
+index be7b392..d7c7b27 100644
+--- a/tuner.c
++++ b/tuner.c
+@@ -500,7 +500,7 @@ bool cSatipTuner::UpdatePids(bool forceP)
+   debug16("%s (%d) tunerState=%s [device %d]", __PRETTY_FUNCTION__, forceP, TunerStateString(currentStateM), deviceIdM);
+   cMutexLock MutexLock(&mutexM);
+   if (((forceP && pidsM.Size()) || (pidUpdateCacheM.TimedOut() && (addPidsM.Size() || delPidsM.Size()))) &&
+-      !isempty(*streamAddrM) && (streamIdM > 0)) {
++      !isempty(*streamAddrM) && (streamIdM >= 0)) {
+      cString uri = cString::sprintf("%sstream=%d", *GetBaseUrl(*streamAddrM, streamPortM), streamIdM);
+      bool useci = (SatipConfig.GetCIExtension() && currentServerM.HasCI());
+      bool usedummy = currentServerM.IsQuirk(cSatipServer::eSatipQuirkPlayPids);
+@@ -600,7 +600,7 @@ bool cSatipTuner::ReadReceptionStatus(bool forceP)
+      statusUpdateM.Set(eStatusUpdateTimeoutMs);
+      forceP = true;
+      }
+-  if (forceP && !isempty(*streamAddrM) && (streamIdM > 0)) {
++  if (forceP && !isempty(*streamAddrM) && (streamIdM >= 0)) {
+      cString uri = cString::sprintf("%sstream=%d", *GetBaseUrl(*streamAddrM, streamPortM), streamIdM);
+      if (rtspM.Describe(*uri))
+         return true;

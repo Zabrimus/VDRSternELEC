@@ -1,0 +1,22 @@
+diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
+--- a/kernel/vtunerc_ctrldev.c	2024-01-03 12:49:32.000000000 +0100
++++ b/kernel/vtunerc_ctrldev.c	2024-01-05 15:20:33.456601492 +0100
+@@ -265,17 +265,17 @@
+ 		// sanity check, we dont allow all
+ 		for (i=0; i<VTUNER_MAX_DELSYS; i++)
+ 		{
+ 			if (delsys.value[i]==4 || (delsys.value[i]>6 && delsys.value[i]<16) || delsys.value[i]>19)
+ 				ret = -EINVAL;
+ 		}
+ 		if (!ctx->fe) ret=-EFAULT;
+ 		if (ret==0) {
+-			memcpy(&ctx->fe->ops.delsys, &delsys.value, MAX_DELSYS*sizeof(u8));
++			memcpy(&ctx->fe->ops.delsys, &delsys.value, VTUNER_MAX_DELSYS*sizeof(u8));
+ 			printk(KERN_INFO "vtunerc%d: setting delsys to", ctx->idx);
+ 			for (i=0; i<VTUNER_MAX_DELSYS; i++) {
+ 				switch (delsys.value[i])
+ 				{
+ 				    case 1:
+ 				      printk(KERN_CONT " DVBC");
+ 				      break;
+ 				    case 2:

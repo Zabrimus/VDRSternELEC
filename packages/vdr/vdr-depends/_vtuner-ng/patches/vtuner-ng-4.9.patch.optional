@@ -26,8 +26,40 @@ diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
  	rm -f .*.cmd
 diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
 --- a/kernel/vtunerc_ctrldev.c	2024-01-03 12:49:32.000000000 +0100
-+++ b/kernel/vtunerc_ctrldev.c	2024-01-05 14:32:08.276658773 +0100
-@@ -265,17 +265,17 @@
++++ b/kernel/vtunerc_ctrldev.c	2024-01-05 14:42:36.452553658 +0100
+@@ -212,16 +212,18 @@
+ 	}
+ 	return 0;
+ }
+ 
+ static long vtunerc_ctrldev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+ 	struct vtunerc_ctx *ctx = file->private_data;
+ 	int ret = 0;
++    int i;
++    struct vtuner_delsys delsys;
+ 
+ 	if (down_interruptible(&ctx->ioctl_sem))
+ 		return -ERESTARTSYS;
+ 
+ 	switch (cmd) {
+ 	case VTUNER_SET_SIGNAL:
+ 		dprintk(ctx, "set signal\n");
+ 		if (copy_from_user(&ctx->signal, (char *)arg, VTUNER_SIG_LEN)) {
+@@ -252,30 +254,28 @@
+ 	case VTUNER_SET_RESPONSE:
+ 		if (copy_from_user(&ctx->ctrldev_response, (char *)arg, VTUNER_MSG_LEN)) {
+ 			ret = -EFAULT;
+ 		}
+ 		wake_up_interruptible(&ctx->ctrldev_wait_response_wq);
+ 		break;
+ 
+ 	case VTUNER_SET_DELSYS:
+-		int i;
+-		struct vtuner_delsys delsys;
+ 		if (copy_from_user(&delsys, (char *) arg, VTUNER_DELSYS_LEN)) {
+ 			ret = -EFAULT;
+ 		}
  		// sanity check, we dont allow all
  		for (i=0; i<VTUNER_MAX_DELSYS; i++)
  		{

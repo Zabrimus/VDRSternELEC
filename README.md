@@ -217,7 +217,7 @@ If you are at the first boot, the minimum you have to do is running the script w
 To be able to use the configured language within VDR you have to create/modify file /storage/.profile with (e.g. for german UTF-8):  
 ```
 export LANG="de_DE.UTF-8"
-export LC_ALL="de_DE.UTF-8“
+export LC_ALL="de_DE.UTF-8"
 ```
 Choose the values depending on your choice in KODI's locale addon (*de_DE is de_DE.UTF-8*).  
 :exclamation: **You need to create ```/storage/.profile```, otherwise VDR won't start!**

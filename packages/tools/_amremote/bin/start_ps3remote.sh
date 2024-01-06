@@ -11,7 +11,7 @@ while [ ! -e /dev/input/meson-remote ]; do sleep 1; done
 # read configuration in profile
 . /storage/.profile
 
-if [ ! -n ${MESON_REMOTE_REPEAT} ]; then
+if [ "${MESON_REMOTE_REPEAT}" = ""  ]; then
     MESON_REMOTE_REPEAT=150
 fi
 

@@ -243,6 +243,11 @@ systemctl daemon-reload
 ### Remote control
 LibreELEC and CoreELEC use kernel built-in remote support as default. See [LibreELEC - Infra-Red Remotes](https://wiki.libreelec.tv/configuration/ir-remotes). If your remote control does not work out of the box in KODI, you can follow the instructions there.
 
+### Remote control (advanced, NEC)
+A description of the configuration can be found in [vdr-portal.de](https://www.vdr-portal.de/forum/index.php?thread/135105-help-request-vdr-coreelec-chroot-oder-zabrimus-und-amremote-eventlird/&postID=1362231#post1362231).
+All necessary driver and system.d units are already included in the distribution.
+Thanks to Dr. Seltsam @ vdr-portal.de
+
 ### Enabled plugins
 ```/storage/.config/vdropt/enabled_plugins``` contains a list of the plugins to autostart with VDR. Simply edit the file and add other plugins of your choice to the already pre-activated ones. 
 

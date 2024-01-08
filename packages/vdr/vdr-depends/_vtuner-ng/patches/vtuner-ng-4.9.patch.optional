@@ -1,6 +1,6 @@
 diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
---- a/kernel/Makefile	2024-01-03 12:49:32.000000000 +0100
-+++ b/kernel/Makefile	2024-01-05 14:22:35.897925453 +0100
+--- a/kernel/Makefile	2024-01-07 18:35:31.000000000 +0100
++++ b/kernel/Makefile	2024-01-08 19:40:40.225886612 +0100
 @@ -18,21 +18,20 @@
  
  # for external compilation
@@ -25,48 +25,16 @@ diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
  	rm -f *.mod
  	rm -f .*.cmd
 diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
---- a/kernel/vtunerc_ctrldev.c	2024-01-03 12:49:32.000000000 +0100
-+++ b/kernel/vtunerc_ctrldev.c	2024-01-05 14:42:36.452553658 +0100
-@@ -212,16 +212,18 @@
- 	}
- 	return 0;
- }
- 
- static long vtunerc_ctrldev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	struct vtunerc_ctx *ctx = file->private_data;
- 	int ret = 0;
-+    int i;
-+    struct vtuner_delsys delsys;
- 
- 	if (down_interruptible(&ctx->ioctl_sem))
- 		return -ERESTARTSYS;
- 
- 	switch (cmd) {
- 	case VTUNER_SET_SIGNAL:
- 		dprintk(ctx, "set signal\n");
- 		if (copy_from_user(&ctx->signal, (char *)arg, VTUNER_SIG_LEN)) {
-@@ -252,30 +254,28 @@
- 	case VTUNER_SET_RESPONSE:
- 		if (copy_from_user(&ctx->ctrldev_response, (char *)arg, VTUNER_MSG_LEN)) {
- 			ret = -EFAULT;
- 		}
- 		wake_up_interruptible(&ctx->ctrldev_wait_response_wq);
- 		break;
- 
- 	case VTUNER_SET_DELSYS:
--		int i;
--		struct vtuner_delsys delsys;
- 		if (copy_from_user(&delsys, (char *) arg, VTUNER_DELSYS_LEN)) {
- 			ret = -EFAULT;
- 		}
+--- a/kernel/vtunerc_ctrldev.c	2024-01-07 18:35:31.000000000 +0100
++++ b/kernel/vtunerc_ctrldev.c	2024-01-08 19:42:23.270343677 +0100
+@@ -272,17 +272,17 @@
  		// sanity check, we dont allow all
  		for (i=0; i<VTUNER_MAX_DELSYS; i++)
  		{
  			if (delsys.value[i]==4 || (delsys.value[i]>6 && delsys.value[i]<16) || delsys.value[i]>19)
  				ret = -EINVAL;
  		}
- 		if (!ctx->fe) ret=-EFAULT;
+ 		if (ret==0 && !ctx->fe) ret=-EFAULT;
  		if (ret==0) {
 -			memcpy(&ctx->fe->ops.delsys, &delsys.value, MAX_DELSYS*sizeof(u8));
 +			memcpy(&ctx->fe->ops.delsys, &delsys.value, VTUNER_MAX_DELSYS*sizeof(u8));
@@ -79,8 +47,8 @@ diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
  				      break;
  				    case 2:
 diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
---- a/kernel/vtunerc_main.c	2024-01-03 12:49:32.000000000 +0100
-+++ b/kernel/vtunerc_main.c	2024-01-05 14:22:35.897925453 +0100
+--- a/kernel/vtunerc_main.c	2024-01-07 18:35:31.000000000 +0100
++++ b/kernel/vtunerc_main.c	2024-01-08 19:40:40.225886612 +0100
 @@ -20,22 +20,22 @@
  #include <linux/proc_fs.h>
  #include <linux/init.h>
@@ -111,8 +79,8 @@ diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
  
  #define VTUNERC_PROC_FILENAME	"vtunerc%i"
 diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
---- a/kernel/vtunerc_priv.h	2024-01-03 12:49:32.000000000 +0100
-+++ b/kernel/vtunerc_priv.h	2024-01-05 14:22:35.897925453 +0100
+--- a/kernel/vtunerc_priv.h	2024-01-07 18:35:31.000000000 +0100
++++ b/kernel/vtunerc_priv.h	2024-01-08 19:40:40.225886612 +0100
 @@ -18,28 +18,24 @@
  #define _VTUNERC_PRIV_H
  
@@ -149,8 +117,8 @@ diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
  	int tscheck;
  	int devices;
 diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
---- a/kernel/vtunerc_proxyfe.c	2024-01-03 12:49:32.000000000 +0100
-+++ b/kernel/vtunerc_proxyfe.c	2024-01-05 14:22:35.897925453 +0100
+--- a/kernel/vtunerc_proxyfe.c	2024-01-07 18:35:31.000000000 +0100
++++ b/kernel/vtunerc_proxyfe.c	2024-01-08 19:41:12.926227167 +0100
 @@ -16,17 +16,17 @@
  
  #include <linux/module.h>
@@ -181,15 +149,15 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
  		ctx->stat_time = ktime_get_seconds();
 -		ctx->signal.status = FE_NONE;
 +		ctx->signal.status = 0;
- 		ctx->tuning = 1;
  
- 		dprintk(ctx, "MSG_SET_FRONTEND\n");
+ 		dprintk(ctx, "MSG_SET_FRONTEND, set signal NONE (internal)\n");
  
  		msg.type = MSG_SET_FRONTEND;
  		vtunerc_ctrldev_xchange_message(ctx, &msg, 1);
  		memcpy(&ctx->fe_params, &msg.body.fe_params, sizeof(struct fe_params));
  
-@@ -286,34 +286,35 @@
+ 		send_pidlist(ctx);
+@@ -284,34 +284,35 @@
  
  	return fe;
  }

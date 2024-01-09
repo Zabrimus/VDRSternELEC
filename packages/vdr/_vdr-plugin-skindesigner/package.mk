@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-skindesigner"
-PKG_VERSION="a91173410795ece1aeeb57c9cf28144242d615ab"
-PKG_SHA256="80a9503242338fac51e1d5600c2ffeb485928ca7fd9101fd92e43483b259832a"
+PKG_VERSION="71b3e514c6c7f8eb76751ce04f1e3dd8f3037b25"
+PKG_SHA256="43dc62b8d2571d7e78ade78a157c533f34bf401c4302c62afd83501e976c5e27"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/kamel5/skindesigner.git"
 PKG_URL="https://gitlab.com/kamel5/skindesigner/-/archive/${PKG_VERSION}/skindesigner-${PKG_VERSION}.tar.gz"
@@ -25,8 +25,9 @@ post_makeinstall_target() {
   $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN}
 
   # ugly hack. A symbolic link to libskindesignerapi is missing. Further investigation is needed!
-  (
-  	cd ${INSTALL}/usr/local/lib/vdr/
-	ln -s libskindesignerapi.so libskindesignerapi.so.0
-  )
+    (
+     cd ${INSTALL}/usr/local/lib/vdr/
+  	 ln -s libskindesignerapi.so libskindesignerapi.so.0
+    )
 }
+

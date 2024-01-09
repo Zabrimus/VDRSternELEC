@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-skinnopacity"
-PKG_VERSION="884077d751778561555714df7c926443e420fe06"
-PKG_SHA256="821cb02418ecabf0297d9ec6a61038839e5463baa7f186e8ec3985748af3cdf0"
+PKG_VERSION="b1a08adf7d3a44bfca6dabbd948a49b44ae550cd"
+PKG_SHA256="6e1d13e3a1a31624bba97bd24c14ef1d543ef3d14117c9079bead327691bab0c"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/kamel5/SkinNopacity.git"
 PKG_URL="https://gitlab.com/kamel5/SkinNopacity/-/archive/${PKG_VERSION}/SkinNopacity-${PKG_VERSION}.tar.gz"

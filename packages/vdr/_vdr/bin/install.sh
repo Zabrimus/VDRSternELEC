@@ -8,7 +8,7 @@ BIN_DIR="${PREFIX}/bin"
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-c (url)] [-p (url)]
+Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-p (url)]
 
 -i       : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
 -C       : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
@@ -16,6 +16,7 @@ Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-c (url)] [-p (url)]
 -b vdr   : VDR will be started after booting
 -T       : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
 -w       : install/update web components (remotetranscode, cefbrowser)
+-v       : install vtuner-ng (change /storage/.config/start_vtuner.sh accordingly, otherwise is will not start)
 -c (url) : install/update cef binary lib (located at url or within /storage/.update or at /usr/local/config)
 -p (url) : install/update private configs (located at url or within /storage/.update)
 EOF
@@ -128,6 +129,27 @@ install_web() {
   systemctl enable remotetranscode.service
 }
 
+install_vtuner() {
+  if [ ! -f /storage/.config/start_vtuner.sh ]; then
+      cp -a /usr/local/bin/sample_start_vtuner.sh /storage/.config/start_vtuner.sh
+  fi
+
+  if [ ! -f /storage/.config/stop_vtuner.sh ]; then
+      cp -a /usr/local/bin/stop_vtuner.sh /storage/.config/stop_vtuner.sh
+  fi
+
+  if [ ! -f /storage/.config/system.d/vtuner-ng.service ]; then
+      cp -a /usr/local/system.d/vtuner-ng.service /storage/.config/system.d/vtuner-ng.service
+
+      systemctl daemon-reload
+      systemctl enable vtuner-ng.service
+  fi
+
+  echo "Info:"
+  echo "  Please check and adapt the script /storage/.config/start_vtuner.sh accordingly."
+  echo "  Otherwise vtuner-ng will not work as expected."
+}
+
 install_cef() {
   rm -Rf /storage/tmp
   mkdir /storage/tmp
@@ -237,13 +259,14 @@ if [ "$#" = "0" ]; then
     usage
 fi
 
-while getopts b:iTCwc:p: o; do
+while getopts b:iTCwvc:p: o; do
   case $o in
     (i) install;;
     (C) install_copy;;
     (b) boot "$OPTARG";;
     (T) install_triggerhappy;;
     (w) install_web;;
+    (v) install_vtuner;;
     (c) eval url=\${$(( $OPTIND -1 ))}
         if [ -n $url ]; then
           install_cef "$url"

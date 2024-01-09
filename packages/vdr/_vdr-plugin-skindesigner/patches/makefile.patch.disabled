@@ -1,0 +1,14 @@
+diff -uNrbBrw a/libskindesignerapi/Makefile b/libskindesignerapi/Makefile
+--- a/libskindesignerapi/Makefile	2023-10-14 13:52:11.000000000 +0200
++++ b/libskindesignerapi/Makefile	2023-12-25 13:29:21.578904762 +0100
+@@ -71,8 +71,8 @@
+ 
+ install-lib: $(TARGET_LIB)
+ 	install -D $^ $(DESTDIR)$(LIBDIR)/$^
+-	if [ -z "$(DESTDIR)" ] ; then ldconfig; fi
+-	cd $(DESTDIR)$(LIBDIR) ; if [ ! -e $(LIBNAME).so ] ; then ln -s $(TARGET_LIB) $(LIBNAME).so; fi
++	#if [ -z "$(DESTDIR)" ] ; then ldconfig; fi
++	cd $(DESTDIR)$(LIBDIR) ; if [ ! -e $(LIBNAME).so ] ; then ln -s $(TARGET_LIB) $(LIBNAME).so; fi; if [ ! -e $(LIBNAME).so.0 ] ; then ln -s $(LIBNAME).so $(LIBNAME).so.0; fi
+ 
+ install-includes:
+ 	@mkdir -p $(DESTDIR)$(INCDIR)/$(LIBNAME)

@@ -1,6 +1,6 @@
 diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
---- a/kernel/Makefile	2024-01-11 23:01:13.000000000 +0100
-+++ b/kernel/Makefile	2024-01-12 06:55:30.060259999 +0100
+--- a/kernel/Makefile	2024-01-18 09:08:25.000000000 +0100
++++ b/kernel/Makefile	2024-01-19 06:36:45.171174123 +0100
 @@ -18,21 +18,20 @@
  
  # for external compilation
@@ -25,9 +25,9 @@ diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
  	rm -f *.mod
  	rm -f .*.cmd
 diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
---- a/kernel/vtunerc_ctrldev.c	2024-01-11 23:01:13.000000000 +0100
-+++ b/kernel/vtunerc_ctrldev.c	2024-01-12 06:55:30.060259999 +0100
-@@ -262,17 +262,17 @@
+--- a/kernel/vtunerc_ctrldev.c	2024-01-18 09:08:25.000000000 +0100
++++ b/kernel/vtunerc_ctrldev.c	2024-01-19 06:36:45.171174123 +0100
+@@ -286,17 +286,17 @@
  		// sanity check, we dont allow all
  		for (i=0; i<VTUNER_MAX_DELSYS; i++)
  		{
@@ -47,8 +47,8 @@ diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
  				      break;
  				    case 2:
 diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
---- a/kernel/vtunerc_main.c	2024-01-11 23:01:13.000000000 +0100
-+++ b/kernel/vtunerc_main.c	2024-01-12 06:55:30.060259999 +0100
+--- a/kernel/vtunerc_main.c	2024-01-18 09:08:25.000000000 +0100
++++ b/kernel/vtunerc_main.c	2024-01-19 06:36:45.171174123 +0100
 @@ -20,22 +20,22 @@
  #include <linux/proc_fs.h>
  #include <linux/init.h>
@@ -79,8 +79,8 @@ diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
  
  #define VTUNERC_PROC_FILENAME	"vtunerc%i"
 diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
---- a/kernel/vtunerc_priv.h	2024-01-11 23:01:13.000000000 +0100
-+++ b/kernel/vtunerc_priv.h	2024-01-12 06:55:30.060259999 +0100
+--- a/kernel/vtunerc_priv.h	2024-01-18 09:08:25.000000000 +0100
++++ b/kernel/vtunerc_priv.h	2024-01-19 06:36:45.171174123 +0100
 @@ -18,28 +18,24 @@
  #define _VTUNERC_PRIV_H
  
@@ -117,9 +117,9 @@ diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
  	int tscheck;
  	int devices;
 diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
---- a/kernel/vtunerc_proxyfe.c	2024-01-11 23:01:13.000000000 +0100
-+++ b/kernel/vtunerc_proxyfe.c	2024-01-12 06:57:44.201760385 +0100
-@@ -16,17 +16,17 @@
+--- a/kernel/vtunerc_proxyfe.c	2024-01-18 09:08:25.000000000 +0100
++++ b/kernel/vtunerc_proxyfe.c	2024-01-19 06:37:44.745964887 +0100
+@@ -16,17 +16,21 @@
  
  #include <linux/module.h>
  #include <linux/init.h>
@@ -130,6 +130,10 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
  
 -#include <media/dvb_frontend.h>
 +#include "dvb_frontend.h"
++
++#ifndef FE_NONE
++#define FE_NONE 0
++#endif
  
  #if (DVB_API_VERSION << 8 | DVB_API_VERSION_MINOR) < 0x0505
   #error ========================================================================
@@ -138,28 +142,7 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
   #error ========================================================================
  #endif
  
-@@ -161,18 +161,18 @@
- 	default:
- 		printk(KERN_ERR "vtunerc%d: unregognized tuner type = %d\n", ctx->idx, c->delivery_system);
- 		return -EINVAL;
- 	}
- 
- 	if (memcmp(&msg.body.fe_params, &ctx->fe_params, sizeof(struct fe_params))!=0) {
- 
- 		ctx->stat_time = ktime_get_seconds();
--		ctx->status = FE_NONE;
--		*status = FE_NONE;
-+		ctx->status = 0;
-+		*status = 0;
- 
- 		dprintk(ctx, "MSG_SET_FRONTEND, set signal NONE\n");
- 
- 		msg.type = MSG_SET_FRONTEND;
- 		vtunerc_ctrldev_xchange_message(ctx, &msg, 1);
- 		memcpy(&ctx->fe_params, &msg.body.fe_params, sizeof(struct fe_params));
- 
- 		send_pidlist(ctx, true);
-@@ -274,34 +274,35 @@
+@@ -280,34 +284,35 @@
  
  	return fe;
  }

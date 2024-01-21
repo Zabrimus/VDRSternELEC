@@ -1,6 +1,6 @@
 diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
---- a/kernel/Makefile	2024-01-18 09:08:25.000000000 +0100
-+++ b/kernel/Makefile	2024-01-19 06:36:45.171174123 +0100
+--- a/kernel/Makefile	2024-01-20 22:35:40.000000000 +0100
++++ b/kernel/Makefile	2024-01-21 18:22:23.952798334 +0100
 @@ -18,21 +18,20 @@
  
  # for external compilation
@@ -25,9 +25,30 @@ diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
  	rm -f *.mod
  	rm -f .*.cmd
 diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
---- a/kernel/vtunerc_ctrldev.c	2024-01-18 09:08:25.000000000 +0100
-+++ b/kernel/vtunerc_ctrldev.c	2024-01-19 06:36:45.171174123 +0100
-@@ -286,17 +286,17 @@
+--- a/kernel/vtunerc_ctrldev.c	2024-01-20 22:35:40.000000000 +0100
++++ b/kernel/vtunerc_ctrldev.c	2024-01-21 18:36:02.573036058 +0100
+@@ -19,16 +19,20 @@
+ #include <linux/module.h>
+ #include <linux/fs.h>
+ #include <linux/delay.h>
+ #include <linux/time.h>
+ #include <linux/poll.h>
+ #include <linux/dvb/frontend.h>
+ #include "vtunerc_priv.h"
+ 
++#ifndef FE_NONE
++#define FE_NONE 0
++#endif
++
+ #define VTUNERC_CTRLDEV_MAJOR	266
+ #define VTUNERC_CTRLDEV_NAME	"vtunerc"
+ 
+ #define VTUNER_MSG_LEN (sizeof(struct vtuner_message))
+ #define VTUNER_SIG_LEN (sizeof(struct vtuner_signal))
+ #define VTUNER_DELSYS_LEN (sizeof(struct vtuner_delsys))
+ 
+ static ssize_t vtunerc_ctrldev_write(struct file *filp, const char *buff, size_t len, loff_t *off)
+@@ -280,17 +284,17 @@
  		// sanity check, we dont allow all
  		for (i=0; i<VTUNER_MAX_DELSYS; i++)
  		{
@@ -47,8 +68,8 @@ diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
  				      break;
  				    case 2:
 diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
---- a/kernel/vtunerc_main.c	2024-01-18 09:08:25.000000000 +0100
-+++ b/kernel/vtunerc_main.c	2024-01-19 06:36:45.171174123 +0100
+--- a/kernel/vtunerc_main.c	2024-01-20 22:35:40.000000000 +0100
++++ b/kernel/vtunerc_main.c	2024-01-21 18:22:23.956798621 +0100
 @@ -20,22 +20,22 @@
  #include <linux/proc_fs.h>
  #include <linux/init.h>
@@ -79,8 +100,8 @@ diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
  
  #define VTUNERC_PROC_FILENAME	"vtunerc%i"
 diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
---- a/kernel/vtunerc_priv.h	2024-01-18 09:08:25.000000000 +0100
-+++ b/kernel/vtunerc_priv.h	2024-01-19 06:36:45.171174123 +0100
+--- a/kernel/vtunerc_priv.h	2024-01-20 22:35:40.000000000 +0100
++++ b/kernel/vtunerc_priv.h	2024-01-21 18:22:23.956798621 +0100
 @@ -18,28 +18,24 @@
  #define _VTUNERC_PRIV_H
  
@@ -117,8 +138,8 @@ diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
  	int tscheck;
  	int devices;
 diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
---- a/kernel/vtunerc_proxyfe.c	2024-01-18 09:08:25.000000000 +0100
-+++ b/kernel/vtunerc_proxyfe.c	2024-01-19 06:37:44.745964887 +0100
+--- a/kernel/vtunerc_proxyfe.c	2024-01-20 22:35:40.000000000 +0100
++++ b/kernel/vtunerc_proxyfe.c	2024-01-21 18:33:10.357962710 +0100
 @@ -16,17 +16,21 @@
  
  #include <linux/module.h>
@@ -142,32 +163,60 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
   #error ========================================================================
  #endif
  
-@@ -280,34 +284,35 @@
+@@ -294,20 +298,20 @@
  
  	return fe;
  }
  
- static struct dvb_frontend_ops dvb_proxyfe_ops = {
-         .delsys = { SYS_DVBT, SYS_DVBT2, SYS_DVBC_ANNEX_A, SYS_DVBC_ANNEX_B, SYS_DVBC_ANNEX_C, SYS_DVBS, SYS_DVBS2 },
- 	.info = {
- 		.name			= "vTuner proxyFE DVB-Multi",
--		.frequency_min_hz	= 51 * MHz,
--		.frequency_max_hz	= 2150 * MHz,
--		.frequency_stepsize_hz	= 62.5 * kHz,
--		.frequency_tolerance_hz	= 29500 * kHz,
-+		.type = FE_QAM, // ???
-+		.frequency_min		= 51000000,
-+		.frequency_max		= 863250000,
-+		.frequency_stepsize	= 62500,
-+		.frequency_tolerance	= 29500,
- 		.symbol_rate_min	= 450000,
- 		.symbol_rate_max	= 45000000,
- 		.caps = FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 | FE_CAN_FEC_4_5 |
+ void dvb_proxyfe_clear_delsys_info(struct dvb_frontend *fe)
+ {
+ 	memset(&fe->ops.delsys,0,sizeof(u8)*MAX_DELSYS);
+ 	fe->ops.delsys[0] = SYS_TURBO;
+-	fe->ops.info.frequency_min_hz       = 0;
+-	fe->ops.info.frequency_max_hz       = 0;
+-	fe->ops.info.frequency_stepsize_hz  = 0;
+-	fe->ops.info.frequency_tolerance_hz = 0;
++	fe->ops.info.frequency_min          = 0;
++	fe->ops.info.frequency_max          = 0;
++	fe->ops.info.frequency_stepsize     = 0;
++	fe->ops.info.frequency_tolerance    = 0;
+ 	fe->ops.info.symbol_rate_min        = 0;
+ 	fe->ops.info.symbol_rate_max        = 0;
+ 
+ 	fe->ops.info.caps                   = 0;
+ }
+ 
+ void dvb_proxyfe_set_delsys_info(struct dvb_frontend *fe)
+ {
+@@ -315,20 +319,20 @@
+ 	fe->ops.delsys[0] = SYS_DVBT;
+ 	fe->ops.delsys[1] = SYS_DVBT2;
+ 	fe->ops.delsys[2] = SYS_DVBC_ANNEX_A;
+ 	fe->ops.delsys[3] = SYS_DVBC_ANNEX_B;
+ 	fe->ops.delsys[4] = SYS_DVBC_ANNEX_C;
+ 	fe->ops.delsys[5] = SYS_DVBS;
+ 	fe->ops.delsys[6] = SYS_DVBS2;
+ 
+-	fe->ops.info.frequency_min_hz       = 51 * MHz;
+-	fe->ops.info.frequency_max_hz       = 2150 * MHz;
+-	fe->ops.info.frequency_stepsize_hz  = 62.5 * kHz;
+-	fe->ops.info.frequency_tolerance_hz = 29500 * kHz;
++	fe->ops.info.frequency_min          = 51000000;
++	fe->ops.info.frequency_max          = 2150000000;
++	fe->ops.info.frequency_stepsize     = 62500;
++	fe->ops.info.frequency_tolerance    = 29500;
+ 	fe->ops.info.symbol_rate_min        = 450000;
+ 	fe->ops.info.symbol_rate_max        = 45000000;
+ 
+ 	fe->ops.info.caps = FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 | FE_CAN_FEC_4_5 |
  			FE_CAN_FEC_5_6 | FE_CAN_FEC_6_7 | FE_CAN_FEC_7_8 | FE_CAN_FEC_8_9 | FE_CAN_QPSK | FE_CAN_RECOVER |
  			FE_CAN_FEC_AUTO | FE_CAN_QAM_16 | FE_CAN_QAM_32 | FE_CAN_QAM_64 | FE_CAN_QAM_128 | FE_CAN_QAM_256 | 
  			FE_CAN_QAM_AUTO | FE_CAN_8VSB | FE_CAN_16VSB | FE_CAN_TRANSMISSION_MODE_AUTO |
  			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO | FE_CAN_FEC_AUTO |
- 			FE_CAN_INVERSION_AUTO | FE_CAN_2G_MODULATION | FE_CAN_TURBO_FEC | FE_CAN_MULTISTREAM
+@@ -340,17 +344,17 @@
+ 	.delsys = { SYS_TURBO },
+ 	.info = {
+ 		.name			= "vTuner proxyFE DVB-Multi",
  	},
  
  	.release = dvb_proxyfe_release,

@@ -26,7 +26,7 @@ diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
  	rm -f .*.cmd
 diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
 --- a/kernel/vtunerc_ctrldev.c	2024-01-20 22:35:40.000000000 +0100
-+++ b/kernel/vtunerc_ctrldev.c	2024-01-21 20:00:15.344019480 +0100
++++ b/kernel/vtunerc_ctrldev.c	2024-01-22 06:19:41.559141929 +0100
 @@ -19,23 +19,27 @@
  #include <linux/module.h>
  #include <linux/fs.h>
@@ -56,25 +56,6 @@ diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
  	unsigned short pid;
  	int i, idx, cc, offs, pf, pesh;
  	bool sendfiller, pusi;
-@@ -280,17 +284,17 @@
- 		// sanity check, we dont allow all
- 		for (i=0; i<VTUNER_MAX_DELSYS; i++)
- 		{
- 			if (delsys.value[i]==4 || (delsys.value[i]>6 && delsys.value[i]<16) || delsys.value[i]>19)
- 				ret = -EINVAL;
- 		}
- 		if (ret==0 && !ctx->fe) ret=-EFAULT;
- 		if (ret==0) {
--			memcpy(&ctx->fe->ops.delsys, &delsys.value, MAX_DELSYS*sizeof(u8));
-+			memcpy(&ctx->fe->ops.delsys, &delsys.value, VTUNER_MAX_DELSYS*sizeof(u8));
- 			printk(KERN_INFO "vtunerc%d: setting delsys to", ctx->idx);
- 			for (i=0; i<VTUNER_MAX_DELSYS; i++) {
- 				switch (delsys.value[i])
- 				{
- 				    case 1:
- 				      printk(KERN_CONT " DVBC");
- 				      break;
- 				    case 2:
 diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
 --- a/kernel/vtunerc_main.c	2024-01-20 22:35:40.000000000 +0100
 +++ b/kernel/vtunerc_main.c	2024-01-21 18:22:23.956798621 +0100

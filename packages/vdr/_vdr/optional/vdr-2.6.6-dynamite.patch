@@ -1,13 +1,7 @@
-Description: Patch for VDR to support hotpluggable devices via the
- dynamite plugin.
-Origin: https://github.com/flensrocker/vdr-plugin-dynamite
-Forwarded: no
-Author: Lars Hanisch <dvb@flensrocker.de>, MarkusE (vdr-portal.de)
-
-Index: vdr-2.6.3_sik/ci.h
+Index: vdr-2.6.6_sik/ci.h
 ===================================================================
---- vdr-2.6.3_sik.orig/ci.h	2023-02-16 09:10:48.141146957 +0100
-+++ vdr-2.6.3_sik/ci.h	2023-02-16 09:10:48.125147165 +0100
+--- vdr-2.6.6_sik.orig/ci.h	2024-01-25 18:36:07.956726721 +0100
++++ vdr-2.6.6_sik/ci.h	2024-01-25 18:36:07.936726964 +0100
 @@ -209,6 +209,8 @@
    cCiAdapter(void);
    virtual ~cCiAdapter();
@@ -17,10 +11,10 @@ Index: vdr-2.6.3_sik/ci.h
    };
  
  class cTPDU;
-Index: vdr-2.6.3_sik/device.c
+Index: vdr-2.6.6_sik/device.c
 ===================================================================
---- vdr-2.6.3_sik.orig/device.c	2023-02-16 09:10:48.141146957 +0100
-+++ vdr-2.6.3_sik/device.c	2023-02-16 09:10:48.125147165 +0100
+--- vdr-2.6.6_sik.orig/device.c	2024-01-25 18:36:07.956726721 +0100
++++ vdr-2.6.6_sik/device.c	2024-01-25 18:36:07.940726915 +0100
 @@ -75,12 +75,22 @@
  cDevice *cDevice::device[MAXDEVICES] = { NULL };
  cDevice *cDevice::primaryDevice = NULL;
@@ -138,8 +132,8 @@ Index: vdr-2.6.3_sik/device.c
 +     return;
 +     }
    if (sectionHandler) {
+      delete sectionHandler; // automatically detaches filters
       delete nitFilter;
-      delete sdtFilter;
 @@ -703,12 +753,17 @@
  
  void cDevice::AttachFilter(cFilter *Filter)
@@ -309,10 +303,10 @@ Index: vdr-2.6.3_sik/device.c
 +{
 +  DynamicDeviceProbes.Del(this, false);
 +}
-Index: vdr-2.6.3_sik/device.h
+Index: vdr-2.6.6_sik/device.h
 ===================================================================
---- vdr-2.6.3_sik.orig/device.h	2023-02-16 09:10:48.141146957 +0100
-+++ vdr-2.6.3_sik/device.h	2023-02-16 09:10:48.125147165 +0100
+--- vdr-2.6.6_sik.orig/device.h	2024-01-25 18:36:07.956726721 +0100
++++ vdr-2.6.6_sik/device.h	2024-01-25 18:36:07.940726915 +0100
 @@ -185,7 +185,6 @@
    static int nextCardIndex;
    int cardIndex;
@@ -325,7 +319,7 @@ Index: vdr-2.6.3_sik/device.h
           ///< May be dropped in a future version, if a better solution is found.
           ///< Do not use otherwise!
  public:
--  bool IsPrimaryDevice(void) const { return this == primaryDevice && HasDecoder(); }
+-  bool IsPrimaryDevice(bool CheckDecoder = true) const { return this == primaryDevice && (!CheckDecoder || HasDecoder()); }
 -  int CardIndex(void) const { return cardIndex; }
 -         ///< Returns the card index of this device (0 ... MAXDEVICES - 1).
    int DeviceNumber(void) const;
@@ -382,7 +376,7 @@ Index: vdr-2.6.3_sik/device.h
 +       ///< Returns a pointer to the patPmtParser, so that a derived device
 +       ///< can use the stream information from it.
 +public:
-+  bool IsPrimaryDevice(void) const { if (parentDevice) return parentDevice->IsPrimaryDevice(); return this == primaryDevice && HasDecoder(); }
++  bool IsPrimaryDevice(bool CheckDecoder = true) const { if (parentDevice) return parentDevice->IsPrimaryDevice(CheckDecoder); return this == primaryDevice && (!CheckDecoder || HasDecoder()); }
 +  int CardIndex(void) const { if (parentDevice) return parentDevice->cardIndex; return cardIndex; }
 +         ///< Returns the card index of this device (0 ... MAXDEVICES - 1).
 +  cCamSlot *CamSlot(void) const { if (parentDevice) return parentDevice->CamSlot(); return camSlot; }
@@ -449,10 +443,10 @@ Index: vdr-2.6.3_sik/device.h
 +extern cList<cDynamicDeviceProbe> DynamicDeviceProbes;
 +
  #endif //__DEVICE_H
-Index: vdr-2.6.3_sik/dvbci.c
+Index: vdr-2.6.6_sik/dvbci.c
 ===================================================================
---- vdr-2.6.3_sik.orig/dvbci.c	2023-02-16 09:10:48.141146957 +0100
-+++ vdr-2.6.3_sik/dvbci.c	2023-02-16 09:10:48.125147165 +0100
+--- vdr-2.6.6_sik.orig/dvbci.c	2024-01-25 18:36:07.956726721 +0100
++++ vdr-2.6.6_sik/dvbci.c	2024-01-25 18:36:07.940726915 +0100
 @@ -10,15 +10,18 @@
  #include "dvbci.h"
  #include <linux/dvb/ca.h>
@@ -559,10 +553,10 @@ Index: vdr-2.6.3_sik/dvbci.c
 +     return new cDvbCiAdapter(Device, Fd, Adapter, Frontend);
    return NULL;
  }
-Index: vdr-2.6.3_sik/dvbci.h
+Index: vdr-2.6.6_sik/dvbci.h
 ===================================================================
---- vdr-2.6.3_sik.orig/dvbci.h	2023-02-16 09:10:48.141146957 +0100
-+++ vdr-2.6.3_sik/dvbci.h	2023-02-16 09:10:48.129147113 +0100
+--- vdr-2.6.6_sik.orig/dvbci.h	2024-01-25 18:36:07.956726721 +0100
++++ vdr-2.6.6_sik/dvbci.h	2024-01-25 18:36:07.940726915 +0100
 @@ -16,16 +16,24 @@
  private:
    cDevice *device;
@@ -590,10 +584,10 @@ Index: vdr-2.6.3_sik/dvbci.h
    };
  
  #endif //__DVBCI_H
-Index: vdr-2.6.3_sik/dvbdevice.c
+Index: vdr-2.6.6_sik/dvbdevice.c
 ===================================================================
---- vdr-2.6.3_sik.orig/dvbdevice.c	2023-02-16 09:10:48.141146957 +0100
-+++ vdr-2.6.3_sik/dvbdevice.c	2023-02-16 09:10:48.129147113 +0100
+--- vdr-2.6.6_sik.orig/dvbdevice.c	2024-01-25 18:36:07.956726721 +0100
++++ vdr-2.6.6_sik/dvbdevice.c	2024-01-25 18:36:07.944726867 +0100
 @@ -571,6 +571,10 @@
    void ResetToneAndVoltage(void);
    bool SetFrontend(void);
@@ -784,10 +778,10 @@ Index: vdr-2.6.3_sik/dvbdevice.c
  }
  
  int cDvbDevice::NumProvidedSystems(void) const
-Index: vdr-2.6.3_sik/dvbdevice.h
+Index: vdr-2.6.6_sik/dvbdevice.h
 ===================================================================
---- vdr-2.6.3_sik.orig/dvbdevice.h	2023-02-16 09:10:48.141146957 +0100
-+++ vdr-2.6.3_sik/dvbdevice.h	2023-02-16 09:10:48.129147113 +0100
+--- vdr-2.6.6_sik.orig/dvbdevice.h	2024-01-25 18:36:07.956726721 +0100
++++ vdr-2.6.6_sik/dvbdevice.h	2024-01-25 18:36:07.944726867 +0100
 @@ -187,12 +187,14 @@
    cDvbDevice *bondedDevice;
    mutable bool needsDetachBondedReceivers;

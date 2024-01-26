@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-dynamite"
-PKG_VERSION="5a94153a27836752f878d3e83fe1a6720ebd76db"
-PKG_SHA256="4cf9d1987bbd6223aece85dba12aa7fefae7779b8665cf40b8ad0bbe9166540e"
+PKG_VERSION="67d2bc51a41ba6a67a0d2aeb491d31622a3cfd1f"
+PKG_SHA256="405ae482f5c09e772bb6e59efa98c359ef04792b9f55fe92e66dcb44e5977660"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/MarkusEh/vdr-plugin-dynamite"
 PKG_URL="https://github.com/MarkusEh/vdr-plugin-dynamite/archive/${PKG_VERSION}.zip"

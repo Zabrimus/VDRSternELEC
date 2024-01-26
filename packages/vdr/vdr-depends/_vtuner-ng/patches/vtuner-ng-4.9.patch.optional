@@ -1,6 +1,6 @@
 diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
---- a/kernel/Makefile	2024-01-20 22:35:40.000000000 +0100
-+++ b/kernel/Makefile	2024-01-21 18:22:23.952798334 +0100
+--- a/kernel/Makefile	2024-01-26 18:49:39.000000000 +0100
++++ b/kernel/Makefile	2024-01-26 19:39:08.510824686 +0100
 @@ -18,21 +18,20 @@
  
  # for external compilation
@@ -25,8 +25,8 @@ diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
  	rm -f *.mod
  	rm -f .*.cmd
 diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
---- a/kernel/vtunerc_ctrldev.c	2024-01-20 22:35:40.000000000 +0100
-+++ b/kernel/vtunerc_ctrldev.c	2024-01-22 06:19:41.559141929 +0100
+--- a/kernel/vtunerc_ctrldev.c	2024-01-26 18:49:39.000000000 +0100
++++ b/kernel/vtunerc_ctrldev.c	2024-01-26 19:39:08.514825894 +0100
 @@ -19,23 +19,27 @@
  #include <linux/module.h>
  #include <linux/fs.h>
@@ -57,8 +57,8 @@ diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
  	int i, idx, cc, offs, pf, pesh;
  	bool sendfiller, pusi;
 diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
---- a/kernel/vtunerc_main.c	2024-01-20 22:35:40.000000000 +0100
-+++ b/kernel/vtunerc_main.c	2024-01-21 18:22:23.956798621 +0100
+--- a/kernel/vtunerc_main.c	2024-01-26 18:49:39.000000000 +0100
++++ b/kernel/vtunerc_main.c	2024-01-26 19:39:08.514825894 +0100
 @@ -20,22 +20,22 @@
  #include <linux/proc_fs.h>
  #include <linux/init.h>
@@ -89,8 +89,8 @@ diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
  
  #define VTUNERC_PROC_FILENAME	"vtunerc%i"
 diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
---- a/kernel/vtunerc_priv.h	2024-01-20 22:35:40.000000000 +0100
-+++ b/kernel/vtunerc_priv.h	2024-01-21 18:22:23.956798621 +0100
+--- a/kernel/vtunerc_priv.h	2024-01-26 18:49:39.000000000 +0100
++++ b/kernel/vtunerc_priv.h	2024-01-26 19:39:08.514825894 +0100
 @@ -18,28 +18,24 @@
  #define _VTUNERC_PRIV_H
  
@@ -127,9 +127,9 @@ diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
  	int tscheck;
  	int devices;
 diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
---- a/kernel/vtunerc_proxyfe.c	2024-01-20 22:35:40.000000000 +0100
-+++ b/kernel/vtunerc_proxyfe.c	2024-01-21 18:33:10.357962710 +0100
-@@ -16,17 +16,21 @@
+--- a/kernel/vtunerc_proxyfe.c	2024-01-26 18:49:39.000000000 +0100
++++ b/kernel/vtunerc_proxyfe.c	2024-01-26 19:43:45.062115842 +0100
+@@ -16,17 +16,25 @@
  
  #include <linux/module.h>
  #include <linux/init.h>
@@ -144,6 +144,10 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
 +#ifndef FE_NONE
 +#define FE_NONE 0
 +#endif
++
++#ifndef MHz
++#define MHz 1000000
++#endif
  
  #if (DVB_API_VERSION << 8 | DVB_API_VERSION_MINOR) < 0x0505
   #error ========================================================================
@@ -152,7 +156,7 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
   #error ========================================================================
  #endif
  
-@@ -294,20 +298,20 @@
+@@ -294,20 +302,20 @@
  
  	return fe;
  }
@@ -161,12 +165,12 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
  {
  	memset(&fe->ops.delsys,0,sizeof(u8)*MAX_DELSYS);
  	fe->ops.delsys[0] = SYS_TURBO;
--	fe->ops.info.frequency_min_hz       = 0;
--	fe->ops.info.frequency_max_hz       = 0;
+-	fe->ops.info.frequency_min_hz       = 1 * MHz;
+-	fe->ops.info.frequency_max_hz       = 2 * MHz;
 -	fe->ops.info.frequency_stepsize_hz  = 0;
 -	fe->ops.info.frequency_tolerance_hz = 0;
-+	fe->ops.info.frequency_min          = 0;
-+	fe->ops.info.frequency_max          = 0;
++	fe->ops.info.frequency_min          = 1 * MHz;
++	fe->ops.info.frequency_max          = 2 * MHz;
 +	fe->ops.info.frequency_stepsize     = 0;
 +	fe->ops.info.frequency_tolerance    = 0;
  	fe->ops.info.symbol_rate_min        = 0;
@@ -177,7 +181,7 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
  
  void dvb_proxyfe_set_delsys_info(struct dvb_frontend *fe)
  {
-@@ -315,20 +319,20 @@
+@@ -315,44 +323,44 @@
  	fe->ops.delsys[0] = SYS_DVBT;
  	fe->ops.delsys[1] = SYS_DVBT2;
  	fe->ops.delsys[2] = SYS_DVBC_ANNEX_A;
@@ -202,10 +206,18 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
  			FE_CAN_FEC_AUTO | FE_CAN_QAM_16 | FE_CAN_QAM_32 | FE_CAN_QAM_64 | FE_CAN_QAM_128 | FE_CAN_QAM_256 | 
  			FE_CAN_QAM_AUTO | FE_CAN_8VSB | FE_CAN_16VSB | FE_CAN_TRANSMISSION_MODE_AUTO |
  			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO | FE_CAN_FEC_AUTO |
-@@ -340,17 +344,17 @@
+ 			FE_CAN_INVERSION_AUTO | FE_CAN_2G_MODULATION | FE_CAN_TURBO_FEC | FE_CAN_MULTISTREAM;
+ 
+ }
+ 
+ static struct dvb_frontend_ops dvb_proxyfe_ops = {
  	.delsys = { SYS_TURBO },
  	.info = {
  		.name			= "vTuner proxyFE DVB-Multi",
+-		.frequency_min_hz	= 1 * MHz,
+-		.frequency_max_hz	= 2 * MHz
++		.frequency_min   	= 1 * MHz,
++		.frequency_max  	= 2 * MHz
  	},
  
  	.release = dvb_proxyfe_release,

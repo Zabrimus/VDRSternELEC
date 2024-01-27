@@ -9,7 +9,7 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="virtual"
 PKG_LONGDESC="Tools which can be useful"
 
-PKG_DEPENDS_TARGET+=" _triggerhappy _python-evdev _vtuner-ng _irmplircd"
+PKG_DEPENDS_TARGET+=" _triggerhappy _python-evdev _vtuner-ng _irmplircd _incus"
 
 if [ "${DISTRO}" = "CoreELEC" ]; then
 	PKG_DEPENDS_TARGET+=" _amremote"

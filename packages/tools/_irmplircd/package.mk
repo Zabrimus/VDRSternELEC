@@ -27,7 +27,8 @@ post_makeinstall_target() {
 	done
 
 	# copy _udev.rules.d folder
-	rm -rf ${INSTALL}/usr/lib/udev/rules.d
-    	mkdir -p ${INSTALL}/usr/lib/udev/rules.d
-        cp -PR ${PKG_DIR}/_udev.d/*.rules ${INSTALL}/usr/lib/udev/rules.d
+    mkdir -p ${INSTALL}/${PREFIX}/config/irmplircd/udev.rules.d
+    for i in $(ls ${PKG_DIR}/_udev.d/*); do
+    	cp ${PKG_DIR}/_udev.d/* ${INSTALL}/${PREFIX}/config/irmplircd/udev.rules.d
+	done
 }

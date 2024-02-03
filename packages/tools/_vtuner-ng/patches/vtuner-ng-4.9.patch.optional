@@ -1,6 +1,6 @@
 diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
---- a/kernel/Makefile	2024-01-26 18:49:39.000000000 +0100
-+++ b/kernel/Makefile	2024-01-26 19:39:08.510824686 +0100
+--- a/kernel/Makefile	2024-02-03 11:06:40.000000000 +0100
++++ b/kernel/Makefile	2024-02-03 11:28:57.246592945 +0100
 @@ -18,21 +18,20 @@
  
  # for external compilation
@@ -25,9 +25,9 @@ diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
  	rm -f *.mod
  	rm -f .*.cmd
 diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
---- a/kernel/vtunerc_ctrldev.c	2024-01-26 18:49:39.000000000 +0100
-+++ b/kernel/vtunerc_ctrldev.c	2024-01-26 19:39:08.514825894 +0100
-@@ -19,23 +19,27 @@
+--- a/kernel/vtunerc_ctrldev.c	2024-02-03 11:06:40.000000000 +0100
++++ b/kernel/vtunerc_ctrldev.c	2024-02-03 11:52:23.745324521 +0100
+@@ -19,23 +19,36 @@
  #include <linux/module.h>
  #include <linux/fs.h>
  #include <linux/delay.h>
@@ -48,17 +48,26 @@ diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
 +#define FE_NONE 0
 +#endif
 +
++#ifndef EPOLLIN
++#define EPOLLIN POLLIN
++#endif
++
++#ifndef EPOLLRDNORM
++#define EPOLLRDNORM POLLRDNORM
++#endif
++
++
  static ssize_t vtunerc_ctrldev_write(struct file *filp, const char *buff, size_t len, loff_t *off)
  {
  	struct vtunerc_ctx *ctx = filp->private_data;
  	struct dvb_demux *demux = &ctx->demux;
- 	int tailsize = len % 188;
+ 	struct dmx_section_feed *sec;
  	unsigned short pid;
- 	int i, idx, cc, offs, pf, pesh;
+ 	int tailsize, i, cc, idx, offs, pf, pesh;
  	bool sendfiller, pusi;
 diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
---- a/kernel/vtunerc_main.c	2024-01-26 18:49:39.000000000 +0100
-+++ b/kernel/vtunerc_main.c	2024-01-26 19:39:08.514825894 +0100
+--- a/kernel/vtunerc_main.c	2024-02-03 11:06:40.000000000 +0100
++++ b/kernel/vtunerc_main.c	2024-02-03 11:52:19.329718477 +0100
 @@ -20,22 +20,22 @@
  #include <linux/proc_fs.h>
  #include <linux/init.h>
@@ -88,9 +97,28 @@ diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
  #define DRIVER_NAME	"vTuner proxy"
  
  #define VTUNERC_PROC_FILENAME	"vtunerc%i"
+@@ -92,17 +92,17 @@
+ 					// stop running section feed
+ 					entry->feed.sec.is_filtering = 0;
+ 					entry->feed.sec.secbuf = entry->feed.sec.secbuf_base;
+ 					entry->feed.sec.secbufp = entry->feed.sec.seclen = 0;
+ 					entry->feed.sec.tsfeedp = 0;
+ 					entry->state = DMX_STATE_READY;
+ 				}
+ 				entry->pusi_seen = 0;
+-				entry->buffer_flags = 0;
++				//entry->buffer_flags = 0;
+ 				ctx->feedinfo[entry->index].id = -1;
+ 				ctx->feedinfo[entry->index].subid = -1;
+ 			}
+ 		}
+ 	}
+ 
+ 	// add standard pids
+ 	x=0;
 diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
---- a/kernel/vtunerc_priv.h	2024-01-26 18:49:39.000000000 +0100
-+++ b/kernel/vtunerc_priv.h	2024-01-26 19:39:08.514825894 +0100
+--- a/kernel/vtunerc_priv.h	2024-02-03 11:06:40.000000000 +0100
++++ b/kernel/vtunerc_priv.h	2024-02-03 11:28:57.250592782 +0100
 @@ -18,28 +18,24 @@
  #define _VTUNERC_PRIV_H
  
@@ -127,8 +155,8 @@ diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
  	int tscheck;
  	int devices;
 diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
---- a/kernel/vtunerc_proxyfe.c	2024-01-26 18:49:39.000000000 +0100
-+++ b/kernel/vtunerc_proxyfe.c	2024-01-26 19:43:45.062115842 +0100
+--- a/kernel/vtunerc_proxyfe.c	2024-02-03 11:06:40.000000000 +0100
++++ b/kernel/vtunerc_proxyfe.c	2024-02-03 11:28:57.250592782 +0100
 @@ -16,17 +16,25 @@
  
  #include <linux/module.h>
@@ -156,7 +184,7 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
   #error ========================================================================
  #endif
  
-@@ -294,20 +302,20 @@
+@@ -295,20 +303,20 @@
  
  	return fe;
  }
@@ -181,7 +209,7 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
  
  void dvb_proxyfe_set_delsys_info(struct dvb_frontend *fe)
  {
-@@ -315,44 +323,44 @@
+@@ -316,44 +324,44 @@
  	fe->ops.delsys[0] = SYS_DVBT;
  	fe->ops.delsys[1] = SYS_DVBT2;
  	fe->ops.delsys[2] = SYS_DVBC_ANNEX_A;

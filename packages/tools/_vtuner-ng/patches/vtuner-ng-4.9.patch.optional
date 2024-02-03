@@ -1,0 +1,235 @@
+diff -ru8bBw a/kernel/Makefile b/kernel/Makefile
+--- a/kernel/Makefile	2024-01-26 18:49:39.000000000 +0100
++++ b/kernel/Makefile	2024-01-26 19:39:08.510824686 +0100
+@@ -18,21 +18,20 @@
+ 
+ # for external compilation
+ ifeq ($(shell make -sC /usr/src/linux kernelversion 2> /dev/null),)
+        KVER := $(shell uname -r)
+ else
+        KVER := $(shell make -sC /usr/src/linux kernelversion)
+ endif
+ 
+-KDIR := /lib/modules/$(KVER)
+ PWD := $(shell pwd)
+ 
+ default:
+-	$(MAKE) -C $(KDIR)/build M=$(PWD) modules
++	$(MAKE) -C $(KDIR)/build modules
+ 
+ clean:
+ 	rm -f *.a
+ 	rm -f *.o
+ 	rm -f *.ko
+ 	rm -f *.mod.c
+ 	rm -f *.mod
+ 	rm -f .*.cmd
+diff -ru8bBw a/kernel/vtunerc_ctrldev.c b/kernel/vtunerc_ctrldev.c
+--- a/kernel/vtunerc_ctrldev.c	2024-01-26 18:49:39.000000000 +0100
++++ b/kernel/vtunerc_ctrldev.c	2024-01-26 19:39:08.514825894 +0100
+@@ -19,23 +19,27 @@
+ #include <linux/module.h>
+ #include <linux/fs.h>
+ #include <linux/delay.h>
+ #include <linux/time.h>
+ #include <linux/poll.h>
+ #include <linux/dvb/frontend.h>
+ #include "vtunerc_priv.h"
+ 
+-#define VTUNERC_CTRLDEV_MAJOR	266
++#define VTUNERC_CTRLDEV_MAJOR	267
+ #define VTUNERC_CTRLDEV_NAME	"vtunerc"
+ 
+ #define VTUNER_MSG_LEN (sizeof(struct vtuner_message))
+ #define VTUNER_SIG_LEN (sizeof(struct vtuner_signal))
+ #define VTUNER_DELSYS_LEN (sizeof(struct vtuner_delsys))
+ 
++#ifndef FE_NONE
++#define FE_NONE 0
++#endif
++
+ static ssize_t vtunerc_ctrldev_write(struct file *filp, const char *buff, size_t len, loff_t *off)
+ {
+ 	struct vtunerc_ctx *ctx = filp->private_data;
+ 	struct dvb_demux *demux = &ctx->demux;
+ 	int tailsize = len % 188;
+ 	unsigned short pid;
+ 	int i, idx, cc, offs, pf, pesh;
+ 	bool sendfiller, pusi;
+diff -ru8bBw a/kernel/vtunerc_main.c b/kernel/vtunerc_main.c
+--- a/kernel/vtunerc_main.c	2024-01-26 18:49:39.000000000 +0100
++++ b/kernel/vtunerc_main.c	2024-01-26 19:39:08.514825894 +0100
+@@ -20,22 +20,22 @@
+ #include <linux/proc_fs.h>
+ #include <linux/init.h>
+ #include <linux/i2c.h>
+ #include <asm/uaccess.h>
+ #include <linux/delay.h>
+ #include <linux/seq_file.h>
+ #include "vtunerc_priv.h"
+ 
+-#include <media/demux.h>
+-#include <media/dmxdev.h>
+-#include <media/dvb_demux.h>
+-#include <media/dvb_frontend.h>
+-#include <media/dvb_net.h>
+-#include <media/dvbdev.h>
++#include "demux.h"
++#include "dmxdev.h"
++#include "dvb_demux.h"
++#include "dvb_frontend.h"
++#include "dvb_net.h"
++#include "dvbdev.h"
+ 
+ #define VTUNERC_MODULE_VERSION "2.0"
+ 
+ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
+ 
+ #define DRIVER_NAME	"vTuner proxy"
+ 
+ #define VTUNERC_PROC_FILENAME	"vtunerc%i"
+diff -ru8bBw a/kernel/vtunerc_priv.h b/kernel/vtunerc_priv.h
+--- a/kernel/vtunerc_priv.h	2024-01-26 18:49:39.000000000 +0100
++++ b/kernel/vtunerc_priv.h	2024-01-26 19:39:08.514825894 +0100
+@@ -18,28 +18,24 @@
+ #define _VTUNERC_PRIV_H
+ 
+ #include <linux/module.h>	/* Specifically, a module */
+ #include <linux/kernel.h>	/* We're doing kernel work */
+ #include <linux/time.h>
+ #include <linux/cdev.h>
+ #include <linux/version.h>
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,16,0)
+- #error linux kernel version 4.16 or newer required
+-#endif
+-
+ #define HZ_FREQUENCIES
+ 
+-#include <media/demux.h>
+-#include <media/dmxdev.h>
+-#include <media/dvb_demux.h>
+-#include <media/dvb_frontend.h>
+-#include <media/dvb_net.h>
+-#include <media/dvbdev.h>
++#include "demux.h"
++#include "dmxdev.h"
++#include "dvb_demux.h"
++#include "dvb_frontend.h"
++#include "dvb_net.h"
++#include "dvbdev.h"
+ 
+ #include "vtuner.h"
+ 
+ struct vtunerc_config {
+ 
+ 	int debug;
+ 	int tscheck;
+ 	int devices;
+diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
+--- a/kernel/vtunerc_proxyfe.c	2024-01-26 18:49:39.000000000 +0100
++++ b/kernel/vtunerc_proxyfe.c	2024-01-26 19:43:45.062115842 +0100
+@@ -16,17 +16,25 @@
+ 
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/string.h>
+ #include <linux/slab.h>
+ 
+ #include "vtunerc_priv.h"
+ 
+-#include <media/dvb_frontend.h>
++#include "dvb_frontend.h"
++
++#ifndef FE_NONE
++#define FE_NONE 0
++#endif
++
++#ifndef MHz
++#define MHz 1000000
++#endif
+ 
+ #if (DVB_API_VERSION << 8 | DVB_API_VERSION_MINOR) < 0x0505
+  #error ========================================================================
+  #error Version 5.5 or newer of DVB API is required (see at linux/dvb/version.h)
+  #error You can find it in kernel version >= 3.3.0
+  #error ========================================================================
+ #endif
+ 
+@@ -294,20 +302,20 @@
+ 
+ 	return fe;
+ }
+ 
+ void dvb_proxyfe_clear_delsys_info(struct dvb_frontend *fe)
+ {
+ 	memset(&fe->ops.delsys,0,sizeof(u8)*MAX_DELSYS);
+ 	fe->ops.delsys[0] = SYS_TURBO;
+-	fe->ops.info.frequency_min_hz       = 1 * MHz;
+-	fe->ops.info.frequency_max_hz       = 2 * MHz;
+-	fe->ops.info.frequency_stepsize_hz  = 0;
+-	fe->ops.info.frequency_tolerance_hz = 0;
++	fe->ops.info.frequency_min          = 1 * MHz;
++	fe->ops.info.frequency_max          = 2 * MHz;
++	fe->ops.info.frequency_stepsize     = 0;
++	fe->ops.info.frequency_tolerance    = 0;
+ 	fe->ops.info.symbol_rate_min        = 0;
+ 	fe->ops.info.symbol_rate_max        = 0;
+ 
+ 	fe->ops.info.caps                   = 0;
+ }
+ 
+ void dvb_proxyfe_set_delsys_info(struct dvb_frontend *fe)
+ {
+@@ -315,44 +323,44 @@
+ 	fe->ops.delsys[0] = SYS_DVBT;
+ 	fe->ops.delsys[1] = SYS_DVBT2;
+ 	fe->ops.delsys[2] = SYS_DVBC_ANNEX_A;
+ 	fe->ops.delsys[3] = SYS_DVBC_ANNEX_B;
+ 	fe->ops.delsys[4] = SYS_DVBC_ANNEX_C;
+ 	fe->ops.delsys[5] = SYS_DVBS;
+ 	fe->ops.delsys[6] = SYS_DVBS2;
+ 
+-	fe->ops.info.frequency_min_hz       = 51 * MHz;
+-	fe->ops.info.frequency_max_hz       = 2150 * MHz;
+-	fe->ops.info.frequency_stepsize_hz  = 62.5 * kHz;
+-	fe->ops.info.frequency_tolerance_hz = 29500 * kHz;
++	fe->ops.info.frequency_min          = 51000000;
++	fe->ops.info.frequency_max          = 2150000000;
++	fe->ops.info.frequency_stepsize     = 62500;
++	fe->ops.info.frequency_tolerance    = 29500;
+ 	fe->ops.info.symbol_rate_min        = 450000;
+ 	fe->ops.info.symbol_rate_max        = 45000000;
+ 
+ 	fe->ops.info.caps = FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 | FE_CAN_FEC_4_5 |
+ 			FE_CAN_FEC_5_6 | FE_CAN_FEC_6_7 | FE_CAN_FEC_7_8 | FE_CAN_FEC_8_9 | FE_CAN_QPSK | FE_CAN_RECOVER |
+ 			FE_CAN_FEC_AUTO | FE_CAN_QAM_16 | FE_CAN_QAM_32 | FE_CAN_QAM_64 | FE_CAN_QAM_128 | FE_CAN_QAM_256 | 
+ 			FE_CAN_QAM_AUTO | FE_CAN_8VSB | FE_CAN_16VSB | FE_CAN_TRANSMISSION_MODE_AUTO |
+ 			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO | FE_CAN_FEC_AUTO |
+ 			FE_CAN_INVERSION_AUTO | FE_CAN_2G_MODULATION | FE_CAN_TURBO_FEC | FE_CAN_MULTISTREAM;
+ 
+ }
+ 
+ static struct dvb_frontend_ops dvb_proxyfe_ops = {
+ 	.delsys = { SYS_TURBO },
+ 	.info = {
+ 		.name			= "vTuner proxyFE DVB-Multi",
+-		.frequency_min_hz	= 1 * MHz,
+-		.frequency_max_hz	= 2 * MHz
++		.frequency_min   	= 1 * MHz,
++		.frequency_max  	= 2 * MHz
+ 	},
+ 
+ 	.release = dvb_proxyfe_release,
+ 
+ 	.init = dvb_proxyfe_init,
+-	.detach = dvb_proxyfe_detach,
++	//.detach = dvb_proxyfe_detach,
+ 	.sleep = dvb_proxyfe_sleep,
+ 
+ 	.get_frontend_algo = dvb_proxyfe_get_frontend_algo,
+ 	.tune = dvb_proxyfe_tune,
+ 
+ 	.read_status = dvb_proxyfe_read_status,
+         .read_ber = dvb_proxyfe_read_ber,
+         .read_signal_strength = dvb_proxyfe_read_signal_strength,

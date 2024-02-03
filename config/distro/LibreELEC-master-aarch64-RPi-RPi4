@@ -1,0 +1,15 @@
+DISTRO=LibreELEC.tv
+SHA=${LIBREELEC12}
+PATCHDIR=libreelec-12
+
+# Use project variant
+VARIANT=
+
+# Build settings
+PROJECT=RPi
+DEVICE=RPi4
+ARCH=aarch64
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhddevice-drm-gles
+VDR_INPUTDEVICE=streamdev-client

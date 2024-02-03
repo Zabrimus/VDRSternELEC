@@ -189,6 +189,12 @@ build_addons() {
         ARCH="$ARCH" \
         BUILD_SUFFIX="$BUILD_SUFFIX" \
         scripts/create_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
+
+      PROJECT="$PROJECT" \
+        DEVICE="$DEVICE" \
+        ARCH="$ARCH" \
+        BUILD_SUFFIX="$BUILD_SUFFIX" \
+        scripts/install_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
     fi
   done
 }
@@ -288,13 +294,13 @@ while [[ "$#" -gt 0 ]]; do
         -extra) shift; read_extra $1 ;;
         -addon) shift; read_addon $1 ;;
         -subdevice) shift; SUB_DEVICE=$1 ;;
-        -addononly) shift; ADDON_ONLY=true ;;
-        -patchonly) shift; PATCH_ONLY=true ;;
+        -addononly) ADDON_ONLY=true ;;
+        -patchonly) PATCH_ONLY=true ;;
         -package) shift; PACKAGE_ONLY=$1 ;;
         -release) shift; RELEASE_SERVER=$1; DORELEASE=true ;;
-        -cef) shift; CEF_BINARIES=true ;;
-        -verbose) shift; VERBOSEBUILD=true ;;
-        -help) shift; usage ;;
+        -cef) CEF_BINARIES=true ;;
+        -verbose) VERBOSEBUILD=true ;;
+        -help) usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac
     shift || continue
@@ -346,7 +352,8 @@ if [ ! "${PATCH_ONLY}" = "true" ]; then
           for i in `find $DISTRO/target -name '*.tar' 2>/dev/null` \
                    `find $DISTRO/target -name '*.tar.sha256' 2>/dev/null` \
                    `find $DISTRO/target -name '*.img.gz' 2>/dev/null` \
-                   `find $DISTRO/target -name '*.img.gz.sha256' 2>/dev/null`; do
+                   `find $DISTRO/target -name '*.img.gz.sha256' 2>/dev/null` \
+                   `find $DISTRO/target/addons -name '*.zip' 2>/dev/null`; do
               mv -f $i $RELEASEDIR
           done
           python3 $RELEASESCRIPTDIR/releases.py -i $RELEASEDIR -u $RELEASE_SERVER -o $RELEASEDIR

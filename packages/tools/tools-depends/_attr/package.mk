@@ -13,14 +13,10 @@ PKG_LONGDESC="Commands for Manipulating Filesystem Extended Attributes"
 PKG_TOOLCHAIN="configure"
 PKG_BUILD_FLAGS="+speed"
 
-PKG_CONFIGURE_OPTS_TARGET="--enable-shared \
+PKG_CONFIGURE_OPTS_TARGET="--disable-shared \
                            --with-sysroot=${SYSROOT_PREFIX} \
                            "
 
 pre_configure_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||")"
-}
-
-post_makeinstall_target() {
-	PREFIX="/usr/local"
 }

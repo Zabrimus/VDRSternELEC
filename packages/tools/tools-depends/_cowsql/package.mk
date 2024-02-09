@@ -13,7 +13,7 @@ PKG_LONGDESC="Powerful system container and virtual machine manager"
 PKG_TOOLCHAIN="configure"
 PKG_BUILD_FLAGS="+speed"
 
-PKG_CONFIGURE_OPTS_TARGET="--enable-shared \
+PKG_CONFIGURE_OPTS_TARGET="--disable-shared \
                            --with-sysroot=${SYSROOT_PREFIX} \
                            "
 
@@ -22,8 +22,4 @@ pre_configure_target() {
   export CFLAGS=$(echo "${CFLAGS} -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-function -Wno-maybe-uninitialized -Wno-unused-parameter")
 
   autoreconf -i
-}
-
-post_makeinstall_target() {
-	PREFIX="/usr/local"
 }

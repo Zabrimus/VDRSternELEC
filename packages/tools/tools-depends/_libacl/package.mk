@@ -13,7 +13,7 @@ PKG_LONGDESC="Commands for Manipulating POSIX Access Control Lists"
 PKG_TOOLCHAIN="configure"
 PKG_BUILD_FLAGS="+speed"
 
-PKG_CONFIGURE_OPTS_TARGET="--enable-shared \
+PKG_CONFIGURE_OPTS_TARGET="--disable-shared \
                            --with-sysroot=${SYSROOT_PREFIX} \
                            "
 

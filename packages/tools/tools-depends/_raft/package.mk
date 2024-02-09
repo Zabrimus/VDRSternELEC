@@ -13,7 +13,7 @@ PKG_LONGDESC="Powerful system container and virtual machine manager"
 PKG_TOOLCHAIN="configure"
 PKG_BUILD_FLAGS="+speed"
 
-PKG_CONFIGURE_OPTS_TARGET="--enable-shared \
+PKG_CONFIGURE_OPTS_TARGET="--disable-shared \
                            --with-sysroot=${SYSROOT_PREFIX} \
                            --prefix=/usr/local \
 						   --bindir=/usr/local/bin \
@@ -26,8 +26,4 @@ pre_configure_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
 
   autoreconf -i
-}
-
-post_makeinstall_target() {
-	PREFIX="/usr/local"
 }

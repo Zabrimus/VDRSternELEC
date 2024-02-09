@@ -15,17 +15,10 @@ PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-shared \
                            --with-sysroot=${SYSROOT_PREFIX} \
-                           --prefix=/usr/local \
-						   --bindir=/usr/local/bin \
-                           --libdir=/usr/local/lib \
-                           --libexecdir=/usr/local/bin \
-                           --sbindir=/usr/local/sbin \
                            "
 
 pre_configure_target() {
-  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-  export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
-
+  export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||")"
   export CFLAGS=$(echo "${CFLAGS} -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-function -Wno-maybe-uninitialized -Wno-unused-parameter")
 
   autoreconf -i

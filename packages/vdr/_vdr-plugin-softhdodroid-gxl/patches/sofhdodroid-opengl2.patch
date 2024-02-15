@@ -1,0 +1,349 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2024-02-05 13:47:26.000000000 +0100
++++ b/Makefile	2024-02-08 09:41:18.128551372 +0100
+@@ -26,17 +26,17 @@
+ ifneq "$(MAKECMDGOALS)" "clean"
+ ifneq "$(MAKECMDGOALS)" "indent"
+ 
+ 
+ endif # MAKECMDGOALS!=indent
+ endif # MAKECMDGOALS!=clean
+ #--------------------------
+ 
+-PLUGIN = softhdodroid
++PLUGIN = softhdodroid-gxl
+ 
+ CONFIG += -DHAVE_GL			# needed for mpv libs
+ CONFIG += -DAV_INFO -DAV_INFO_TIME=3000	# info/debug a/v sync
+ CONFIG += -DUSE_MPEG_COMPLETE		# support only complete mpeg packets
+ CONFIG += -DUSE_VDR_SPU			# use VDR SPU decoder.
+ CONFIG += -DUSE_OPENGLOSD 
+ 
+ ### The version number of this plugin (taken from the main source file):
+diff -ru8bBw a/openglosd.cpp b/openglosd.cpp
+--- a/openglosd.cpp	2024-02-05 13:47:26.000000000 +0100
++++ b/openglosd.cpp	2024-02-07 16:09:01.157958715 +0100
+@@ -15,16 +15,18 @@
+ /// This program is distributed in the hope that it will be useful,
+ /// but WITHOUT ANY WARRANTY; without even the implied warranty of
+ /// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ /// GNU Affero General Public License for more details.
+ ///
+ /// $Id: 83cd827a8744e8c80c8adba6cb87653b0ad58c45 $
+ //////////////////////////////////////////////////////////////////////////////
+ 
++//#define GL30
++
+ #define __STL_CONFIG_H
+ #include <algorithm>
+ #include "openglosd.h"
+ 
+ 
+ //#include <GL/glew.h>
+ #define EGL_EGLEXT_PROTOTYPES
+ #define MESA_EGL_NO_X11_HEADERS
+@@ -87,17 +89,17 @@
+     col.g = ((colARGB & 0x0000FF00) >> 8) / 255.0;
+     col.b = ((colARGB & 0x000000FF)) / 255.0;
+ }
+ 
+ /****************************************************************************************
+ * cShader
+ ****************************************************************************************/
+ 
+-
++#ifdef GL30 
+ const char *glversion = "#version 300 es   ";
+ //const char *glversion = "#version 300 es ";
+ 
+ const char *rectVertexShader = "%s\n \
+ \
+ layout (location = 0) in vec2 position; \
+ out vec4 rectCol; \
+ uniform vec4 inColor; \
+@@ -222,17 +224,176 @@
+ uniform sampler2D glyphTexture; \
+ \
+ void main() \
+ {  \
+     vec4 sampled = vec4(1.0, 1.0, 1.0, texture(glyphTexture, TexCoords).r); \
+     color = textColor * sampled; \
+ } \
+ ";
++#else
++const char *rectVertexShader = 
++"#version 100 \n\
++\
++attribute vec2 position; \
++varying vec4 rectCol; \
++uniform vec4 inColor; \
++uniform mat4 projection; \
++\
++void main() \
++{ \
++    gl_Position = projection * vec4(position.x, position.y, 0.0, 1.0); \
++    rectCol = inColor; \
++} \
++";
++
++const char *rectFragmentShader = 
++"#version 100 \n\
++precision mediump float; \
++varying vec4 rectCol; \
++\
++void main() \
++{ \
++    gl_FragColor = rectCol; \
++} \
++";
+ 
++const char *textureVertexShader = 
++"#version 100 \n\
++\
++attribute vec2 position; \
++attribute vec2 texCoords; \
++\
++varying vec2 TexCoords; \
++varying vec4 alphaValue;\
++varying vec4 bColorValue;\
++\
++uniform vec4 bColor; \
++uniform mat4 projection; \
++uniform vec4 alpha; \
++\
++void main() \
++{ \
++    gl_Position = projection * vec4(position.x, position.y, 0.0, 1.0); \
++    TexCoords = texCoords; \
++    alphaValue = alpha; \
++    bColorValue = bColor; \
++} \
++";
++
++const char *textureFragmentShader = 
++"#version 100 \n\
++precision mediump float; \
++varying vec2 TexCoords; \
++varying vec4 alphaValue; \
++varying vec4 bColorValue; \
++\
++uniform sampler2D screenTexture; \
++\
++float clamp_to_border_factor (vec2 coords) \
++{ \
++    bvec2 out1 = greaterThan (coords, vec2 (1,1)); \
++    bvec2 out2 = lessThan (coords, vec2 (0,0)); \
++    bool do_clamp = (any (out1) || any (out2)); \
++    return float (!do_clamp); \
++} \
++\
++void main() \
++{ \
++    vec4 color = texture2D(screenTexture, TexCoords) * alphaValue; \
++    float f = clamp_to_border_factor (TexCoords); \
++    gl_FragColor = mix (bColorValue, color, f); \
++} \
++";
++
++const char *imageFragmentShader = 
++"#version 100 \n \
++precision mediump float; \
++varying vec2 TexCoords; \
++varying vec4 alphaValue; \
++varying vec4 bColorValue ; \
++\
++uniform sampler2D screenTexture; \
++\
++float clamp_to_border_factor (vec2 coords) \
++{ \
++    bvec2 out1 = greaterThan (coords, vec2 (1,1)); \
++    bvec2 out2 = lessThan (coords, vec2 (0,0)); \
++    bool do_clamp = (any (out1) || any (out2)); \
++    return float (!do_clamp); \
++} \
++\
++void main() \
++{ \
++    vec4 color = texture2D(screenTexture, TexCoords) * alphaValue; \
++    vec4 color_swapped = vec4(color.b, color.g, color.r, color.a); \
++    float f = clamp_to_border_factor (TexCoords); \
++    gl_FragColor = mix (bColorValue, color_swapped, f); \
++} \
++";
++
++const char *textVertexShader = 
++"#version 100 \n \
++\
++attribute vec2 position; \
++attribute vec2 texCoords; \
++\
++varying vec2 TexCoords; \
++varying vec4 textColor; \
++\
++uniform mat4 projection; \
++uniform vec4 inColor; \
++\
++void main() \
++{ \
++    gl_Position = projection * vec4(position.x, position.y, 0.0, 1.0); \
++    TexCoords = texCoords; \
++    textColor = inColor; \
++} \
++";
++
++const char *imageVertexShader = 
++"#version 100 \n \
++\
++attribute vec2 position; \
++attribute vec2 texCoords; \
++\
++varying vec2 TexCoords; \
++varying vec4 alphaValue; \
++varying vec4 bColorValue;\
++\
++uniform vec4 bColor; \
++uniform mat4 projection; \
++uniform vec4 alpha; \
++\
++void main() \
++{ \
++    gl_Position = projection * vec4(position.x, position.y, 0.0, 1.0); \
++    TexCoords = texCoords; \
++    alphaValue = alpha; \
++    bColorValue = bColor; \
++} \
++";
++
++const char *textFragmentShader = 
++"#version 100 \n \
++precision mediump float; \
++varying vec2 TexCoords; \
++varying vec4 textColor; \
++\
++uniform sampler2D glyphTexture; \
++\
++void main() \
++{  \
++    vec4 sampled = vec4(1.0, 1.0, 1.0, texture2D(glyphTexture, TexCoords).r); \
++    gl_FragColor = textColor * sampled; \
++} \
++";
++
++#endif
+ ///
+ /// GLX check error.
+ ///
+ #define GlxCheck(void)\
+ {\
+     GLenum err;\
+ \
+     if ((err = glGetError()) != GL_NO_ERROR) {\
+@@ -322,32 +483,40 @@
+ {
+     GLuint sVertex, sFragment;
+     char *buffer = (char *)malloc(1000);
+ 
+     // Vertex Shader
+     GlxCheck();
+     sVertex = glCreateShader(GL_VERTEX_SHADER);
+     GlxCheck();
++#ifdef GL30
+     sprintf(buffer, vertexCode, glversion);
+     glShaderSource(sVertex, 1, (const GLchar **)&buffer, NULL);
++#else
++    glShaderSource(sVertex, 1, (const GLchar **)&vertexCode, NULL);
++#endif
+     glCompileShader(sVertex);
+     GlxCheck();
+ 
+-    //esyslog("[softhddev]:SHADER:VERTEX %s\n",buffer);
++    //esyslog("[softhddev]:SHADER:VERTEX >%s<\n",vertexCode);
+     if (!CheckCompileErrors(sVertex)) {
+         free(buffer);
+         return false;
+     }
+     // Fragment Shader
+     sFragment = glCreateShader(GL_FRAGMENT_SHADER);
++#ifdef GL30
+     sprintf(buffer, fragmentCode, glversion);
+     glShaderSource(sFragment, 1, (const GLchar **)&buffer, NULL);
++#else
++    glShaderSource(sFragment, 1, (const GLchar **)&fragmentCode, NULL);
++#endif
+     glCompileShader(sFragment);
+-    // esyslog("[softhddev]:SHADER:FRAGMENT %s\n",fragmentCode);
++    //esyslog("[softhddev]:SHADER:FRAGMENT >%s<\n",fragmentCode);
+     if (!CheckCompileErrors(sFragment)) {
+         free(buffer);
+         return false;
+     }
+     // link Program
+     id = glCreateProgram();
+     glAttachShader(id, sVertex);
+     glAttachShader(id, sFragment);
+@@ -833,16 +1002,17 @@
+     } else if (type == vbImage) {
+         // Image VBO definition
+         sizeVertex1 = 2;
+         sizeVertex2 = 2;
+         numVertices = 6;
+         drawMode = GL_TRIANGLES;
+         shader = stImage;
+     }
++#ifdef GL30
+     glGenVertexArrays(1, &vao);
+     glGenBuffers(1, &vbo);
+     glBindVertexArray(vao);
+     glBindBuffer(GL_ARRAY_BUFFER, vbo);
+ 
+     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (sizeVertex1 + sizeVertex2) * numVertices, NULL, GL_DYNAMIC_DRAW);
+ 
+     glEnableVertexAttribArray(0);
+@@ -851,23 +1021,47 @@
+     if (sizeVertex2 > 0) {
+         glEnableVertexAttribArray(1);
+         glVertexAttribPointer(1, sizeVertex2, GL_FLOAT, GL_FALSE, (sizeVertex1 + sizeVertex2) * sizeof(GLfloat),
+             (GLvoid *) (sizeVertex1 * sizeof(GLfloat)));
+     }
+ 
+     glBindBuffer(GL_ARRAY_BUFFER, 0);
+     glBindVertexArray(0);
++#else
++    glGenBuffers(1, &vbo);
++    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+ 
++    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (sizeVertex1 + sizeVertex2) * numVertices, NULL, GL_DYNAMIC_DRAW);
++
++    glEnableVertexAttribArray(0);
++    glVertexAttribPointer(0, sizeVertex1, GL_FLOAT, GL_FALSE, (sizeVertex1 + sizeVertex2) * sizeof(GLfloat), (GLvoid*)0);
++    if (sizeVertex2 > 0) {
++        glEnableVertexAttribArray(1);
++        glVertexAttribPointer(1, sizeVertex2, GL_FLOAT, GL_FALSE, (sizeVertex1 + sizeVertex2) * sizeof(GLfloat), (GLvoid*)(sizeVertex1 * sizeof(GLfloat)));
++    }
++
++    glBindBuffer(GL_ARRAY_BUFFER, 0);
++#endif
+     return true;
+ }
+ 
+ void cOglVb::Bind(void)
+ {
++#ifdef GL30
+     glBindVertexArray(vao);
++#else
++    glBindBuffer(GL_ARRAY_BUFFER, vbo);
++    glEnableVertexAttribArray(0);
++    glVertexAttribPointer(0, sizeVertex1, GL_FLOAT, GL_FALSE, (sizeVertex1 + sizeVertex2) * sizeof(GLfloat), (GLvoid*)0);
++    if (sizeVertex2 > 0) {
++        glEnableVertexAttribArray(1);
++        glVertexAttribPointer(1, sizeVertex2, GL_FLOAT, GL_FALSE, (sizeVertex1 + sizeVertex2) * sizeof(GLfloat), (GLvoid*)(sizeVertex1 * sizeof(GLfloat)));
++    }
++#endif
+ }
+ 
+ void cOglVb::Unbind(void)
+ {
+     glBindVertexArray(0);
+ }
+ 
+ void cOglVb::ActivateShader(void)

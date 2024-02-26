@@ -1,17 +1,19 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-satip"
-PKG_VERSION="02a842f95a09a74d7eba90648c97693638007141"
-PKG_SHA256="daf3b6024274e3216345e6d48076641f5388bbc28ab4d56464470b28ea1755ef"
+PKG_VERSION="71732b07a52663a3c540226408fe61b264e94835"
+PKG_SHA256="cb508be66d05c06ab41232c09b70ae3b30cf543424f8b2b7328454827819ad17"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/rofafor/vdr-plugin-satip"
-PKG_URL="https://github.com/rofafor/vdr-plugin-satip/archive/${PKG_VERSION}.tar.gz"
+PKG_SITE="https://github.com/wirbel-at-vdr-portal/vdr-plugin-satip"
+PKG_URL="https://github.com/wirbel-at-vdr-portal/vdr-plugin-satip/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
-PKG_DEPENDS_TARGET="toolchain _vdr curl tinyxml vdr-helper"
+PKG_DEPENDS_TARGET="toolchain _vdr curl tinyxml _librepfunc vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
 PKG_LONGDESC="This is an SAT>IP plugin for the Video Disk Recorder (VDR)."
 PKG_MAKE_OPTS_TARGET="SATIP_USE_TINYXML=1"
+PKG_SOURCE_DIR="vdr-plugin-satip-${PKG_VERSION}"
+PKG_TOOLCHAIN="make"
 PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {

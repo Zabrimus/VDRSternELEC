@@ -12,7 +12,7 @@ PKG_LONGDESC="A DVB TV server application."
 PKG_DEPENDS_TARGET+=" _vdr"
 
 if [ "${VDR_OUTPUTDEVICE}" = "softhdodroid" ]; then
-   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid"
+   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid _vdr-plugin-softhdodroid-gxl"
 elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ] || [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm-gles" ]; then
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm _vdr-plugin-softhddevice-drm-gles"
 fi

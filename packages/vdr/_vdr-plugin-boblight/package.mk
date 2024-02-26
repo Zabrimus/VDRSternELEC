@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-boblight"
-PKG_VERSION="95c9ecfbdc0d73f40f09a8cc3022bf22ae6aa724"
-PKG_SHA256="c07234992c5a6f6fc2134e6d0d22eca9e7323593ad812a79b28cbaf3f1da62ce"
+PKG_VERSION="c2fed8e3559331480bbae795a4e3ca6c75d6a4c5"
+PKG_SHA256="ca7b116267762a111016b6c10a128c24a7d628ff8104a7317e0be0fff0a6b8af"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-vdrboblight"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-vdrboblight/archive/${PKG_VERSION}.zip"

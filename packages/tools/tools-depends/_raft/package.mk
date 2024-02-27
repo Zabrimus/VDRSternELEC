@@ -13,14 +13,8 @@ PKG_LONGDESC="Powerful system container and virtual machine manager"
 PKG_TOOLCHAIN="configure"
 PKG_BUILD_FLAGS="+speed"
 
-PKG_CONFIGURE_OPTS_TARGET="--disable-shared \
-                           --with-sysroot=${SYSROOT_PREFIX} \
-                           --prefix=/usr/local \
-						   --bindir=/usr/local/bin \
-                           --libdir=/usr/local/lib \
-                           --libexecdir=/usr/local/bin \
-                           --sbindir=/usr/local/sbin \
-                           "
+PKG_CONFIGURE_OPTS_TARGET="--enable-shared \
+                           --with-sysroot=${SYSROOT_PREFIX}"
 
 pre_configure_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"

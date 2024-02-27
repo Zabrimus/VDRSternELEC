@@ -13,7 +13,7 @@ PKG_LONGDESC="Powerful system container and virtual machine manager"
 PKG_TOOLCHAIN="configure"
 PKG_BUILD_FLAGS="+speed"
 
-PKG_CONFIGURE_OPTS_TARGET="--disable-shared \
+PKG_CONFIGURE_OPTS_TARGET="--enable-shared \
                            --with-sysroot=${SYSROOT_PREFIX} \
                            "
 

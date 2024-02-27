@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_incus"
-PKG_VERSION="0.5.1"
-PKG_SHA256="99621ccf3f9edc10203ec29290f6686fcfd5e71be8fa9155dec051d3ff00d9f1"
+PKG_VERSION="0.6.0"
+PKG_SHA256="9bbce9ae95b40be4bd11116a97f422ecd2adf2915a2c0b6828fa34435de756d2"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/lxc/incus"
-PKG_URL="https://github.com/lxc/incus/releases/download/v${PKG_VERSION}/incus-${PKG_VERSION}.tar.xz"
+PKG_URL="https://github.com/lxc/incus/archive/refs/tags/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain go:host _cowsql _libacl _lxc"
 PKG_SOURCE_DIR="incus-${PKG_VERSION}"
 PKG_BRANCH="master"
@@ -20,7 +20,7 @@ pre_configure_target() {
 
 make_target() {
 	go_configure
-	GO=${GOLANG} make  #SHELL='sh -x'
+	GO=${GOLANG} make  # SHELL='sh -x'
 }
 
 makeinstall_target() {

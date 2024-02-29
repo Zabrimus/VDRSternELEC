@@ -31,6 +31,7 @@ Options:
 -patchonly         : Only apply patches and build nothing
 -package <name>    : Build <name> as a single package
 -release <server>  : Create release for update, accessible at <server>
+-releaseonly       : Build only the release tar and not all images
 -cef               : Include cef binaries into release, otherwise deploy it as an external package
 -verbose           : Enable verbose outputs while building LE/CE packages
 -help              : Show this help
@@ -210,7 +211,12 @@ build() {
       RELEASE_STRING="${RELEASE_STRING} and release it to ${RELEASE_SERVER}"
     fi
     echo "${RELEASE_STRING}"
-    make image
+
+    if [ "$RELEASE_ONLY" = "true" ]; then
+        make release
+    else
+        make image
+    fi
   fi
 }
 
@@ -298,6 +304,7 @@ while [[ "$#" -gt 0 ]]; do
         -patchonly) PATCH_ONLY=true ;;
         -package) shift; PACKAGE_ONLY=$1 ;;
         -release) shift; RELEASE_SERVER=$1; DORELEASE=true ;;
+        -releaseonly) RELEASE_ONLY=true ;;
         -cef) CEF_BINARIES=true ;;
         -verbose) VERBOSEBUILD=true ;;
         -help) usage ;;

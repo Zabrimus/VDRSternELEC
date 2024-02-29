@@ -116,6 +116,7 @@ Options:
 -patchonly         : Only apply patches and build nothing
 -package <name>    : Build <name> as a single package
 -release <server>  : Create release for update, accessible at <server>
+-releaseonly       : Build only the release tar and not all images
 -cef               : Include cef binaries into release, otherwise deploy it as an external package
 -verbose           : Enable verbose outputs while building LE/CE packages
 -help              : Show this help

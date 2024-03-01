@@ -10,7 +10,7 @@ index 2b13eaf890..3fd9acec65 100644
 +  sed -e 's/# CONFIG_MEDIA_ANALOG_TV_SUPPORT is not set/CONFIG_MEDIA_ANALOG_TV_SUPPORT=y/g' -i $PKG_BUILD/v4l/.config
 +  sed -e 's/# CONFIG_VIDEO_PVRUSB2_SYSFS is not set/CONFIG_VIDEO_PVRUSB2_SYSFS=y/g' -i $PKG_BUILD/v4l/.config
 +  sed -e 's/# CONFIG_VIDEO_PVRUSB2 is not set/CONFIG_VIDEO_PVRUSB2=m/g' -i $PKG_BUILD/v4l/.config
-+  sed -e 's/# CONFIG_VIDEO_PVRUSB2_DVB is not set/CONFIG_VIDEO_PVRUSB2_DVB=y/g' -i $PKG_BUILD/v4l/.config
++  sed -e 's/# CONFIG_VIDEO_PVRUSB2_DVB is not set/# CONFIG_VIDEO_PVRUSB2_DVB is not set/g' -i $PKG_BUILD/v4l/.config
 +  sed -e 's/# CONFIG_VIDEO_HDPVR is not set/CONFIG_VIDEO_HDPVR=y/g' -i $PKG_BUILD/v4l/.config
 +
    kernel_make VER=$KERNEL_VER SRCDIR=$(kernel_path)

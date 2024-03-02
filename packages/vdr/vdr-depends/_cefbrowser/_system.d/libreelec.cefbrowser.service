@@ -2,14 +2,14 @@
 Description=cefbrowser
 Requires=network-online.target
 After=network-online.target
-StartLimitIntervalSec=400
-StartLimitBurst=5
+StartLimitIntervalSec=3
+StartLimitBurst=10
 
 [Service]
 WorkingDirectory=/storage/cefbrowser/data
 ExecStart=/usr/local/bin/cefbrowser --config /storage/.config/vdropt/sockets.ini --ozone-platform=headless --locales-dir-path=/storage/cef/locales --log-file=/storage/.cache/cefbrowser/cefbrowser.log --cachePath=/storage/.cache/cefbrowser --profilePath=/storage/.cache/cefbrowser --staticPath=/storage/cefbrowser/data
 Restart=always
-RestartSec=30
+RestartSec=3
 Environment=LD_LIBRARY_PATH="/storage/cef"
 Environment=BROWSER_DB_PATH="/storage/.cache/cefbrowser"
 StartLimitInterval=0

@@ -178,6 +178,18 @@ build_addons() {
   # delete old build artifacts
   rm -Rf target/*
 
+  # prepare VDR*ELEC addons (link VDR*ELEC folder to official folder)
+  for a in $(ls ../addons); do
+      if [ ! "$a" = "addon-depends" ]; then
+          cp -a ../addons/$a packages/addons/
+      fi
+  done
+
+  # prepare VDR*ELEC addons (link VDR*ELEC folder to official folder)
+  for a in $(ls ../addons/addon-depends); do
+      cp -a ../addons/addon-depends/$a packages/addons/addon-depends
+  done
+
   # addons must be build before the final build is started
   for i in $(env | grep ^ADDON_); do
     TMP=$(echo $i | cut -d "=" -f 1)

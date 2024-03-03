@@ -32,5 +32,8 @@ sundtek-mediatv:ADDON_SUNDTEK_MEDIATV
 # Install addon system-tools
 system-tools:ADDON_SYSTEM_TOOLS
 
+# Install addon incus
+incus:ADDON_INCUS
+
 # Install locale addon
 locale:ADDON_LOCALE

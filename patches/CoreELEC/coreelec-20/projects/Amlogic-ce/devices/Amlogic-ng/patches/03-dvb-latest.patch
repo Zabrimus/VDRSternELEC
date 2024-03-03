@@ -1,12 +1,8 @@
-diff -ru8bBwd a/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk b/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk
---- a/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk	2023-03-12 19:02:25.165491656 +0100
-+++ b/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk	2023-03-12 19:03:52.696519969 +0100
-@@ -50,14 +50,20 @@
-     echo "obj-y += dvb/" >> "${PKG_BUILD}/linux/drivers/media/platform/meson/Makefile"
-     echo 'source "drivers/media/platform/meson/dvb/Kconfig"' >>  "${PKG_BUILD}/linux/drivers/media/platform/Kconfig"
-     sed -e 's/ && RC_CORE//g' -i ${PKG_BUILD}/linux/drivers/media/usb/dvb-usb/Kconfig
-   fi
- 
+diff --git a/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk b/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk
+index 2b13eaf890..3fd9acec65 100644
+--- a/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk
++++ b/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk
+@@ -55,6 +55,13 @@ make_target() {
    # make config all
    kernel_make VER=$KERNEL_VER SRCDIR=$(kernel_path) allyesconfig
  
@@ -14,11 +10,9 @@ diff -ru8bBwd a/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk
 +  sed -e 's/# CONFIG_MEDIA_ANALOG_TV_SUPPORT is not set/CONFIG_MEDIA_ANALOG_TV_SUPPORT=y/g' -i $PKG_BUILD/v4l/.config
 +  sed -e 's/# CONFIG_VIDEO_PVRUSB2_SYSFS is not set/CONFIG_VIDEO_PVRUSB2_SYSFS=y/g' -i $PKG_BUILD/v4l/.config
 +  sed -e 's/# CONFIG_VIDEO_PVRUSB2 is not set/CONFIG_VIDEO_PVRUSB2=m/g' -i $PKG_BUILD/v4l/.config
-+  sed -e 's/# CONFIG_VIDEO_PVRUSB2_DVB is not set/CONFIG_VIDEO_PVRUSB2_DVB=y/g' -i $PKG_BUILD/v4l/.config
++  sed -e 's/# CONFIG_VIDEO_PVRUSB2_DVB is not set/# CONFIG_VIDEO_PVRUSB2_DVB is not set/g' -i $PKG_BUILD/v4l/.config
++  sed -e 's/# CONFIG_VIDEO_HDPVR is not set/CONFIG_VIDEO_HDPVR=m/g' -i $PKG_BUILD/v4l/.config
 +
    kernel_make VER=$KERNEL_VER SRCDIR=$(kernel_path)
  }
  
- makeinstall_target() {
-   install_driver_addon_files "${PKG_BUILD}/v4l/"
- }

@@ -4,22 +4,7 @@ Date: Wed, 26 Jul 2023 11:05:54 +0200
 Subject: [PATCH] build ffmpeg programs
 
 ---
- packages/addons/addon-depends/opus/package.mk |  2 +-
- packages/audio/libvorbis/package.mk           |  2 +-
- packages/multimedia/ffmpeg/package.mk         | 20 +++++++++++++++----
- 3 files changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/packages/addons/addon-depends/opus/package.mk b/packages/addons/addon-depends/opus/package.mk
-index 83bb5e61af..d635265b71 100644
---- a/packages/addons/addon-depends/opus/package.mk
-+++ b/packages/addons/addon-depends/opus/package.mk
-@@ -19,5 +19,5 @@ else
- fi
- 
- PKG_CONFIGURE_OPTS_TARGET="--enable-static \
--                           --disable-shared \
-+                           --enable-shared \
-                            ${PKG_FIXED_POINT}"
 diff --git a/packages/audio/libvorbis/package.mk b/packages/audio/libvorbis/package.mk
 index 2b72481931..72d6a15f67 100644
 --- a/packages/audio/libvorbis/package.mk

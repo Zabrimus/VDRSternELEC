@@ -1,14 +1,3 @@
-diff --git a/packages/addons/addon-depends/opus/package.mk b/packages/addons/addon-depends/opus/package.mk
-index d37e97f3d4..3f29e35bba 100644
---- a/packages/addons/addon-depends/opus/package.mk
-+++ b/packages/addons/addon-depends/opus/package.mk
-@@ -19,5 +19,5 @@ else
- fi
- 
- PKG_CONFIGURE_OPTS_TARGET="--enable-static \
--                           --disable-shared \
-+                           --enable-shared \
-                            ${PKG_FIXED_POINT}"
 diff --git a/packages/audio/libvorbis/package.mk b/packages/audio/libvorbis/package.mk
 index 2b72481931..72d6a15f67 100644
 --- a/packages/audio/libvorbis/package.mk

@@ -179,15 +179,15 @@ build_addons() {
   rm -Rf target/*
 
   # prepare VDR*ELEC addons (link VDR*ELEC folder to official folder)
-  for a in $(ls ../addons); do
+  for a in $(ls ../packages/addons); do
       if [ ! "$a" = "addon-depends" ]; then
-          cp -a ../addons/$a packages/addons/
+          cp -a ../packages/addons/$a packages/addons/
       fi
   done
 
   # prepare VDR*ELEC addons (link VDR*ELEC folder to official folder)
-  for a in $(ls ../addons/addon-depends); do
-      cp -a ../addons/addon-depends/$a packages/addons/addon-depends
+  for a in $(ls ../packages/addons/addon-depends); do
+      cp -a ../packages/addons/addon-depends/$a packages/addons/addon-depends
   done
 
   # addons must be build before the final build is started

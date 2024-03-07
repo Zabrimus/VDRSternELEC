@@ -2,8 +2,7 @@
 
 PKG_NAME="incus"
 PKG_VERSION="0.6.0"
-PKG_VERSION_NUMBER="0.6.0"
-PKG_REV="1"
+PKG_ADDON_VERSION="0.6.0-1"
 PKG_SHA256="9bbce9ae95b40be4bd11116a97f422ecd2adf2915a2c0b6828fa34435de756d2"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/lxc/incus"
@@ -48,8 +47,4 @@ addon() {
   		 $(get_install_dir _lxc)/usr/lib/liblxc.so* \
   		 $(get_install_dir _raft)/usr/lib/libraft.so* \
          ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
-
-  # TODO: Configuration files
-
-  echo "==> ADDON"
 }

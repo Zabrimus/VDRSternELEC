@@ -35,8 +35,21 @@ makeinstall_target() {
 }
 
 addon() {
+  go_configure
+
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
-  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
+
+  # copy binaries
+  cp -P $(get_build_dir incus)/.gopath/bin/linux_${TARGET_ARCH}/* ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+
+  # copy libs
+  cp -PL $(get_install_dir _cowsql)/usr/lib/libcowsql.so* \
+  		 $(get_install_dir _lxc)/usr/lib/liblxc.so* \
+  		 $(get_install_dir _raft)/usr/lib/libraft.so* \
+         ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
+
+  # TODO: Configuration files
 
   echo "==> ADDON"
 }

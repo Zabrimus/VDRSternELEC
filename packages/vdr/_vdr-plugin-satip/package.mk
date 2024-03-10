@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-satip"
-PKG_VERSION="71732b07a52663a3c540226408fe61b264e94835"
-PKG_SHA256="cb508be66d05c06ab41232c09b70ae3b30cf543424f8b2b7328454827819ad17"
+PKG_VERSION="fa3dca05bbc4f7c27a5867d6eb50f16d11e9aa79"
+PKG_SHA256="7e678a55fc97b03a2bff8f00ab85bb96e72ed6c849ca5be40b1831711b200ded"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/wirbel-at-vdr-portal/vdr-plugin-satip"
 PKG_URL="https://github.com/wirbel-at-vdr-portal/vdr-plugin-satip/archive/${PKG_VERSION}.zip"

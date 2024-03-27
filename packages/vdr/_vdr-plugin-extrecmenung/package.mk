@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-extrecmenung"
-PKG_VERSION="c4305b4cae62574df7d92273ee6ea5d7d3ca9a06"
-PKG_SHA256="32463a9217b3d0d932a023e7830958275508241d478c6ce8295be912527755fa"
+PKG_VERSION="e565f299301d3ca81ef50abfb2726bdf2c38df60"
+PKG_SHA256="783c0b2b8a827c55448159aa61d151ac9b09ed34922f9228362f9cbcce0a23fc"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/kamel5/extrecmenung.git"
 PKG_URL="https://gitlab.com/kamel5/extrecmenung/-/archive/${PKG_VERSION}/extrecmenung-${PKG_VERSION}.tar.gz"

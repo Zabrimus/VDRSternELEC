@@ -16,7 +16,7 @@ PKG_BUILD_FLAGS="+speed"
 
 post_unpack() {
   rm -rf ${PKG_BUILD}/PLUGINS/src/skincurses
-  rm -f ${PKG_DIR}/patches/vdr-2.6.3-dynamite.patch
+  rm -f ${PKG_DIR}/patches/vdr-2.*-dynamite.patch
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   rm -f ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch
 
@@ -25,7 +25,7 @@ post_unpack() {
   fi
 
   if [ "${EXTRA_DYNAMITE}" = "y" ]; then
-  	cp ${PKG_DIR}/optional/vdr-2.6.6-dynamite.patch ${PKG_DIR}/patches/vdr-2.6.6-dynamite.patch
+  	cp ${PKG_DIR}/optional/vdr-2.6.7-dynamite.patch ${PKG_DIR}/patches/vdr-2.6.7-dynamite.patch
   fi
 
   if [ "${EXTRA_PERMASHIFT}" = "y" ]; then
@@ -126,7 +126,7 @@ EOF
   # copy sample XML (PowerMenu for Kodi which includes a Button to switch to VDR)
   cp ${PKG_DIR}/config/DialogButtonMenu.xml ${INSTALL}/usr/local/config/DialogButtonMenu.xml
 
-  rm -f ${PKG_DIR}/patches/vdr-2.6.3-dynamite.patch
+  rm -f ${PKG_DIR}/patches/vdr-2.*-dynamite.patch
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   rm -f ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch
 }

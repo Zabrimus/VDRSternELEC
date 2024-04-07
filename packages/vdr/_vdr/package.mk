@@ -4,8 +4,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_vdr"
-PKG_VERSION="2.6.6"
-PKG_SHA256="41334beed94bf3e4c222b354ae7d2241154845238d1fdd5accfa9d5f103d545b"
+PKG_VERSION="2.6.7"
+PKG_SHA256="b27addea2d1cd6919d03d865a14ae043cacc600b1e4670530ef3bbeb6b3083e1"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.tvdr.de"
 PKG_URL="http://git.tvdr.de/?p=vdr.git;a=snapshot;h=refs/tags/${PKG_VERSION};sf=tbz2"
@@ -16,7 +16,7 @@ PKG_BUILD_FLAGS="+speed"
 
 post_unpack() {
   rm -rf ${PKG_BUILD}/PLUGINS/src/skincurses
-  rm -f ${PKG_DIR}/patches/vdr-2.6.3-dynamite.patch
+  rm -f ${PKG_DIR}/patches/vdr-2.*-dynamite.patch
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   rm -f ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch
 
@@ -25,7 +25,7 @@ post_unpack() {
   fi
 
   if [ "${EXTRA_DYNAMITE}" = "y" ]; then
-  	cp ${PKG_DIR}/optional/vdr-2.6.6-dynamite.patch ${PKG_DIR}/patches/vdr-2.6.6-dynamite.patch
+  	cp ${PKG_DIR}/optional/vdr-2.6.7-dynamite.patch ${PKG_DIR}/patches/vdr-2.6.7-dynamite.patch
   fi
 
   if [ "${EXTRA_PERMASHIFT}" = "y" ]; then
@@ -126,7 +126,7 @@ EOF
   # copy sample XML (PowerMenu for Kodi which includes a Button to switch to VDR)
   cp ${PKG_DIR}/config/DialogButtonMenu.xml ${INSTALL}/usr/local/config/DialogButtonMenu.xml
 
-  rm -f ${PKG_DIR}/patches/vdr-2.6.3-dynamite.patch
+  rm -f ${PKG_DIR}/patches/vdr-2.*-dynamite.patch
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch
   rm -f ${PKG_DIR}/patches/vdr-2.6-patch-for-permashift.patch
 }

@@ -2,8 +2,8 @@
 
 PKG_NAME="_vdr-plugin-softhddevice-drm-gles"
 
-PKG_VERSION="4ebb8ac05608f9d7a2e2f16d430328e9b57d7eec"
-PKG_SHA256="ecbf9387b9b4ab8227d434551bad37018341ac330ba620a54ea6119f757772cb"
+PKG_VERSION="85783c7dfd761f4f920d04f4748572008063c5ab"
+PKG_SHA256="aeb78991befb1e5169adcc287d4a22b42c264cc9a6e874aac337b2e3b2a4ab1b"
 PKG_SITE="https://github.com/rellla/vdr-plugin-softhddevice-drm-gles"
 PKG_URL="https://github.com/rellla/vdr-plugin-softhddevice-drm-gles/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="drm-atomic-gles"

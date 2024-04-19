@@ -16,7 +16,7 @@ if [ "$1" = "attach" ]; then
       echo 4 > /sys/module/amvdec_h264/parameters/dec_control
       /usr/local/bin/svdrpsend REMO on
       /usr/local/bin/svdrpsend PLUG cecremote CONN
-      /usr/local/bin/svdrpsend PLUG softhdodroid ATTA -a hw:CARD=AMLAUGESOUND,DEV=2 -p hw:CARD=AMLAUGESOUND,DEV=2
+      /usr/local/bin/svdrpsend PLUG softhdodroid ATTA -p hw:CARD=AMLAUGESOUND,DEV=2
     fi
 elif [ "$1" = "detach" ]; then
     /usr/local/bin/svdrpsend PLUG softhdodroid DETA

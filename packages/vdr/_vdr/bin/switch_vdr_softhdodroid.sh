@@ -13,7 +13,7 @@ if [ "$1" = "attach" ]; then
       systemctl start vdropt
     else
       # Attach to running VDR
-      echo 4 > /sys/module/amvdec_h264/parameters/dec_control
+      # echo 4 > /sys/module/amvdec_h264/parameters/dec_control
       /usr/local/bin/svdrpsend REMO on
       /usr/local/bin/svdrpsend PLUG cecremote CONN
       /usr/local/bin/svdrpsend PLUG softhdodroid ATTA

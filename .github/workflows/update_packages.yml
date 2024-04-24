@@ -24,6 +24,7 @@ jobs:
           ./update.sh -s _remotetranscode >> commit.body.full
           ./update.sh -s _vtuner-ng >> commit.body.full
           cat commit.body.full | grep -v "no update available" | grep -v -i "skipped" | grep -v "Try update" | grep -v "checking" > commit.body
+          rm commit.body.full
 
       - name: Start patch test
         run: |

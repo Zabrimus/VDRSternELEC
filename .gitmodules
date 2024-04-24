@@ -1,10 +1,12 @@
 [submodule "LibreELEC.tv"]
 	path = LibreELEC.tv
 	url = https://github.com/LibreELEC/LibreELEC.tv
+	ignore = dirty
 [submodule "CoreELEC"]
 	path = CoreELEC
 	url = https://github.com/CoreELEC/CoreELEC
 	branch = coreelec-19
+	ignore = dirty
 [submodule "release-scripts"]
 	path = release-scripts
 	url = https://github.com/LibreELEC/release-scripts

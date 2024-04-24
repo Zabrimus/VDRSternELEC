@@ -1,0 +1,47 @@
+name: Update Packages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout CoreELEC/LibreELEC
+        run: |            
+          git submodule update --init -- CoreELEC
+          git submodule update --init -- LibreELEC.tv
+
+      - name: Update packages
+        run: |
+          ./update.sh -p > commit.body.full
+          ./update.sh -s _cefbrowser >> commit.body.full
+          ./update.sh -s _remotetranscode >> commit.body.full
+          ./update.sh -s _vtuner-ng >> commit.body.full
+          cat commit.body.full | grep -v "no update available" | grep -v -i "skipped" | grep -v "Try update" | grep -v "checking" > commit.body
+
+      - name: Start patch test
+        run: |
+          ./build.sh -config CoreELEC-19 -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config CoreELEC-20-ng -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config CoreELEC-21-ng -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config CoreELEC-21-ne -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config LibreELEC-11-arm-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config LibreELEC-master-arm-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config LibreELEC-master-x86_64-x11 -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: Update packages
+          delete-branch: true
+          title: '[Bot] Update packages'
+          body-path: commit.body
+          labels: |
+            automated pull request
+          draft: false

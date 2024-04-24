@@ -1,0 +1,99 @@
+Try update ...
+Available packages: 146
+   ## _vdr-plugin-fritzbox - no update available
+   ## _vdr-plugin-epgfixer - no update available
+   ## _vdr-plugin-dvbapi - no update available
+   ## _vdr-plugin-softhdcuvid - no update available
+   ## _vdr-plugin-systeminfo - no update available
+   ## _vdr-plugin-skinflat - no update available
+   ## _vdr-plugin-eepg - no update available
+   ## _vdr-plugin-screenshot - no update available
+   ## _vdr-plugin-bgprocess - no update available
+   ## _vdr-plugin-streamdev - no update available
+   ## _vdr-plugin-osd2web - no update available
+   ## _vdr-plugin-skinsimple - no update available
+   ## _vdr-plugin-ac3mode - no update available
+   ## _vdr-plugin-web - no update available
+   ## _vdr-plugin-targavfd - no update available
+   ## _vdr-plugin-pvrinput - no update available
+   ## _vdr-plugin-dvd - no update available
+   ## _vdr-plugin-tvscraper - no update available
+   ## _vdr-plugin-ddci2 - no update available
+   ## _vdr-plugin-skinsoppalusikka - no update available
+   ## _vdr-plugin-menuorg - no update available
+   ## _vdr-plugin-skinelchihd - no update available
+   ## _vdr-plugin-epg2vdr - no update available
+   ## _vdr-plugin-osdteletext - no update available
+   ## _vdr-plugin-control - no update available
+   ## _vdr-plugin-skinlcarsng - no update available
+   ## _vdr-plugin-dynamite - no update available
+   ## _vdr-plugin-recsearch - no update available
+   ## _vdr-plugin-softhddevice-drm - no update available
+   ## _vdr-plugin-softhdodroid-gxl - no update available
+   ## _vdr-plugin-weatherforecast - no update available
+   ## _vdr-plugin-satip - no update available
+   ## _vdr-plugin-devstatus - no update available
+   ## _vdr-plugin-duplicates - no update available
+   ## _vdr-plugin-restfulapi - no update available
+   ## _vdr-plugin-channellists - no update available
+   ## _vdr-plugin-scraper2vdr - no update available
+   ## _vdr-plugin-markad - no update available
+   ## _vdr-plugin-tvguide - no update available
+   ## _vdr-plugin-zappilot - no update available
+   ## _vdr-plugin-skinenigmang - no update available
+   ## _vdr-plugin-robotv - no update available
+   ## _vdr-plugin-skinflatplus - no update available
+   ## _vdr-plugin-skindesigner - no update available
+   ## _vdr-plugin-epgsearch - no update available
+   ## _vdr-plugin-seduatmo - no update available
+   ## _vdr-plugin-vnsiserver - no update available
+   ## _vdr-plugin-softhddevice-drm-gles - no update available
+   ## _vdr-plugin-extrecmenung - no update available
+   ## _vdr-plugin-radio - no update available
+   ## _vdr-plugin-chanman - no update available
+   ## _vdr-plugin-live - no update available
+   ## _vdr-plugin-softhdvaapi - no update available
+   ## _vdr-plugin-filebrowser - no update available
+   ## _vdr-plugin-femon - no update available
+   ## _vdr-plugin-boblight - no update available
+   ## _vdr-plugin-epgborder - no update available
+   ## _vdr-plugin-softhddrm - no update available
+   ## _vdr-plugin-favorites - no update available
+   ## _vdr-plugin-softhdodroid - no update available
+   ## _vdr-plugin-tvguideng - no update available
+   ## _vdr-plugin-zaphistory - no update available
+   ## _vdr-plugin-softhddevice - no update available
+   ## _vdr-plugin-dbus2vdr - no update available
+   ## _vdr-plugin-skinnopacity - no update available
+   ## _vdr-plugin-nordlichtsepg - no update available
+   ## _vdr-plugin-remoteosd - no update available
+   ## _vdr-plugin-svdrpservice - no update available
+   ## _vdr-plugin-mp3 - no update available
+Auto update possible (0):
+Manual update possible (0):
+No update available (69):
+Skipped packages (15):
+--> skipped check for _vdr-plugin-remote
+--> skipped check for _vdr-plugin-externalplayer
+--> skipped check for _vdr-plugin-dummydevice
+--> skipped check for _vdr-plugin-cdplayer
+--> skipped check for _vdr-plugin-wirbelscancontrol
+--> skipped check for _vdr-plugin-epgsync
+--> skipped check for _vdr-plugin-xineliboutput
+--> skipped check for _vdr-plugin-iptv
+--> skipped check for _vdr-plugin-wirbelscan
+--> skipped check for _vdr-plugin-permashift
+--> skipped check for _vdr-plugin-easyvdr
+--> skipped check for _vdr-plugin-suspendoutput
+--> skipped check for _vdr-plugin-cecremote
+--> skipped check for _vdr-plugin-wirbelscan-ce
+--> skipped check for _vdr-plugin-vompserver
+Try update ...
+checking _cefbrowser
+   ## _cefbrowser - no update available
+Try update ...
+checking _remotetranscode
+   ## _remotetranscode - no update available
+Try update ...
+checking _vtuner-ng
+   ## _vtuner-ng - no update available

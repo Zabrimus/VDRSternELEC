@@ -40,6 +40,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           commit-message: Update packages
+          branch: bot-update-packages
           delete-branch: true
           title: '[Bot] Update packages'
           body-path: commit.body

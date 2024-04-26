@@ -1,0 +1,84 @@
+name: precache sources
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Maximize build space
+        uses: Zabrimus/maximize-build-space@master
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout CoreELEC/LibreELEC
+        run: |            
+          git submodule update --init -- CoreELEC
+          git submodule update --init -- LibreELEC.tv
+
+      - name: prepare sources
+        run: |
+          mkdir ../sources
+          (cd CoreELEC && ln -s ../../sources .)
+          (cd LibreELEC.tv && ln -s ../../sources .)
+          ./build.sh -config CoreELEC-21-ng -patchonly
+          ./build.sh -config LibreELEC-master-arm-AMLGX -patchonly
+
+      - name: load CoreELEC sources
+        run: |
+          echo "================================================="
+          echo " get sources for CoreELEC 20
+          echo "================================================="
+          ( cd CoreELEC
+            git checkout coreelec-20
+          
+            for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
+              scripts/get $i; 
+            done
+          )
+
+          echo "================================================="
+          echo " get sources for CoreELEC 21
+          echo "================================================="
+          ( cd CoreELEC
+            git checkout coreelec-21
+          
+            for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
+                scripts/get $i; 
+            done
+          )
+
+      - name: load LibreELEC.tv sources
+        run: |
+          echo "================================================="
+          echo " get sources for LibreELEC.tv 11
+          echo "================================================="
+          ( cd LibreELEC.tv
+            git checkout libreelec-11
+          
+            for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
+              scripts/get $i; 
+            done
+          )
+
+          echo "================================================="
+          echo " get sources for LibreELEC.tv 12
+          echo "================================================="
+          ( cd LibreELEC.tv
+            git checkout master
+          
+            for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
+                scripts/get $i; 
+            done
+          )
+
+      - name: upload sources
+        uses: actions/upload-artifact@v4
+        with:
+          name: cache-ce-le-sources
+          path: ../sources
+          compression-level: 0

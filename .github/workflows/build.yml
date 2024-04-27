@@ -1,0 +1,157 @@
+name: build
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "build"
+        default: all
+        required: true
+        type: choice
+        options:
+          - all
+          - CoreELEC-19
+          - CoreELEC-20-ng
+          - CoreELEC-20-ne
+          - CoreELEC-21-ng
+          - CoreELEC-21-ne
+          - LibreELEC-master-arm-AMLGX
+          - LibreELEC-master-x86_64-x11
+          - LibreELEC-master-arm-Allwinner-H6
+          - LibreELEC-master-arm-Allwinner-A64
+          - LibreELEC-master-arm-Allwinner-R40
+          - LibreELEC-master-arm-Allwinner-H3
+          - LibreELEC-master-arm-Allwinner-H5
+          - LibreELEC-master-arm-Rockchip-RK3399
+          - LibreELEC-master-arm-Rockchip-RK3288
+          - LibreELEC-master-arm-Rockchip-RK3328
+          - LibreELEC-master-arm-RPi-RPi4
+
+jobs:
+  coreelec-19:
+    name: CoreELEC-19
+    if:  ( github.event.inputs.target == 'CoreELEC-19' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: CoreELEC-19
+    secrets: inherit
+
+  coreelec-20-ng:
+    name: CoreELEC-20-ng
+    if:  ( github.event.inputs.target == 'CoreELEC-20-ng' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: CoreELEC-20-ng
+    secrets: inherit
+
+  coreelec-20-ne:
+    name: CoreELEC-20-ne
+    if:  ( github.event.inputs.target == 'CoreELEC-20-ne' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: CoreELEC-20-ne
+    secrets: inherit
+
+  coreelec-21-ng:
+    name: CoreELEC-21-ng
+    if:  ( github.event.inputs.target == 'CoreELEC-21-ng' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: CoreELEC-21-ng
+    secrets: inherit
+
+  coreelec-21-ne:
+    name: CoreELEC-21-ne
+    if:  ( github.event.inputs.target == 'CoreELEC-21-ne' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: CoreELEC-21-ne
+    secrets: inherit
+
+  libreelec-arm-amlgx:
+    name: LibreELEC-arm-AMLGX
+    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-AMLGX' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-arm-AMLGX
+    secrets: inherit
+
+  libreELEC-master-x86_64-x11:
+    name: LibreELEC-master-x86_64-x11
+    if:  ( github.event.inputs.target == 'LibreELEC-master-x86_64-x11' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-x86_64-x11
+    secrets: inherit
+
+  libreelec-Allwinner-H6:
+    name: LibreELEC-Allwinner-H6
+    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Allwinner-H6' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-arm-Allwinner-H6
+    secrets: inherit
+
+  libreelec-Allwinner-A64:
+    name: LibreELEC-Allwinner-a64
+    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Allwinner-A64' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-arm-Allwinner-A64
+    secrets: inherit
+
+  libreelec-Allwinner-R40:
+    name: LibreELEC-Allwinner-R40
+    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Allwinner-R40' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-arm-Allwinner-R40
+    secrets: inherit
+
+  libreelec-Allwinner-H3:
+    name: LibreELEC-Allwinner-H3
+    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Allwinner-H3' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-arm-Allwinner-H3
+    secrets: inherit
+
+  libreelec-Allwinner-H5:
+    name: LibreELEC-Allwinner-H5
+    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Allwinner-H5' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-arm-Allwinner-H5
+    secrets: inherit
+
+  libreelec-Rockchip-RK3399:
+    name: LibreELEC-Rockchip-RK3399
+    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Rockchip-RK3399' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-arm-Rockchip-RK3399
+    secrets: inherit
+
+  libreelec-Rockchip-RK3288:
+    name: LibreELEC-Rockchip-RK3288
+    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Rockchip-RK3288' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-arm-Rockchip-RK3288
+    secrets: inherit
+
+  libreelec-Rockchip-RK3328:
+    name: LibreELEC-Rockchip-RK3328
+    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Rockchip-RK3328' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-arm-Rockchip-RK3328
+    secrets: inherit
+
+  libreelec-RPi-RPi4:
+    name: LibreELEC-RPi-RPi4
+    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-RPi-RPi4' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: LibreELEC-master-arm-RPi-RPi4
+    secrets: inherit

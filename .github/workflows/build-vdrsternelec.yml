@@ -1,0 +1,69 @@
+name: Build Image
+
+on:
+  workflow_call:
+    inputs:
+      config:
+        description: "configuration to build"
+        default: CoreELEC-19
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Maximize build space
+        uses: Zabrimus/maximize-build-space@master
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Create dir and determine source artifact
+        id: source_artifact
+        run: |
+          git submodule update --init -- CoreELEC
+          git submodule update --init -- LibreELEC.tv
+
+          mkdir -p CoreELEC/sources
+          mkdir -p LibreELEC.tv/sources
+          
+          # get patchdir (hack to determine the branch)
+          branch=$(grep PATCHDIR config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          
+          if [ "$branch" = "coreelec-19" ]; then
+              echo "ARTIFACT=cache-coreelec-19-sources" >> "$GITHUB_OUTPUT"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_OUTPUT"
+          elif [ "$branch" = "coreelec-20" ]; then
+              echo "ARTIFACT=cache-coreelec-20-sources" >> "$GITHUB_OUTPUT"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_OUTPUT"
+          elif [ "$branch" = "coreelec-21" ]; then
+              echo "ARTIFACT=cache-coreelec-21-sources" >> "$GITHUB_OUTPUT"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_OUTPUT"
+          elif [ "$branch" = "libreelec-11" ]; then
+              echo "ARTIFACT=cache-libreelec-11-sources" >> "$GITHUB_OUTPUT"
+              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_OUTPUT"
+          elif [ "$branch" = "libreelec-12" ]; then
+              echo "ARTIFACT=cache-libreelec-12-sources" >> "$GITHUB_OUTPUT"
+              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          name: ${{ steps.source_artifact.outputs.CACHE_NAME }}
+          name_is_regexp: false
+          path: ${{ steps.source_artifact.outputs.DISTRO }}/sources
+
+      - name: Build
+        run: |
+          ./build.sh -config ${{ inputs.config }} -package kodi
+          
+          du -h -c ${{ steps.source_artifact.outputs.DISTRO }}/build.*
+          
+          ./build.sh -config ${{ inputs.config }} -releaseonly

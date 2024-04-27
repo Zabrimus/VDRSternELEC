@@ -1,0 +1,99 @@
+name: download sources
+
+on:
+  workflow_call:
+    inputs:
+      config:
+        description: "CoreELEC or LibreELEC.tv"
+        default: CoreELEC-21
+        required: true
+        type: string
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download sources
+        id: download
+        run: |
+          git submodule update --init -- CoreELEC
+          git submodule update --init -- LibreELEC.tv
+          
+          if [[ "${{ inputs.config }}" == "CoreELEC-19" ]]; then                        
+              branch="coreelec-19"
+          
+              echo "CACHE_NAME=cache-coreelec-19-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=CoreELEC/sources" >> "$GITHUB_OUTPUT"
+          
+              ./build.sh -config CoreELEC-19 -patchonly
+          fi
+
+          if [[ "${{ inputs.config }}" == "CoreELEC-20" ]]; then
+              branch="coreelec-20"
+          
+              echo "CACHE_NAME=cache-coreelec-20-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=CoreELEC/sources" >> "$GITHUB_OUTPUT"
+          
+              ./build.sh -config CoreELEC-20-ng -patchonly
+          fi
+
+          if [[ "${{ inputs.config }}" == "CoreELEC-21" ]]; then
+              branch="coreelec-21"
+          
+              echo "CACHE_NAME=cache-coreelec-21-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=CoreELEC/sources" >> "$GITHUB_OUTPUT"
+          
+              ./build.sh -config CoreELEC-21-ng -patchonly
+          fi
+
+          if [[ "${{ inputs.config }}" == "LibreELEC-11" ]]; then
+              branch="libreelec-11"
+          
+              echo "CACHE_NAME=cache-libreelec-11-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"
+          
+              ./build.sh -config LibreELEC-11-arm-AMLGX -patchonly
+          fi
+
+          if [[ "${{ inputs.config }}" == "LibreELEC-12" ]]; then
+              branch="master"
+          
+              echo "CACHE_NAME=cache-libreelec-12-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"
+          
+              ./build.sh -config LibreELEC-master-arm-AMLGX -patchonly
+          fi
+  
+          if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
+            ( cd CoreELEC
+              git checkout ${branch}
+          
+              for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
+                scripts/get $i
+              done
+            )
+          
+            ls -lR CoreELEC/sources/
+          else
+            ( cd LibreELEC.tv
+              git checkout ${branch}
+          
+              for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
+                scripts/get $i
+              done
+            )
+          
+            ls -lR LibreELEC.tv/sources/
+          fi
+
+      - name: upload sources
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.download.outputs.CACHE_NAME }}
+          path: ${{ steps.download.outputs.CACHE_PATH }}
+          compression-level: 0

@@ -2,84 +2,57 @@ name: precache sources
 
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: "targets to cache"
+        default: all
+        required: true
+        type: choice
+        options:
+          - all
+          - CoreELEC-19
+          - CoreELEC-20
+          - CoreELEC-21
+          - LibreELEC-11
+          - LibreELEC-12
 
 jobs:
-  update:
-    runs-on: ubuntu-latest
+  coreelec-19:
+    name: CoreELEC-19
+    if:  ( github.event.inputs.target == 'CoreELEC-19' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: CoreELEC-19
+    secrets: inherit
 
-    steps:
-      - name: Maximize build space
-        uses: Zabrimus/maximize-build-space@master
+  coreelec-20:
+    name: CoreELEC-20
+    if:  ( github.event.inputs.target == 'CoreELEC-20' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: CoreELEC-20
+    secrets: inherit
 
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  coreelec-21:
+    name: CoreELEC-21
+    if:  ( github.event.inputs.target == 'CoreELEC-21' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: CoreELEC-21
+    secrets: inherit
 
-      - name: Checkout CoreELEC/LibreELEC
-        run: |            
-          git submodule update --init -- CoreELEC
-          git submodule update --init -- LibreELEC.tv
+  libreelec-11:
+    name: LibreELEC-11
+    if:  ( github.event.inputs.target == 'LibreELEC-11' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: LibreELEC-11
+    secrets: inherit
 
-      - name: prepare sources
-        run: |
-          mkdir sources 
-          (cd CoreELEC && ln -s ../sources .)          
-          (cd LibreELEC.tv && ln -s ../sources .)
-          
-          ./build.sh -config CoreELEC-21-ng -patchonly
-          ./build.sh -config LibreELEC-master-arm-AMLGX -patchonly
-
-      - name: load CoreELEC sources
-        run: |
-          echo "================================================="
-          echo " get sources for CoreELEC 20
-          echo "================================================="
-          ( cd CoreELEC
-            git checkout coreelec-20
-          
-            for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-              scripts/get $i || true
-            done
-          )
-
-          echo "================================================="
-          echo " get sources for CoreELEC 21
-          echo "================================================="
-          ( cd CoreELEC
-            git checkout coreelec-21
-          
-            for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-                scripts/get $i || true
-            done
-          )
-
-      - name: load LibreELEC.tv sources
-        run: |
-          echo "================================================="
-          echo " get sources for LibreELEC.tv 11
-          echo "================================================="
-          ( cd LibreELEC.tv
-            git checkout libreelec-11
-          
-            for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-              scripts/get $i || true
-            done
-          )
-
-          echo "================================================="
-          echo " get sources for LibreELEC.tv 12
-          echo "================================================="
-          ( cd LibreELEC.tv
-            git checkout master
-          
-            for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-                scripts/get $i || true
-            done
-          )
-
-      - name: upload sources
-        uses: actions/upload-artifact@v4
-        with:
-          name: cache-ce-le-sources
-          path: sources
-          compression-level: 0
+  libreelec-12:
+    name: LibreELEC-12
+    if:  ( github.event.inputs.target == 'LibreELEC-12' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: LibreELEC-12
+    secrets: inherit

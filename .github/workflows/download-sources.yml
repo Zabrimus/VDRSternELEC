@@ -74,7 +74,7 @@ jobs:
               git checkout ${branch}
           
               for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-                  if [[ "$i" != *:init ]]; then
+                  if [[ "$i" != *:* ]]; then
                       echo "===================================="
                       echo "Download $i"
                       echo "===================================="
@@ -93,7 +93,7 @@ jobs:
               git checkout ${branch}
           
               for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-                  if [[ "$i" != *:init ]]; then
+                  if [[ "$i" != *:* ]]; then
                       echo "===================================="
                       echo "Download $i"
                       echo "===================================="

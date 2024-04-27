@@ -17,6 +17,12 @@ jobs:
 
       - name: Checkout CoreELEC/LibreELEC
         run: |            
+          gcc -v
+          g++ -v
+          command -v gcc
+          command -v g++
+          false
+          
           git submodule update --init -- CoreELEC
           git submodule update --init -- LibreELEC.tv
 
@@ -37,7 +43,7 @@ jobs:
             git checkout coreelec-20
           
             for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-              scripts/get $i; 
+              scripts/get $i || true
             done
           )
 
@@ -48,7 +54,7 @@ jobs:
             git checkout coreelec-21
           
             for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-                scripts/get $i; 
+                scripts/get $i || true
             done
           )
 
@@ -61,7 +67,7 @@ jobs:
             git checkout libreelec-11
           
             for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-              scripts/get $i; 
+              scripts/get $i || true
             done
           )
 
@@ -72,7 +78,7 @@ jobs:
             git checkout master
           
             for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-                scripts/get $i; 
+                scripts/get $i || true
             done
           )
 

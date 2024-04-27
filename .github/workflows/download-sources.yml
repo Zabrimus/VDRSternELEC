@@ -74,7 +74,16 @@ jobs:
               git checkout ${branch}
           
               for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-                scripts/get $i
+                  if [[ "$i" != *:init ]]; then
+                      echo "===================================="
+                      echo "Download $i"
+                      echo "===================================="
+                      scripts/get $i
+                  else
+                      echo "===================================="
+                      echo "Prevent Download of $i" 
+                      echo "===================================="
+                  fi
               done
             )
           
@@ -84,7 +93,16 @@ jobs:
               git checkout ${branch}
           
               for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-                scripts/get $i
+                  if [[ "$i" != *:init ]]; then
+                      echo "===================================="
+                      echo "Download $i"
+                      echo "===================================="
+                      scripts/get $i
+                  else
+                      echo "===================================="
+                      echo "Prevent Download of $i" 
+                      echo "===================================="
+                  fi
               done
             )
           

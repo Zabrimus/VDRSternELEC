@@ -22,9 +22,10 @@ jobs:
 
       - name: prepare sources
         run: |
-          mkdir ../sources
-          (cd CoreELEC && ln -s ../../sources .)
-          (cd LibreELEC.tv && ln -s ../../sources .)
+          mkdir sources 
+          (cd CoreELEC && ln -s ../sources .)          
+          (cd LibreELEC.tv && ln -s ../sources .)
+          
           ./build.sh -config CoreELEC-21-ng -patchonly
           ./build.sh -config LibreELEC-master-arm-AMLGX -patchonly
 

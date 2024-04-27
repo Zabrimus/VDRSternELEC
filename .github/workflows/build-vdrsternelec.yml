@@ -58,6 +58,7 @@ jobs:
           workflow: precache-sources.yml
           if_no_artifact_found: ignore
           check_artifacts: true
+          search_artifacts: true
           name: ${{ steps.source_artifact.outputs.ARTIFACT }}
           name_is_regexp: false
           path: ${{ steps.source_artifact.outputs.DISTRO }}/sources

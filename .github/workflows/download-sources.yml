@@ -52,7 +52,7 @@ jobs:
           fi
 
           if [[ "${{ inputs.config }}" == "LibreELEC-11" ]]; then
-              branch="libreelec-11"
+              branch="libreelec-11.0"
           
               echo "CACHE_NAME=cache-libreelec-11-sources" >> "$GITHUB_OUTPUT"
               echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"

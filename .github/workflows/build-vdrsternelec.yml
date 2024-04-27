@@ -56,6 +56,8 @@ jobs:
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
           name: ${{ steps.source_artifact.outputs.ARTIFACT }}
           name_is_regexp: false
           path: ${{ steps.source_artifact.outputs.DISTRO }}/sources

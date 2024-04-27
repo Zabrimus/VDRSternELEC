@@ -17,12 +17,6 @@ jobs:
 
       - name: Checkout CoreELEC/LibreELEC
         run: |            
-          gcc -v
-          g++ -v
-          command -v gcc
-          command -v g++
-          false
-          
           git submodule update --init -- CoreELEC
           git submodule update --init -- LibreELEC.tv
 

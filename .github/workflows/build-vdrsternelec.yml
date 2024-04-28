@@ -65,8 +65,10 @@ jobs:
 
       - name: Build
         run: |
-          ./build.sh -config ${{ inputs.config }} -package kodi
-          
-          du -h -c ${{ steps.source_artifact.outputs.DISTRO }}/build.*
-          
           ./build.sh -config ${{ inputs.config }} -releaseonly
+          ls -la ${{ steps.source_artifact.outputs.DISTRO }}/target
+          df -h
+          
+          # ./build.sh -config ${{ inputs.config }} -package kodi          
+          # du -h -c ${{ steps.source_artifact.outputs.DISTRO }}/build.*          
+          # ./build.sh -config ${{ inputs.config }} -releaseonly

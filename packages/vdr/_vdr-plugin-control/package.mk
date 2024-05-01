@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-control"
-PKG_VERSION="7325bb4c7487ebd1aa9b4f786bac9983b9c60403"
-PKG_SHA256="330025257ad47df822eefc3d1cc6a291027408a8c7e26ff64bb2327468609f7a"
+PKG_VERSION="f6f7cb55605c1c5237dc68655eca5f6a5a843c9f"
+PKG_SHA256="c5abb898599eabfc1321bb81a553c3b927e2af4dad32ed9715c5533363271cb2"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/wirbel-at-vdr-portal/vdr-plugin-control"
 PKG_URL="https://github.com/wirbel-at-vdr-portal/vdr-plugin-control/archive/${PKG_VERSION}.zip"

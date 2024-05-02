@@ -95,7 +95,7 @@ jobs:
 
           # create summary
           function bool_emo() {
-              if [ $1 = 'true' ]; then
+              if [ $1 = 'false' ]; then
                 eval "$2=':white_check_mark:'"
               else
                 eval "$2=':fire:'"

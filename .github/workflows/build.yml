@@ -31,7 +31,7 @@ on:
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     outputs:
       CURRENT_RELEASE_TAG: ${{ steps.create_release_tag.outputs.CURRENT_RELEASE_TAG }}
     permissions:
@@ -87,7 +87,7 @@ jobs:
           echo "CURRENT_RELASE_TAG = ${TAG}"
 
   prepare-matrix:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     outputs:
         matrix: ${{ steps.setmatrix.outputs.matrix }}
     steps:
@@ -126,7 +126,7 @@ jobs:
 
   create-release:
     needs: [ prepare, prepare-matrix, build-all ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Maximize build space

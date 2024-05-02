@@ -28,9 +28,11 @@ jobs:
       - name: Create dir and determine source artifact
         id: source_artifact
         run: |
+          echo "Clone submodules"
           git submodule update --init -- CoreELEC
           git submodule update --init -- LibreELEC.tv
 
+          echo "Pre-Create directories"
           mkdir -p CoreELEC/sources
           mkdir -p LibreELEC.tv/sources
           
@@ -38,9 +40,9 @@ jobs:
           mkdir -p LibreELEC.tv/target
           
           # get config values (hack)
-          branch=$(grep PATCHDIR config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
-          project=$(grep PROJECT config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
-          device=$(grep DEVICE config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          branch=$(grep "^PATCHDIR" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          project=$(grep "^PROJECT" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          device=$(grep "^DEVICE" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
           
           echo "BRANCH=$branch" >> "$GITHUB_ENV"
           echo "PROJECT=$project" >> "$GITHUB_ENV"
@@ -49,23 +51,23 @@ jobs:
           if [ "$branch" = "coreelec-19" ]; then
               echo "ARTIFACT=cache-coreelec-19-sources" >> "$GITHUB_ENV"
               echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
-              rev=$(grep COREELEC19 config/versions | awk -F= '{ print $2 }')
+              rev=$(grep "COREELEC19=" config/versions | awk -F= '{ print $2 }')
           elif [ "$branch" = "coreelec-20" ]; then
               echo "ARTIFACT=cache-coreelec-20-sources" >> "$GITHUB_ENV"
               echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
-              rev=$(grep COREELEC20 config/versions | awk -F= '{ print $2 }')
+              rev=$(grep "COREELEC20=" config/versions | awk -F= '{ print $2 }')
           elif [ "$branch" = "coreelec-21" ]; then
               echo "ARTIFACT=cache-coreelec-21-sources" >> "$GITHUB_ENV"
               echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
-              rev=$(grep COREELEC21 config/versions | awk -F= '{ print $2 }')
+              rev=$(grep "COREELEC21=" config/versions | awk -F= '{ print $2 }')
           elif [ "$branch" = "libreelec-11" ]; then
               echo "ARTIFACT=cache-libreelec-11-sources" >> "$GITHUB_ENV"
               echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"
-              rev=$(grep LIBREELEC11 config/versions | awk -F= '{ print $2 }')
+              rev=$(grep "LIBREELEC11=" config/versions | awk -F= '{ print $2 }')
           elif [ "$branch" = "libreelec-12" ]; then
               echo "ARTIFACT=cache-libreelec-12-sources" >> "$GITHUB_ENV"
               echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"
-              rev=$(grep LIBREELEC12 config/versions | awk -F= '{ print $2 }')
+              rev=$(grep "LIBREELEC12=" config/versions | awk -F= '{ print $2 }')
           fi
           
           echo "REVISION=$rev" >> "$GITHUB_ENV"

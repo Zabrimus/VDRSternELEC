@@ -1,15 +1,17 @@
-name: build
+name: Build VDRSternELEC
 
 on:
   workflow_dispatch:
     inputs:
       target:
         description: "build"
-        default: all
+        default: CoreELEC-20-ng
         required: true
         type: choice
         options:
           - all
+          - CoreELEC (all)
+          - LibreELEC (all)
           - CoreELEC-19
           - CoreELEC-20-ng
           - CoreELEC-20-ne
@@ -28,130 +30,160 @@ on:
           - LibreELEC-master-arm-RPi-RPi4
 
 jobs:
-  coreelec-19:
-    name: CoreELEC-19
-    if:  ( github.event.inputs.target == 'CoreELEC-19' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      CURRENT_RELEASE_TAG: ${{ steps.create_release_tag.outputs.CURRENT_RELEASE_TAG }}
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Prepare
+        run: |
+          gh extension install actions/gh-actions-cache
+          
+          REPO=${{ github.repository }}
+          BRANCH="main"
+          
+          echo "Fetching list of cache key"
+          cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH | cut -f 1 )
+          
+          ## Setting this to not fail the workflow while deleting cache keys. 
+          set +e
+          for cacheKey in $cacheKeysForPR
+          do
+              echo "Delete cache entry $cacheKey in repo $REPO and branch $BRANCH" 
+              gh actions-cache delete $cacheKey -R $REPO -B $BRANCH --confirm
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: oprypin/find-latest-tag@v1
+        with:
+          repository:  ${{ github.repository }}
+          releases-only: false
+        id: current_release_tag
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+      - name: create release tag file
+        id: create_release_tag
+        run: |
+          CURRENT_TAG=${{ steps.current_release_tag.outputs.tag }}
+          
+          if [[ ! ${CURRENT_TAG} =~ ^${{ steps.date.outputs.date }} ]]; then
+            TAG="${{ steps.date.outputs.date }}.1"
+          else
+            if [[ "${CURRENT_TAG}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\.[0-9]+$ ]]; then
+              TAG=$(echo "${CURRENT_TAG}" | perl -pe 's/(\d+)(?!.*\d+)/$1+1/e')
+            else
+              TAG="${{ steps.date.outputs.date }}.1"
+            fi
+          fi
+
+          echo "CURRENT_RELEASE_TAG=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "CURRENT_RELASE_TAG = ${TAG}"
+
+  prepare-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+        matrix: ${{ steps.setmatrix.outputs.matrix }}
+    steps:
+      - name: Set Dynamic Matrix
+        id: setmatrix
+        run: |
+          JSON="{\"include\":["
+          
+          for i in CoreELEC-19 CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne \
+                   LibreELEC-master-arm-AMLGX LibreELEC-master-x86_64-x11 LibreELEC-master-arm-Allwinner-H6 \
+                   LibreELEC-master-arm-Allwinner-A64 LibreELEC-master-arm-Allwinner-R40 LibreELEC-master-arm-Allwinner-H3 \
+                   LibreELEC-master-arm-Allwinner-H5 LibreELEC-master-arm-Rockchip-RK3399 LibreELEC-master-arm-Rockchip-RK3288 \
+                   LibreELEC-master-arm-Rockchip-RK3328 LibreELEC-master-arm-RPi-RPi4
+          do
+            if ([ "${{ github.event.inputs.target }}" == "$i" ] || [ "${{ github.event.inputs.target }}" == 'all' ] || [ "${{ github.event.inputs.target }}" == '' ]) \
+              || ([ "${{ github.event.inputs.target }}" == 'CoreELEC (all)' ] && [[ "$i" == CoreELEC* ]]) \
+              || ([ "${{ github.event.inputs.target }}" == 'LibreELEC (all)' ] && [[ "$i" == LibreELEC* ]]) 
+            then
+               JSON="${JSON} {\"run\":\"$i\"}," 
+            fi
+          done
+          
+          JSON="${JSON} ]}"
+      
+          echo "matrix=${JSON}" >> "$GITHUB_OUTPUT"
+
+  build-all:
+    needs: [ prepare, prepare-matrix ]
+    strategy:
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
     uses: ./.github/workflows/build-vdrsternelec.yml
     with:
-      config: CoreELEC-19
+      config: ${{ matrix.run }}
+      releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
     secrets: inherit
 
-  coreelec-20-ng:
-    name: CoreELEC-20-ng
-    if:  ( github.event.inputs.target == 'CoreELEC-20-ng' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: CoreELEC-20-ng
-    secrets: inherit
+  create-release:
+    needs: [ prepare, prepare-matrix, build-all ]
+    runs-on: ubuntu-latest
 
-  coreelec-20-ne:
-    name: CoreELEC-20-ne
-    if:  ( github.event.inputs.target == 'CoreELEC-20-ne' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: CoreELEC-20-ne
-    secrets: inherit
+    steps:
+      - name: Maximize build space
+        uses: Zabrimus/maximize-build-space@master
 
-  coreelec-21-ng:
-    name: CoreELEC-21-ng
-    if:  ( github.event.inputs.target == 'CoreELEC-21-ng' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: CoreELEC-21-ng
-    secrets: inherit
+      - name: Download summary
+        uses: actions/download-artifact@v4
+        with:
+          path: build-summary
+          pattern: build-summary-*
+          merge-multiple: true
 
-  coreelec-21-ne:
-    name: CoreELEC-21-ne
-    if:  ( github.event.inputs.target == 'CoreELEC-21-ne' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: CoreELEC-21-ne
-    secrets: inherit
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build-artifacts
+          pattern: build-artifacts-*
+          merge-multiple: true
 
-  libreelec-arm-amlgx:
-    name: LibreELEC-arm-AMLGX
-    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-AMLGX' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-arm-AMLGX
-    secrets: inherit
+      - name: Create release and upload files
+        run: |
+          if [ -d build-summary ]; then 
+            ls -R build-summary
+          fi
+          
+          if [ -d build-artifacts ]; then 
+            ls -R build-artifacts
+          fi
 
-  libreELEC-master-x86_64-x11:
-    name: LibreELEC-master-x86_64-x11
-    if:  ( github.event.inputs.target == 'LibreELEC-master-x86_64-x11' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-x86_64-x11
-    secrets: inherit
+          # Funktioniert nicht. Kein Plan, woran das liegt. Ich muss die Revision anders bestimmen.          
+          # CMD="git ls-remote https://github.com/${{ github.repository }} | head -1 | sed \"s/HEAD//\" | cut -c 1-7"
+          # VREV=eval $CMD
+          
+          # Erstmal rausnehmen, wenn das obige nicht funktioniert, dann ist das auch nicht sinnvoll
+          # echo "VDRSternELEC: [master@${VREV}](https://github.com/${{ github.repository }}/tree/${VREV})" >> release_notes
+          # echo "" >> release_notes
+          
+          echo "----------------------------------------------------------------------------" >> release_notes
+          
+          echo "| Status  | Distro | Project | Device | Revision |" >> release_notes
+          echo "| ------- | ------ | ------- | ------ | -------- |" >> release_notes         
 
-  libreelec-Allwinner-H6:
-    name: LibreELEC-Allwinner-H6
-    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Allwinner-H6' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-arm-Allwinner-H6
-    secrets: inherit
-
-  libreelec-Allwinner-A64:
-    name: LibreELEC-Allwinner-a64
-    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Allwinner-A64' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-arm-Allwinner-A64
-    secrets: inherit
-
-  libreelec-Allwinner-R40:
-    name: LibreELEC-Allwinner-R40
-    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Allwinner-R40' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-arm-Allwinner-R40
-    secrets: inherit
-
-  libreelec-Allwinner-H3:
-    name: LibreELEC-Allwinner-H3
-    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Allwinner-H3' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-arm-Allwinner-H3
-    secrets: inherit
-
-  libreelec-Allwinner-H5:
-    name: LibreELEC-Allwinner-H5
-    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Allwinner-H5' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-arm-Allwinner-H5
-    secrets: inherit
-
-  libreelec-Rockchip-RK3399:
-    name: LibreELEC-Rockchip-RK3399
-    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Rockchip-RK3399' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-arm-Rockchip-RK3399
-    secrets: inherit
-
-  libreelec-Rockchip-RK3288:
-    name: LibreELEC-Rockchip-RK3288
-    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Rockchip-RK3288' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-arm-Rockchip-RK3288
-    secrets: inherit
-
-  libreelec-Rockchip-RK3328:
-    name: LibreELEC-Rockchip-RK3328
-    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-Rockchip-RK3328' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-arm-Rockchip-RK3328
-    secrets: inherit
-
-  libreelec-RPi-RPi4:
-    name: LibreELEC-RPi-RPi4
-    if:  ( github.event.inputs.target == 'LibreELEC-master-arm-RPi-RPi4' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/build-vdrsternelec.yml
-    with:
-      config: LibreELEC-master-arm-RPi-RPi4
-    secrets: inherit
+          cat build-summary/build-summary* >> release_notes
+          
+          cat release_notes
+          
+          # create release
+          # gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" -R ${{ github.repository }} -F release_notes
+          
+          # upload target files
+          for i in $(ls build-artifacts/CoreELEC/target/VDR*); do          
+              echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
+              # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
+          done
+          
+          for i in $(ls build-artifacts/LibreELEC.tv/target/VDR*); do          
+             echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
+             # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
+          done          
+          

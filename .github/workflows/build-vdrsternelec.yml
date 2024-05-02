@@ -1,18 +1,22 @@
-name: Build Image
+name: Build Artifacts
 
 on:
   workflow_call:
     inputs:
       config:
-        description: "configuration to build"
-        default: CoreELEC-19
+        description: "Configuration to build"
+        default: CoreELEC-20-ng
+        required: true
+        type: string
+
+      releasetag:
+        description: "Release Tag"
         required: true
         type: string
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Maximize build space
         uses: Zabrimus/maximize-build-space@master
@@ -30,25 +34,41 @@ jobs:
           mkdir -p CoreELEC/sources
           mkdir -p LibreELEC.tv/sources
           
-          # get patchdir (hack to determine the branch)
+          mkdir -p CoreELEC/target
+          mkdir -p LibreELEC.tv/target
+          
+          # get config values (hack)
           branch=$(grep PATCHDIR config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          project=$(grep PROJECT config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          device=$(grep DEVICE config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          
+          echo "BRANCH=$branch" >> "$GITHUB_ENV"
+          echo "PROJECT=$project" >> "$GITHUB_ENV"
+          echo "DEVICE=$device" >> "$GITHUB_ENV"
           
           if [ "$branch" = "coreelec-19" ]; then
-              echo "ARTIFACT=cache-coreelec-19-sources" >> "$GITHUB_OUTPUT"
-              echo "DISTRO=CoreELEC" >> "$GITHUB_OUTPUT"
+              echo "ARTIFACT=cache-coreelec-19-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep COREELEC19 config/versions | awk -F= '{ print $2 }')
           elif [ "$branch" = "coreelec-20" ]; then
-              echo "ARTIFACT=cache-coreelec-20-sources" >> "$GITHUB_OUTPUT"
-              echo "DISTRO=CoreELEC" >> "$GITHUB_OUTPUT"
+              echo "ARTIFACT=cache-coreelec-20-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep COREELEC20 config/versions | awk -F= '{ print $2 }')
           elif [ "$branch" = "coreelec-21" ]; then
-              echo "ARTIFACT=cache-coreelec-21-sources" >> "$GITHUB_OUTPUT"
-              echo "DISTRO=CoreELEC" >> "$GITHUB_OUTPUT"
+              echo "ARTIFACT=cache-coreelec-21-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep COREELEC21 config/versions | awk -F= '{ print $2 }')
           elif [ "$branch" = "libreelec-11" ]; then
-              echo "ARTIFACT=cache-libreelec-11-sources" >> "$GITHUB_OUTPUT"
-              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_OUTPUT"
+              echo "ARTIFACT=cache-libreelec-11-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"
+              rev=$(grep LIBREELEC11 config/versions | awk -F= '{ print $2 }')
           elif [ "$branch" = "libreelec-12" ]; then
-              echo "ARTIFACT=cache-libreelec-12-sources" >> "$GITHUB_OUTPUT"
-              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_OUTPUT"
+              echo "ARTIFACT=cache-libreelec-12-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"
+              rev=$(grep LIBREELEC12 config/versions | awk -F= '{ print $2 }')
           fi
+          
+          echo "REVISION=$rev" >> "$GITHUB_ENV"
 
       - name: Download artifact
         id: download-artifact
@@ -59,16 +79,81 @@ jobs:
           if_no_artifact_found: ignore
           check_artifacts: true
           search_artifacts: true
-          name: ${{ steps.source_artifact.outputs.ARTIFACT }}
+          name: ${{ env.ARTIFACT }}
           name_is_regexp: false
-          path: ${{ steps.source_artifact.outputs.DISTRO }}/sources
+          path: ${{ env.DISTRO }}/sources
 
       - name: Build
         run: |
-          ./build.sh -config ${{ inputs.config }} -releaseonly
-          ls -la ${{ steps.source_artifact.outputs.DISTRO }}/target
-          df -h
+          BUILD_FAILED="false"
           
-          # ./build.sh -config ${{ inputs.config }} -package kodi          
-          # du -h -c ${{ steps.source_artifact.outputs.DISTRO }}/build.*          
-          # ./build.sh -config ${{ inputs.config }} -releaseonly
+          if ! ./build.sh -config ${{ inputs.config }} -releaseonly; then
+            BUILD_FAILED="true"
+          fi
+
+          # create summary
+          function bool_emo() {
+              if [ $1 = 'true' ]; then
+                eval "$2=':white_check_mark:'"
+              else
+                eval "$2=':fire:'"
+              fi;
+          }
+          emo=''
+          
+          bool_emo "$BUILD_FAILED" emo                 
+          
+          if [ ${{ env.DISTRO }} == 'CoreELEC' ]; then
+              echo "| ${emo} | ${{ inputs.config }} | ${{ env.PROJECT }} | ${{ env.DEVICE }} | [${{ env.BRANCH }}@${{ env.REVISION }}](https://github.com/CoreELEC/CoreELEC/tree/${{ env.REVISION }}) |" > build-summary-${{ inputs.config }}
+          else
+              echo "| ${emo} | ${{ inputs.config }} | ${{ env.PROJECT }} | ${{ env.DEVICE }} | [${{ env.BRANCH }}@${{ env.REVISION }}](https://github.com/LibreELEC/LibreELEC.tv/tree/${{ env.REVISION }}) |" > build-summary-${{ inputs.config }}
+          fi
+          
+          # rename target files
+          if [ "$DISTRO" == "CoreELEC" ]; then
+              (
+                cd CoreELEC/target
+                ls -la 
+                for i in `ls CoreELEC*{tar,img.gz,sha256}`; do 
+                  NEWNAME=`echo $i | perl -pe "s/^(CoreELEC.*?)_(.*?)((_*.img.gz)|(\.tar))?(\.sha256)?$/VDR-\1-${{ inputs.releasetag }}\3\6/"`;
+                  mv $i $NEWNAME || true;
+                done;
+                ls -la 
+              )
+          fi
+
+          if [ "$DISTRO" == "LibreELEC.tv" ]; then          
+              (
+                cd LibreELEC.tv/target
+                ls -la 
+                for i in `ls LibreELEC*{tar,img.gz,sha256}`; do
+                  NEWNAME=`echo $i | perl -pe "s/^(LibreELEC.*?)-devel-\d+-.*?((-.*?)?(.img.gz)|(.tar))(\.sha256)?$/VDR-\1\3-${{ inputs.releasetag }}\4\5\6/"`;          
+                  mv $i $NEWNAME || true;                          
+                done;
+                ls -la 
+              )
+          fi
+
+      - name: Save target files
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-artifacts-${{ inputs.releasetag }}-${{ inputs.config }}"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+              CoreELEC/target/VDR*
+              LibreELEC.tv/target/VDR*
+
+      - name: Save summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-summary-${{ inputs.config }}"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            build-summary-${{ inputs.config }}
+            

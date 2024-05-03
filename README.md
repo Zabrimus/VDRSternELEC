@@ -128,11 +128,9 @@ CoreELEC-20-ne
 CoreELEC-20-ng
 CoreELEC-21-ne
 CoreELEC-21-ng
-LibreELEC-10.0-aarch64-AMLGX
 LibreELEC-10.0-arm-AMLGX
 LibreELEC-10.0-x86_64
 LibreELEC-11-arm-AMLGX
-LibreELEC-{12,13}-aarch64
 LibreELEC-{12,13}-arm-Allwinner-A64
 LibreELEC-{12,13}-arm-Allwinner-H3
 LibreELEC-{12,13}-arm-Allwinner-H5

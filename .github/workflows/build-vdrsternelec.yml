@@ -89,7 +89,7 @@ jobs:
         run: |
           BUILD_FAILED="false"
           
-          if ! ./build.sh -config ${{ inputs.config }} -releaseonly; then
+          if ! ./build.sh -config ${{ inputs.config }} -extra easyvdr,channellogos,remotetranscode,cefbrowser -releaseonly -addon dvb-latest; then
             BUILD_FAILED="true"
           fi
 
@@ -115,28 +115,52 @@ jobs:
           if [ "$DISTRO" == "CoreELEC" ]; then
               (
                 cd CoreELEC/target
-                ls -la 
+          
+                # release files
                 for i in `ls CoreELEC*{tar,img.gz,sha256}`; do 
                   NEWNAME=`echo $i | perl -pe "s/^(CoreELEC.*?)_(.*?)((_*.img.gz)|(\.tar))?(\.sha256)?$/VDR-\1-${{ inputs.releasetag }}\3\6/"`;
                   mv $i $NEWNAME || true;
-                done;
-                ls -la 
+                done;          
+          
+                # addons
+                if [ -d addons/ ]; then
+                  ALE=$(find addons/ -name "*zip")
+                else
+                  ALE="X"
+                fi
+          
+                if [ -n "$ALE" ] && [ ! "$ALE" = "X" ]; then
+                  NACE=(${ALE//\// })
+                  mv "${ALE}" ${NACE[0]}-${NACE[3]}-${NACE[7]} || true
+                fi
               )
           fi
 
           if [ "$DISTRO" == "LibreELEC.tv" ]; then          
               (
                 cd LibreELEC.tv/target
-                ls -la 
+          
+                # release files
                 for i in `ls LibreELEC*{tar,img.gz,sha256}`; do
                   NEWNAME=`echo $i | perl -pe "s/^(LibreELEC.*?)-devel-\d+-.*?((-.*?)?(.img.gz)|(.tar))(\.sha256)?$/VDR-\1\3-${{ inputs.releasetag }}\4\5\6/"`;          
                   mv $i $NEWNAME || true;                          
                 done;
-                ls -la 
+          
+                # addons
+                if [ -d addons/ ]; then
+                  ALE=$(find addons/ -name "*zip")
+                else
+                  ALE="X"
+                fi
+          
+                if [ -n "$ALE" ] && [ ! "$ALE" = "X" ]; then
+                  NACE=(${ALE//\// })
+                  mv "${ALE}" ${NACE[0]}-${NACE[3]}-${NACE[7]} || true
+                fi          
               )
           fi
 
-      - name: Save target files
+      - name: Save release target files
         uses: actions/upload-artifact@v4
         with:
           name: "build-artifacts-${{ inputs.releasetag }}-${{ inputs.config }}"
@@ -147,6 +171,29 @@ jobs:
           path: |
               CoreELEC/target/VDR*
               LibreELEC.tv/target/VDR*
+
+      - name: Save addon target files
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-addon-${{ inputs.config }}"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            CoreELEC/target/CoreELEC*zip 
+            LibreELEC.tv/target/LibreELEC*zip
+
+      - name: Save cef files
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-cef-${{ inputs.config }}"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            cef/cef*.zip
 
       - name: Save summary
         uses: actions/upload-artifact@v4

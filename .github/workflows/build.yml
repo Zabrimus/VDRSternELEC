@@ -140,23 +140,57 @@ jobs:
           pattern: build-summary-*
           merge-multiple: true
 
-      - name: Download build artifacts
+      - name: Download release artifacts
         uses: actions/download-artifact@v4
         with:
           path: build-artifacts
           pattern: build-artifacts-*
           merge-multiple: true
 
+      - name: Download addon artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build-addon
+          pattern: build-addon-*
+          merge-multiple: true
+
+      - name: Download cef artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build-cef
+          pattern: build-cef-*
+          merge-multiple: true
+
       - name: Create release and upload files
         run: |
+          echo "-------------------------------"
+          echo "List build summaries....
+          echo "-------------------------------"
+          
           if [ -d build-summary ]; then 
             ls -R build-summary
           fi
           
+          echo "-------------------------------"
+          echo "List build artifacts....
+          echo "-------------------------------"
+
           if [ -d build-artifacts ]; then 
             ls -R build-artifacts
           fi
 
+          echo "-------------------------------"
+          echo "List cef....
+          echo "-------------------------------"
+
+          if [ -d cef ]; then 
+            ls -R cef
+          fi
+
+          echo "-------------------------------"
+          echo "Create Release notes...
+          echo "-------------------------------"
+        
           VREV=$(git ls-remote https://github.com/${{ github.repository }} | head -1 | sed "s/HEAD//" | cut -c 1-7)
           echo "VDRSternELEC: [master@${VREV}](https://github.com/${{ github.repository }}/tree/${VREV})" >> release_notes
           echo "" >> release_notes
@@ -170,10 +204,43 @@ jobs:
           
           cat release_notes
           
+          echo "-------------------------------"
+          echo "Create Release...
+          echo "-------------------------------"
+
           # create release
           # gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" -R ${{ github.repository }} -F release_notes
           
-          # upload target files
+          echo "-------------------------------"
+          echo "Upload cef...
+          echo "-------------------------------"
+
+          # upload cef files
+          for i in $(ls cef/*.zip); do          
+              echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
+              # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
+          done
+          
+          echo "-------------------------------"
+          echo "Upload addons...
+          echo "-------------------------------"
+          
+          # upload addon files
+          for i in $(ls build-artifacts/CoreELEC/target/CoreELEC*zip); do          
+              echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
+              # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
+          done
+
+          for i in $(ls build-artifacts/CoreELEC/target/LibreELEC*zip); do          
+              echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
+              # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
+          done
+          
+          echo "-------------------------------"
+          echo "Upload release...
+          echo "-------------------------------"
+          
+          # upload release files
           for i in $(ls build-artifacts/CoreELEC/target/VDR*); do          
               echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
               # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
@@ -182,5 +249,4 @@ jobs:
           for i in $(ls build-artifacts/LibreELEC.tv/target/VDR*); do          
              echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
              # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
-          done          
-          
+          done

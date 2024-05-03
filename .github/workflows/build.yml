@@ -250,3 +250,14 @@ jobs:
              echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
              # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
           done
+
+#  delete-old-releases:
+#    needs: [create-release]
+#    name: delete-old-releases
+#    runs-on: ubuntu-20.04
+#    if: ${{ always() }}
+#    steps:
+#      - uses: dev-drprasad/delete-older-releases@v0.2.0
+#        with:
+#          repo: ${{ github.repository }}
+#          keep_latest: 8

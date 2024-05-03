@@ -183,6 +183,10 @@ build_addons() {
     TMP=$(echo $i | cut -d "=" -f 1)
     if [ $(grep $TMP$ ../config/addons.list) ]; then
 
+      # save DISTRO before starting the build (name clash, LE/CE uses also DISTRO, but the problem exists currently only with Github Workflows)
+      OLD_DISTRO=$DISTRO
+      unset DISTRO
+
       echo "Start building addon ${!TMP} ..."
 
       PROJECT="$PROJECT" \
@@ -196,6 +200,9 @@ build_addons() {
         ARCH="$ARCH" \
         BUILD_SUFFIX="$BUILD_SUFFIX" \
         scripts/install_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
+
+      DISTRO=$OLD_DISTRO
+      unset OLD_DISTRO
     fi
   done
 }
@@ -212,11 +219,18 @@ build() {
     fi
     echo "${RELEASE_STRING}"
 
+    # save DISTRO before starting the build (name clash, LE/CE uses also DISTRO, but the problem exists currently only with Github Workflows)
+    OLD_DISTRO=$DISTRO
+    unset DISTRO
+
     if [ "$RELEASE_ONLY" = "true" ]; then
         make release
     else
         make image
     fi
+
+    DISTRO=$OLD_DISTRO
+    unset OLD_DISTRO
   fi
 }
 

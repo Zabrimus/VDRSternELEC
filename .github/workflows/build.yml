@@ -157,13 +157,9 @@ jobs:
             ls -R build-artifacts
           fi
 
-          # Funktioniert nicht. Kein Plan, woran das liegt. Ich muss die Revision anders bestimmen.          
-          # CMD="git ls-remote https://github.com/${{ github.repository }} | head -1 | sed \"s/HEAD//\" | cut -c 1-7"
-          # VREV=eval $CMD
-          
-          # Erstmal rausnehmen, wenn das obige nicht funktioniert, dann ist das auch nicht sinnvoll
-          # echo "VDRSternELEC: [master@${VREV}](https://github.com/${{ github.repository }}/tree/${VREV})" >> release_notes
-          # echo "" >> release_notes
+          VREV=$(git ls-remote https://github.com/${{ github.repository }} | head -1 | sed "s/HEAD//" | cut -c 1-7)
+          echo "VDRSternELEC: [master@${VREV}](https://github.com/${{ github.repository }}/tree/${VREV})" >> release_notes
+          echo "" >> release_notes
           
           echo "----------------------------------------------------------------------------" >> release_notes
           

@@ -61,7 +61,7 @@ jobs:
               echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"
           
               ( cd LibreELEC.tv && git checkout libreelec-12.0 )
-              ./build.sh -config LibreELEC-12-arm-AMLGX -patchonly
+              ./build.sh -config LibreELEC-12-aarch64-AMLGX -patchonly
           fi
   
           if [[ "${{ inputs.config }}" == CoreELEC* ]]; then

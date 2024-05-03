@@ -87,9 +87,9 @@ jobs:
           ./build.sh -config CoreELEC-21-ng -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config CoreELEC-21-ne -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config LibreELEC-11-arm-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
-          ./build.sh -config LibreELEC-12-arm-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config LibreELEC-12-aarch64-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config LibreELEC-12-x86_64-x11 -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
-          ./build.sh -config LibreELEC-13-arm-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config LibreELEC-13-aarch64-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config LibreELEC-13-x86_64-x11 -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
 
       - name: Create Pull Request

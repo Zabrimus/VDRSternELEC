@@ -15,6 +15,9 @@ on:
           - CoreELEC-21
           - LibreELEC-11
           - LibreELEC-12
+          - LibreELEC-13
+  schedule:
+    - cron: '5 23 4 */2 *'
 
 jobs:
   coreelec-19:
@@ -56,3 +59,12 @@ jobs:
     with:
       config: LibreELEC-12
     secrets: inherit
+
+  libreelec-13:
+    name: LibreELEC-13
+    if:  ( github.event.inputs.target == 'LibreELEC-13' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: LibreELEC-13
+    secrets: inherit
+

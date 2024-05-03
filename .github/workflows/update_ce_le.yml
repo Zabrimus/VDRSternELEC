@@ -28,6 +28,7 @@ jobs:
           le10_old=$(cat config/versions | grep "LIBREELEC10=" | awk -F"=" '{ print $2 }')
           le11_old=$(cat config/versions | grep "LIBREELEC11=" | awk -F"=" '{ print $2 }')
           le12_old=$(cat config/versions | grep "LIBREELEC12=" | awk -F"=" '{ print $2 }')
+          le13_old=$(cat config/versions | grep "LIBREELEC13=" | awk -F"=" '{ print $2 }')
           
           # Get latest version
           ce19=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-19 | awk '{ print substr($1, 0, 7) }')
@@ -35,7 +36,8 @@ jobs:
           ce21=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-21 | awk '{ print substr($1, 0, 7) }')
           le10=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git libreelec-10.0 | awk '{ print substr($1, 0, 7) }')
           le11=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git libreelec-11.0 | awk '{ print substr($1, 0, 7) }')
-          le12=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git master | awk '{ print substr($1, 0, 7) }')
+          le12=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git libreelec-12.0 | awk '{ print substr($1, 0, 7) }')
+          le13=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git master | awk '{ print substr($1, 0, 7) }')
         
           echo "Update CoreELEC/LibreELEC to version:" > commit.body
           if [ ! "${ce19_old}" = "${ce19}" ]; then 
@@ -61,6 +63,10 @@ jobs:
           if [ ! "${le12_old}" = "${le12}" ]; then
               echo "  LibreELEC.tv 12 from [${le12_old}](https://github.com/LibreELEC/LibreELEC.tv/tree/${le12_old}) to [${le12}](https://github.com/LibreELEC/LibreELEC.tv/tree/${le12})" >> commit.body
           fi
+
+          if [ ! "${le13_old}" = "${le13}" ]; then
+              echo "  LibreELEC.tv 13 from [${le13_old}](https://github.com/LibreELEC/LibreELEC.tv/tree/${le13_old}) to [${le13}](https://github.com/LibreELEC/LibreELEC.tv/tree/${le13})" >> commit.body
+          fi
       
           # update version
           cat config/versions | sed -e "s/^COREELEC19=.*$/COREELEC19=${ce19}/" \
@@ -68,7 +74,8 @@ jobs:
                               | sed -e "s/^COREELEC21=.*$/COREELEC21=${ce21}/" \
                               | sed -e "s/^LIBREELEC10=.*$/LIBREELEC10=${le10}/" \
                               | sed -e "s/^LIBREELEC11=.*$/LIBREELEC11=${le11}/" \
-                              | sed -e "s/^LIBREELEC12=.*$/LIBREELEC12=${le12}/" > config/versions.new
+                              | sed -e "s/^LIBREELEC12=.*$/LIBREELEC12=${le12}/" \
+                              | sed -e "s/^LIBREELEC13=.*$/LIBREELEC13=${le13}/" > config/versions.new
           
           rm config/versions
           mv config/versions.new config/versions
@@ -80,8 +87,10 @@ jobs:
           ./build.sh -config CoreELEC-21-ng -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config CoreELEC-21-ne -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config LibreELEC-11-arm-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
-          ./build.sh -config LibreELEC-master-arm-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
-          ./build.sh -config LibreELEC-master-x86_64-x11 -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config LibreELEC-12-arm-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config LibreELEC-12-x86_64-x11 -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config LibreELEC-13-arm-AMLGX -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
+          ./build.sh -config LibreELEC-13-x86_64-x11 -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6

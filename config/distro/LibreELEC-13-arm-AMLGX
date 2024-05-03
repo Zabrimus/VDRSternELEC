@@ -1,0 +1,15 @@
+DISTRO=LibreELEC.tv
+SHA=${LIBREELEC13}
+PATCHDIR=libreelec-13
+
+# Use project variant
+VARIANT=
+
+# Build settings
+PROJECT=Amlogic
+DEVICE=AMLGX
+ARCH=arm
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhddevice-drm-gles
+VDR_INPUTDEVICE=satip

@@ -132,19 +132,19 @@ LibreELEC-10.0-aarch64-AMLGX
 LibreELEC-10.0-arm-AMLGX
 LibreELEC-10.0-x86_64
 LibreELEC-11-arm-AMLGX
-LibreELEC-master-aarch64
-LibreELEC-master-arm-Allwinner-A64
-LibreELEC-master-arm-Allwinner-H3
-LibreELEC-master-arm-Allwinner-H5
-LibreELEC-master-arm-Allwinner-H6
-LibreELEC-master-arm-Allwinner-R40
-LibreELEC-master-arm-AMLGX
-LibreELEC-master-arm-Rockchip-RK3288
-LibreELEC-master-arm-Rockchip-RK3328
-LibreELEC-master-arm-Rockchip-RK3399
-LibreELEC-master-arm-RPi-RPi4
-LibreELEC-master-x86_64-x11
-LibreELEC-master-x86_64-x11-qemu
+LibreELEC-{12,13}-aarch64
+LibreELEC-{12,13}-arm-Allwinner-A64
+LibreELEC-{12,13}-arm-Allwinner-H3
+LibreELEC-{12,13}-arm-Allwinner-H5
+LibreELEC-{12,13}-arm-Allwinner-H6
+LibreELEC-{12,13}-arm-Allwinner-R40
+LibreELEC-{12,13}-arm-AMLGX
+LibreELEC-{12,13}-arm-Rockchip-RK3288
+LibreELEC-{12,13}-arm-Rockchip-RK3328
+LibreELEC-{12,13}-arm-Rockchip-RK3399
+LibreELEC-{12,13}-arm-RPi-RPi4
+LibreELEC-{12,13}-x86_64-x11
+LibreELEC-{12,13}-x86_64-x11-qemu
 
 Available extras:
 directfb
@@ -371,7 +371,7 @@ VDR_LD_PRELOAD=/path/to/lib1.so:/path/to/lib2.so
 It is possible to start a local virtual machine in [incus](https://linuxcontainers.org/incus/) for LibreELEC/x86_64.
 At first you need to build the image and `extras` Parameter if desired.
 ```
-./build.sh -config LibreELEC-master-x86_64-x11-qemu
+./build.sh -config LibreELEC-12-x86_64-x11-qemu
 ```
 After the build an `ova` Image is available in folder LibreELEC.tv/target/. This image needs to be converted to a `qcow2` image.
 

@@ -17,17 +17,17 @@ on:
           - CoreELEC-20-ne
           - CoreELEC-21-ng
           - CoreELEC-21-ne
-          - LibreELEC-master-arm-AMLGX
-          - LibreELEC-master-x86_64-x11
-          - LibreELEC-master-arm-Allwinner-H6
-          - LibreELEC-master-arm-Allwinner-A64
-          - LibreELEC-master-arm-Allwinner-R40
-          - LibreELEC-master-arm-Allwinner-H3
-          - LibreELEC-master-arm-Allwinner-H5
-          - LibreELEC-master-arm-Rockchip-RK3399
-          - LibreELEC-master-arm-Rockchip-RK3288
-          - LibreELEC-master-arm-Rockchip-RK3328
-          - LibreELEC-master-arm-RPi-RPi4
+          - LibreELEC-12-arm-AMLGX
+          - LibreELEC-12-x86_64-x11
+          - LibreELEC-12-arm-Allwinner-H6
+          - LibreELEC-12-arm-Allwinner-A64
+          - LibreELEC-12-arm-Allwinner-R40
+          - LibreELEC-12-arm-Allwinner-H3
+          - LibreELEC-12-arm-Allwinner-H5
+          - LibreELEC-12-arm-Rockchip-RK3399
+          - LibreELEC-12-arm-Rockchip-RK3288
+          - LibreELEC-12-arm-Rockchip-RK3328
+          - LibreELEC-12-arm-RPi-RPi4
 
 jobs:
   prepare:
@@ -97,10 +97,10 @@ jobs:
           JSON="{\"include\":["
           
           for i in CoreELEC-19 CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne \
-                   LibreELEC-master-arm-AMLGX LibreELEC-master-x86_64-x11 LibreELEC-master-arm-Allwinner-H6 \
-                   LibreELEC-master-arm-Allwinner-A64 LibreELEC-master-arm-Allwinner-R40 LibreELEC-master-arm-Allwinner-H3 \
-                   LibreELEC-master-arm-Allwinner-H5 LibreELEC-master-arm-Rockchip-RK3399 LibreELEC-master-arm-Rockchip-RK3288 \
-                   LibreELEC-master-arm-Rockchip-RK3328 LibreELEC-master-arm-RPi-RPi4
+                   LibreELEC-12-arm-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-arm-Allwinner-H6 \
+                   LibreELEC-12-arm-Allwinner-A64 LibreELEC-12-arm-Allwinner-R40 LibreELEC-12-arm-Allwinner-H3 \
+                   LibreELEC-12-arm-Allwinner-H5 LibreELEC-12-arm-Rockchip-RK3399 LibreELEC-12-arm-Rockchip-RK3288 \
+                   LibreELEC-12-arm-Rockchip-RK3328 LibreELEC-12-arm-RPi-RPi4
           do
             if ([ "${{ github.event.inputs.target }}" == "$i" ] || [ "${{ github.event.inputs.target }}" == 'all' ] || [ "${{ github.event.inputs.target }}" == '' ]) \
               || ([ "${{ github.event.inputs.target }}" == 'CoreELEC (all)' ] && [[ "$i" == CoreELEC* ]]) \

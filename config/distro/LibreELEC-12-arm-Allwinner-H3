@@ -1,14 +1,14 @@
 DISTRO=LibreELEC.tv
-SHA=${LIBREELEC13}
-PATCHDIR=libreelec-13
+SHA=${LIBREELEC12}
+PATCHDIR=libreelec-12
 
 # Use project variant
 VARIANT=
 
 # Build settings
 PROJECT=Allwinner
-DEVICE=R40
-ARCH=aarch64
+DEVICE=H3
+ARCH=arm
 
 # VDR settings
 VDR_OUTPUTDEVICE=softhddevice-drm-gles

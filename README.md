@@ -132,12 +132,12 @@ LibreELEC-10.0-arm-AMLGX
 LibreELEC-10.0-x86_64
 LibreELEC-11-arm-AMLGX
 LibreELEC-{12,13}-aarch64-Allwinner-A64
-LibreELEC-{12,13}-aarch64-Allwinner-H3
+LibreELEC-{12,13}-arm-Allwinner-H3
 LibreELEC-{12,13}-aarch64-Allwinner-H5
 LibreELEC-{12,13}-aarch64-Allwinner-H6
-LibreELEC-{12,13}-aarch64-Allwinner-R40
+LibreELEC-{12,13}-arm-Allwinner-R40
 LibreELEC-{12,13}-aarch64-AMLGX
-LibreELEC-{12,13}-aarch64-Rockchip-RK3288
+LibreELEC-{12,13}-arm-Rockchip-RK3288
 LibreELEC-{12,13}-aarch64-Rockchip-RK3328
 LibreELEC-{12,13}-aarch64-Rockchip-RK3399
 LibreELEC-{12,13}-aarch64-RPi-RPi4

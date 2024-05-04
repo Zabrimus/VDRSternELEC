@@ -29,7 +29,6 @@ jobs:
 
       - name: Start patch test
         run: |
-          ./build.sh -config CoreELEC-19 -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config CoreELEC-20-ng -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config CoreELEC-21-ng -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config CoreELEC-21-ne -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly

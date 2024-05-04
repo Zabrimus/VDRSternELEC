@@ -11,7 +11,6 @@ on:
         type: choice
         options:
           - all
-          - CoreELEC-19
           - CoreELEC-20
           - CoreELEC-21
           - LibreELEC-11
@@ -19,14 +18,6 @@ on:
           - LibreELEC-13
 
 jobs:
-  coreelec-19:
-    name: CoreELEC-19
-    if:  ( github.event.inputs.target == 'CoreELEC-19' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
-    uses: ./.github/workflows/download-sources.yml
-    with:
-      config: CoreELEC-19
-    secrets: inherit
-
   coreelec-20:
     name: CoreELEC-20
     if:  ( github.event.inputs.target == 'CoreELEC-20' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )

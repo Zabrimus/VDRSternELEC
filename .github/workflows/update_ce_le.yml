@@ -21,7 +21,6 @@ jobs:
       - name: Update CoreELEC/LibreELEC
         run: |
           # Get current version
-          ce19_old=$(cat config/versions | grep "COREELEC19=" | awk -F"=" '{ print $2 }')
           ce20_old=$(cat config/versions | grep "COREELEC20=" | awk -F"=" '{ print $2 }')
           ce21_old=$(cat config/versions | grep "COREELEC21=" | awk -F"=" '{ print $2 }')
           le10_old=$(cat config/versions | grep "LIBREELEC10=" | awk -F"=" '{ print $2 }')
@@ -30,7 +29,6 @@ jobs:
           le13_old=$(cat config/versions | grep "LIBREELEC13=" | awk -F"=" '{ print $2 }')
           
           # Get latest version
-          ce19=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-19 | awk '{ print substr($1, 0, 7) }')
           ce20=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-20 | awk '{ print substr($1, 0, 7) }')
           ce21=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-21 | awk '{ print substr($1, 0, 7) }')
           le10=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git libreelec-10.0 | awk '{ print substr($1, 0, 7) }')
@@ -39,10 +37,6 @@ jobs:
           le13=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git master | awk '{ print substr($1, 0, 7) }')
         
           echo "Update CoreELEC/LibreELEC to version:" > commit.body
-          if [ ! "${ce19_old}" = "${ce19}" ]; then 
-              echo "  CoreELEC 19 from [${ce19_old}](https://github.com/CoreELEC/CoreELEC/tree/${ce19_old}) to [${ce19}](https://github.com/CoreELEC/CoreELEC/tree/${ce19})" >> commit.body
-          fi
-          
           if [ ! "${ce20_old}" = "${ce20}" ]; then 
               echo "  CoreELEC 20 from [${ce20_old}](https://github.com/CoreELEC/CoreELEC/tree/${ce20_old}) to [${ce20}](https://github.com/CoreELEC/CoreELEC/tree/${ce20})" >> commit.body
           fi
@@ -68,8 +62,7 @@ jobs:
           fi
       
           # update version
-          cat config/versions | sed -e "s/^COREELEC19=.*$/COREELEC19=${ce19}/" \
-                              | sed -e "s/^COREELEC20=.*$/COREELEC20=${ce20}/" \
+          cat config/versions | sed -e "s/^COREELEC20=.*$/COREELEC20=${ce20}/" \
                               | sed -e "s/^COREELEC21=.*$/COREELEC21=${ce21}/" \
                               | sed -e "s/^LIBREELEC10=.*$/LIBREELEC10=${le10}/" \
                               | sed -e "s/^LIBREELEC11=.*$/LIBREELEC11=${le11}/" \
@@ -81,7 +74,6 @@ jobs:
 
       - name: Start patch test
         run: |
-          ./build.sh -config CoreELEC-19 -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config CoreELEC-20-ng -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config CoreELEC-21-ng -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly
           ./build.sh -config CoreELEC-21-ne -extra dynamite,permashift,easyvdr,channellogos,remotetranscode,cefbrowser -patchonly

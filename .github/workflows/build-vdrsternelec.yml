@@ -48,11 +48,7 @@ jobs:
           echo "PROJECT=$project" >> "$GITHUB_ENV"
           echo "DEVICE=$device" >> "$GITHUB_ENV"
           
-          if [ "$branch" = "coreelec-19" ]; then
-              echo "ARTIFACT=cache-coreelec-19-sources" >> "$GITHUB_ENV"
-              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
-              rev=$(grep "COREELEC19=" config/versions | awk -F= '{ print $2 }')
-          elif [ "$branch" = "coreelec-20" ]; then
+          if [ "$branch" = "coreelec-20" ]; then
               echo "ARTIFACT=cache-coreelec-20-sources" >> "$GITHUB_ENV"
               echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
               rev=$(grep "COREELEC20=" config/versions | awk -F= '{ print $2 }')

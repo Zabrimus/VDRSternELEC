@@ -169,6 +169,8 @@ jobs:
           
           if [ -d build-summary ]; then 
             ls -R build-summary
+          else
+            echo "Directory build-summary does not exists"
           fi
           
           echo "-------------------------------"
@@ -177,14 +179,28 @@ jobs:
 
           if [ -d build-artifacts ]; then 
             ls -R build-artifacts
+          else
+            echo "Directory build-artifacts does not exists"
           fi
 
           echo "-------------------------------"
           echo "List cef....
           echo "-------------------------------"
 
-          if [ -d cef ]; then 
-            ls -R cef
+          if [ -d build-cef ]; then 
+            ls -R build-cef
+          else
+            echo "Directory build-cef does not exists"          
+          fi
+
+          echo "-------------------------------"
+          echo "List addons....
+          echo "-------------------------------"
+
+          if [ -d build-addon ]; then 
+            ls -R build-addon
+          else
+            echo "Directory build-addon does not exists"          
           fi
 
           echo "-------------------------------"
@@ -216,7 +232,7 @@ jobs:
           echo "-------------------------------"
 
           # upload cef files
-          for i in $(ls cef/*.zip); do          
+          for i in $(ls build-cef/*.zip); do          
               echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
               # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
           done

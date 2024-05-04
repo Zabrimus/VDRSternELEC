@@ -127,7 +127,7 @@ jobs:
           
                 if [ -n "$ALE" ] && [ ! "$ALE" = "X" ]; then
                   NACE=(${ALE//\// })
-                  mv "${ALE}" ${NACE[0]}-${NACE[3]}-${NACE[7]} || true
+                  mv "${ALE}" CoreELEC-${NACE[1]}-${NACE[5]}" || true
                 fi
               )
           fi
@@ -151,7 +151,7 @@ jobs:
           
                 if [ -n "$ALE" ] && [ ! "$ALE" = "X" ]; then
                   NACE=(${ALE//\// })
-                  mv "${ALE}" ${NACE[0]}-${NACE[3]}-${NACE[7]} || true
+                  mv "${ALE}" LibreELEC-${NACE[1]}-${NACE[5]}" || true
                 fi          
               )
           fi

@@ -1,4 +1,4 @@
-name: Update Packages
+name: Cron Precache Sources
 
 on:
   schedule:

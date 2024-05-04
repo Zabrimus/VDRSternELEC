@@ -1,4 +1,4 @@
-name: Update Packages
+name: Cron Build VDRSternELEC
 
 on:
   workflow_dispatch:

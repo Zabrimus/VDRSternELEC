@@ -1,4 +1,4 @@
-name: Update Packages
+name: Cron Update CE/LE
 
 on:
   schedule:

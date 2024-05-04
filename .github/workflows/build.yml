@@ -164,7 +164,7 @@ jobs:
       - name: Create release and upload files
         run: |
           echo "-------------------------------"
-          echo "List build summaries....
+          echo "List build summaries...."
           echo "-------------------------------"
           
           if [ -d build-summary ]; then 
@@ -174,7 +174,7 @@ jobs:
           fi
           
           echo "-------------------------------"
-          echo "List build artifacts....
+          echo "List build artifacts...."
           echo "-------------------------------"
 
           if [ -d build-artifacts ]; then 
@@ -184,7 +184,7 @@ jobs:
           fi
 
           echo "-------------------------------"
-          echo "List cef....
+          echo "List cef...."
           echo "-------------------------------"
 
           if [ -d build-cef ]; then 
@@ -194,7 +194,7 @@ jobs:
           fi
 
           echo "-------------------------------"
-          echo "List addons....
+          echo "List addons...."
           echo "-------------------------------"
 
           if [ -d build-addon ]; then 
@@ -204,7 +204,7 @@ jobs:
           fi
 
           echo "-------------------------------"
-          echo "Create Release notes...
+          echo "Create Release notes..."
           echo "-------------------------------"
         
           VREV=$(git ls-remote https://github.com/${{ github.repository }} | head -1 | sed "s/HEAD//" | cut -c 1-7)
@@ -221,14 +221,14 @@ jobs:
           cat release_notes
           
           echo "-------------------------------"
-          echo "Create Release...
+          echo "Create Release..."
           echo "-------------------------------"
 
           # create release
           # gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" -R ${{ github.repository }} -F release_notes
           
           echo "-------------------------------"
-          echo "Upload cef...
+          echo "Upload cef..."
           echo "-------------------------------"
 
           # upload cef files
@@ -238,7 +238,7 @@ jobs:
           done
           
           echo "-------------------------------"
-          echo "Upload addons...
+          echo "Upload addons..."
           echo "-------------------------------"
           
           # upload addon files
@@ -253,7 +253,7 @@ jobs:
           done
           
           echo "-------------------------------"
-          echo "Upload release...
+          echo "Upload release..."
           echo "-------------------------------"
           
           # upload release files

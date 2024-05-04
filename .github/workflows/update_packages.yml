@@ -2,8 +2,7 @@ name: Update Packages
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 23 * * *'
+  workflow_call:
 
 jobs:
   update:

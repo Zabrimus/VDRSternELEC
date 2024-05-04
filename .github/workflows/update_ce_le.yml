@@ -2,8 +2,7 @@ name: Update CoreELEC/LibreELEC
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 23 * * 3'
+  workflow_call:
 
 jobs:
   update_ce_le:

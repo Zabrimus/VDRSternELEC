@@ -1,0 +1,13 @@
+name: Update Packages
+
+on:
+  schedule:
+    - cron: '0 23 * * 3'
+
+jobs:
+  # This workflow is configured to run only in repository 'Zabrimus/VDRSternELEC'
+  # If you also want to run this workflow, then change or remove the condition in job 'cron'
+
+  cron:
+    if: github.repository == 'Zabrimus/VDRSternELEC'
+    uses: ./.github/workflows/update_ce_le.yml

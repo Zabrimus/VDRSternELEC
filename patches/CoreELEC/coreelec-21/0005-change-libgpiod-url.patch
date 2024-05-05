@@ -1,0 +1,17 @@
+diff --git a/packages/addons/addon-depends/system-tools-depends/libgpiod/package.mk b/packages/addons/addon-depends/system-tools-depends/libgpiod/package.mk
+index 77e33614c0..1a8b4ca221 100644
+--- a/packages/addons/addon-depends/system-tools-depends/libgpiod/package.mk
++++ b/packages/addons/addon-depends/system-tools-depends/libgpiod/package.mk
+@@ -3,10 +3,10 @@
+ 
+ PKG_NAME="libgpiod"
+ PKG_VERSION="2.1"
+-PKG_SHA256="fd6ed4b2c674fe6cc3b481880f6cde1eea79e296e95a139b85401eaaea6de3fc"
++PKG_SHA256="fa4024a080121c958502f9a46a5bda44bea85e7a4dd7fcb3dead463b6fc4261c"
+ PKG_LICENSE="GPLv2+"
+ PKG_SITE="https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/about/"
+-PKG_URL="https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/snapshot/libgpiod-${PKG_VERSION}.tar.gz"
++PKG_URL="https://mirrors.edge.kernel.org/pub/software/libs/libgpiod/libgpiod-${PKG_VERSION}.tar.xz"
+ PKG_DEPENDS_TARGET="toolchain"
+ PKG_LONGDESC="Tools for interacting with the linux GPIO character device."
+ PKG_TOOLCHAIN="autotools"

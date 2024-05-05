@@ -1,0 +1,17 @@
+diff --git a/packages/tools/dtc/package.mk b/packages/tools/dtc/package.mk
+index 09ec2e782d..8da37efc4c 100644
+--- a/packages/tools/dtc/package.mk
++++ b/packages/tools/dtc/package.mk
+@@ -4,10 +4,10 @@
+ 
+ PKG_NAME="dtc"
+ PKG_VERSION="1.7.0"
+-PKG_SHA256="8bca9b594702267d84453e530cc974b7f8e06aea7e60d65614d4bf23be3167d2"
++PKG_SHA256="29edce3d302a15563d8663198bbc398c5a0554765c83830d0d4c0409d21a16c4"
+ PKG_LICENSE="GPL"
+ PKG_SITE="https://git.kernel.org/pub/scm/utils/dtc/dtc.git/"
+-PKG_URL="https://git.kernel.org/pub/scm/utils/dtc/dtc.git/snapshot/${PKG_VERSION}.tar.gz"
++PKG_URL="https://mirrors.edge.kernel.org/pub/software/utils/dtc/dtc-${PKG_VERSION}.tar.xz"
+ PKG_DEPENDS_HOST="toolchain:host"
+ PKG_DEPENDS_TARGET="toolchain"
+ PKG_LONGDESC="The Device Tree Compiler"

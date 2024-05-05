@@ -85,7 +85,7 @@ jobs:
         run: |
           BUILD_FAILED="false"
           
-          if ! ./build.sh -config ${{ inputs.config }} -extra easyvdr,channellogos,remotetranscode,cefbrowser -releaseonly -addon dvb-latest; then
+          if ! ./build.sh -config ${{ inputs.config }} -extra easyvdr,channellogos,remotetranscode,cefbrowser -releaseonly -addon dvb-latest -addononly; then
             BUILD_FAILED="true"
           fi
 
@@ -111,6 +111,11 @@ jobs:
           if [ "$DISTRO" == "CoreELEC" ]; then
               (
                 cd CoreELEC/target
+          
+                echo "============================="
+                echo " TEST: List target files"
+                echo "============================="
+                ls -laR .
           
                 # release files
                 for i in `ls CoreELEC*{tar,img.gz,sha256}`; do 

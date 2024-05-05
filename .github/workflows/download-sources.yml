@@ -60,7 +60,7 @@ jobs:
               echo "CACHE_NAME=cache-libreelec-13-sources" >> "$GITHUB_OUTPUT"
               echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"
           
-              ( cd LibreELEC.tv && git checkout libreelec-13.0 )
+              ( cd LibreELEC.tv && git checkout master )
               ./build.sh -config LibreELEC-13-aarch64-AMLGX -patchonly
           fi
   

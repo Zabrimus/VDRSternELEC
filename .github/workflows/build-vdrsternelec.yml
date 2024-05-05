@@ -118,21 +118,17 @@ jobs:
                 ls -laR .
           
                 # release files
-                for i in `ls CoreELEC*{tar,img.gz,sha256}`; do 
+                for i in $(ls CoreELEC*{tar,img.gz,sha256}); do           
                   NEWNAME=`echo $i | perl -pe "s/^(CoreELEC.*?)_(.*?)((_*.img.gz)|(\.tar))?(\.sha256)?$/VDR-\1-${{ inputs.releasetag }}\3\6/"`;
                   mv $i $NEWNAME || true;
                 done;          
           
                 # addons
-                if [ -d addons/ ]; then
-                  ALE=$(find addons/ -name "*zip")
-                else
-                  ALE="X"
-                fi
-          
-                if [ -n "$ALE" ] && [ ! "$ALE" = "X" ]; then
-                  NACE=(${ALE//\// })
-                  mv "${ALE}" CoreELEC-${NACE[1]}-${NACE[5]}" || true
+                if [ -d addons ]; then
+                  for i in $(find addons -name "*zip"); do
+                    NACE=(${i//\// })
+                    mv ${ALE} addons/CoreELEC-${NACE[1]}-${NACE[5]}
+                  done
                 fi
               )
           fi
@@ -148,16 +144,12 @@ jobs:
                 done;
           
                 # addons
-                if [ -d addons/ ]; then
-                  ALE=$(find addons/ -name "*zip")
-                else
-                  ALE="X"
+                if [ -d addons ]; then
+                  for i in $(find addons -name "*zip"); do
+                    NACE=(${i//\// })
+                    mv ${ALE} addons/LibreELEC-${NACE[1]}-${NACE[5]}
+                  done
                 fi
-          
-                if [ -n "$ALE" ] && [ ! "$ALE" = "X" ]; then
-                  NACE=(${ALE//\// })
-                  mv "${ALE}" LibreELEC-${NACE[1]}-${NACE[5]}" || true
-                fi          
               )
           fi
 
@@ -182,8 +174,8 @@ jobs:
           overwrite: true
           if-no-files-found: ignore
           path: |
-            CoreELEC/target/CoreELEC*zip 
-            LibreELEC.tv/target/LibreELEC*zip
+            CoreELEC/target/addons/CoreELEC*zip 
+            LibreELEC.tv/target/addons/LibreELEC*zip
 
       - name: Save cef files
         uses: actions/upload-artifact@v4

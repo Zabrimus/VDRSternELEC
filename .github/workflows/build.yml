@@ -242,12 +242,12 @@ jobs:
           echo "-------------------------------"
           
           # upload addon files
-          for i in $(ls build-artifacts/CoreELEC/target/CoreELEC*zip); do          
+          for i in $(ls build-addon/CoreELEC/target/addons/CoreELEC*zip); do          
               echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
               # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
           done
 
-          for i in $(ls build-artifacts/CoreELEC/target/LibreELEC*zip); do          
+          for i in $(ls build-addon/LibreELEC.tv/target/addons/LibreELEC*zip); do          
               echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
               # gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
           done

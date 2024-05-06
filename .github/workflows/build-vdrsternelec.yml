@@ -118,16 +118,20 @@ jobs:
                 ls -laR .
           
                 # release files
+                echo "=> CoreELEC release files"
                 for i in $(ls CoreELEC*{tar,img.gz,sha256}); do           
                   NEWNAME=`echo $i | perl -pe "s/^(CoreELEC.*?)_(.*?)((_*.img.gz)|(\.tar))?(\.sha256)?$/VDR-\1-${{ inputs.releasetag }}\3\6/"`;
+                  echo "mv $i $NEWNAME"
                   mv $i $NEWNAME || true;
                 done;          
           
                 # addons
+                echo "=> CoreELEC addons"
                 if [ -d addons ]; then
                   for i in $(find addons -name "*zip"); do
                     NACE=(${i//\// })
-                    mv ${ALE} addons/CoreELEC-${NACE[1]}-${NACE[5]}
+                    echo "mv ${ALE} addons/CoreELEC-${NACE[1]}-${NACE[5]}"
+                    mv ${ALE} addons/CoreELEC-${NACE[1]}-${NACE[5]} || true
                   done
                 fi
               )
@@ -138,16 +142,20 @@ jobs:
                 cd LibreELEC.tv/target
           
                 # release files
+                echo "=> LibreELEC release files"
                 for i in `ls LibreELEC*{tar,img.gz,sha256}`; do
-                  NEWNAME=`echo $i | perl -pe "s/^(LibreELEC.*?)-devel-\d+-.*?((-.*?)?(.img.gz)|(.tar))(\.sha256)?$/VDR-\1\3-${{ inputs.releasetag }}\4\5\6/"`;          
+                  NEWNAME=`echo $i | perl -pe "s/^(LibreELEC.*?)-devel-\d+-.*?((-.*?)?(.img.gz)|(.tar))(\.sha256)?$/VDR-\1\3-${{ inputs.releasetag }}\4\5\6/"`;
+                  echo "mv $i $NEWNAME"
                   mv $i $NEWNAME || true;                          
                 done;
           
                 # addons
+                echo "=> LibreELEC addons"
                 if [ -d addons ]; then
                   for i in $(find addons -name "*zip"); do
                     NACE=(${i//\// })
-                    mv ${ALE} addons/LibreELEC-${NACE[1]}-${NACE[5]}
+                    echo "mv ${ALE} addons/LibreELEC-${NACE[1]}-${NACE[5]}"
+                    mv ${ALE} addons/LibreELEC-${NACE[1]}-${NACE[5]} || true
                   done
                 fi
               )

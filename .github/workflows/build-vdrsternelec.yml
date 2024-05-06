@@ -85,7 +85,7 @@ jobs:
         run: |
           BUILD_FAILED="false"
           
-          if ! ./build.sh -config ${{ inputs.config }} -extra easyvdr,channellogos,remotetranscode,cefbrowser -releaseonly -addon dvb-latest -addononly; then
+          if ! ./build.sh -config ${{ inputs.config }} -extra easyvdr,channellogos,remotetranscode,cefbrowser -releaseonly -addon dvb-latest; then
             BUILD_FAILED="true"
           fi
 

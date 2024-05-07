@@ -104,8 +104,8 @@ jobs:
           #         LibreELEC-12-aarch64-Rockchip-RK3328 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5
           
           for i in CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne \
-                   LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 \                   
-                   LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5          
+                   LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 \
+                   LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5
           do
             if ([ "${{ github.event.inputs.target }}" == "$i" ] || [ "${{ github.event.inputs.target }}" == 'all' ] || [ "${{ github.event.inputs.target }}" == '' ]) \
               || ([ "${{ github.event.inputs.target }}" == 'CoreELEC (all)' ] && [[ "$i" == CoreELEC* ]]) \

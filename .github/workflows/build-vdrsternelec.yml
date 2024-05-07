@@ -6,7 +6,6 @@ on:
       config:
         description: "Configuration to build"
         default: CoreELEC-20-ng
-        required: true
         type: string
 
       releasetag:
@@ -109,7 +108,7 @@ jobs:
              EXTRAS=""
           fi
 
-          EXTRA_PARAMETER=${{ extraparameter }}
+          EXTRA_PARAMETER=${{ inputs.extraparameter }}
           
           if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
             BUILD_FAILED="true"

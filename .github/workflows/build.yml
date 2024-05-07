@@ -49,9 +49,9 @@ on:
         description: "extras"
         default: easyvdr,channellogos,remotetranscode,cefbrowser
         type: string
-      extra_Parameter:
+      extraparameter:
         description: "extra parameter"
-        default: -releaseonly
+        default: '-releaseonly'
         type: string
 
 jobs:
@@ -161,7 +161,7 @@ jobs:
       releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
       addons: ${{ github.event.inputs.addons }}
       extras: ${{ github.event.inputs.extras }}
-      extra_Parameter: ${{ github.event.inputs.extra_Parameter }}
+      extraparameter: ${{ github.event.inputs.extraparameter }}
     secrets: inherit
 
   create-release:

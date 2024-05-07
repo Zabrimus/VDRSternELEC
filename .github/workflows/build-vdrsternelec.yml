@@ -96,13 +96,13 @@ jobs:
         run: |
           BUILD_FAILED="false"
 
-          if [ ! "${{ inputs.addons }}" = "" ];
+          if [ ! "${{ inputs.addons }}" = "" ]; then
              ADDONS="-addon ${{ inputs.addons }}"
           else
              ADDONS=""
           fi
           
-          if [ ! "${{ inputs.extras }}" = "" ];
+          if [ ! "${{ inputs.extras }}" = "" ]; then
              EXTRAS="-extra ${{ inputs.extras }}"
           else
              EXTRAS=""

@@ -108,7 +108,7 @@ jobs:
              EXTRAS=""
           fi
 
-          EXTRA_PARAMETER=${{ inputs.extraparameter }}
+          EXTRA_PARAMETER="${{ inputs.extraparameter }}"
           
           if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
             BUILD_FAILED="true"

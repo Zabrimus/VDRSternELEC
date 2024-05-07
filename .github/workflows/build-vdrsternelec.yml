@@ -14,6 +14,18 @@ on:
         required: true
         type: string
 
+      addons:
+        description: "addons"
+        type: string
+
+      extras:
+        description: "extras"
+        type: string
+
+      extra_Parameter:
+        description: "extra parameter"
+        type: string
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -84,8 +96,22 @@ jobs:
       - name: Build
         run: |
           BUILD_FAILED="false"
+
+          if [ ! "${{ inputs.addons }}" = "" ];
+             ADDONS="-addon ${{ inputs.addons }}"
+          else
+             ADDONS=""
+          fi
           
-          if ! ./build.sh -config ${{ inputs.config }} -extra easyvdr,channellogos,remotetranscode,cefbrowser -releaseonly -addon dvb-latest; then
+          if [ ! "${{ inputs.extras }}" = "" ];
+             EXTRAS="-extra ${{ inputs.extras }}"
+          else
+             EXTRAS=""
+          fi
+
+          EXTRA_PARAMETER=${{ extra_Parameter }}
+          
+          if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
             BUILD_FAILED="true"
           fi
 

@@ -10,9 +10,9 @@ on:
         required: true
         type: choice
         options:
-          - all
-          - CoreELEC (all)
-          - LibreELEC (all)
+          - all default
+          - CoreELEC (all default)
+          - LibreELEC (all default)
           - CoreELEC-20-ng
           - CoreELEC-20-ne
           - CoreELEC-21-ng
@@ -29,6 +29,30 @@ on:
           - LibreELEC-12-aarch64-RPi-RPi4
           - LibreELEC-12-aarch64-RPi-RPi5
           - LibreELEC-12-x86_64-x11
+          - LibreELEC-13-aarch64-AMLGX
+          - LibreELEC-13-aarch64-Allwinner-H6
+          - LibreELEC-13-aarch64-Allwinner-A64
+          - LibreELEC-13-arm-Allwinner-R40
+          - LibreELEC-13-arm-Allwinner-H3
+          - LibreELEC-13-aarch64-Allwinner-H5
+          - LibreELEC-13-aarch64-Rockchip-RK3399
+          - LibreELEC-13-arm-Rockchip-RK3288
+          - LibreELEC-13-aarch64-Rockchip-RK3328
+          - LibreELEC-13-aarch64-RPi-RPi4
+          - LibreELEC-13-aarch64-RPi-RPi5
+          - LibreELEC-13-x86_64-x11
+      addons:
+        description: "addons"
+        default: dvb-latest
+        type: string
+      extras:
+        description: "extras"
+        default: easyvdr,channellogos,remotetranscode,cefbrowser
+        type: string
+      extra_Parameter:
+        description: "extra parameter"
+        default: -releaseonly
+        type: string
 
 jobs:
   prepare:
@@ -95,24 +119,32 @@ jobs:
       - name: Set Dynamic Matrix
         id: setmatrix
         run: |
+          ALL_DEFAULT="CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne \
+             LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 \
+             LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
+          
           JSON="{\"include\":["
-          
-          # for i in CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne \
-          #         LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 \
-          #         LibreELEC-12-aarch64-Allwinner-A64 LibreELEC-12-arm-Allwinner-R40 LibreELEC-12-arm-Allwinner-H3 \
-          #         LibreELEC-12-aarch64-Allwinner-H5 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-arm-Rockchip-RK3288 \
-          #         LibreELEC-12-aarch64-Rockchip-RK3328 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5
-          
-          for i in CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne \
-                   LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 \
-                   LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5
-          do
-            if ([ "${{ github.event.inputs.target }}" == "$i" ] || [ "${{ github.event.inputs.target }}" == 'all' ] || [ "${{ github.event.inputs.target }}" == '' ]) \
-              || ([ "${{ github.event.inputs.target }}" == 'CoreELEC (all)' ] && [[ "$i" == CoreELEC* ]]) \
-              || ([ "${{ github.event.inputs.target }}" == 'LibreELEC (all)' ] && [[ "$i" == LibreELEC* ]]) 
-            then
-               JSON="${JSON} {\"run\":\"$i\"}," 
-            fi
+
+          if [ "${{ github.event.inputs.target }}" = "all default" ] || [ "${{ github.event.inputs.target }}" = "" ]; then
+              BUILD=$ALL_DEFAULT
+          elif [ "${{ github.event.inputs.target }}" = "CoreELEC (all default)" ]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC* ]]; then
+                      BUILD="$BUILD $i"
+                  fi
+              done
+          elif [ "${{ github.event.inputs.target }}" = "LibreELEC (all default)" ]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == LibreELEC* ]]; then
+                      BUILD="$BUILD $i"
+                  fi
+              done
+          else
+              BUILD=${{ github.event.inputs.target }}
+          fi
+  
+          for i in $BUILD; do
+              JSON="${JSON} {\"run\":\"$i\"},"
           done
           
           JSON="${JSON} ]}"
@@ -127,6 +159,9 @@ jobs:
     with:
       config: ${{ matrix.run }}
       releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
+      addons: ${{ github.event.inputs.addons }}
+      extras: ${{ github.event.inputs.extras }}
+      extra_Parameter: ${{ github.event.inputs.extra_Parameter }}
     secrets: inherit
 
   create-release:
@@ -270,6 +305,9 @@ jobs:
              echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
              gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
           done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
 #  delete-old-releases:
 #    needs: [create-release]

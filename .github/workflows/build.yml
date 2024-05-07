@@ -154,6 +154,7 @@ jobs:
   build-all:
     needs: [ prepare, prepare-matrix ]
     strategy:
+      fail-fast: false
       matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
     uses: ./.github/workflows/build-vdrsternelec.yml
     with:

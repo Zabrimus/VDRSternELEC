@@ -30,9 +30,18 @@ post_unpack() {
     	mv ${PKG_DIR}/patches/vtuner-ne-5.4.patch ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional
 	fi
 
+	if [ -e ${PKG_DIR}/patches/vtuner-no-5.15.patch ]; then
+		rm -f ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional
+    	mv ${PKG_DIR}/patches/vtuner-no-5.15.patch ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional
+	fi
+
     if [ "${DEVICE}" == "Amlogic-ne" ]; then
     	mv ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional ${PKG_DIR}/patches/vtuner-ne-5.4.patch
 	fi
+
+	if [ "${DEVICE}" == "Amlogic-no" ]; then
+        mv ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional ${PKG_DIR}/patches/vtuner-no-5.15.patch
+    fi
 }
 
 make_target() {

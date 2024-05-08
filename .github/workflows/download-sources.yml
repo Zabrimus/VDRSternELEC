@@ -40,6 +40,14 @@ jobs:
               ./build.sh -config CoreELEC-21-ng -patchonly
           fi
 
+          if [[ "${{ inputs.config }}" == "CoreELEC-22" ]]; then
+              echo "CACHE_NAME=cache-coreelec-22-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=CoreELEC/sources" >> "$GITHUB_OUTPUT"
+          
+              ( cd CoreELEC && git checkout coreelec-22 )
+              ./build.sh -config CoreELEC-22-no -patchonly
+          fi
+
           if [[ "${{ inputs.config }}" == "LibreELEC-11" ]]; then
               echo "CACHE_NAME=cache-libreelec-11-sources" >> "$GITHUB_OUTPUT"
               echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"

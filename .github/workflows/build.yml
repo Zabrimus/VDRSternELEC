@@ -17,6 +17,7 @@ on:
           - CoreELEC-20-ne
           - CoreELEC-21-ng
           - CoreELEC-21-ne
+          - CoreELEC-22-no
           - LibreELEC-12-aarch64-AMLGX
           - LibreELEC-12-aarch64-Allwinner-H6
           - LibreELEC-12-aarch64-Allwinner-A64
@@ -43,7 +44,7 @@ on:
           - LibreELEC-13-x86_64-x11
       defaulttarget:
         description: "Default targets (used by target: all)"
-        default: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
+        default: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
         type: string
       addons:
         description: "addons"

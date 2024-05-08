@@ -1,0 +1,15 @@
+DISTRO=CoreELEC
+SHA=${COREELEC22}
+PATCHDIR=coreelec-22
+
+# Use project variant
+VARIANT=
+
+# Build settings
+PROJECT=Amlogic-ce
+DEVICE=Amlogic-no
+ARCH=aarch64
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhdodroid
+VDR_INPUTDEVICE=satip

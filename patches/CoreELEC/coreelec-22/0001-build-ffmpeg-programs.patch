@@ -1,0 +1,70 @@
+diff --git a/packages/audio/libvorbis/package.mk b/packages/audio/libvorbis/package.mk
+index 2b72481931..72d6a15f67 100644
+--- a/packages/audio/libvorbis/package.mk
++++ b/packages/audio/libvorbis/package.mk
+@@ -14,7 +14,7 @@ PKG_TOOLCHAIN="autotools"
+ PKG_BUILD_FLAGS="+pic"
+ 
+ PKG_CONFIGURE_OPTS_TARGET="--enable-static \
+-                           --disable-shared \
++                           --enable-shared \
+                            --with-ogg=${SYSROOT_PREFIX}/usr \
+                            --disable-docs \
+                            --disable-examples \
+diff --git a/packages/multimedia/ffmpeg/package.mk b/packages/multimedia/ffmpeg/package.mk
+index 85b42bc9b9..8b88530a52 100644
+--- a/packages/multimedia/ffmpeg/package.mk
++++ b/packages/multimedia/ffmpeg/package.mk
+@@ -8,7 +8,7 @@ PKG_SHA256="eadbad9e9ab30b25f5520fbfde99fae4a92a1ae3c0257a8d68569a4651e30e02"
+ PKG_LICENSE="GPL-3.0-only"
+ PKG_SITE="https://ffmpeg.org"
+ PKG_URL="http://ffmpeg.org/releases/ffmpeg-${PKG_VERSION}.tar.xz"
+-PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex"
++PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex gnutls libvpx libvorbis opus"
+ PKG_LONGDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
+ PKG_PATCH_DIRS="kodi libreelec"
+ 
+@@ -134,7 +134,7 @@ if [ "${FFMPEG_TESTING}" = "yes" ]; then
+     PKG_FFMPEG_TESTING+=" --enable-vout-drm --enable-outdev=vout_drm"
+   fi
+ else
+-  PKG_FFMPEG_TESTING="--disable-programs"
++  PKG_FFMPEG_TESTING=""
+ fi
+ 
+ configure_target() {
+@@ -197,6 +197,13 @@ configure_target() {
+               --enable-encoder=aac \
+               --enable-encoder=wmav2 \
+               --enable-encoder=mjpeg \
++              --enable-libvpx \
++              --enable-encoder=libvpx_vp8 \
++              --enable-encoder=libvpx_vp9 \
++              --enable-libvorbis \
++              --enable-libopus \
++              --enable-encoder=libvorbis \
++              --enable-encoder=libopus \
+               --enable-encoder=png \
+               ${PKG_FFMPEG_HWACCEL} \
+               --disable-muxers \
+@@ -205,6 +212,11 @@ configure_target() {
+               --enable-muxer=asf \
+               --enable-muxer=ipod \
+               --enable-muxer=mpegts \
++              --enable-muxer=matroska \
++              --enable-muxer=mp4 \
++              --enable-muxer=webm \
++              --enable-muxer=webm_chunk \
++              --enable-muxer=webm_dash_manifest \
+               --enable-demuxers \
+               --enable-parsers \
+               --enable-bsfs \
+@@ -230,8 +242,6 @@ configure_target() {
+               --enable-libspeex \
+               --disable-libtheora \
+               --disable-libvo-amrwbenc \
+-              --disable-libvorbis \
+-              --disable-libvpx \
+               --disable-libx264 \
+               --disable-libxavs \
+               --disable-libxvid \

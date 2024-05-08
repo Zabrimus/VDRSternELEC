@@ -67,6 +67,10 @@ jobs:
               echo "ARTIFACT=cache-coreelec-21-sources" >> "$GITHUB_ENV"
               echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
               rev=$(grep "COREELEC21=" config/versions | awk -F= '{ print $2 }')
+          elif [ "$branch" = "coreelec-22" ]; then
+              echo "ARTIFACT=cache-coreelec-22-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep "COREELEC22=" config/versions | awk -F= '{ print $2 }')          
           elif [ "$branch" = "libreelec-11" ]; then
               echo "ARTIFACT=cache-libreelec-11-sources" >> "$GITHUB_ENV"
               echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"

@@ -114,6 +114,8 @@ jobs:
             BUILD_FAILED="true"
           fi
 
+          echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"
+
           # create summary
           function bool_emo() {
               if [ $1 = 'false' ]; then
@@ -132,7 +134,7 @@ jobs:
               echo "| ${emo} | ${{ inputs.config }} | ${{ env.PROJECT }} | ${{ env.DEVICE }} | [${{ env.BRANCH }}@${{ env.REVISION }}](https://github.com/LibreELEC/LibreELEC.tv/tree/${{ env.REVISION }}) |" > build-summary-${{ inputs.config }}
           fi
           
-          if [ "${{ env.BUILD_FAILED }}" == "false" ]; then          
+          if [ "$BUILD_FAILED" == "false" ]; then          
               # rename target files
               if [ "$DISTRO" == "CoreELEC" ]; then
                   (
@@ -195,8 +197,7 @@ jobs:
                   )
               fi
           fi
-          
-          echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"
+                    
 
       - name: Save summary
         uses: actions/upload-artifact@v4

@@ -56,7 +56,7 @@ on:
         type: string
       extraparameter:
         description: "extra parameter"
-        default: '-releaseonly'
+        #default: '-releaseonly'
         type: string
 
 jobs:

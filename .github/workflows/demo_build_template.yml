@@ -1,0 +1,33 @@
+# Demo workflow to show how to create a workflow to configure a build with specific options.
+# This workflow can be used to easily repeat a build without the need to configure the build everytimg.
+#
+# The workflow contains the following configuration
+# target: "all default"
+#     Build all default targets
+# defaulttarget: "LibreELEC-13-x86_64-x11 LibreELEC-13-aarch64-AMLGX"
+#    Set the default target to LibreELEC-13-x86_64-x11 and LibreELEC-13-aarch64-AMLGX
+# addons: ""
+#    Don't build any addons
+# extras: ""
+#    Don't compile any extras
+# extraparameter: ""
+#   call build.sh without any extra parameter
+#
+# For all possible options see
+# https://github.com/Zabrimus/VDRSternELEC#building-the-image
+
+name: Build VDRSternELEC Template
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      target: "all default"
+      defaulttarget: "LibreELEC-13-x86_64-x11 LibreELEC-13-aarch64-AMLGX"
+      addons: ""
+      extras: ""
+      extraparameter: ""
+    secrets: inherit

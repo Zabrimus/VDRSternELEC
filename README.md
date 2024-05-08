@@ -67,6 +67,7 @@ ARCH=arm
 VDR_OUTPUTDEVICE=softhdodroid
 VDR_INPUTDEVICE=satip
 ```
+
 **Environment variables:**
 - DISTRO: can be either ```CoreELEC``` or ```LibreELEC```
 - SHA: The commit/branch/tag from CoreELEC/LibreELEC to use (see [config/versions](config/versions))
@@ -168,6 +169,24 @@ system-tools
 Example call:  ```./build.sh -config CoreELEC-19 -extra easyvdr```  
 
 If everything worked fine, the desired images can be found in either  ```CoreELEC/target```, ```LibreELEC/target``` or ```releases```.
+
+## Github Build
+In directory ```.github/workflows``` exists several workflows which can be used to build an own image with own configuration.
+* **[precache sources](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/precache-sources.yml)** which downloads all necessary sources for a distribution and caches them in Github as artifact.
+* **[Update CoreELEC/LibreELEC](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/update_ce_le.yml)** checks if an update of CoreELEC or LibreELEC exists and creates a pull request to update ```config/versions```.
+* **[Update Packages](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/update_packages.yml)** checks if package updates exists and create a pull request to update the packages.
+* **[Build VDRSternELEC](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/build.yml)** Main workflow to build releases, images and addons. After the build a new release will be created and all build artifacts are uploaded to the release.
+
+If you clone the repository, you can start your own build and create own releases. The configuration of the build can be widely configured.
+The configuration matches the commandline parameters of [build.sh](https://github.com/Zabrimus/VDRSternELEC#building-the-image).
+If you often want to create an own release with specific parameters it is possibly easier to create a new workflow and configure the desired parameters.
+A sample workflow [demo_build_template.yml](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/demo_build_template.yml) exists.
+
+There exists several other cron workflows, which cannot be used outside the repository Zabrimus/VDRSternELEC. Except in a forked repository the condition is removed or changed.
+* **[Cron Build VDRSternELEC](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/cron_build.yml)** calls periodically the workflow **Build VDRSternELEC**
+* **[Cron Precache Sources](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/cron_precache_sources.yml)** calls periodically the workflow **precache sources**
+* **[Cron Update CE/LE](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/cron_update_ce_le.yml)** calls periodically the workflow **Update CoreELEC/LibreELEC**
+* **[Cron Update Packages](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/cron_update_packages.yml)** calls periodically the workflow **Update Packages**
 
 # Creating bootable media
 Write your image file to an SD-Card like you are used to do it with [LibreELEC](https://wiki.libreelec.tv/installation/create-media) or [CoreELEC](https://wiki.coreelec.org/coreelec:bootmedia#step_2) and boot your device.

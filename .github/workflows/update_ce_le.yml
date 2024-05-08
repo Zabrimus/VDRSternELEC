@@ -70,7 +70,7 @@ jobs:
           # update version
           cat config/versions | sed -e "s/^COREELEC20=.*$/COREELEC20=${ce20}/" \
                               | sed -e "s/^COREELEC21=.*$/COREELEC21=${ce21}/" \
-                              | sed -e "s/^COREELEC22=.*$/COREELEC21=${ce22}/" \
+                              | sed -e "s/^COREELEC22=.*$/COREELEC22=${ce22}/" \
                               | sed -e "s/^LIBREELEC10=.*$/LIBREELEC10=${le10}/" \
                               | sed -e "s/^LIBREELEC11=.*$/LIBREELEC11=${le11}/" \
                               | sed -e "s/^LIBREELEC12=.*$/LIBREELEC12=${le12}/" \

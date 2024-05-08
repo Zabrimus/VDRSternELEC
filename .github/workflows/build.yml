@@ -168,6 +168,7 @@ jobs:
   create-release:
     needs: [ prepare, prepare-matrix, build-all ]
     runs-on: ubuntu-20.04
+    if: ${{ always() }}
 
     steps:
       - name: Maximize build space

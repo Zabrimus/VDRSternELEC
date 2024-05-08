@@ -47,16 +47,16 @@ on:
         default: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
         type: string
       addons:
-        description: "addons"
+        description: "addons. Use '-' if no addon shall be build"
         default: dvb-latest
         type: string
       extras:
-        description: "extras"
+        description: "extras. Use '-' if no parameter extra be used"
         default: easyvdr,channellogos,remotetranscode,cefbrowser
         type: string
       extraparameter:
-        description: "extra parameter"
-        #default: '-releaseonly'
+        description: "extra parameter. Use '-' if no parameter shall be used"
+        default: '-releaseonly'
         type: string
 
 jobs:

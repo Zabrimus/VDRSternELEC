@@ -182,6 +182,8 @@ The configuration matches the commandline parameters of [build.sh](https://githu
 If you often want to create an own release with specific parameters it is possibly easier to create a new workflow and configure the desired parameters.
 A sample workflow [demo_build_template.yml](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/demo_build_template.yml) exists.
 
+:exclamation: If you want to delete a parameter then use '-' as parameter. Otherwise the workflows falls back to the default parameter.
+
 There exists several other cron workflows, which cannot be used outside the repository Zabrimus/VDRSternELEC. Except in a forked repository the condition is removed or changed.
 * **[Cron Build VDRSternELEC](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/cron_build.yml)** calls periodically the workflow **Build VDRSternELEC**
 * **[Cron Precache Sources](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/cron_precache_sources.yml)** calls periodically the workflow **precache sources**

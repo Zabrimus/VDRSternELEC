@@ -27,7 +27,7 @@ jobs:
     with:
       target: "all default"
       defaulttarget: "LibreELEC-13-x86_64-x11 LibreELEC-13-aarch64-AMLGX"
-      addons: ""
-      extras: ""
-      extraparameter: ""
+      addons: "-"
+      extras: "-"
+      extraparameter: "-"
     secrets: inherit

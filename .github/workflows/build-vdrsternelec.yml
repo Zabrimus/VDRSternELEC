@@ -100,19 +100,23 @@ jobs:
         run: |
           BUILD_FAILED="false"
 
-          if [ ! "${{ inputs.addons }}" = "" ]; then
+          if [ ! "${{ inputs.addons }}" = "" ] && [ ! "${{ inputs.addons }}" = "-" ] && [ ! "${{ inputs.addons }}" = "'-'" ]; then
              ADDONS="-addon ${{ inputs.addons }}"
           else
              ADDONS=""
           fi
           
-          if [ ! "${{ inputs.extras }}" = "" ]; then
+          if [ ! "${{ inputs.extras }}" = "" ] && [ ! "${{ inputs.extras }}" = "-" ] && [ ! "${{ inputs.extras }}" = "'-'" ]; then
              EXTRAS="-extra ${{ inputs.extras }}"
           else
              EXTRAS=""
           fi
 
-          EXTRA_PARAMETER="${{ inputs.extraparameter }}"
+          if [ ! "${{ inputs.extraparameter }}" = "-" ] && [ ! "${{ inputs.extraparameter }}" = "'-'" ]; then
+             EXTRA_PARAMETER="-extra ${{ inputs.extraparameter }}"
+          else
+             EXTRA_PARAMETER=""
+          fi
           
           if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
             BUILD_FAILED="true"

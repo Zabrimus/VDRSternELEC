@@ -128,6 +128,7 @@ CoreELEC-20-ne
 CoreELEC-20-ng
 CoreELEC-21-ne
 CoreELEC-21-ng
+CoreELEC-22-no
 LibreELEC-10.0-arm-AMLGX
 LibreELEC-10.0-x86_64
 LibreELEC-11-arm-AMLGX

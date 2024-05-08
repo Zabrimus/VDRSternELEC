@@ -79,6 +79,9 @@ jobs:
           rm config/versions
           mv config/versions.new config/versions
 
+          ./build.sh -config CoreELEC-22-no -patchonly
+          ./build.sh -config LibreELEC-13-aarch64-AMLGX -patchonly
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:

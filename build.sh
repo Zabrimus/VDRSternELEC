@@ -141,15 +141,18 @@ apply_patches() {
 
     # Copy package patches to LE/CE directory structure
     cd $ROOTDIR
-    for i in `find package_patches/${DISTRO} -type f 2>/dev/null`; do
-        if [ ! -d $(echo $i | sed -e s/^"package_patches\/"// -e s/$(basename $i)$//) ]; then
-            mkdir -p $(echo $i | sed -e s/^"package_patches\/"// -e s/$(basename $i)$//)
-            echo "Create directory $(echo $i | sed -e s/^"package_patches\/"// -e s/$(basename $i)$//)"
+    for i in $(find package_patches/${DISTRO} -type f 2>/dev/null) \
+             $(find package_patches/${DISTRO}.${PATCHDIR} -type f 2>/dev/null); do
+
+        PDIR=${i//$DISTRO.$PATCHDIR/$DISTRO}
+        if [ ! -d $(echo $PDIR | sed -e s/^"package_patches\/"// -e s/$(basename $PDIR)$//) ]; then
+            mkdir -p $(echo $PDIR | sed -e s/^"package_patches\/"// -e s/$(basename $PDIR)$//)
+            echo "Create directory $(echo $PDIR | sed -e s/^"package_patches\/"// -e s/$(basename $PDIR)$//)"
         fi
-        if cp -r $i $(echo $i | sed -e s/^"package_patches\/"//); then
-            echo "Copy $(basename $i) to $(echo $i | sed -e s/^"package_patches\/"//)"
+        if cp -r $i $(echo $PDIR | sed -e s/^"package_patches\/"//); then
+            echo "Copy $(basename $i) to $(echo $PDIR | sed -e s/^"package_patches\/"//)"
         else
-            echo "ERROR copying $(basename $i) to $(echo $i | sed -e s/^"package_patches\/"//)"
+            echo "ERROR copying $(basename $i) to $(echo $PDIR | sed -e s/^"package_patches\/"//)"
         fi
     done
 }

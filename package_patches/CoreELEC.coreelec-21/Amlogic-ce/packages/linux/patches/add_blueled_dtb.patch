@@ -1,0 +1,54 @@
+diff -ru8bBwd a/arch/arm64/boot/dts/amlogic/g12b_s922x_odroid_n2.dts b/arch/arm64/boot/dts/amlogic/g12b_s922x_odroid_n2.dts
+--- a/arch/arm64/boot/dts/amlogic/g12b_s922x_odroid_n2.dts	2022-12-22 07:45:55.000000000 +0100
++++ b/arch/arm64/boot/dts/amlogic/g12b_s922x_odroid_n2.dts	2023-01-10 19:24:38.261141162 +0100
+@@ -51,18 +51,21 @@
+ 				stock_freq = <1896000000>;
+ 			};
+ 			cluster1:cluster1 {
+ 				stock_freq = <1800000000>;
+ 			};
+ 		};
+ 	};
+ 
+-	gpioleds {
+-		sys_led {
++    leds {
++		compatible = "gpio-leds";
++		blueled {
++			label = "blue:heartbeat";
++			gpios = <&gpio GPIOX_12 GPIO_ACTIVE_HIGH>;
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
+ 
+ 	gpio-reset {
+ 		compatible = "linux,gpio-reset";
+ 		usb_hub_en {
+ 			gpios = <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;
+diff -ru8bBwd a/arch/arm64/boot/dts/amlogic/g12b_s922x_odroid_n2plus.dts b/arch/arm64/boot/dts/amlogic/g12b_s922x_odroid_n2plus.dts
+--- a/arch/arm64/boot/dts/amlogic/g12b_s922x_odroid_n2plus.dts	2022-12-22 07:45:55.000000000 +0100
++++ b/arch/arm64/boot/dts/amlogic/g12b_s922x_odroid_n2plus.dts	2023-01-10 19:24:29.940554780 +0100
+@@ -48,18 +48,21 @@
+ 				stock_freq = <1908000000>;
+ 			};
+ 			cluster1:cluster1 {
+ 				stock_freq = <2208000000>;
+ 			};
+ 		};
+ 	};
+ 
+-	gpioleds {
+-		sys_led {
++    leds {
++		compatible = "gpio-leds";
++		blueled {
++			label = "blue:heartbeat";
++			gpios = <&gpio GPIOX_12 GPIO_ACTIVE_HIGH>;
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
+ 
+ 	gpio-reset {
+ 		compatible = "linux,gpio-reset";
+ 		usb_hub_en {
+ 			gpios = <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;

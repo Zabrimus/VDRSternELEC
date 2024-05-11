@@ -112,7 +112,7 @@ jobs:
              EXTRAS=""
           fi
 
-          if [ ! "${{ inputs.extraparameter }}" = "-" ] && [ ! "${{ inputs.extraparameter }}" = "'-'" ]; then
+          if [ ! "${{ inputs.extraparameter }}" = "" ] && [ ! "${{ inputs.extraparameter }}" = "-" ] && [ ! "${{ inputs.extraparameter }}" = "'-'" ]; then
              EXTRA_PARAMETER="-extra ${{ inputs.extraparameter }}"
           else
              EXTRA_PARAMETER=""

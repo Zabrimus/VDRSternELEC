@@ -28,6 +28,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    name: ${{ inputs.config }}
     steps:
       - name: Maximize build space
         uses: Zabrimus/maximize-build-space@master

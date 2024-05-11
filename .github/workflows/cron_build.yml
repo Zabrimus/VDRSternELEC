@@ -5,11 +5,6 @@ on:
   schedule:
     - cron: '10 0 * * 6'
 
-env:
-  DEFAULT_TARGET: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
-  DEFAULT_ADDONS: "dvb-latest"
-  DEFAULT_EXTRAS: "easyvdr,channellogos,remotetranscode,cefbrowser"
-
 jobs:
   # This workflow is configured to run only in repository 'Zabrimus/VDRSternELEC'
   # If you also want to run this workflow, then change or remove the condition in job 'cron'
@@ -35,9 +30,9 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       target: "all default"
-      defaulttarget: ${{ env.DEFAULT_TARGET }}
-      addons: ${{ env.DEFAULT_ADDONS }}
-      extras: ${{ env.DEFAULT_EXTRAS }}
+      defaulttarget: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
+      addons: "dvb-latest"
+      extras: "easyvdr,channellogos,remotetranscode,cefbrowser"
       extraparameter: "-releaseonly"
     secrets: inherit
 
@@ -47,8 +42,8 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       target: "all default"
-      defaulttarget: ${{ env.DEFAULT_TARGET }}
-      addons: ${{ env.DEFAULT_ADDONS }}
-      extras: ${{ env.DEFAULT_EXTRAS }}
+      defaulttarget: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
+      addons: "dvb-latest"
+      extras: "easyvdr,channellogos,remotetranscode,cefbrowser"
       extraparameter: "-"
     secrets: inherit

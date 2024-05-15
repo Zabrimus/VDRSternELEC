@@ -80,6 +80,10 @@ jobs:
               echo "ARTIFACT=cache-libreelec-12-sources" >> "$GITHUB_ENV"
               echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"
               rev=$(grep "LIBREELEC12=" config/versions | awk -F= '{ print $2 }')
+          elif [ "$branch" = "libreelec-13" ]; then
+              echo "ARTIFACT=cache-libreelec-13-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"
+              rev=$(grep "LIBREELEC13=" config/versions | awk -F= '{ print $2 }')          
           fi
           
           echo "REVISION=$rev" >> "$GITHUB_ENV"

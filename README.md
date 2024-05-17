@@ -155,6 +155,7 @@ permashift
 channellogos
 cefbrowser
 remotetranscode
+tsduck
 
 Available addons:
 crazycat

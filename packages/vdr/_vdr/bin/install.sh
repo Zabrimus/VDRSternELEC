@@ -118,7 +118,13 @@ install_web() {
 
   . /etc/os-release
   if [ "$NAME" == "CoreELEC" ]; then
-    cp /usr/local/system.d/coreelec.cefbrowser.service /storage/.config/system.d/cefbrowser.service
+    if [ "$COREELEC_DEVICE" == "Amlogic-ng" ] && [[ "$VERSION_ID" =~ ^"21" ]]; then
+        cp /usr/local/system.d/coreelec.cefbrowser.ce21-ng.service /storage/.config/system.d/cefbrowser.service
+    elif [ "$COREELEC_DEVICE" == "Amlogic-ne" ] && [[ "$VERSION_ID" =~ ^"21" ]]; then
+       cp /usr/local/system.d/coreelec.cefbrowser.ce21-ne.service /storage/.config/system.d/cefbrowser.service
+    else
+        cp /usr/local/system.d/coreelec.cefbrowser.ce20.service /storage/.config/system.d/cefbrowser.service
+    fi
   else
     cp /usr/local/system.d/libreelec.cefbrowser.service /storage/.config/system.d/cefbrowser.service
   fi

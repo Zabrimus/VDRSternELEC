@@ -122,8 +122,10 @@ install_web() {
         cp /usr/local/system.d/coreelec.cefbrowser.ce21-ng.service /storage/.config/system.d/cefbrowser.service
     elif [ "$COREELEC_DEVICE" == "Amlogic-ne" ] && [[ "$VERSION_ID" =~ ^"21" ]]; then
        cp /usr/local/system.d/coreelec.cefbrowser.ce21-ne.service /storage/.config/system.d/cefbrowser.service
-    else
+    elif [ "$COREELEC_DEVICE" == "Amlogic-ng" ] && [[ "$VERSION_ID" =~ ^"20" ]]; then
         cp /usr/local/system.d/coreelec.cefbrowser.ce20.service /storage/.config/system.d/cefbrowser.service
+    elif [ "$COREELEC_DEVICE" == "Amlogic-no" ]; then
+        cp /usr/local/system.d/coreelec.cefbrowser.ce22-no.service /storage/.config/system.d/cefbrowser.service
     fi
   else
     cp /usr/local/system.d/libreelec.cefbrowser.service /storage/.config/system.d/cefbrowser.service

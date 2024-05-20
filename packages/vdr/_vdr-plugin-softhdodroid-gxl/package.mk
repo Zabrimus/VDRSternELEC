@@ -24,6 +24,7 @@ fi;
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib -L${SYSROOT_PREFIX}/usr/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export GIT_REV=${PKG_VERSION}
 }
 
 post_makeinstall_target() {

@@ -6,6 +6,8 @@
 # Default: Start Kodi
 #
 
+/usr/lib/coreelec/smp-affinity.sh || true
+
 # create file which will be watched to switch between Kodi and VDR
 rm -f /storage/.cache/switch_kodi_vdr
 touch /storage/.cache/switch_kodi_vdr

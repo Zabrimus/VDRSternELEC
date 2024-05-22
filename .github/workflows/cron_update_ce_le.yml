@@ -2,7 +2,7 @@ name: Cron Update CE/LE
 
 on:
   schedule:
-    - cron: '0 23 * * 3'
+    - cron: '0 23 * * 2'
 
 jobs:
   # This workflow is configured to run only in repository 'Zabrimus/VDRSternELEC'

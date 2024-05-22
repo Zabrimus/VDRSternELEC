@@ -3,7 +3,7 @@ name: Cron Build VDRSternELEC
 on:
   workflow_dispatch:
   schedule:
-    - cron: '10 0 * * 6'
+    - cron: '10 0 * * 4'
 
 jobs:
   # This workflow is configured to run only in repository 'Zabrimus/VDRSternELEC'

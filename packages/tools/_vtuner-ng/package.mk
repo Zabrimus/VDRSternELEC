@@ -71,7 +71,18 @@ makeinstall_target() {
 }
 
 post_makeinstall_target() {
-	if [ "${DEVICE}" == "Amlogic-ng" ]; then
+	if [ -e ${PKG_DIR}/patches/vtuner-ng-4.9.patch ]; then
+		rm -f ${PKG_DIR}/patches/vtuner-ne-4.9.patch.optional
 		mv ${PKG_DIR}/patches/vtuner-ng-4.9.patch ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional
+	fi
+
+	if [ -e ${PKG_DIR}/patches/vtuner-ne-5.4.patch ]; then
+    	rm -f ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional
+        mv ${PKG_DIR}/patches/vtuner-ne-5.4.patch ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional
+	fi
+
+    if [ -e ${PKG_DIR}/patches/vtuner-no-5.15.patch ]; then
+    	rm -f ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional
+        mv ${PKG_DIR}/patches/vtuner-no-5.15.patch ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional
 	fi
 }

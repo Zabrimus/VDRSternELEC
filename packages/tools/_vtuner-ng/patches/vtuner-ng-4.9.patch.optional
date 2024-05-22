@@ -222,9 +222,9 @@ diff -ru8bBw a/kernel/vtunerc_proxyfe.c b/kernel/vtunerc_proxyfe.c
 -	fe->ops.info.frequency_max_hz       = 2150 * MHz;
 -	fe->ops.info.frequency_stepsize_hz  = 62.5 * kHz;
 -	fe->ops.info.frequency_tolerance_hz = 29500 * kHz;
-+	fe->ops.info.frequency_min          = 51000000;
++	fe->ops.info.frequency_min          = 51000;
 +	fe->ops.info.frequency_max          = 2150000000;
-+	fe->ops.info.frequency_stepsize     = 62500;
++	fe->ops.info.frequency_stepsize     = 62;
 +	fe->ops.info.frequency_tolerance    = 29500;
  	fe->ops.info.symbol_rate_min        = 450000;
  	fe->ops.info.symbol_rate_max        = 45000000;

@@ -17,19 +17,9 @@ PKG_BUILD_FLAGS="+speed"
 post_unpack() {
     # sanity check. It's possible that the former build was interrupted.
     rm -f ${PKG_DIR}/patches/vtuner-ng-4.9.patch
-    rm -f ${PKG_DIR}/patches/vtuner-ne-5.4.patch
-    rm -f ${PKG_DIR}/patches/vtuner-no-5.15.patch
 
     if [ "${DEVICE}" == "Amlogic-ng" ]; then
         cp ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional ${PKG_DIR}/patches/vtuner-ng-4.9.patch
-    fi
-
-    if [ "${DEVICE}" == "Amlogic-ne" ]; then
-    	cp ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional ${PKG_DIR}/patches/vtuner-ne-5.4.patch
-	fi
-
-	if [ "${DEVICE}" == "Amlogic-no" ]; then
-        cp ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional ${PKG_DIR}/patches/vtuner-no-5.15.patch
     fi
 }
 
@@ -61,6 +51,4 @@ makeinstall_target() {
 
 post_makeinstall_target() {
     rm -f ${PKG_DIR}/patches/vtuner-ng-4.9.patch
-    rm -f ${PKG_DIR}/patches/vtuner-ne-5.4.patch
-    rm -f ${PKG_DIR}/patches/vtuner-no-5.15.patch
 }

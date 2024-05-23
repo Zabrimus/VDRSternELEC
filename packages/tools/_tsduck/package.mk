@@ -7,6 +7,7 @@ PKG_LICENSE="BSD-2-Clause license "
 PKG_SITE="https://tsduck.io/"
 PKG_URL="https://github.com/tsduck/tsduck/archive/refs/tags/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain _tsduck:host"
+PKG_DEPENDS_HOST="gcc:host"
 PKG_LONGDESC="The MPEG Transport Stream Toolkit"
 PKG_TOOLCHAIN="make"
 PKG_BUILD_FLAGS="+speed"
@@ -34,6 +35,8 @@ make_target() {
   if [ ${ARCH} = "aarch64" ]; then
   	export CXXFLAGS_EXTRA="-mno-outline-atomics"
   fi
+
+  mkdir -p $(get_install_dir _tsduck)/usr/bin
 
   make -j NOTEST=1 \
           NODTAPI=1 \

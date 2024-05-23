@@ -15,32 +15,21 @@ PKG_TOOLCHAIN="make"
 PKG_BUILD_FLAGS="+speed"
 
 post_unpack() {
-    # sanity check. It's possible that the former build was interrupted and the optional patch file has not yet be renamed
-    if [ -e ${PKG_DIR}/patches/vtuner-ng-4.9.patch ]; then
-    	rm -f ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional
-    	mv ${PKG_DIR}/patches/vtuner-ng-4.9.patch ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional
-    fi
+    # sanity check. It's possible that the former build was interrupted.
+    rm -f ${PKG_DIR}/patches/vtuner-ng-4.9.patch
+    rm -f ${PKG_DIR}/patches/vtuner-ne-5.4.patch
+    rm -f ${PKG_DIR}/patches/vtuner-no-5.15.patch
 
     if [ "${DEVICE}" == "Amlogic-ng" ]; then
-        mv ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional ${PKG_DIR}/patches/vtuner-ng-4.9.patch
+        cp ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional ${PKG_DIR}/patches/vtuner-ng-4.9.patch
     fi
 
-	if [ -e ${PKG_DIR}/patches/vtuner-ne-5.4.patch ]; then
-		rm -f ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional
-    	mv ${PKG_DIR}/patches/vtuner-ne-5.4.patch ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional
-	fi
-
-	if [ -e ${PKG_DIR}/patches/vtuner-no-5.15.patch ]; then
-		rm -f ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional
-    	mv ${PKG_DIR}/patches/vtuner-no-5.15.patch ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional
-	fi
-
     if [ "${DEVICE}" == "Amlogic-ne" ]; then
-    	mv ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional ${PKG_DIR}/patches/vtuner-ne-5.4.patch
+    	cp ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional ${PKG_DIR}/patches/vtuner-ne-5.4.patch
 	fi
 
 	if [ "${DEVICE}" == "Amlogic-no" ]; then
-        mv ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional ${PKG_DIR}/patches/vtuner-no-5.15.patch
+        cp ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional ${PKG_DIR}/patches/vtuner-no-5.15.patch
     fi
 }
 
@@ -71,18 +60,7 @@ makeinstall_target() {
 }
 
 post_makeinstall_target() {
-	if [ -e ${PKG_DIR}/patches/vtuner-ng-4.9.patch ]; then
-		rm -f ${PKG_DIR}/patches/vtuner-ne-4.9.patch.optional
-		mv ${PKG_DIR}/patches/vtuner-ng-4.9.patch ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional
-	fi
-
-	if [ -e ${PKG_DIR}/patches/vtuner-ne-5.4.patch ]; then
-    	rm -f ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional
-        mv ${PKG_DIR}/patches/vtuner-ne-5.4.patch ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional
-	fi
-
-    if [ -e ${PKG_DIR}/patches/vtuner-no-5.15.patch ]; then
-    	rm -f ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional
-        mv ${PKG_DIR}/patches/vtuner-no-5.15.patch ${PKG_DIR}/patches/vtuner-no-5.15.patch.optional
-	fi
+    rm -f ${PKG_DIR}/patches/vtuner-ng-4.9.patch
+    rm -f ${PKG_DIR}/patches/vtuner-ne-5.4.patch
+    rm -f ${PKG_DIR}/patches/vtuner-no-5.15.patch
 }

@@ -30,7 +30,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       target: "all default"
-      defaulttarget: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
+      defaulttarget: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
       addons: "dvb-latest"
       extras: "easyvdr,channellogos,remotetranscode,cefbrowser"
       extraparameter: "-releaseonly"
@@ -42,7 +42,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       target: "all default"
-      defaulttarget: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-x86_64-x11 LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
+      defaulttarget: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5"
       addons: "dvb-latest"
       extras: "easyvdr,channellogos,remotetranscode,cefbrowser"
       extraparameter: "-"

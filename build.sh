@@ -33,6 +33,7 @@ Options:
 -release <server>  : Create release for update, accessible at <server>
 -releaseonly       : Build only the release tar and not all images
 -cef               : Include cef binaries into release, otherwise deploy it as an external package
+-cebootlabel       : Change CoreELEC bootlabel to value of "-config"
 -verbose           : Enable verbose outputs while building LE/CE packages
 -help              : Show this help
 EOF
@@ -155,6 +156,13 @@ apply_patches() {
             echo "ERROR copying $(basename $i) to $(echo $PDIR | sed -e s/^"package_patches\/"//)"
         fi
     done
+
+    if [ "$DISTRO" = "CoreELEC" ] && [ "$CEBOOTLABEL" = "true" ]; then
+        for i in $(find CoreELEC/projects/Amlogic-ce/devices -name "*_boot.ini"); do
+            echo "sed -i -e \"s/setenv bootlabel \"CoreELEC\"/setenv bootlabel \"$CONFIG\"/\" \"$i\""
+            sed -i -e "s/setenv bootlabel \"CoreELEC\"/setenv bootlabel \"$CONFIG\"/" $i
+        done
+    fi
 }
 
 prepare_sources() {
@@ -323,6 +331,7 @@ while [[ "$#" -gt 0 ]]; do
         -release) shift; RELEASE_SERVER=$1; DORELEASE=true ;;
         -releaseonly) RELEASE_ONLY=true ;;
         -cef) CEF_BINARIES=true ;;
+        -cebootlabel) CEBOOTLABEL=true ;;
         -verbose) VERBOSEBUILD=true ;;
         -help) usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;

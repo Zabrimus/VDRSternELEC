@@ -1,6 +1,7 @@
-diff -ru8bBw a/Makefile b/Makefile
---- a/Makefile	2024-02-05 13:47:26.000000000 +0100
-+++ b/Makefile	2024-02-08 09:41:18.128551372 +0100
+Gemeinsame Unterverzeichnisse: a/amports und b/amports.
+diff -u8bBw a/Makefile b/Makefile
+--- a/Makefile	2024-04-28 10:56:26.000000000 +0200
++++ b/Makefile	2024-05-29 18:30:26.715329067 +0200
 @@ -26,17 +26,17 @@
  ifneq "$(MAKECMDGOALS)" "clean"
  ifneq "$(MAKECMDGOALS)" "indent"
@@ -20,9 +21,9 @@ diff -ru8bBw a/Makefile b/Makefile
  CONFIG += -DUSE_OPENGLOSD 
  
  ### The version number of this plugin (taken from the main source file):
-diff -ru8bBw a/openglosd.cpp b/openglosd.cpp
---- a/openglosd.cpp	2024-02-05 13:47:26.000000000 +0100
-+++ b/openglosd.cpp	2024-02-07 16:09:01.157958715 +0100
+diff -u8bBw a/openglosd.cpp b/openglosd.cpp
+--- a/openglosd.cpp	2024-04-28 10:56:26.000000000 +0200
++++ b/openglosd.cpp	2024-05-29 18:37:34.510653828 +0200
 @@ -15,16 +15,18 @@
  /// This program is distributed in the hope that it will be useful,
  /// but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -299,7 +300,7 @@ diff -ru8bBw a/openglosd.cpp b/openglosd.cpp
      glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (sizeVertex1 + sizeVertex2) * numVertices, NULL, GL_DYNAMIC_DRAW);
  
      glEnableVertexAttribArray(0);
-@@ -851,23 +1021,47 @@
+@@ -851,28 +1021,56 @@
      if (sizeVertex2 > 0) {
          glEnableVertexAttribArray(1);
          glVertexAttribPointer(1, sizeVertex2, GL_FLOAT, GL_FALSE, (sizeVertex1 + sizeVertex2) * sizeof(GLfloat),
@@ -343,7 +344,16 @@ diff -ru8bBw a/openglosd.cpp b/openglosd.cpp
  
  void cOglVb::Unbind(void)
  {
++#ifdef GL30
      glBindVertexArray(0);
++#else
++    // glDeleteBuffers(GL_ARRAY_BUFFER, &vbo); // TODO: Is this correct at all? Because it forced GL errors.
++#endif
  }
  
  void cOglVb::ActivateShader(void)
+ {
+     Shaders[shader]->Use();
+ }
+ 
+ void cOglVb::EnableBlending(void)

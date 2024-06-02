@@ -11,10 +11,6 @@ PKG_LONGDESC="Tools which can be useful"
 
 PKG_DEPENDS_TARGET+=" _triggerhappy _python-evdev _irmplircd _vtuner-ng"
 
-if [ "${EXTRA_TSDUCK}" = "y" ]; then
-	PKG_DEPENDS_TARGET+=" _tsduck"
-fi
-
 if [ "${DISTRO}" = "CoreELEC" ]; then
 	PKG_DEPENDS_TARGET+=" _amremote"
 fi

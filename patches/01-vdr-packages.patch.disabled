@@ -11,7 +11,7 @@ diff -dru8bBw a/config/functions b/config/functions
      find "${ROOT}/projects/${PROJECT}/packages" -type f -name package.mk 2>/dev/null | sed "s#/package\.mk\$#${_ANCHOR}#" >> "${temp_local}"
  
 +    # cache VDR packages
-+    find "${ROOT}/../${PACKAGES}" -type f -name package.mk 2>/dev/null | sed "s#/package\.mk\$#${_ANCHOR}#" >> "${temp_global}"
++    find "${ROOT}/../${PACKAGES}" -type f -name package.mk -not -path "${ROOT}/../packages/addons/*" -exec realpath {} \; 2>/dev/null | sed "s#/package\.mk\$#${_ANCHOR}#" >> "${temp_global}"
 +
      # cache packages folder
      find "${ROOT}/${PACKAGES}" -type f -name package.mk 2>/dev/null | sed "s#/package\.mk\$#${_ANCHOR}#" >> "${temp_global}"

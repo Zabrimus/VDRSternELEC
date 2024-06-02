@@ -33,6 +33,3 @@ cefbrowser:EXTRA_CEFBROWSER
 
 # install remotetranscoder
 remotetranscode:EXTRA_REMOTETRANSCODE
-
-# install tsduck
-tsduck:EXTRA_TSDUCK

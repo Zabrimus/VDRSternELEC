@@ -1,0 +1,10 @@
+diff --git a/packages/graphics/glu/package.mk b/packages/graphics/glu/package.mk
+index efbe7bf972..3c7a2e450a 100644
+--- a/packages/graphics/glu/package.mk
++++ b/packages/graphics/glu/package.mk
+@@ -12,4 +12,4 @@ PKG_DEPENDS_TARGET="toolchain libglvnd mesa"
+ PKG_NEED_UNPACK="$(get_pkg_directory mesa)"
+ PKG_LONGDESC="libglu is the The OpenGL utility library"
+ 
+-PKG_MESON_OPTS_TARGET="-Dgl_provider=gl"
++PKG_MESON_OPTS_TARGET="-Dgl_provider=glvnd"

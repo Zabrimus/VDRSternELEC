@@ -1,0 +1,22 @@
+diff --git a/projects/Amlogic-ce/devices/Amlogic-no/options b/projects/Amlogic-ce/devices/Amlogic-no/options
+index 42062492ea..34767b0fb6 100644
+--- a/projects/Amlogic-ce/devices/Amlogic-no/options
++++ b/projects/Amlogic-ce/devices/Amlogic-no/options
+@@ -76,7 +76,7 @@
+     ALSA_SUPPORT="yes"
+ 
+   # OpenGL(X) implementation to use (no / Mesa)
+-    OPENGL="no"
++    OPENGL="mesa"
+ 
+   # OpenGL-ES implementation to use (no / bcm2835-driver / gpu-viv-bin-mx6q / opengl-meson)
+     OPENGLES="opengl-meson"
+@@ -93,7 +93,7 @@
+   # Xorg Graphic drivers to use (all / i915,i965,r200,r300,r600,nvidia,nouveau)
+   # Space separated list is supported,
+   # e.g. GRAPHIC_DRIVERS="i915 i965 r300 r600 radeonsi nvidia nouveau"
+-    GRAPHIC_DRIVERS=""
++    GRAPHIC_DRIVERS="panfrost"
+ 
+   # Use a vendor specific KODI repo
+     KODI_VENDOR="amlogic-5.15"

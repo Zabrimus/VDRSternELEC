@@ -17,6 +17,11 @@ elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ] || [ "${VDR_OUTPUTDEVICE}" =
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm _vdr-plugin-softhddevice-drm-gles"
 fi
 
+# For Amlogic-no build some more output devices (only test mode. Does not work)
+if [ "$DEVICE" = "Amlogic-no" ]; then
+	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm _vdr-plugin-softhddevice-drm-gles"
+fi
+
 if [ "${ARCH}" = "x86_64" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdcuvid"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdvaapi"

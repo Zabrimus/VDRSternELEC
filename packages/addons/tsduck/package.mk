@@ -65,11 +65,12 @@ makeinstall_target() {
 }
 
 addon() {
-  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/{bin,lib.private,data}
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/{etc/tsduck,bin,lib.private,data}
   	cp -P $(get_build_dir tsduck)/build_addon/usr/bin/* ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/
   	rm ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/tsconfig
-	patchelf --add-rpath '${ORIGIN}/../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/*
 	cp -Pr $(get_build_dir tsduck)/build_addon/usr/lib/* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private/
 	rm ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private/libtsduck.a
-	cp -P $(get_build_dir tsduck)/build_addon/usr/share/tsduck/{*.names,*.xml} ${ADDON_BUILD}/${PKG_ADDON_ID}/data
+	cp -P $(get_build_dir tsduck)/build_addon/usr/share/tsduck/{*.names,*.xml} ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/tsduck
+
+	patchelf --add-rpath '${ORIGIN}/../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/*
 }

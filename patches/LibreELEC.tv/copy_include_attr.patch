@@ -1,0 +1,10 @@
+diff --git a/packages/devel/attr/package.mk b/packages/devel/attr/package.mk
+index 051a9ab9c1..8cbc160f92 100644
+--- a/packages/devel/attr/package.mk
++++ b/packages/devel/attr/package.mk
+@@ -30,4 +30,5 @@ makeinstall_target() {
+ 
+   mkdir -p ${SYSROOT_PREFIX}/usr/include/attr
+     cp include/*.h ${SYSROOT_PREFIX}/usr/include/attr
++    cp include/attr/*.h ${SYSROOT_PREFIX}/usr/include/attr
+ }

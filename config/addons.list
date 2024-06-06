@@ -37,3 +37,6 @@ locale:ADDON_LOCALE
 
 # Install tsduck
 tsduck:ADDON_TSDUCK
+
+# Install incus
+incus:ADDON_INCUS

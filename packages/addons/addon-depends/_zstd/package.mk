@@ -12,3 +12,10 @@ PKG_LONGDESC="A fast real-time compression algorithm."
 PKG_TOOLCHAIN="make"
 PKG_BUILD_FLAGS="+local-cc"
 
+makeinstall_target() {
+	mkdir -p $(get_build_dir _zstd)/bindir
+	cp $(get_build_dir _zstd)/lib/libzstd.so.${PKG_VERSION} $(get_build_dir _zstd)/bindir
+	cd $(get_build_dir _zstd)/bindir
+	ln -s libzstd.so.${PKG_VERSION} libzstd.so.1
+    ln -s libzstd.so.${PKG_VERSION} libzstd.so
+}

@@ -7,3 +7,4 @@ sed -i 's:# cache packages folder:# cache VDR packages\n    find "${ROOT}/../${P
 # copy addons
 mkdir -p packages/addons/tools/vdrsterneelec
 cp -a ../packages/addons/* packages/addons/tools/vdrsterneelec
+

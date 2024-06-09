@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="incus"
-PKG_VERSION="6.2.0"
-PKG_ADDON_VERSION="6.2.0-1"
-PKG_SHA256="3593bd8ffd18d347615f451fddcc9658a65e47d4812461cceb9f61c49f568231"
+PKG_VERSION="6.0.0"
+PKG_ADDON_VERSION="6.0.0-1"
+PKG_SHA256="0e7f7de3a61a2ca33ad8f04c4e37fe9eaa0c775de3723dc43cebafdea029f000"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/lxc/incus"
 PKG_URL="https://github.com/lxc/incus/archive/refs/tags/v${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain go:host _cowsql _libacl _lxc _lxcfs _squashfs-tools _tar"
+PKG_DEPENDS_TARGET="toolchain go:host _cowsql _libacl _lxc _lxcfs _squashfs-tools _tar _dnsmasq"
 PKG_SOURCE_DIR="incus-${PKG_VERSION}"
 PKG_BRANCH="master"
 PKG_SECTION="tools"
@@ -49,7 +49,7 @@ addon() {
 
   # copy lxcfs
   cp -Pr $(get_install_dir _lxcfs)/storage/.kodi/addons/service.incus/* ${ADDON_BUILD}/${PKG_ADDON_ID}
-  cp -P  $(get_install_dir _lxc)/usr/lib/systemd/system/* ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
+  cp -P  $(get_install_dir _lxcfs)/usr/lib/systemd/system/* ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
 
   # copy binaries
   cp -P $(get_build_dir incus)/.gopath/bin/linux_${TARGET_KERNEL_ARCH}/* ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
@@ -57,11 +57,14 @@ addon() {
   cp -P $(get_build_dir _squashfs-tools)/squashfs-tools/unsquashfs ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
   cp -P $(get_build_dir _squashfs-tools)/squashfs-tools/unsquashfs ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
   cp -P $(get_build_dir _tar)/bindir/tar ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+  cp -P $(get_install_dir libseccomp)/usr/bin/* ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+  cp -P $(get_install_dir _dnsmasq)/usr/local/sbin/* ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
 
   # copy libs
   cp -P  $(get_install_dir _cowsql)/usr/lib/libcowsql.so* \
   		 $(get_install_dir _raft)/usr/lib/libraft.so* \
   		 $(get_build_dir _zstd)/bindir/libzstd.so* \
+  		 $(get_install_dir libseccomp)/usr/lib/lib*.so* \
          ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
 
   patchelf --add-rpath '${ORIGIN}/../lib' ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/incusd

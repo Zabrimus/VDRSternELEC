@@ -1,10 +1,10 @@
 [Unit]
 Description=incus
-After=graphical.target network-online.service
+After=network-online.service
 
 [Service]
 ExecStart=/storage/.kodi/addons/service.incus/bin/incusd
-Environment=PATH=/storage/.kodi/addons/service.incus/bin:/bin:/sbin:/usr/bin:/usr/sbin LD_LIBRARY_PATH=/storage/.kodi/addons/service.incus/lib.private INCUS_DIR=/storage/incus INCUS_SECURITY_APPARMOR=false
+Environment=PATH=/storage/.kodi/addons/service.incus/bin:/bin:/sbin:/usr/bin:/usr/sbin LD_LIBRARY_PATH=/storage/.kodi/addons/service.incus/lib INCUS_DIR=/storage/incus INCUS_SECURITY_APPARMOR=false
 StartLimitInterval=0
 Restart=on-abnormal
 

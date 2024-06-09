@@ -16,3 +16,8 @@ echo "CONFIG_ARCH_RANDOM=y"                       >> ./projects/Amlogic-ce/devic
 echo "CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=y" >> ./projects/Amlogic-ce/devices/Amlogic-no/linux/linux.aarch64.conf
 echo "CONFIG_DEFAULT_SECURITY_APPARMOR=y"         >> ./projects/Amlogic-ce/devices/Amlogic-no/linux/linux.aarch64.conf
 echo "CONFIG_AUDIT=y"                             >> ./projects/Amlogic-ce/devices/Amlogic-no/linux/linux.aarch64.conf
+
+sed -i -e "s/# CONFIG_NETFILTER_XT_MATCH_CONNLABEL is not set/CONFIG_NETFILTER_XT_MATCH_CONNLABEL=m/" ./projects/Amlogic-ce/devices/Amlogic-no/linux/linux.aarch64.conf
+sed -i -e "s/# CONFIG_NF_CONNTRACK_LABELS is not set/CONFIG_NF_CONNTRACK_LABELS=y/" ./projects/Amlogic-ce/devices/Amlogic-no/linux/linux.aarch64.conf
+sed -i -e "s/# CONFIG_NETFILTER_XT_MATCH_COMMENT is not set/CONFIG_NETFILTER_XT_MATCH_COMMENT=m/" ./projects/Amlogic-ce/devices/Amlogic-no/linux/linux.aarch64.conf
+sed -i -e "s/# CONFIG_NETFILTER_XT_MATCH_CONNLABEL is not set/CONFIG_NETFILTER_XT_MATCH_CONNLABEL=m/" ./projects/Amlogic-ce/devices/Amlogic-no/linux/linux.aarch64.conf

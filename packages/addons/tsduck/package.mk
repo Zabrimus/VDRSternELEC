@@ -11,7 +11,7 @@ PKG_DEPENDS_HOST="gcc:host"
 PKG_LONGDESC="The MPEG Transport Stream Toolkit"
 PKG_TOOLCHAIN="make"
 PKG_SECTION="tools"
-PKG_BUILD_FLAGS="+speed"
+PKG_BUILD_FLAGS="+speed -sysroot"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="tsduck"

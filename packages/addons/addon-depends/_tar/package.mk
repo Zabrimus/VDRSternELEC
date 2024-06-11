@@ -10,8 +10,4 @@ PKG_URL="https://ftp.gnu.org/gnu/tar/tar-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain make:host"
 PKG_LONGDESC="tar"
 PKG_TOOLCHAIN="auto"
-
-makeinstall_target() {
-	mkdir -p $(get_build_dir _tar)/bindir
-	cp src/tar $(get_build_dir _tar)/bindir
-}
+PKG_BUILD_FLAGS="+speed -sysroot"

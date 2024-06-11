@@ -11,7 +11,7 @@ PKG_SOURCE_DIR="lxcfs-${PKG_VERSION}"
 PKG_BRANCH="master"
 PKG_LONGDESC="FUSE filesystem for LXC"
 PKG_TOOLCHAIN="meson"
-PKG_BUILD_FLAGS="+speed"
+PKG_BUILD_FLAGS="+speed -sysroot"
 
 PKG_MESON_OPTS_TARGET="--prefix=/storage/.kodi/addons/service.incus \
 					   --bindir=/storage/.kodi/addons/service.incus/bin \

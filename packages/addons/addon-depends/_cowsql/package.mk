@@ -11,7 +11,7 @@ PKG_BRANCH="master"
 PKG_SOURCE_DIR="cowsql-${PKG_VERSION}"
 PKG_LONGDESC="Powerful system container and virtual machine manager"
 PKG_TOOLCHAIN="configure"
-PKG_BUILD_FLAGS="+speed"
+PKG_BUILD_FLAGS="+speed -sysroot"
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-shared \
                            --with-sysroot=${SYSROOT_PREFIX} \
@@ -19,6 +19,9 @@ PKG_CONFIGURE_OPTS_TARGET="--enable-shared \
 
 pre_configure_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||")"
+  export LDFLAGS="${LDFLAGS} -L$(get_install_dir _raft)/usr/lib"
+  export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:$(get_install_dir _raft)/usr/lib/pkgconfig"
+
   export CFLAGS=$(echo "${CFLAGS} -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unused-function -Wno-maybe-uninitialized -Wno-unused-parameter")
 
   autoreconf -i

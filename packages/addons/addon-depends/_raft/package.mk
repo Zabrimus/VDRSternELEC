@@ -11,7 +11,7 @@ PKG_SOURCE_DIR="raft-${PKG_VERSION}"
 PKG_BRANCH="master"
 PKG_LONGDESC="Powerful system container and virtual machine manager"
 PKG_TOOLCHAIN="configure"
-PKG_BUILD_FLAGS="+speed"
+PKG_BUILD_FLAGS="+speed -sysroot"
 
 PKG_CONFIGURE_OPTS_TARGET="--enable-shared --disable-static \
                            --with-sysroot=${SYSROOT_PREFIX}"

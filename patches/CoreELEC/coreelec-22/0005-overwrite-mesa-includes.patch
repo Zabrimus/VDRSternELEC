@@ -1,0 +1,15 @@
+diff --git a/packages/graphics/mesa/package.mk b/packages/graphics/mesa/package.mk
+index 3182d9012a..682d918643 100644
+--- a/packages/graphics/mesa/package.mk
++++ b/packages/graphics/mesa/package.mk
+@@ -125,3 +125,10 @@ makeinstall_host() {
+   mkdir -p "${TOOLCHAIN}/bin"
+     cp -a src/intel/compiler/intel_clc "${TOOLCHAIN}/bin"
+ }
++
++# Bad hack for CoreELEC-no
++post_makeinstall_target() {
++	if [ "$DEVICE" = "Amlogic-no" ]; then
++		cp -pr $(get_build_dir opengl-meson)/include/EGL_platform/platform_fbdev/* ${SYSROOT_PREFIX}/usr/include/EGL
++    fi
++}

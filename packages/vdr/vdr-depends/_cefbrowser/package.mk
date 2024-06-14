@@ -15,19 +15,19 @@ PKG_LONGDESC="cefbrowser"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed"
 
-# CoreELEC >= 21
-if [ "${DISTRONAME}" = "CoreELEC" ] && [ ${OS_MAJOR} -ge 21 ]; then
-   PKG_DEPENDS_TARGET += " cef-at-spi2-atk"
+# CoreELEC <= 20
+if [ "${DISTRONAME}" = "CoreELEC" ] && [ ${OS_MAJOR} -le 20 ]; then
+   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
 fi
 
 # CoreELEC >= 22
 if [ "${DISTRONAME}" = "CoreELEC" ] && [ ${OS_MAJOR} -ge 22 ]; then
-   PKG_DEPENDS_TARGET += " _mesa"
+   PKG_DEPENDS_TARGET+=" _mesa"
 fi
 
-# LibreELEC >= 12
-if [ "${DISTRONAME}" = "LibreELEC" ] && [ ${OS_MAJOR} -ge 12 ]; then
-   PKG_DEPENDS_TARGET += " cef-at-spi2-atk"
+# LibreELEC <= 11
+if [ "${DISTRONAME}" = "LibreELEC" ] && [ ${OS_MAJOR} -le 11 ]; then
+   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
 fi
 
 CEF_PREFIX="/usr/local"

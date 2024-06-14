@@ -1,0 +1,123 @@
+Index: vdr-2.6.7_sik/device.c
+===================================================================
+--- vdr-2.6.7_sik.orig/device.c	2024-06-11 15:29:15.922535580 +0200
++++ vdr-2.6.7_sik/device.c	2024-06-11 15:29:15.910535748 +0200
+@@ -812,6 +812,11 @@
+   return !Occupied() && !Receiving() && !(pidHandles[ptAudio].pid || pidHandles[ptVideo].pid || pidHandles[ptDolby].pid);
+ }
+ 
++void cDevice::SetIdleIfUnused() {
++  if (!Occupied() && !Receiving() && !(pidHandles[ptAudio].pid || pidHandles[ptVideo].pid || pidHandles[ptDolby].pid)) SetChannelDevice(nullptr, false);
++}
++
++
+ bool cDevice::SwitchChannel(const cChannel *Channel, bool LiveView)
+ {
+   if (LiveView) {
+Index: vdr-2.6.7_sik/dvbdevice.c
+===================================================================
+--- vdr-2.6.7_sik.orig/dvbdevice.c	2024-06-11 15:29:15.922535580 +0200
++++ vdr-2.6.7_sik/dvbdevice.c	2024-06-11 15:53:02.438500445 +0200
+@@ -685,6 +685,7 @@
+ 
+ bool cDvbTuner::ProvidesFrontend(const cChannel *Channel, bool Activate) const
+ {
++  if (Channel == nullptr) return true;
+   cDvbTransponderParameters dtp(Channel->Parameters());
+   int DeliverySystem = GetRequiredDeliverySystem(Channel, &dtp);
+   for (int i = 0; i < dvbFrontends.Size(); i++) {
+@@ -805,6 +806,14 @@
+ void cDvbTuner::SetChannel(const cChannel *Channel)
+ {
+   if (Channel) {
++     if (fd_frontend == -1) {
++        cMutexLock MutexLock(&mutex);
++        dsyslog("opening frontend %d/%d", adapter, frontend);
++        fd_frontend = dvbFrontend->Open();
++        lastUncValue = 0;
++        lastUncDelta = 0;
++        lastUncChange = 0;
++     }
+      if (bondedTuner) {
+         cMutexLock MutexLock(&bondMutex);
+         cDvbTuner *BondedMaster = GetBondedMaster();
+@@ -827,9 +836,18 @@
+      newSet.Broadcast();
+      }
+   else {
+-     cMutexLock MutexLock(&mutex);
+-     tunerStatus = tsIdle;
+-     ResetToneAndVoltage();
++     if (tunerStatus != tsIdle) {
++       cMutexLock MutexLock(&mutex);
++       tunerStatus = tsIdle;
++       if (!bondedTuner) {
++         ResetToneAndVoltage();
++         if (fd_frontend != -1) {
++            dsyslog("closing frontend %d/%d", adapter, frontend);
++            dvbFrontend->Close();
++            fd_frontend = -1;
++            }
++         }
++       }
+      }
+   if (bondedTuner && device->IsPrimaryDevice())
+      cDevice::PrimaryDevice()->DelLivePids(); // 'device' is const, so we must do it this way
+@@ -876,6 +894,7 @@
+ 
+ bool cDvbTuner::GetSignalStats(int &Valid, double *Strength, double *Cnr, double *BerPre, double *BerPost, double *Per, int *Status) const
+ {
++  if (tunerStatus == tsIdle) return false;
+   ClearEventQueue();
+   fe_status_t FeStatus = (fe_status_t)0; // initialize here to fix buggy drivers
+   dtv_property Props[MAXFRONTENDCMDS];
+@@ -1226,6 +1245,7 @@
+ 
+ int cDvbTuner::GetSignalStrength(void) const
+ {
++  if (tunerStatus == tsIdle) return 0;
+   ClearEventQueue();
+   // Try DVB API 5:
+   for (int i = 0; i < 1; i++) { // just a trick to break out with 'continue' ;-)
+@@ -1291,6 +1311,7 @@
+ 
+ int cDvbTuner::GetSignalQuality(void) const
+ {
++  if (tunerStatus == tsIdle) return 0;
+   // Try DVB API 5:
+   for (int i = 0; i < 1; i++) { // just a trick to break out with 'continue' ;-)
+       dtv_property Props[MAXFRONTENDCMDS];
+Index: vdr-2.6.7_sik/eitscan.c
+===================================================================
+--- vdr-2.6.7_sik.orig/eitscan.c	2024-06-11 15:29:15.922535580 +0200
++++ vdr-2.6.7_sik/eitscan.c	2024-06-11 15:29:15.910535748 +0200
+@@ -131,8 +131,14 @@
+   if (Setup.EPGScanTimeout || !lastActivity) { // !lastActivity means a scan was forced
+      time_t now = time(NULL);
+      if (now - lastScan > ScanTimeout && now - lastActivity > ActivityTimeout) {
+-        if (Setup.EPGPauseAfterScan && scanList->Count() == 0 && lastActivity && lastScan && now - lastScan < Setup.EPGScanTimeout * 3600)
++        if (Setup.EPGPauseAfterScan && scanList->Count() == 0 && lastActivity && lastScan && now - lastScan < Setup.EPGScanTimeout * 3600) {
++           // close unused frontends
++           for (int i = 0; i < cDevice::NumDevices(); i++) {
++              cDevice *Device = cDevice::GetDevice(i);
++              if (Device) Device->SetIdleIfUnused();
++           }
+            return; // pause for Setup.EPGScanTimeout hours
++        }
+         cStateKey StateKey;
+         if (const cChannels *Channels = cChannels::GetChannelsRead(StateKey, 10)) {
+            if (scanList->Count() == 0) {
+Index: vdr-2.6.7_sik/device.h
+===================================================================
+--- vdr-2.6.7_sik.orig/device.h	2024-06-11 15:29:15.922535580 +0200
++++ vdr-2.6.7_sik/device.h	2024-06-11 15:29:15.910535748 +0200
+@@ -346,6 +346,9 @@
+          ///< device, without disturbing any other activities. If an occupied timeout
+          ///< has been set for this device, and that timeout has not yet expired,
+          ///< this function returns false.
++  void SetIdleIfUnused();
++         ///< Check if used (except for eitscan)
++         ///< if it is not used, call SetChannelDevice(nullptr);
+   bool SwitchChannel(const cChannel *Channel, bool LiveView);
+          ///< Switches the device to the given Channel, initiating transfer mode
+          ///< if necessary.

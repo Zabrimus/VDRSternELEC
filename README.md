@@ -38,7 +38,7 @@ The eaysiest way is to use a prebuilt image. These images are periodically avail
 The following description is based on Debian or Ubuntu as the host system.*
 ### Install all dependencies
 ```
-apt-get install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless
+apt-get install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless curl cpio
 ```
 ### Checkout VDR*ELEC
 ```

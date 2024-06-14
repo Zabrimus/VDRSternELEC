@@ -16,17 +16,17 @@ PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed"
 
 # CoreELEC <= 20
-if [ "${DISTRONAME}" = "CoreELEC" ] && [ ${OS_MAJOR} -le 20 ]; then
+if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -le "20" ]; then
    PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
 fi
 
 # CoreELEC >= 22
-if [ "${DISTRONAME}" = "CoreELEC" ] && [ ${OS_MAJOR} -ge 22 ]; then
+if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -ge "22" ]; then
    PKG_DEPENDS_TARGET+=" _mesa"
 fi
 
-# LibreELEC <= 11
-if [ "${DISTRONAME}" = "LibreELEC" ] && [ ${OS_MAJOR} -le 11 ]; then
+# LibreELEC 11
+if [ "${DISTRONAME}" = "LibreELEC" ] && [ "${OS_VERSION}" = "11.0" ]; then
    PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
 fi
 

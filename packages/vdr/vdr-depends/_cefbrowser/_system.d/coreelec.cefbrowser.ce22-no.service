@@ -7,10 +7,10 @@ StartLimitBurst=10
 
 [Service]
 WorkingDirectory=/storage/cefbrowser/data
-ExecStart=/usr/local/bin/cefbrowser --zoom=1920 --config /storage/.config/vdropt/sockets.ini --ozone-platform=headless --locales-dir-path=/storage/cef/locales --log-file=/storage/.cache/cefbrowser/cefbrowser.log --cachePath=/storage/.cache/cefbrowser --profilePath=/storage/.cache/cefbrowser --staticPath=/storage/cefbrowser/data
+ExecStart=/usr/local/bin/cefbrowser --zoom=1920 --config /storage/.config/vdropt/sockets.ini --ozone-platform=headless --locales-dir-path=/storage/cef/locales --log-file=/storage/.cache/cefbrowser/cefbrowser.log --cachePath=/storage/.cache/cefbrowser --profilePath=/storage/.cache/cefbrowser --staticPath=/storage/cefbrowser/data --use-angle=gl-egl
 Restart=always
 RestartSec=3
-Environment=LD_LIBRARY_PATH="/storage/cef"
+Environment=LD_LIBRARY_PATH="/storage/cef:/usr/local/lib/private"
 Environment=BROWSER_DB_PATH="/storage/.cache/cefbrowser"
 StartLimitInterval=0
 TimeoutStartSec=30

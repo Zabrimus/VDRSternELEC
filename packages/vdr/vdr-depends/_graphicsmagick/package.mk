@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_graphicsmagick"
-PKG_VERSION="1.3.40"
-PKG_SHA256="88ddbf76e1ced2ab6bcd743207ee308865de1afb4b645d460924dcc8bfc0ee85"
+PKG_VERSION="1.3.43"
+PKG_SHA256="2b88580732cd7e409d9e22c6116238bef4ae06fcda11451bf33d259f9cbf399f"
 PKG_LICENSE="GraphiksMagick License"
 PKG_SITE="http://www.graphicsmagick.org/index.html"
-PKG_URL="https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/${PKG_VERSION}/GraphicsMagick-${PKG_VERSION}.tar.gz"
+PKG_URL="https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/${PKG_VERSION}/GraphicsMagick-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain libXext"
 PKG_LONGDESC="Use GraphiksMagick to create, edit, compose, or convert digital images."
 PKG_SOURCE_DIR="GraphicsMagick-${PKG_VERSION}"

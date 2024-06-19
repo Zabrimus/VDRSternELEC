@@ -1,17 +1,37 @@
+From 4080828fb7cd1fee5ffa75a17fbfe7b8278fbd2f Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Wed, 26 Jul 2023 11:05:54 +0200
+Subject: [PATCH] build ffmpeg programs
+
+---
+
+diff --git a/packages/audio/libvorbis/package.mk b/packages/audio/libvorbis/package.mk
+index 2b72481931..72d6a15f67 100644
+--- a/packages/audio/libvorbis/package.mk
++++ b/packages/audio/libvorbis/package.mk
+@@ -14,7 +14,7 @@ PKG_TOOLCHAIN="autotools"
+ PKG_BUILD_FLAGS="+pic"
+ 
+ PKG_CONFIGURE_OPTS_TARGET="--enable-static \
+-                           --disable-shared \
++                           --enable-shared \
+                            --with-ogg=${SYSROOT_PREFIX}/usr \
+                            --disable-docs \
+                            --disable-examples \
 diff --git a/packages/multimedia/ffmpeg/package.mk b/packages/multimedia/ffmpeg/package.mk
-index b55ffbd2c8..c7b5c8f4cf 100644
+index cb0d4ae22a..c457ab97e9 100644
 --- a/packages/multimedia/ffmpeg/package.mk
 +++ b/packages/multimedia/ffmpeg/package.mk
-@@ -8,7 +8,7 @@ PKG_SHA256="9b16b8731d78e596b4be0d720428ca42df642bb2d78342881ff7f5bc29fc9623"
+@@ -8,7 +8,7 @@ PKG_SHA256="57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082"
  PKG_LICENSE="GPL-3.0-only"
  PKG_SITE="https://ffmpeg.org"
  PKG_URL="http://ffmpeg.org/releases/ffmpeg-${PKG_VERSION}.tar.xz"
--PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex libxml2"
-+PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex libxml2 gnutls libvpx libvorbis opus"
+-PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex"
++PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex libvpx libvorbis opus"
  PKG_LONGDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
  PKG_PATCH_DIRS="libreelec"
  
-@@ -127,7 +127,7 @@ if [ "${FFMPEG_TESTING}" = "yes" ]; then
+@@ -125,7 +126,7 @@ if [ "${FFMPEG_TESTING}" = "yes" ]; then
      PKG_FFMPEG_TESTING+=" --enable-vout-drm --enable-outdev=vout_drm"
    fi
  else
@@ -20,7 +40,7 @@ index b55ffbd2c8..c7b5c8f4cf 100644
  fi
  
  configure_target() {
-@@ -190,6 +190,13 @@ configure_target() {
+@@ -188,6 +189,13 @@ configure_target() {
                --enable-encoder=aac \
                --enable-encoder=wmav2 \
                --enable-encoder=mjpeg \
@@ -34,7 +54,7 @@ index b55ffbd2c8..c7b5c8f4cf 100644
                --enable-encoder=png \
                ${PKG_FFMPEG_HWACCEL} \
                --disable-muxers \
-@@ -198,6 +205,11 @@ configure_target() {
+@@ -196,6 +205,11 @@ configure_target() {
                --enable-muxer=asf \
                --enable-muxer=ipod \
                --enable-muxer=mpegts \
@@ -46,7 +66,7 @@ index b55ffbd2c8..c7b5c8f4cf 100644
                --enable-demuxers \
                --enable-parsers \
                --enable-bsfs \
-@@ -223,8 +235,6 @@ configure_target() {
+@@ -221,8 +235,6 @@ configure_target() {
                --enable-libspeex \
                --disable-libtheora \
                --disable-libvo-amrwbenc \
@@ -54,4 +74,7 @@ index b55ffbd2c8..c7b5c8f4cf 100644
 -              --disable-libvpx \
                --disable-libx264 \
                --disable-libxavs \
-               --enable-libxml2 \
+               --disable-libxvid \
+-- 
+2.30.2
+

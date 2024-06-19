@@ -1,5 +1,5 @@
 diff --git a/packages/multimedia/ffmpeg/package.mk b/packages/multimedia/ffmpeg/package.mk
-index b55ffbd2c8..c7b5c8f4cf 100644
+index b55ffbd2c8..300e03e480 100644
 --- a/packages/multimedia/ffmpeg/package.mk
 +++ b/packages/multimedia/ffmpeg/package.mk
 @@ -8,7 +8,7 @@ PKG_SHA256="9b16b8731d78e596b4be0d720428ca42df642bb2d78342881ff7f5bc29fc9623"
@@ -7,7 +7,7 @@ index b55ffbd2c8..c7b5c8f4cf 100644
  PKG_SITE="https://ffmpeg.org"
  PKG_URL="http://ffmpeg.org/releases/ffmpeg-${PKG_VERSION}.tar.xz"
 -PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex libxml2"
-+PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex libxml2 gnutls libvpx libvorbis opus"
++PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex libxml2 libvpx libvorbis opus"
  PKG_LONGDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
  PKG_PATCH_DIRS="libreelec"
  

@@ -28,7 +28,7 @@ on:
     inputs:
       target:
         description: "build"
-        default: CoreELEC-20-ng
+        default: CoreELEC-22-no
         required: true
         type: choice
         options:

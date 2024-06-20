@@ -5,7 +5,7 @@ on:
     inputs:
       config:
         description: "Configuration to build"
-        default: CoreELEC-20-ng
+        default: CoreELEC-22-no
         type: string
 
       releasetag:

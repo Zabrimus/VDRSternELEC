@@ -72,6 +72,7 @@ post_makeinstall_target() {
   cp ${PKG_DIR}/bin/autostart.sh ${INSTALL}/usr/local/bin/autostart.sh
   cp ${PKG_DIR}/bin/switch_vdr_softhdodroid.sh ${INSTALL}/usr/local/bin/switch_vdr_softhdodroid.sh
   cp ${PKG_DIR}/bin/switch_kodi_vdr.sh ${INSTALL}/usr/local/bin/switch_kodi_vdr.sh
+  cp ${PKG_DIR}/bin/setup_bl301.sh ${INSTALL}/usr/local/bin/setup_bl301.sh
 
   # Create start parameters depending on the project
   cat<<EOF >> ${INSTALL}/usr/local/bin/autostart.sh

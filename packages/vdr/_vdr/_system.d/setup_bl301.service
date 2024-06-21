@@ -3,7 +3,7 @@ Description=Transfer IR code to bl301 blob
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c 'echo 1 > /sys/class/bl301_manager/setup_bl301'
+ExecStart=/usr/local/bin/setup_bl301.sh
 
 [Install]
 WantedBy=default.target

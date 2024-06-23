@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_cef"
-PKG_VERSION="114.2.11"
+PKG_VERSION="126.2.7"
 PKG_LICENSE="unknown"
 PKG_SITE="https://cef-builds.spotifycdn.com/"
 PKG_URL=""
@@ -14,9 +14,9 @@ makeinstall_target() {
   CEF_DIR="${PKG_BUILD}/../../../../cef"
   CEF_PREFIX="/storage"
   CEF_URL="https://cef-builds.spotifycdn.com/"
-  CEF_FILE_X86="cef_binary_114.2.11%2Bg87c8807%2Bchromium-114.0.5735.134_linux64_minimal.tar.bz2"
-  CEF_FILE_ARM64="cef_binary_114.2.11%2Bg87c8807%2Bchromium-114.0.5735.134_linuxarm64_minimal.tar.bz2"
-  CEF_FILE_ARM="cef_binary_114.2.11%2Bg87c8807%2Bchromium-114.0.5735.134_linuxarm_minimal.tar.bz2"
+  CEF_FILE_X86="cef_binary_126.2.7%2Bg300bb05%2Bchromium-126.0.6478.115_linux64_minimal.tar.bz2"
+  CEF_FILE_ARM64="cef_binary_126.2.7%2Bg300bb05%2Bchromium-126.0.6478.115_linuxarm64_minimal.tar.bz2"
+  CEF_FILE_ARM="cef_binary_126.2.7%2Bg300bb05%2Bchromium-126.0.6478.115_linuxarm_minimal.tar.bz2"
 
   case "${ARCH}" in
     arm)     CEF_FILE=${CEF_FILE_ARM};;

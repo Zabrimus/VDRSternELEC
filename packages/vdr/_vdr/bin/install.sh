@@ -267,7 +267,7 @@ if [ "$#" = "0" ]; then
     usage
 fi
 
-while getopts b:iTCwvc:p: o; do
+while getopts b:iTCwvcp: o; do
   case $o in
     (i) install;;
     (C) install_copy;;
@@ -275,7 +275,7 @@ while getopts b:iTCwvc:p: o; do
     (T) install_triggerhappy;;
     (w) install_web;;
     (v) install_vtuner;;
-    (c) eval url=\${$(( $OPTIND -1 ))}
+    (c) eval url=\${$(( $OPTIND ))}
         if [ -n $url ]; then
           install_cef "$url"
         else

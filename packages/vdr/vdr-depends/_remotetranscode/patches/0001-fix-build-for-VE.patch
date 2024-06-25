@@ -1,25 +1,16 @@
 diff --git a/meson.build b/meson.build
-index c7af562..8ac2339 100644
+index 076f990..c7ac2d8 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -4,6 +4,7 @@ project('remotetranscode', 'cpp', 'c',
-   meson_version: '>=0.56.2')
- 
- add_global_arguments(language : 'cpp')
-+install_prefix = get_option('prefix')
- 
- cmake = import('cmake')
- cpp = meson.get_compiler('cpp')
-@@ -29,10 +30,10 @@ mini_dep = mini_proj.get_variable('mini_dep')
- 
+@@ -30,10 +30,9 @@ mini_dep = mini_proj.get_variable('mini_dep')
  
  exe = executable('remotrans', 'main.cpp', 'logger.cpp', 'ffmpeghandler.cpp', 'browserclient.cpp', 'transcodeconfig.cpp', 'vdrclient.cpp',
--                 install : false,
-+                 install : true,
+                  install : true,
+-                 install_dir : meson.current_build_dir() + '/Release',
                   dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep])
  
  #
- # install static content
+ # install
  #
--install_subdir('static-content/movie', install_dir : meson.current_build_dir())
+-install_subdir('static-content/movie', install_dir : meson.current_build_dir() + '/Release')
 +install_subdir('static-content/movie', install_dir : '')

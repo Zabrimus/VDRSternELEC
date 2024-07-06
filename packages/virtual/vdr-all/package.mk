@@ -101,6 +101,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-pvrinput"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-vompserver"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-web"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-webapp"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-epgborder"
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then

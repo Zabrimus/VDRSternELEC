@@ -1,5 +1,5 @@
 diff --git a/packages/multimedia/ffmpeg/package.mk b/packages/multimedia/ffmpeg/package.mk
-index b55ffbd2c8..c7b5c8f4cf 100644
+index b55ffbd2c8..7ec6b2fbaa 100644
 --- a/packages/multimedia/ffmpeg/package.mk
 +++ b/packages/multimedia/ffmpeg/package.mk
 @@ -8,7 +8,7 @@ PKG_SHA256="9b16b8731d78e596b4be0d720428ca42df642bb2d78342881ff7f5bc29fc9623"
@@ -10,7 +10,7 @@ index b55ffbd2c8..c7b5c8f4cf 100644
 +PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex libxml2 gnutls libvpx libvorbis opus"
  PKG_LONGDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
  PKG_PATCH_DIRS="libreelec"
- 
+
 @@ -127,7 +127,7 @@ if [ "${FFMPEG_TESTING}" = "yes" ]; then
      PKG_FFMPEG_TESTING+=" --enable-vout-drm --enable-outdev=vout_drm"
    fi
@@ -18,9 +18,9 @@ index b55ffbd2c8..c7b5c8f4cf 100644
 -  PKG_FFMPEG_TESTING="--disable-programs"
 +  PKG_FFMPEG_TESTING=""
  fi
- 
+
  configure_target() {
-@@ -190,6 +190,13 @@ configure_target() {
+@@ -190,7 +190,15 @@ configure_target() {
                --enable-encoder=aac \
                --enable-encoder=wmav2 \
                --enable-encoder=mjpeg \
@@ -32,9 +32,11 @@ index b55ffbd2c8..c7b5c8f4cf 100644
 +              --enable-encoder=libvorbis \
 +              --enable-encoder=libopus \
                --enable-encoder=png \
++              --enable-encoder=mpeg2video --enable-encoder=mp2 \
                ${PKG_FFMPEG_HWACCEL} \
                --disable-muxers \
-@@ -198,6 +205,11 @@ configure_target() {
+               --enable-muxer=spdif \
+@@ -198,6 +206,11 @@ configure_target() {
                --enable-muxer=asf \
                --enable-muxer=ipod \
                --enable-muxer=mpegts \
@@ -46,7 +48,7 @@ index b55ffbd2c8..c7b5c8f4cf 100644
                --enable-demuxers \
                --enable-parsers \
                --enable-bsfs \
-@@ -223,8 +235,6 @@ configure_target() {
+@@ -223,8 +236,6 @@ configure_target() {
                --enable-libspeex \
                --disable-libtheora \
                --disable-libvo-amrwbenc \

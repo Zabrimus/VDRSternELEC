@@ -30,7 +30,7 @@ index b55ffbd2c8..300e03e480 100644
 +              --enable-libvorbis \
 +              --enable-libopus \
 +              --enable-encoder=libvorbis \
-+              --enable-encoder=libopus \
++              --enable-encoder=libopus --enable-encoder=mpeg2video --enable-encoder=mp2 \
                --enable-encoder=png \
                ${PKG_FFMPEG_HWACCEL} \
                --disable-muxers \

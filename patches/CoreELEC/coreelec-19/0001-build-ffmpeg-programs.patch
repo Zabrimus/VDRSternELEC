@@ -53,7 +53,7 @@ index 614515e64c..bafab42a5c 100644
 +              --enable-libvorbis \
 +              --enable-libopus \
 +              --enable-encoder=libvorbis \
-+              --enable-encoder=libopus \
++              --enable-encoder=libopus --enable-encoder=mpeg2video --enable-encoder=mp2 \
                --enable-encoder=png \
                ${PKG_FFMPEG_HWACCEL} \
                --disable-muxers \

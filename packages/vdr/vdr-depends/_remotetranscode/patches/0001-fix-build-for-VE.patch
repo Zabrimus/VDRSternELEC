@@ -1,13 +1,13 @@
 diff --git a/meson.build b/meson.build
-index 076f990..c7ac2d8 100644
+index c0b4077..40b5d51 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -30,10 +30,9 @@ mini_dep = mini_proj.get_variable('mini_dep')
- 
+@@ -34,10 +34,9 @@ mini_dep = mini_proj.get_variable('mini_dep')
  exe = executable('remotrans', 'main.cpp', 'logger.cpp', 'ffmpeghandler.cpp', 'browserclient.cpp', 'transcodeconfig.cpp', 'vdrclient.cpp',
+                  'm3u8handler.cpp',
                   install : true,
 -                 install_dir : meson.current_build_dir() + '/Release',
-                  dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep])
+                  dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep, openssl_dep])
  
  #
  # install

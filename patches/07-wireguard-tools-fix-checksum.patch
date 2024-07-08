@@ -1,13 +1,17 @@
 diff --git a/packages/network/wireguard-tools/package.mk b/packages/network/wireguard-tools/package.mk
-index da5b7f486a..76c3502bf9 100644
+index da5b7f486a..4847318763 100644
 --- a/packages/network/wireguard-tools/package.mk
 +++ b/packages/network/wireguard-tools/package.mk
-@@ -3,7 +3,7 @@
+@@ -3,10 +3,10 @@
  
  PKG_NAME="wireguard-tools"
  PKG_VERSION="1.0.20210914"
 -PKG_SHA256="69de713458a887cddb46b2fd1d43bf20548f693136af95792e65ec925538c770"
-+PKG_SHA256="04af1ce7b9856b986dad23f7ebd47de7d4e2f48ced32eab058f648d96b801820"
++PKG_SHA256="b9017da6e7dae5b44da4f4495f128ca27a65fc1be1edc5c74d08b9c681296583"
  PKG_LICENSE="GPLv2"
  PKG_SITE="https://www.wireguard.com"
- PKG_URL="https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-v${PKG_VERSION}.tar.xz"
+-PKG_URL="https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-v${PKG_VERSION}.tar.xz"
++PKG_URL="https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${PKG_VERSION}.zip"
+ PKG_DEPENDS_TARGET="toolchain linux"
+ PKG_NEED_UNPACK="${LINUX_DEPENDS}"
+ PKG_LONGDESC="WireGuard VPN userspace tools"

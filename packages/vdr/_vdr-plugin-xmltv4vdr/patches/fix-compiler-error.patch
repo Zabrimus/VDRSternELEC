@@ -1,0 +1,22 @@
+diff -ru8bBwd a/source.cpp b/source.cpp
+--- a/source.cpp	2024-07-14 14:42:21.000000000 +0200
++++ b/source.cpp	2024-07-15 12:07:35.616933289 +0200
+@@ -580,17 +580,17 @@
+          continue;
+       }
+ 
+       if(episodesDB)
+          episodesDB->QueryEpisode(&xtEvent);
+       //else if (!isempty(XMLTVConfig.EpisodesDir()))
+       //   xtEvent.FetchSeasonEpisode();
+ 
+-      xmlErrorPtr xmlErr = xmlGetLastError();
++      const xmlError* xmlErr = xmlGetLastError();
+       if (xmlErr && xmlErr->code)
+       {
+          esyslogs(this, "xmlError: %s", xmlErr->message);
+       }
+ 
+       // set xtEventID if empty
+       if (!xtEvent.XTEventID())
+          xtEvent.SetXTEventID(xtEvent.StartTime());

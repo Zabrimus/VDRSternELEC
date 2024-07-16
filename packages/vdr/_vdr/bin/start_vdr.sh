@@ -44,11 +44,6 @@ if [ -e /tmp/openvfd_service ]; then
   echo "" > /tmp/openvfd_service
 fi
 
-# set ALSA output device if configured (spdif or spdif_b)
-if [ ! -z "$ALSA_SPDIF" ]; then
-    amixer set 'HDMITX Audio Source Select' $ALSA_SPDIF
-fi
-
 # really start VDR
 if [ -z "$VDR_LD_PRELOAD" ]; then
    sh -c "LD_PRELOAD=$LD_PRELOAD_MALI LD_LIBRARY_PATH=$LIB_DIR:$LIB_DIR/vdr:$LD_LIBRARY_PATH ${BIN_DIR}/$arg"

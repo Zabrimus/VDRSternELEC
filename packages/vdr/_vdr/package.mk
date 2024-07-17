@@ -25,7 +25,7 @@ post_unpack() {
   fi
 
   if [ "${EXTRA_DYNAMITE}" = "y" ]; then
-  	cp ${PKG_DIR}/optional/vdr-2.6.7-dynamite.patch ${PKG_DIR}/patches/vdr-2.6.7-dynamite.patch
+  	cp ${PKG_DIR}/optional/vdr-2.6.8-dynamite.patch ${PKG_DIR}/patches/vdr-2.6.8-dynamite.patch
   fi
 
   if [ "${EXTRA_PERMASHIFT}" = "y" ]; then

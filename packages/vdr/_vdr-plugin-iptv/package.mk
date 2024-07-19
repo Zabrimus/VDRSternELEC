@@ -1,10 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-iptv"
-PKG_VERSION="1386b261ae9cd500ddcaaed63302734240967af6"
-PKG_SHA256="5e0b176cca3e1c4e46c24ed456e8ab267e7e3bec639201a71c7b158931587b31"
+PKG_VERSION="c33c34d5f2ad1ac8b4084e2d0b954f6370ef7f69"
+PKG_SHA256="68df4f276b2752f4f09bae1a14361db189734f20dac25bea8f297ff6428db994"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.saunalahti.fi/~rahrenbe/vdr/iptv/"
+PKG_ORIGINAL_SITE="http://www.saunalahti.fi/~rahrenbe/vdr/iptv/"
+PKG_SITE="https://github.com/Zabrimus/vdr-plugin-iptv/"
 PKG_URL="https://github.com/Zabrimus/vdr-plugin-iptv/archive/${PKG_VERSION}.zip"
 PKG_DEPENDS_TARGET="toolchain _vdr curl vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"

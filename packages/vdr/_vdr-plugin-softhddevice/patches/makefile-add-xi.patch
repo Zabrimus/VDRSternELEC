@@ -1,0 +1,44 @@
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2024-07-21 17:59:45.000000000 +0200
++++ b/Makefile	2024-07-22 08:17:23.875348366 +0200
+@@ -63,17 +63,18 @@
+ #CONDIF += -DDUMP_TRICKSPEED		# dump trickspeed packets
+ #CONFIG += -DUSE_BITMAP			# VDPAU, use bitmap surface for OSD
+ CONFIG += -DUSE_VDR_SPU			# use VDR SPU decoder.
+ #CONFIG += -DUSE_SOFTLIMIT		# (tobe removed) limit the buffer fill
+ 
+ ### The version number of this plugin (taken from the main source file):
+ 
+ VERSION = $(shell grep 'static const char \*const VERSION *=' $(PLUGIN).cpp | awk '{ print $$7 }' | sed -e 's/[";]//g')
+-GIT_REV = $(shell git describe --always 2>/dev/null)
++# GIT_REV = $(shell git describe --always 2>/dev/null)
++GIT_REV=
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+ PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
+ LIBDIR = $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+@@ -183,18 +184,18 @@
+ ifeq ($(OPENGLOSD),1)
+ CONFIG += -DUSE_OPENGLOSD
+ _CFLAGS += $(shell pkg-config --cflags glew)
+ LIBS += $(shell pkg-config --libs glew) -lglut
+ _CFLAGS += $(shell pkg-config --cflags freetype2)
+ LIBS   += $(shell pkg-config --libs freetype2)
+ endif
+ 
+-_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr)
+-LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr)
++_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr xi)
++LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr xi)
+ 
+ ### Includes and Defines (add further entries here):
+ 
+ INCLUDES +=
+ 
+ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"' -D_GNU_SOURCE $(CONFIG) \
+ 	$(if $(GIT_REV), -DGIT_REV='"$(GIT_REV)"')
+ 

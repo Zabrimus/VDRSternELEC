@@ -32,8 +32,8 @@ diff -ru8bBw a/Makefile b/Makefile
  
 -_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr)
 -LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr)
-+_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr xi)
-+LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr xi)
++_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr xi xrandr xrender xext xxf86vm)
++LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm xcb-randr xi xrandr xrender xext xxf86vm)
  
  ### Includes and Defines (add further entries here):
  

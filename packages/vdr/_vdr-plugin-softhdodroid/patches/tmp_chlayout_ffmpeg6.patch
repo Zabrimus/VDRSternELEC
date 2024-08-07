@@ -1,0 +1,28 @@
+diff -ru8bBwd a/codec.c b/codec.c
+--- a/codec.c	2024-08-07 13:54:28.000000000 +0200
++++ b/codec.c	2024-08-07 16:36:58.737753337 +0200
+@@ -935,19 +935,22 @@
+ #ifdef USE_SWRESAMPLE 
+ #if LIBSWRESAMPLE_VERSION_INT < AV_VERSION_INT(4,5,100) 
+     audio_decoder->Resample = swr_alloc_set_opts(audio_decoder->Resample, 
+                                 CodecDownmix ? AV_CH_LAYOUT_STEREO_DOWNMIX : audio_ctx->channel_layout , 
+                                 AV_SAMPLE_FMT_S16, audio_decoder->HwSampleRate,
+                                 audio_ctx->channel_layout, audio_ctx->sample_fmt,audio_ctx->sample_rate,
+                                 0, NULL);
+ #else
++    AVChannelLayout src_ch_layout = audio_ctx->ch_layout;
++    AVChannelLayout dst_ch_layout = CodecDownmix ? (AVChannelLayout)AV_CHANNEL_LAYOUT_STEREO_DOWNMIX : src_ch_layout;
++
+     audio_decoder->Resample = swr_alloc();
+-    av_opt_set_channel_layout(audio_decoder->Resample, "in_channel_layout",audio_ctx->channel_layout, 0);
+-    av_opt_set_channel_layout(audio_decoder->Resample, "out_channel_layout", CodecDownmix ? AV_CHANNEL_LAYOUT_STEREO_DOWNMIX : audio_ctx->channel_layout,  0);
++    av_opt_set_chlayout(audio_decoder->Resample, "in_channel_layout", &src_ch_layout, 0);
++    av_opt_set_chlayout(audio_decoder->Resample, "out_channel_layout", &dst_ch_layout,  0);
+     av_opt_set_int(audio_decoder->Resample, "in_sample_rate",     audio_ctx->sample_rate,                0);
+     av_opt_set_int(audio_decoder->Resample, "out_sample_rate",    audio_decoder->HwSampleRate,                0);
+     av_opt_set_sample_fmt(audio_decoder->Resample, "in_sample_fmt",  audio_ctx->sample_fmt, 0);
+     av_opt_set_sample_fmt(audio_decoder->Resample, "out_sample_fmt", AV_SAMPLE_FMT_S16,  0);
+ #endif
+     if (audio_decoder->Resample) {
+ 	    swr_init(audio_decoder->Resample);
+     } else {

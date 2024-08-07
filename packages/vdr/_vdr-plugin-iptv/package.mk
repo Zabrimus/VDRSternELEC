@@ -20,9 +20,6 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
-  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/samples/
-  cp -r $(get_build_dir _vdr-plugin-iptv)/samples ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/
-
   PLUGIN="$(cat ${PKG_BUILD}/Makefile | grep 'PLUGIN = ' | cut -d ' ' -f 3)"
   $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN}
 }

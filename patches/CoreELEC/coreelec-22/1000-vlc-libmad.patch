@@ -1,0 +1,16 @@
+diff --git a/packages/addons/addon-depends/libmad/package.mk b/packages/addons/addon-depends/libmad/package.mk
+index 7d8c8d6456..51684a4603 100644
+--- a/packages/addons/addon-depends/libmad/package.mk
++++ b/packages/addons/addon-depends/libmad/package.mk
+@@ -10,9 +10,10 @@ PKG_URL="${SOURCEFORGE_SRC}/mad/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+ PKG_DEPENDS_TARGET="toolchain"
+ PKG_LONGDESC="A high-quality MPEG audio decoder."
+ PKG_TOOLCHAIN="autotools"
++PKG_BUILD_FLAGS="+pic"
+ 
+ # package specific configure options
+-PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared"
++PKG_CONFIGURE_OPTS_TARGET="--enable-static --enable-shared"
+ if [ "${TARGET_ARCH}" = "x86_64" ]; then
+   PKG_CONFIGURE_OPTS_TARGET+=" --enable-accuracy --enable-fpm=64bit"
+ fi

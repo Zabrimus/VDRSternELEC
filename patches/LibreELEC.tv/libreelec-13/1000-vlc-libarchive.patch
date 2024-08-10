@@ -1,0 +1,13 @@
+diff --git a/packages/compress/libarchive/package.mk b/packages/compress/libarchive/package.mk
+index 29e73941b3..a6e473cd69 100644
+--- a/packages/compress/libarchive/package.mk
++++ b/packages/compress/libarchive/package.mk
+@@ -12,7 +12,7 @@ PKG_DEPENDS_TARGET="cmake:host gcc:host"
+ PKG_SHORTDESC="A multi-format archive and compression library."
+ 
+ PKG_CMAKE_OPTS_TARGET="-DCMAKE_POSITION_INDEPENDENT_CODE=1 \
+-                       -DBUILD_SHARED_LIBS=OFF \
++                       -DBUILD_SHARED_LIBS=ON \
+                        -DENABLE_ACL=ON \
+                        -DENABLE_BZip2=ON \
+                        -DENABLE_CAT=OFF \

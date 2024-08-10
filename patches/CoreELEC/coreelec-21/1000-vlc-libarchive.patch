@@ -1,0 +1,24 @@
+diff --git a/packages/compress/libarchive/package.mk b/packages/compress/libarchive/package.mk
+index 5e6749daac..4eb4a762d4 100644
+--- a/packages/compress/libarchive/package.mk
++++ b/packages/compress/libarchive/package.mk
+@@ -8,7 +8,7 @@ PKG_LICENSE="GPL"
+ PKG_SITE="https://www.libarchive.org"
+ PKG_URL="https://www.libarchive.org/downloads/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+ PKG_DEPENDS_HOST="toolchain:host"
+-PKG_DEPENDS_TARGET="toolchain"
++PKG_DEPENDS_TARGET="toolchain bzip2"
+ PKG_SHORTDESC="A multi-format archive and compression library."
+ 
+ PKG_CMAKE_OPTS_TARGET="-DCMAKE_POSITION_INDEPENDENT_CODE=1 \
+@@ -19,10 +19,3 @@ PKG_CMAKE_OPTS_TARGET="-DCMAKE_POSITION_INDEPENDENT_CODE=1 \
+                        -DENABLE_TEST=0 \
+                        -DENABLE_COVERAGE=0 \
+                        -DENABLE_WERROR=0"
+-
+-post_makeinstall_target() {
+-  rm -rf ${INSTALL}
+-
+-  # delete the shared library as we only want static
+-  rm ${SYSROOT_PREFIX}/usr/lib/libarchive.so*
+-}

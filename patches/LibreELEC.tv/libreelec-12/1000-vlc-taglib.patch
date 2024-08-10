@@ -1,0 +1,16 @@
+diff --git a/packages/audio/taglib/package.mk b/packages/audio/taglib/package.mk
+index e0541f98e5..d9d48f11af 100644
+--- a/packages/audio/taglib/package.mk
++++ b/packages/audio/taglib/package.mk
+@@ -10,9 +10,10 @@ PKG_SITE="https://taglib.org"
+ PKG_URL="https://taglib.org/releases/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+ PKG_DEPENDS_TARGET="toolchain cmake:host zlib"
+ PKG_LONGDESC="TagLib is a library for reading and editing the meta-data of several popular audio formats."
++PKG_BUILD_FLAGS="+pic"
+ 
+ PKG_CMAKE_OPTS_TARGET="-DBUILD_EXAMPLES=OFF \
+-                       -DBUILD_SHARED_LIBS=OFF \
++                       -DBUILD_SHARED_LIBS=ON \
+                        -DBUILD_TESTING=OFF \
+                        -DENABLE_CCACHE=ON \
+                        -DWITH_ZLIB=ON"

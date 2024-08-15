@@ -1,0 +1,11 @@
+diff --git a/packages/addons/addon-depends/system-tools-depends/depends/libssh2/package.mk b/packages/addons/addon-depends/system-tools-depends/depends/libssh2/package.mk
+index df40ed5d9e..ed8e2e7572 100644
+--- a/packages/addons/addon-depends/system-tools-depends/depends/libssh2/package.mk
++++ b/packages/addons/addon-depends/system-tools-depends/depends/libssh2/package.mk
+@@ -12,5 +12,5 @@ PKG_LONGDESC="A library implementing the SSH2 protocol"
+ PKG_BUILD_FLAGS="+pic"
+ 
+ PKG_CMAKE_OPTS_TARGET="-DBUILD_EXAMPLES=OFF \
+-                       -DBUILD_SHARED_LIBS=OFF \
++                       -DBUILD_SHARED_LIBS=ON \
+                        -DBUILD_TESTING=OFF"

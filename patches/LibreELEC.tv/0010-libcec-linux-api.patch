@@ -1,0 +1,14 @@
+diff --git a/packages/devel/libcec/package.mk b/packages/devel/libcec/package.mk
+index aa7a846cc5..708ab3c229 100644
+--- a/packages/devel/libcec/package.mk
++++ b/packages/devel/libcec/package.mk
+@@ -17,7 +17,8 @@ PKG_CMAKE_OPTS_TARGET="-DBUILD_SHARED_LIBS=1 \
+                        -DSKIP_PYTHON_WRAPPER=1 \
+                        -DHAVE_IMX_API=0 \
+                        -DHAVE_GIT_BIN=0 \
+-                       -DHAVE_RPI_LIB=0"
++                       -DHAVE_RPI_LIB=0 \
++                       -DHAVE_LINUX_API=1"
+ 
+ if [ "${KODIPLAYER_DRIVER}" = "libamcodec" ]; then
+   PKG_CMAKE_OPTS_TARGET="${PKG_CMAKE_OPTS_TARGET} -DHAVE_AOCEC_API=1"

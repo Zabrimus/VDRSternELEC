@@ -19,7 +19,15 @@ pre_make_target() {
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 }
 
+pre_makeinstall_target() {
+	mkdir -p $(get_build_dir _vdr-plugin-iptv)/iptv
+	cp $(get_pkg_directory _vdr-plugin-iptv)/iptv/* $(get_build_dir _vdr-plugin-iptv)/iptv
+}
+
 post_makeinstall_target() {
+  mkdir -p $(get_install_dir _vdr-plugin-iptv)/storage/.config/vdropt/plugins/iptv/vlcinput
+  mkdir -p $(get_install_dir _vdr-plugin-iptv)/storage/.config/vdropt/plugins/iptv/m3u-conf
+
   PLUGIN="$(cat ${PKG_BUILD}/Makefile | grep 'PLUGIN = ' | cut -d ' ' -f 3)"
   $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN}
 }

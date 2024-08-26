@@ -1,0 +1,18 @@
+diff --git a/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk b/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk
+index 2b13eaf890..3fd9acec65 100644
+--- a/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk
++++ b/projects/Amlogic-ce/packages/addons/driver/dvb-latest/package.mk
+@@ -55,6 +55,13 @@ make_target() {
+   # make config all
+   kernel_make VER=$KERNEL_VER SRCDIR=$(kernel_path) allyesconfig
+ 
++  sed -e 's/CONFIG_DVB_DEMUX_SECTION_LOSS_LOG=y/# CONFIG_DVB_DEMUX_SECTION_LOSS_LOG is not set/g' -i $PKG_BUILD/v4l/.config
++  sed -e 's/# CONFIG_MEDIA_ANALOG_TV_SUPPORT is not set/CONFIG_MEDIA_ANALOG_TV_SUPPORT=y/g' -i $PKG_BUILD/v4l/.config
++  sed -e 's/# CONFIG_VIDEO_PVRUSB2_SYSFS is not set/CONFIG_VIDEO_PVRUSB2_SYSFS=y/g' -i $PKG_BUILD/v4l/.config
++  sed -e 's/# CONFIG_VIDEO_PVRUSB2 is not set/CONFIG_VIDEO_PVRUSB2=m/g' -i $PKG_BUILD/v4l/.config
++  sed -e 's/# CONFIG_VIDEO_PVRUSB2_DVB is not set/# CONFIG_VIDEO_PVRUSB2_DVB is not set/g' -i $PKG_BUILD/v4l/.config
++  sed -e 's/# CONFIG_VIDEO_HDPVR is not set/CONFIG_VIDEO_HDPVR=m/g' -i $PKG_BUILD/v4l/.config
++
+   kernel_make VER=$KERNEL_VER SRCDIR=$(kernel_path)
+ }
+ 

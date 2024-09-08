@@ -1,0 +1,64 @@
+diff -ru8bBwd a/giscanner/ccompiler.py b/giscanner/ccompiler.py
+--- a/giscanner/ccompiler.py	2024-04-01 15:21:25.000000000 +0200
++++ b/giscanner/ccompiler.py	2024-09-08 16:41:36.883608543 +0200
+@@ -21,17 +21,16 @@
+ import os
+ import shlex
+ import subprocess
+ import tempfile
+ 
+ import sys
+ import distutils
+ 
+-from distutils.msvccompiler import MSVCCompiler
+ from distutils.unixccompiler import UnixCCompiler
+ from distutils.cygwinccompiler import Mingw32CCompiler
+ from distutils.sysconfig import get_config_vars
+ from distutils.sysconfig import customize_compiler as orig_customize_compiler
+ 
+ from . import utils
+ 
+ 
+@@ -455,17 +454,17 @@
+         if self.check_is_msvc():
+             if not self.compiler.initialized:
+                 self.compiler.initialize()
+             return [self.compiler.linker]
+         else:
+             return self.compiler.linker_exe
+ 
+     def check_is_msvc(self):
+-        return isinstance(self.compiler, MSVCCompiler)
++        return False
+ 
+     # Private APIs
+     def _set_cpp_options(self, options):
+         includes = []
+         macros = []
+         other_options = []
+ 
+         for o in options:
+@@ -476,23 +475,16 @@
+                 macro = option[len('-D'):]
+                 macro_index = macro.find('=')
+                 if macro_index == -1:
+                     macro_name = macro
+                     macro_value = None
+                 else:
+                     macro_name = macro[:macro_index]
+                     macro_value = macro[macro_index + 1:]
+-
+-                    # Somehow the quotes used in defining
+-                    # macros for compiling using distutils
+-                    # get dropped for MSVC builds, so
+-                    # escape the escape character.
+-                    if isinstance(self.compiler, MSVCCompiler):
+-                        macro_value = macro_value.replace('\"', '\\\"')
+                 macros.append((macro_name, macro_value))
+             elif option.startswith('-U'):
+                 macros.append((option[len('-U'):],))
+             else:
+                 # We expect the preprocessor to remove macros. If debugging is turned
+                 # up high enough that won't happen, so don't add those flags. Bug #720504
+                 if option not in FLAGS_RETAINING_MACROS:
+                     other_options.append(option)

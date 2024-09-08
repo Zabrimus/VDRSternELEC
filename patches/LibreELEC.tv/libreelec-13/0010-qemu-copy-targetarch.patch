@@ -1,0 +1,24 @@
+diff --git a/packages/tools/qemu/package.mk b/packages/tools/qemu/package.mk
+index 0153382b29..c139ca541b 100644
+--- a/packages/tools/qemu/package.mk
++++ b/packages/tools/qemu/package.mk
+@@ -35,11 +35,11 @@ pre_configure_host() {
+     --disable-gcrypt \
+     --disable-gnutls \
+     --disable-system \
+-    --disable-user \
+     --disable-vnc \
+     --disable-werror \
+     --disable-xkbcommon \
+-    --disable-zstd"
++    --disable-zstd \
++    --target-list=$TARGET_ARCH-linux-user"
+ 
+   export DONT_BUILD_LEGACY_PYC=1
+ }
+@@ -47,4 +47,5 @@ pre_configure_host() {
+ makeinstall_host() {
+   mkdir -p ${TOOLCHAIN}/bin
+     cp ${PKG_BUILD}/.${HOST_NAME}/qemu-img ${TOOLCHAIN}/bin
++    cp ${PKG_BUILD}/.${HOST_NAME}/qemu-${TARGET_ARCH} ${TOOLCHAIN}/bin
+ }

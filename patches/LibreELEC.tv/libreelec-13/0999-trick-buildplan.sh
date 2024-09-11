@@ -8,6 +8,6 @@ set -e
 # and therefore the build fails.
 #
 # These changes add toolchain to the dependencies to try to fix the build plan
-sed -i -E "s/^(PKG_DEPENDS_HOST.*)$/\0\nPKG_DEPENDS_TARGET=\"toolchain\"/" packages/graphics/vulkan/glslang/package.mk
-sed -i -E "s/^(PKG_DEPENDS_HOST.*)$/\0\nPKG_DEPENDS_TARGET=\"toolchain\"/" packages/graphics/spirv-headers/package.mk
-sed -i -E "s/^(PKG_DEPENDS_HOST.*)$/\0\nPKG_DEPENDS_TARGET=\"toolchain\"/" packages/graphics/spirv-tools/package.mk
+#sed -i -E "s/^(PKG_DEPENDS_HOST.*)$/\0\nPKG_DEPENDS_TARGET=\"toolchain\"/" packages/graphics/vulkan/glslang/package.mk
+#sed -i -E "s/^(PKG_DEPENDS_HOST.*)$/\0\nPKG_DEPENDS_TARGET=\"toolchain\"/" packages/graphics/spirv-headers/package.mk
+#sed -i -E "s/^(PKG_DEPENDS_HOST.*)$/\0\nPKG_DEPENDS_TARGET=\"toolchain\"/" packages/graphics/spirv-tools/package.mk

@@ -3,12 +3,13 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_libshaderc"
-PKG_VERSION="2023.7"
-PKG_SHA256="681e1340726a0bf46bea7e31f10cbfe78e01e4446a35d90fedc2b78d400fcdeb"
+PKG_VERSION="2024.1"
+PKG_SHA256="eb3b5f0c16313d34f208d90c2fa1e588a23283eed63b101edd5422be6165d528"
 PKG_LICENSE="Apache"
 PKG_SITE="https://github.com/google/shaderc"
 PKG_URL="https://github.com/google/shaderc/archive/refs/tags/v${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain _glslang"
+PKG_DEPENDS_TARGET="toolchain glslang"
+PKG_DEPENDS_UNPACK="spirv-tools spirv-headers"
 PKG_LONGDESC="A collection of tools, libraries and tests for shader compilation."
 PKG_BUILD_FLAGS="+pic +speed"
 
@@ -18,5 +19,5 @@ pre_configure_target() {
   mkdir -p ${PKG_BUILD}/third_party
   ln -s -f $(get_build_dir spirv-tools) ${PKG_BUILD}/third_party/spirv-tools
   ln -s -f $(get_build_dir spirv-headers) ${PKG_BUILD}/third_party/spirv-headers
-  ln -s -f $(get_build_dir _glslang) ${PKG_BUILD}/third_party/glslang
+  ln -s -f $(get_build_dir glslang) ${PKG_BUILD}/third_party/glslang
 }

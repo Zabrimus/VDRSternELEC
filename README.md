@@ -171,6 +171,94 @@ Example call:  ```./build.sh -config CoreELEC-19 -extra easyvdr```
 
 If everything worked fine, the desired images can be found in either  ```CoreELEC/target```, ```LibreELEC/target``` or ```releases```.
 
+### Adding patches and modifying sources (developers only!)
+
+You can modify your build by adding patches which can modify the upstream LE/CE or
+the VDRSternELEC packages.
+
+> Remember to NOT modify the LibreELEC or CoreELEC subdirectory itself, because changes in there
+> will be swept out during the next build. When starting the build process, these directories will be
+> reset to the sha from [config/versions](https://github.com/Zabrimus/VDRSternELEC/config/versions).
+> Whenever you want to modify some package, you need to do this in the following 3 directories.
+> As long as you don't clear the build directory, only packages that have been modified will be built again.
+> LE/CE should know, if something has been modified or if a new or modified patch was placed somewhere.
+
+Besides [config/versions](https://github.com/Zabrimus/VDRSternELEC/config/versions), where you
+can change the upstream sha of LE/CE for your needs, you can add patches or bash scripts, to be
+applied or executed:
++ **somescript.sh** - scripts, which will be executed on the submodule directory (mainly simple sed-oneliners)  
++ **somepatch.patch** - patches, which will be applied on the submodule directory  
+
+You have to place such scripts and patches at the right place in the directory structure, to let
+the build logic decide, on which LE/CE-version and PROJECT/DEVICE they should be applied and executed.  
+There are 3 directories, which are relevant and the logic is like this:
+
+-> :file_folder: **patches**  
+Scripts and patches in the **patches** directory are intended to modify the original upstream files of LE/CE.
+They will be applied at first.
+
+:file_folder: **patches** (will be executed/ applied to every build)  
+|__ **somescript.sh**  
+|__ **somepatch.patch**  
+|__ :file_folder: **CoreELEC** (will be executed/ applied to every CoreELEC build)  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ :file_folder: **coreelec-(version)** (will be executed/ applied to the CoreELEC-version build)  
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+|__ :file_folder: **LibreELEC** (will be executed/ applied to every LibreELEC build)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ :file_folder: **libreelec-(version)** (will be executed/ applied to the LibreELEC-version build)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+
+---
+
+-> :file_folder: **package_patches**  
+Patches in the **package_patches** directory are intended to be copied to the upstream LE/CE version as is.
+You can build a patched from the package source (probably the already patched LE/CE source) and this patch will be applied
+as if it would have been part of the original LE/CE.
+
+:file_folder: **package_patches**  
+|__ :file_folder: **CoreELEC** (will be applied to every CoreELEC build)  
+|__ :file_folder: **CoreELEC.coreelec-version** (will be applied to the CoreELEC-version build)  
+|__ :file_folder: **LibreELEC** (will be executed/ applied to every LibreELEC build)  
+|__ :file_folder: **LibreELEC.libreelec-version** (will be applied to the LibreELEC-version build)  
+
+The structure within the directories follows the LE/CE logic, e.g. a patch for the package ```kodi``` has to be placed in
+```packages/mediacenter/kodi/patches``` like it's done in LE/CE. Platform-specific patches should be placed in the ```projects/PLATFORM/patches```
+subdirectories. Device-specific patches should be placed in the ```projects/PLATFORM/devices/DEVICE/patches``` subdirectories.
+
+It's a bit tricky to find the right place because at first you need to understand the LE/CE directory structure, but it's doable.
+
+---
+
+-> :file_folder: **packages**  
+This is the heart of VDR*ELEC. The packages directory contains all packages that are added to upstream LE/CE. This directory is
+handled during the build process as if it is part of the upstream ```packages``` directory.
+For a new package you need at least a package.mk file. See VDR*ELEC and LE/CE sources to see how this works.
+You also have the possibility to modify and add patches and files to the existing packages.
+
+### VDR*ELEC as a developing platform
+
+There is a special package [vdr-helper](packages/virtual/vdr-helper) with the [zip_config.sh](packages/virtual/vdr-helper/zip_config.sh) bash script.
+This script is used to package the VDR-Plugin libraries and is executed in nearly every plugin creation ([example](packages/vdr/_vdr-plugin-web/package.mk)) at the end.
+You can add the Plugin API version as a fourth parameter like ```$(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN} "2.6.3"```.  
+In this case, the build process creates a new directory ```/storage/.config/vdrlibs/save``` in the image where the binary will be copied to.  
+Next, a ```/storage/.config/vdrlibs/bin``` directory is created, where a symlink to the binary in ```save``` is created. At last, the ```/usr/local/lib/vdr/libvdr.*.so.2.6.3``` is created
+as a symlink to ```bin```.  
+With this setup, you can simply place your new binary somewhere in ```/storage``` and let the symlink in ```/storage/.config/vdrlibs/bin``` point to the new file.
+
+If you have a build host, where you can mount directories from, you can get it more comfortable. Simply create a new directory, e.g. ```/storage/.config/vdrlibs/server```
+and use a nfs systemd service to mount your VDR*ELEC or build directory in.
+Let your ```bin```-symlink point to the binary within the mounted build directory and now you simply need to restart VDR to see the effect of a new build on a host machine.
+
+You can do this for many packages by adding the linking logic shown in the [zip_config.sh](packages/virtual/vdr-helper/zip_config.sh) script to your ```package.mk```.
+You probably have to check, what files are needed to be linked at all. You will find them in the ```install_pkg``` directory in LE/CE build directory.
+
+[zip_config.sh](packages/virtual/vdr-helper/zip_config.sh) only works for VDR plugins out of the box. All other packages need manual changes.
+
 ## Github Build
 In directory ```.github/workflows``` exists several workflows which can be used to build an own image with own configuration.
 * **[precache sources](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/precache-sources.yml)** which downloads all necessary sources for a distribution and caches them in Github as artifact.

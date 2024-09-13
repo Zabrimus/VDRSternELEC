@@ -203,15 +203,20 @@ They will be applied at first.
 |__ :file_folder: **CoreELEC** (will be executed/ applied to every CoreELEC build)  
 |&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
 |&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
-|&nbsp;&nbsp;&nbsp;&nbsp;|__ :file_folder: **coreelec-(version)** (will be executed/ applied to the CoreELEC-version build)  
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+|__ :file_folder: **coreelec-(version)** (will be executed/ applied to the CoreELEC-version build)  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
 |__ :file_folder: **LibreELEC** (will be executed/ applied to every LibreELEC build)  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+|__ :file_folder: **libreelec-(version)** (will be executed/ applied to the LibreELEC-version build)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ :file_folder: **libreelec-(version)** (will be executed/ applied to the LibreELEC-version build)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+
+You can add a subdirectory to the above directories in the following logic:  
+:file_folder: **../project/YOUR_PROJECT/** (will only be executed/ applied to all devices in YOUR_PROJECT)  
+:file_folder: **../project/YOUR_PROJECT/devices/YOUR_DEVICE/** (will be executed/ applied to YOUR_DEVICE in YOUR_PROJECT)  
+:file_folder: **../project/YOUR_PROJECT/devices/YOUR_DEVICE/variant/YOUR_VARIANT/** (will be executed/ applied to YOUR_VARIANT of YOUR_DEVICE in YOUR_PROJECT)  
 
 ---
 
@@ -235,9 +240,9 @@ It's a bit tricky to find the right place because at first you need to understan
 ---
 
 -> :file_folder: **packages**  
-This is the heart of VDR*ELEC. The packages directory contains all packages that are added to upstream LE/CE. This directory is
+This is the heart of VDRSternELEC. The packages directory contains all packages that are added to upstream LE/CE. This directory is
 handled during the build process as if it is part of the upstream ```packages``` directory.
-For a new package you need at least a package.mk file. See VDR*ELEC and LE/CE sources to see how this works.
+For a new package you need at least a package.mk file. See VDRSternELEC and LE/CE sources to see how this works.
 You also have the possibility to modify and add patches and files to the existing packages.
 
 ### VDR*ELEC as a developing platform

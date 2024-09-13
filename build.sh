@@ -121,18 +121,26 @@ apply_patches() {
     # Apply patches and sed scripts in ./patches
     for i in `find ../patches -maxdepth 1 -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO} -maxdepth 1 -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/${PATCHDIR} -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.patch' 2>/dev/null`; do
+             `find ../patches/${DISTRO}/projects/${PROJECT} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.patch' 2>/dev/null`; do
         echo "Apply patch $i"
         patch -p1 < $i
     done
 
     for i in `find ../patches -maxdepth 1 -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO} -maxdepth 1 -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/${PATCHDIR} -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.sh' 2>/dev/null`; do
+             `find ../patches/${DISTRO}/projects/${PROJECT} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.sh' 2>/dev/null`; do
         echo "Apply script $i"
         bash $i
     done

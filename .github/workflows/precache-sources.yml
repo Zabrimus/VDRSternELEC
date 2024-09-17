@@ -13,6 +13,7 @@ on:
           - all
           - CoreELEC-20
           - CoreELEC-21
+          - CoreELEC-22
           - LibreELEC-11
           - LibreELEC-12
           - LibreELEC-13
@@ -32,6 +33,14 @@ jobs:
     uses: ./.github/workflows/download-sources.yml
     with:
       config: CoreELEC-21
+    secrets: inherit
+
+  coreelec-22:
+    name: CoreELEC-22
+    if:  ( github.event.inputs.target == 'CoreELEC-22' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: CoreELEC-22
     secrets: inherit
 
   libreelec-11:

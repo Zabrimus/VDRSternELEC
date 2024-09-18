@@ -44,7 +44,7 @@ esac
 case "${ARCH}" in
   arm)     DSUBARCH=${TARGET_SUBARCH};;
   aarch64) DSUBARCH=${TARGET_VARIANT};;
-  x86_64)  DSUBARCH=${TARGET_SUBARCH};;
+  x86_64)  DSUBARCH="x86-64";;
 esac
 
 PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} \

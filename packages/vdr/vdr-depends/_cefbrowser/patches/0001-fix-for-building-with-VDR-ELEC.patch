@@ -1,17 +1,17 @@
-From c3fb7fae0f3f8efeaffdff1d44e4984221b0abdd Mon Sep 17 00:00:00 2001
+From ded968d2bc69ee9e60dd0c8f07cd7db8b51521e4 Mon Sep 17 00:00:00 2001
 From: Andreas Baierl <ichgeh@imkreisrum.de>
 Date: Tue, 4 Jul 2023 16:21:34 +0200
 Subject: [PATCH] fix for building with VDR*ELEC
 
 ---
- meson.build                                   | 22 ++++++++++++-------
+ meson.build                                   | 25 ++++++++++++-------
  meson_options.txt                             |  1 +
  .../packagefiles/mini-0.9.14/meson.build      |  2 +-
  .../meson.build                               |  2 +-
- 4 files changed, 17 insertions(+), 10 deletions(-)
+ 4 files changed, 19 insertions(+), 11 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index 2f6c487..2d70960 100644
+index 556b679..b341f60 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -1,11 +1,13 @@
@@ -30,20 +30,23 @@ index 2f6c487..2d70960 100644
  
  cmake = import('cmake')
  CXX = meson.get_compiler('cpp')
-@@ -22,8 +24,12 @@ cef_opt_var = cmake.subproject_options()
- 
+@@ -23,9 +25,14 @@ cef_opt_var = cmake.subproject_options()
  if arch == 'arm'
      cef_opt_var.add_cmake_defines({'PROJECT_ARCH': 'armhf'})
-+    cef_opt_var.add_cmake_defines({'CMAKE_CXX_FLAGS': subarch})
-+    cef_opt_var.add_cmake_defines({'CMAKE_C_FLAGS': subarch})
  elif arch == 'arm64'
-     cef_opt_var.add_cmake_defines({'PROJECT_ARCH': 'aarch64'})
-+    cef_opt_var.add_cmake_defines({'CMAKE_CXX_FLAGS': '-march=armv8-a'})
-+    cef_opt_var.add_cmake_defines({'CMAKE_C_FLAGS': '-march=armv8-a'})
+-    cef_opt_var.add_cmake_defines({'PROJECT_ARCH': 'aarch64'})
++    cef_opt_var.add_cmake_defines({'PROJECT_ARCH': 'arm64'})
++elif arch == 'x86_64'
++    cef_opt_var.add_cmake_defines({'PROJECT_ARCH': 'x86_64'})
  endif
  
++cef_opt_var.add_cmake_defines({'CMAKE_CXX_FLAGS': subarch})
++cef_opt_var.add_cmake_defines({'CMAKE_C_FLAGS': subarch})
++
  cef_opt_var.append_compile_args('cpp', '-Wno-unused-variable')
-@@ -78,7 +84,7 @@ exe = executable('cefbrowser', 'main.cpp', 'mainapp.cpp', 'logger.cpp',
+ cef_opt_var.add_cmake_defines({'CMAKE_BUILD_TYPE': 'Debug'})
+ cef_proj = cmake.subproject('cef', options: cef_opt_var)
+@@ -78,7 +85,7 @@ exe = executable('cefbrowser', 'main.cpp', 'mainapp.cpp', 'logger.cpp',
                   'httplib.cpp',
                   cpp_args : ['-DPHTTPLIB_ZLIB_SUPPORT', '-DCPPHTTPLIB_OPENSSL_SUPPORT'],
                   install : true,
@@ -52,7 +55,7 @@ index 2f6c487..2d70960 100644
                   dependencies: [mini_dep, cef_lib, spdlog_dep, deps, sqlite3_dep, dep_ssl, dep_crypto])
  
  exe = executable('vdrclient', 'test-tools/vdr_tool.cpp', 'logger.cpp', 'sharedmemory.cpp', 'test-tools/common.cpp',
-@@ -86,13 +92,13 @@ exe = executable('vdrclient', 'test-tools/vdr_tool.cpp', 'logger.cpp', 'sharedme
+@@ -86,13 +93,13 @@ exe = executable('vdrclient', 'test-tools/vdr_tool.cpp', 'logger.cpp', 'sharedme
                  'httplib.cpp',
                   cpp_args : ['-DCLIENT_ONLY', '-DPHTTPLIB_ZLIB_SUPPORT', '-DCPPHTTPLIB_OPENSSL_SUPPORT'],
                   install : true,
@@ -105,5 +108,5 @@ index 4d0e048..815d8f6 100644
  
  src = files(
 -- 
-2.30.2
+2.39.2
 

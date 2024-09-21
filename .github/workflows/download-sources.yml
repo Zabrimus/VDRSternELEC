@@ -48,14 +48,6 @@ jobs:
               ./build.sh -config CoreELEC-22-no -patchonly
           fi
 
-          if [[ "${{ inputs.config }}" == "LibreELEC-11" ]]; then
-              echo "CACHE_NAME=cache-libreelec-11-sources" >> "$GITHUB_OUTPUT"
-              echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"
-          
-              ( cd LibreELEC.tv && git checkout libreelec-11.0 )
-              ./build.sh -config LibreELEC-11-arm-AMLGX -patchonly
-          fi
-
           if [[ "${{ inputs.config }}" == "LibreELEC-12" ]]; then
               echo "CACHE_NAME=cache-libreelec-12-sources" >> "$GITHUB_OUTPUT"
               echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"

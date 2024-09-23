@@ -31,9 +31,6 @@ if [ "${DISTRONAME}" = "LibreELEC" ] && [ "${OS_VERSION}" = "11.0" ]; then
 fi
 
 CEF_PREFIX="/usr/local"
-CEF_DIR="$(get_build_dir _cef)/../../../../cef"
-CEF_VERSION_FILE="$(get_build_dir _cef)/VERSION"
-CEF_VERSION="$(cat ${CEF_VERSION_FILE})"
 
 case "${ARCH}" in
   arm)     DARCH="arm";;
@@ -55,6 +52,10 @@ PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} \
                        --sbindir=${CEF_PREFIX}/bin"
 
 pre_configure_target() {
+   CEF_DIR="$(get_build_dir _cef)/../../../../cef"
+   CEF_VERSION_FILE="$(get_build_dir _cef)/VERSION"
+   CEF_VERSION="$(cat ${CEF_VERSION_FILE})"
+
    export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system
    rm -rf ${PKG_BUILD}/subprojects/cef
    ln -s ${CEF_DIR}/cef-${CEF_VERSION}-${ARCH} ${PKG_BUILD}/subprojects/cef

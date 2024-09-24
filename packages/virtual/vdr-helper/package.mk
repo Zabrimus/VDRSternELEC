@@ -9,6 +9,8 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="Some build helper scripts"
 PKG_TOOLCHAIN="manual"
 
-make_target() {
+makeinstall_target() {
+  APIVERSION="$(cat $(get_build_dir _vdr)/config.h | grep '#define APIVERSION' | cut -d '"' -f 2)"
   cp ${PKG_DIR}/zip_config.sh ${PKG_BUILD}
+  sed -i s/XXAPIVERSIONXX/${APIVERSION}/ ${PKG_BUILD}/zip_config.sh
 }

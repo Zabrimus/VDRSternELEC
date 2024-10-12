@@ -57,13 +57,6 @@ VDR_USER=root
 CFLAGS += -DDEPRECATED_SCHEDULE_GET_EVENT=1
 CXXFLAGS += -DDEPRECATED_SCHEDULE_GET_EVENT=1
 
-# used by:
-#    wirbelscan
-# dependant plugins:
-#    wirbelscancontrol, vnsiserver, restfulapi
-# CFLAGS += -DDEPRECATED_SECTIONSYNCER_SYNC_REPEAT=1
-# CXXFLAGS += -DDEPRECATED_SECTIONSYNCER_SYNC_REPEAT=1
-
 EOF
 }
 

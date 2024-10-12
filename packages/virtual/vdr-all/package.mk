@@ -41,11 +41,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-restfulapi"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-robotv"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-streamdev"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-vnsiserver"
-if [ "${DISTRO}" = "CoreELEC" ]; then
-  PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscan-ce"
-else
-  PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscan"
-fi
+PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscan"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscancontrol"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-osdteletext"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-zaphistory"

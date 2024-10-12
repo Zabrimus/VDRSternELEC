@@ -7,12 +7,7 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/yavdr/vdr-plugin-restfulapi"
 PKG_URL="https://github.com/yavdr/vdr-plugin-restfulapi/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
-if [ "${DISTRO}" = "CoreELEC" ]; then
-  WIRBELSCAN="_vdr-plugin-wirbelscan-ce"
-else
-  WIRBELSCAN="_vdr-plugin-wirbelscan"
-fi
-PKG_DEPENDS_TARGET="toolchain _vdr cxxtools vdr-helper ${WIRBELSCAN}"
+PKG_DEPENDS_TARGET="toolchain _vdr cxxtools vdr-helper _vdr-plugin-wirbelscan"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_SOURCE_DIR="vdr-plugin-restfulapi-${PKG_VERSION}"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr ${WIRBELSCAN} vdr-helper)"
@@ -24,11 +19,7 @@ pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
 
-  if [ "${DISTRO}" = "CoreELEC" ]; then
-    cp $(get_build_dir _vdr-plugin-wirbelscan-ce)/wirbelscan_services.h ${PKG_BUILD}/wirbelscan/
-  else
-    cp $(get_build_dir _vdr-plugin-wirbelscan)/wirbelscan_services.h ${PKG_BUILD}/wirbelscan/
-  fi
+  cp $(get_build_dir _vdr-plugin-wirbelscan)/wirbelscan_services.h ${PKG_BUILD}/wirbelscan/
 }
 
 post_makeinstall_target() {

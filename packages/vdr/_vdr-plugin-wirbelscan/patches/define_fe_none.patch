@@ -1,0 +1,22 @@
+diff -ru8bBwd a/common.cpp b/common.cpp
+--- a/common.cpp	2024-09-10 19:08:37.000000000 +0200
++++ b/common.cpp	2024-10-12 23:37:39.734545834 +0200
+@@ -614,17 +614,17 @@
+ void PrintDvbApi(std::string& s) {
+   s = "compiled for DVB API "
+       + IntToStr(DVB_API_VERSION)
+       + '.'
+       + IntToStr(DVB_API_VERSION_MINOR);
+ }
+ 
+ unsigned int GetFrontendStatus(cDevice* dev) {
+-  fe_status_t status = FE_NONE;  
++  fe_status_t status = (fe_status_t)0;
+   cDvbDevice* dvbdevice = GetDvbDevice(dev);
+   if (dvbdevice == nullptr) return status; 
+ 
+   std::string s = "/dev/dvb/adapter" + std::to_string(dvbdevice->Adapter()) +
+                   "/frontend"        + std::to_string(dvbdevice->Frontend());
+ 
+   int fe = open(s.c_str(), O_RDONLY | O_NONBLOCK);
+   if (fe < 0)

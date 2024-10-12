@@ -64,13 +64,6 @@ CXXFLAGS += -DDEPRECATED_SCHEDULE_GET_EVENT=1
 CFLAGS += -DDEPRECATED_SECTIONSYNCER_SYNC_REPEAT=1
 CXXFLAGS += -DDEPRECATED_SECTIONSYNCER_SYNC_REPEAT=1
 
-# used by softhdodroid, suspendoutput, radio, mp3, cecremote, femon,
-#    extrecmenung, fritzbox, skindesigner
-# dependant plugin:
-#    weatherforecast
-# CFLAGS += -DDEPRECATED_CCONTROL=1
-# CXXFLAGS += -DDEPRECATED_CCONTROL=1
-
 EOF
 }
 

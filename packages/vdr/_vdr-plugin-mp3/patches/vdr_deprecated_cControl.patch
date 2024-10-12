@@ -1,0 +1,45 @@
+diff -ru8bBwd a/mp3.c b/mp3.c
+--- a/mp3.c	2021-05-25 15:27:50.000000000 +0200
++++ b/mp3.c	2024-10-12 19:30:51.187937471 +0200
+@@ -276,17 +276,19 @@
+   delete player; player=0;
+   mgr->Halt();
+   mgr->Flush(); //XXX remove later
+ }
+ 
+ bool cMP3Control::SetPlayList(cPlayList *plist)
+ {
+   bool res;
+-  cControl *control=cControl::Control();
++  cMutexLock ControlMutexLock;
++  cControl *control = cControl::Control(ControlMutexLock);
++
+   // is there a running MP3 player?
+   if(control && typeid(*control)==typeid(cMP3Control)) {
+     // add songs to running playlist
+     if(!MP3Setup.EnqueueSongs) mgr->Flush();
+     mgr->Add(plist);
+     res=true;
+     }
+   else {
+@@ -1689,17 +1691,19 @@
+   else if(!strcasecmp(Command,"TEST")) {
+     if(*Option) {
+       if(ExternalPlay(Option,true)) return "Playback possible";
+       else { ReplyCode=550; return "Playback not possible"; }
+       }
+     else { ReplyCode=501; return "Missing filename"; }
+     }
+   else if(!strcasecmp(Command,"CURR")) {
+-    cControl *control=cControl::Control();
++    cMutexLock ControlMutexLock;
++    cControl *control = cControl::Control(ControlMutexLock);
++
+     if(control && typeid(*control)==typeid(cMP3Control)) {
+       cMP3PlayInfo mode;
+       if(mgr->Info(-1,&mode)) return mode.Filename;
+       else return "<unknown>";
+       }
+     else { ReplyCode=550; return "No running playback"; }
+     }
+   return NULL;

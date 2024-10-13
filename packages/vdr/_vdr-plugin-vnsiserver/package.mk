@@ -15,7 +15,7 @@ PKG_LONGDESC="VDR plugin to handle Kodi clients."
 PKG_BUILD_FLAGS="+speed"
 
 pre_build_target() {
-  WIRBELSCAN_DIR=$(get_build_dir ${WIRBELSCAN})
+  WIRBELSCAN_DIR=$(get_build_dir _vdr-plugin-wirbelscan)
   ln -sf ${WIRBELSCAN_DIR}/wirbelscan_services.h ${PKG_BUILD}
 }
 

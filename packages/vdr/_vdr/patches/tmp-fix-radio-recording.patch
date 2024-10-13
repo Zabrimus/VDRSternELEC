@@ -1,0 +1,10 @@
+--- a/remux.c     2024/10/08 08:46:38     5.14
++++ b/remux.c     2024/10/13 13:34:32
+@@ -2274,6 +2274,7 @@
+                           }
+                        else // audio
+                           framesPerSecond = double(PTSTICKS) / Delta; // PTS of audio frames is always increasing
++                       frameChecker->SetFrameDelta(Delta);
+                        dbgframes("\nDelta = %d  FPS = %5.2f  FPPU = %d NF = %d TRO = %d\n", Delta, framesPerSecond, framesPerPayloadUnit, numPtsValues + 1, parser->IFrameTemporalReferenceOffset());
+                        synced = true;
+                        parser->SetDebug(false);

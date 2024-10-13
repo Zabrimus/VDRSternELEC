@@ -1,0 +1,22 @@
+diff --git a/scrapmanager.c b/scrapmanager.c
+index 1b34e41..0e7cc9a 100644
+--- a/scrapmanager.c
++++ b/scrapmanager.c
+@@ -441,7 +441,7 @@ void cScrapManager::DumpSeries(void)
+ 				const cSchedule *schedule = schedules->GetSchedule(cID);
+ 
+ 				if (schedule)
+-					event = schedule->GetEvent(key.eventId);
++					event = schedule->GetEventById(key.eventId);
+ 			}
+ 
+ 			if (event)
+@@ -497,7 +497,7 @@ void cScrapManager::DumpMovies(void)
+ 				const cSchedule *schedule = schedules->GetSchedule(cID);
+ 
+ 				if (schedule)
+-					event = schedule->GetEvent(key.eventId);
++					event = schedule->GetEventById(key.eventId);
+ 			}
+ 
+ 			if (event)

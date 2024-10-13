@@ -50,13 +50,6 @@ CACHEDIR = /storage/.cache/vdr
 LIBS += -liconv
 VDR_USER=root
 
-# deprecated method since VDR 2.7.1
-# used by:
-#     eepg, scraper2vdr, epg2vdr, tvscraper, tvguide, restfulapi,
-#     vompserver, epgsearch, tvguidng, live
-CFLAGS += -DDEPRECATED_SCHEDULE_GET_EVENT=1
-CXXFLAGS += -DDEPRECATED_SCHEDULE_GET_EVENT=1
-
 EOF
 }
 

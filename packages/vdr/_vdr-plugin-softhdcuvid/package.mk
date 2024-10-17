@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-softhdcuvid"
-PKG_VERSION="41da5ca5269f1494206982c5a27425b5642e72e5"
-PKG_SHA256="582c9cf281717b83c472f2bd246f2ef750c0cf3d46fee259757821a3ec7afd8f"
+PKG_VERSION="c907239bb57ee35d9d9ad4caf54d16f07536f215"
+PKG_SHA256="8faff143ff4e9d2859685734b7a7a2872d5ec2576232493ed688147485531da6"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/jojo61/vdr-plugin-softhdcuvid"
 PKG_URL="https://github.com/jojo61/vdr-plugin-softhdcuvid/archive/${PKG_VERSION}.zip"

@@ -1,0 +1,21 @@
+diff --git a/Makefile b/Makefile
+index 118966c..88c9fa6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -42,16 +42,9 @@ APIVERSION := $(call PKGCFG,apiversion)
+ include global.mk
+ 
+ ### Determine tntnet and cxxtools versions:
+-TNTNET-CONFIG := $(shell which tntnet-config 2>/dev/null)
+-ifeq ($(TNTNET-CONFIG),)
+ TNTVERSION := $(shell $(PKG_CONFIG) --modversion tntnet | sed -e's/\.//g' | sed -e's/pre.*//g' | awk '/^..$$/ { print $$1."000"} /^...$$/ { print $$1."00"} /^....$$/ { print $$1."0" } /^.....$$/ { print $$1 }')
+ CXXFLAGS  += $(shell $(PKG_CONFIG) --cflags tntnet)
+ LIBS      += $(shell $(PKG_CONFIG) --libs tntnet)
+-else
+-TNTVERSION = $(shell tntnet-config --version | sed -e's/\.//g' | sed -e's/pre.*//g' | awk '/^..$$/ { print $$1."000"} /^...$$/ { print $$1."00"} /^....$$/ { print $$1."0" } /^.....$$/ { print $$1 }')
+-CXXFLAGS  += $(shell tntnet-config --cxxflags)
+-LIBS      += $(shell tntnet-config --libs)
+-endif
+ 
+ # $(info $$TNTVERSION is [${TNTVERSION}])
+ 

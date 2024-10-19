@@ -16,6 +16,8 @@ PKG_BUILD_FLAGS="+pic -parallel +speed"
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export PKG_CONFIG=${TOOLCHAIN}/bin/pkg-config
+  export ECPPC=${TOOLCHAIN}/bin/ecppc
 }
 
 post_makeinstall_target() {

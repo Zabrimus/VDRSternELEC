@@ -1,0 +1,28 @@
+diff -crB libfritz_old/FritzClient.cpp libfritz++/FritzClient.cpp
+*** libfritz_old/FritzClient.cpp	2016-05-01 12:45:47.177502748 +0200
+--- libfritz++/FritzClient.cpp	2016-04-30 09:09:58.474863911 +0200
+***************
+*** 269,274 ****
+--- 269,290 ----
+  		return false;
+  	if (!login())
+  		return false;
++         INF("Dial (using lua)...");
++         try {
++              msg = httpClient.get("/fon_num/foncalls_list.lua",
++                              {
++                              { "sid", gConfig->getSid() },
++                              { "xhr", "1" },
++                              
++                              { "dial", number },
++                           });
++         } catch (std::runtime_error &re) {}
++         if (msg.find("dialing") != std::string::npos) {
++            INF("Sucess.");
++            return true;
++         }
++         INF("failed.");
++    
+  	try {
+  		INF("sending call init request " << (gConfig->logPersonalInfo() ? number.c_str() : HIDDEN));
+  		network::HttpClient::param_t params =

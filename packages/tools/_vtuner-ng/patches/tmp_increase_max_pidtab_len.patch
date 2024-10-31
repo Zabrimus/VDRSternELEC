@@ -1,0 +1,13 @@
+diff --git a/kernel/vtuner.h b/kernel/vtuner.h
+index 41d027a..993cdbc 100644
+--- a/kernel/vtuner.h
++++ b/kernel/vtuner.h
+@@ -25,7 +25,7 @@
+ #define MSG_CLOSE_FRONTEND		11
+ #define MSG_PIDLIST			20
+ 
+-#define MAX_PIDTAB_LEN			30
++#define MAX_PIDTAB_LEN			50
+ 
+ #define PID_UNKNOWN 0xffff
+ 

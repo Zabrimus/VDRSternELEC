@@ -1,7 +1,7 @@
-Index: vdr-2.6.8_sik/ci.h
+Index: vdr-2.7.3_sik/ci.h
 ===================================================================
---- vdr-2.6.8_sik.orig/ci.h	2024-07-09 15:45:29.919519811 +0200
-+++ vdr-2.6.8_sik/ci.h	2024-07-09 15:45:29.899520002 +0200
+--- vdr-2.7.3_sik.orig/ci.h	2024-10-30 19:18:40.714527909 +0100
++++ vdr-2.7.3_sik/ci.h	2024-10-30 19:18:40.686528146 +0100
 @@ -209,6 +209,8 @@
    cCiAdapter(void);
    virtual ~cCiAdapter();
@@ -11,10 +11,10 @@ Index: vdr-2.6.8_sik/ci.h
    };
  
  class cTPDU;
-Index: vdr-2.6.8_sik/device.c
+Index: vdr-2.7.3_sik/device.c
 ===================================================================
---- vdr-2.6.8_sik.orig/device.c	2024-07-09 15:45:29.919519811 +0200
-+++ vdr-2.6.8_sik/device.c	2024-07-09 15:45:29.903519964 +0200
+--- vdr-2.7.3_sik.orig/device.c	2024-10-30 19:18:40.714527909 +0100
++++ vdr-2.7.3_sik/device.c	2024-10-30 19:18:40.690528112 +0100
 @@ -75,12 +75,22 @@
  cDevice *cDevice::device[MAXDEVICES] = { NULL };
  cDevice *cDevice::primaryDevice = NULL;
@@ -306,10 +306,10 @@ Index: vdr-2.6.8_sik/device.c
 +{
 +  DynamicDeviceProbes.Del(this, false);
 +}
-Index: vdr-2.6.8_sik/device.h
+Index: vdr-2.7.3_sik/device.h
 ===================================================================
---- vdr-2.6.8_sik.orig/device.h	2024-07-09 15:45:29.919519811 +0200
-+++ vdr-2.6.8_sik/device.h	2024-07-09 15:45:29.903519964 +0200
+--- vdr-2.7.3_sik.orig/device.h	2024-10-30 19:18:40.714527909 +0100
++++ vdr-2.7.3_sik/device.h	2024-10-30 19:22:42.668413837 +0100
 @@ -188,7 +188,6 @@
    static int nextCardIndex;
    int cardIndex;
@@ -328,7 +328,7 @@ Index: vdr-2.6.8_sik/device.h
    int DeviceNumber(void) const;
           ///< Returns the number of this device (0 ... numDevices - 1).
    virtual cString DeviceType(void) const;
-@@ -476,8 +472,8 @@
+@@ -470,8 +466,8 @@
         ///< Attaches the given filter to this device.
    void Detach(cFilter *Filter);
         ///< Detaches the given filter from this device.
@@ -339,7 +339,7 @@ Index: vdr-2.6.8_sik/device.h
  
  // Common Interface facilities:
  
-@@ -496,9 +492,6 @@
+@@ -490,9 +486,6 @@
           ///< shall check whether the channel can be decrypted.
    void SetCamSlot(cCamSlot *CamSlot);
           ///< Sets the given CamSlot to be used with this device.
@@ -349,7 +349,7 @@ Index: vdr-2.6.8_sik/device.h
  
  // Image Grab facilities
  
-@@ -661,9 +654,6 @@
+@@ -655,9 +648,6 @@
    cTsToPes tsToPesSubtitle;
    bool isPlayingVideo;
  protected:
@@ -359,7 +359,7 @@ Index: vdr-2.6.8_sik/device.h
    virtual bool CanReplay(void) const;
         ///< Returns true if this device can currently start a replay session.
    virtual bool SetPlayMode(ePlayMode PlayMode);
-@@ -882,6 +872,38 @@
+@@ -876,6 +866,38 @@
         ///< Detaches all receivers from this device for this pid.
    virtual void DetachAllReceivers(void);
         ///< Detaches all receivers from this device.
@@ -398,7 +398,7 @@ Index: vdr-2.6.8_sik/device.h
    };
  
  /// Derived cDevice classes that can receive channels will have to provide
-@@ -922,4 +944,47 @@
+@@ -916,4 +938,47 @@
       ///< to Get().
    };
  
@@ -426,8 +426,8 @@ Index: vdr-2.6.8_sik/device.h
 +    };
 +  static cList<cDynamicDeviceProbeItem> commandQueue;
 +     ///< A list where all attach/detach commands are queued
-+     ///< so they can be processed in the MainThreadHook of
-+     ///< the dynamite plugin.
++     ///< so they can be processed in the cDynamiteWorker thread
++     ///< of the dynamite plugin.
 +public:
 +  static void QueueDynamicDeviceCommand(eDynamicDeviceProbeCommand Cmd, const char *DevPath);
 +     ///< Plugins which support cDynamicDeviceProbe must use this function
@@ -446,10 +446,10 @@ Index: vdr-2.6.8_sik/device.h
 +extern cList<cDynamicDeviceProbe> DynamicDeviceProbes;
 +
  #endif //__DEVICE_H
-Index: vdr-2.6.8_sik/dvbci.c
+Index: vdr-2.7.3_sik/dvbci.c
 ===================================================================
---- vdr-2.6.8_sik.orig/dvbci.c	2024-07-09 15:45:29.919519811 +0200
-+++ vdr-2.6.8_sik/dvbci.c	2024-07-09 15:45:29.903519964 +0200
+--- vdr-2.7.3_sik.orig/dvbci.c	2024-10-30 19:18:40.714527909 +0100
++++ vdr-2.7.3_sik/dvbci.c	2024-10-30 19:18:40.698528044 +0100
 @@ -10,15 +10,18 @@
  #include "dvbci.h"
  #include <linux/dvb/ca.h>
@@ -556,10 +556,10 @@ Index: vdr-2.6.8_sik/dvbci.c
 +     return new cDvbCiAdapter(Device, Fd, Adapter, Frontend);
    return NULL;
  }
-Index: vdr-2.6.8_sik/dvbci.h
+Index: vdr-2.7.3_sik/dvbci.h
 ===================================================================
---- vdr-2.6.8_sik.orig/dvbci.h	2024-07-09 15:45:29.919519811 +0200
-+++ vdr-2.6.8_sik/dvbci.h	2024-07-09 15:45:29.903519964 +0200
+--- vdr-2.7.3_sik.orig/dvbci.h	2024-10-30 19:18:40.714527909 +0100
++++ vdr-2.7.3_sik/dvbci.h	2024-10-30 19:18:40.698528044 +0100
 @@ -16,16 +16,24 @@
  private:
    cDevice *device;
@@ -587,10 +587,10 @@ Index: vdr-2.6.8_sik/dvbci.h
    };
  
  #endif //__DVBCI_H
-Index: vdr-2.6.8_sik/dvbdevice.c
+Index: vdr-2.7.3_sik/dvbdevice.c
 ===================================================================
---- vdr-2.6.8_sik.orig/dvbdevice.c	2024-07-09 15:45:29.919519811 +0200
-+++ vdr-2.6.8_sik/dvbdevice.c	2024-07-09 15:55:10.578209816 +0200
+--- vdr-2.7.3_sik.orig/dvbdevice.c	2024-10-30 19:18:40.714527909 +0100
++++ vdr-2.7.3_sik/dvbdevice.c	2024-10-30 19:18:40.706527977 +0100
 @@ -571,6 +571,10 @@
    void ResetToneAndVoltage(void);
    bool SetFrontend(void);
@@ -628,7 +628,7 @@ Index: vdr-2.6.8_sik/dvbdevice.c
    for (int i = 0; i < dvbFrontends.Size(); i++)
        delete dvbFrontends[i];
  }
-@@ -851,6 +860,13 @@
+@@ -853,6 +862,13 @@
  
  void cDvbTuner::ClearEventQueue(void) const
  {
@@ -642,7 +642,7 @@ Index: vdr-2.6.8_sik/dvbdevice.c
    cPoller Poller(fd_frontend);
    if (Poller.Poll(TUNER_POLL_TIMEOUT)) {
       dvb_frontend_event Event;
-@@ -1554,6 +1570,13 @@
+@@ -1556,6 +1572,13 @@
  
  bool cDvbTuner::SetFrontend(void)
  {
@@ -656,7 +656,7 @@ Index: vdr-2.6.8_sik/dvbdevice.c
    dtv_property Props[MAXFRONTENDCMDS];
    memset(&Props, 0, sizeof(Props));
    dtv_properties CmdSeq;
-@@ -1699,9 +1722,11 @@
+@@ -1701,9 +1724,11 @@
    fe_status_t Status = (fe_status_t)0;
    while (Running()) {
          int WaitTime = 1000;
@@ -671,7 +671,7 @@ Index: vdr-2.6.8_sik/dvbdevice.c
          cMutexLock MutexLock(&mutex);
          switch (tunerStatus) {
            case tsIdle:
-@@ -1804,6 +1829,43 @@
+@@ -1808,6 +1833,43 @@
       }
  }
  
@@ -715,7 +715,7 @@ Index: vdr-2.6.8_sik/dvbdevice.c
  // --- cDvbSourceParam -------------------------------------------------------
  
  class cDvbSourceParam : public cSourceParam {
-@@ -1871,7 +1933,8 @@
+@@ -1875,7 +1937,8 @@
  int cDvbDevice::setTransferModeForDolbyDigital = 1;
  cMutex cDvbDevice::bondMutex;
  
@@ -725,7 +725,7 @@ Index: vdr-2.6.8_sik/dvbdevice.c
  {
    adapter = Adapter;
    frontend = Frontend;
-@@ -1885,7 +1948,7 @@
+@@ -1889,7 +1952,7 @@
  
    fd_ca = DvbOpen(DEV_DVB_CA, adapter, frontend, O_RDWR);
    if (fd_ca >= 0)
@@ -734,7 +734,7 @@ Index: vdr-2.6.8_sik/dvbdevice.c
    checkTsBuffer = false;
  
    // The DVR device (will be opened and closed as needed):
-@@ -2045,7 +2108,11 @@
+@@ -2049,7 +2112,11 @@
           if (d >= 0) {
              int ErrorDevice = 0;
              if (cDevice *Device1 = cDevice::GetDevice(i)) {
@@ -746,7 +746,7 @@ Index: vdr-2.6.8_sik/dvbdevice.c
                    if (cDvbDevice *DvbDevice1 = dynamic_cast<cDvbDevice *>(Device1)) {
                       if (cDvbDevice *DvbDevice2 = dynamic_cast<cDvbDevice *>(Device2)) {
                          if (!DvbDevice1->Bond(DvbDevice2))
-@@ -2079,7 +2146,10 @@
+@@ -2083,7 +2150,10 @@
  void cDvbDevice::UnBondDevices(void)
  {
    for (int i = 0; i < cDevice::NumDevices(); i++) {
@@ -758,7 +758,7 @@ Index: vdr-2.6.8_sik/dvbdevice.c
           d->UnBond();
        }
  }
-@@ -2133,6 +2203,26 @@
+@@ -2137,6 +2207,26 @@
    return true;
  }
  
@@ -785,7 +785,7 @@ Index: vdr-2.6.8_sik/dvbdevice.c
  bool cDvbDevice::HasCi(void)
  {
    return ciAdapter;
-@@ -2293,7 +2383,7 @@
+@@ -2297,7 +2387,7 @@
  
  bool cDvbDevice::ProvidesEIT(void) const
  {
@@ -794,10 +794,10 @@ Index: vdr-2.6.8_sik/dvbdevice.c
  }
  
  int cDvbDevice::NumProvidedSystems(void) const
-Index: vdr-2.6.8_sik/dvbdevice.h
+Index: vdr-2.7.3_sik/dvbdevice.h
 ===================================================================
---- vdr-2.6.8_sik.orig/dvbdevice.h	2024-07-09 15:45:29.919519811 +0200
-+++ vdr-2.6.8_sik/dvbdevice.h	2024-07-09 15:45:29.907519926 +0200
+--- vdr-2.7.3_sik.orig/dvbdevice.h	2024-10-30 19:18:40.714527909 +0100
++++ vdr-2.7.3_sik/dvbdevice.h	2024-10-30 19:18:40.706527977 +0100
 @@ -187,12 +187,14 @@
    cDvbDevice *bondedDevice;
    mutable bool needsDetachBondedReceivers;

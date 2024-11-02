@@ -2,6 +2,22 @@
 
 TMP=/storage/.config/vdropt/tmp
 
+# Test if all system relevant executables and devices exists. Otherwise abort the script silently
+if [ ! -x "$(command -v /usr/bin/date)" ]; then
+    echo "/usr/bin/date does not exists. Abort"
+    exit 0;
+fi
+
+if [ ! -f /sys/class/rtc/rtc0/wakealarm ]; then
+      echo "/sys/class/rtc/rtc0/wakealarm does not exists. Abort"
+      exit 0;
+fi
+
+if [ ! -f /proc/driver/rtc ]; then
+      echo "/proc/driver/rtc does not exists. Abort"
+      exit 0;
+fi
+
 case $1 in
         start)
                 test -r  /$TMP/wakeup || exit 1
@@ -87,7 +103,7 @@ case $1 in
 
         *)
                 echo "Wrong Argument"
-                oxit 1
+                exit 1
                 ;;
 esac
 

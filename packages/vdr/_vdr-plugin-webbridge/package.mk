@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-webbridge"
-PKG_VERSION="2045855fa587a4b67fa609dc09a49d01de45633e"
-PKG_SHA256="dbb6cf917593d1ca7c8b2986e3e01685059282ccfe93dc004045af42fd7562d4"
+PKG_VERSION="3810cf68fce829112900f67f2a8d4bf5fc47b33f"
+PKG_SHA256="95251cf712526773bf4d8a0505904a8e6be11949362a4963e702fba19eece79e"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/Zabrimus/vdr-plugin-webbridge"
 PKG_URL="https://github.com/Zabrimus/vdr-plugin-webbridge/archive/${PKG_VERSION}.zip"

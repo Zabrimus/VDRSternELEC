@@ -1,0 +1,94 @@
+#!/bin/bash
+
+TMP=/storage/.config/vdropt/tmp
+
+case $1 in
+        start)
+                test -r  /$TMP/wakeup || exit 1
+                rm /$TMP/rtcwakeup >>/dev/null
+
+                WAKETIME=`cat /$TMP/wakeup`
+                CURTIME=`date +%s`
+
+                let DIFF=$WAKETIME-$CURTIME
+                if [ 1  -gt $DIFF ]
+                then
+                  let  DIFF=$CURTIME-$WAKETIME
+                fi
+
+                if [ $DIFF -lt 30 ]
+                then
+                  echo "RTC" >/$TMP/rtcwakeup
+                fi
+				rm /$TMP/wakeup
+                ;;
+        stop)
+                /usr/sbin/hwclock -w -u         # Hardware Uhr auf UTC
+                CURTIME=`date +%s`
+                DEV=/sys/class/rtc/rtc0/wakealarm
+                TIMER=$(/usr/local/bin/svdrpsend -d localhost NEXT abs|grep 250 |cut -f3 -d' '|tr -d '\r')
+                bash -c "echo "0 > /$TMP/wakeup""
+                echo "Timer >$TIMER<"
+                if [[ "e$TIMER" ==  "e" ]]; then
+                        bash -c "echo 0 > $DEV" && echo No VDR Timer exist, proceed with shutdown && exit 0
+                else
+                  DIFF=0
+                  let DIFF=$TIMER-$CURTIME
+                  if [ $DIFF -lt 500 ]; then
+                    echo Next Timer in less than 500sek
+                    exit 1
+                  else
+                    DATE=/bin/date
+                    if [[ $DATE =~ "CEST" ]]; then
+                        let WAKEUPTIME$TIMER+60*60-300
+                    else
+                        let WAKEUPTIME=$TIMER-300
+                    fi
+					#echo "Wakeup $WAKEUPTIME Timer $TIMER"
+
+                    echo 0 > $DEV
+                    bash -c "echo "$WAKEUPTIME > $DEV""
+                    bash -c "echo "$WAKEUPTIME > /$TMP/wakeup""
+                    echo BIOS Event set to:
+                    cat /proc/driver/rtc
+                    echo
+                    echo Next Startup Event set in:
+                    cat /sys/class/rtc/rtc0/wakealarm
+                    echo "seconds since UTC midnight 1 January 1970 :-)"
+                    echo
+                    exit 0
+                  fi
+                fi
+                ;;
+        status)
+                echo
+                echo BIOS Event actual set to:
+                cat /proc/driver/rtc
+                echo
+                echo Next Startup Event set in:
+                cat /sys/class/rtc/rtc0/wakealarm
+                echo "seconds since UTC midnight 1 January 1970 :-)"
+                echo
+                exit 0
+                ;;
+        clear)
+                echo
+                echo Clearing BIOS Event...
+                bash -c "echo 0 > /sys/class/rtc/rtc0/wakealarm"
+                echo
+                echo BIOS Event cleared:
+                cat /proc/driver/rtc
+                echo
+                echo Next Startup Event set in:
+                cat /sys/class/rtc/rtc0/wakealarm
+                echo "seconds since UTC midnight 1 January 1970 :-)"
+                exit 0
+                ;;
+
+        *)
+                echo "Wrong Argument"
+                oxit 1
+                ;;
+esac
+
+

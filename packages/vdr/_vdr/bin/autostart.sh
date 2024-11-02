@@ -20,5 +20,8 @@ fi
 # monitor file changes
 systemctl start switch_kodi_vdr.path
 
+# check if we got started by timer
+/storage/.config/vdropt/wakeupacpi start
+
 # Start either Kodi or VDR on reboot
 . /storage/.profile

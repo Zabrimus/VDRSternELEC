@@ -1,0 +1,32 @@
+#!/bin/sh
+
+#echo $1 >>/storage/.config/vdropt/tmp/test.log
+
+case "$1" in
+     before)
+            echo "Before recording $2"
+            ;;
+     started)
+            echo "Started recording $2"
+            ;;
+     after)
+            echo "After recording $2"
+	    if [ -r /storage/.config/vdropt/tmp/rtcwakeup ]
+	     then
+		/bin/bash -c /storage/.config/vdropt/stopwaiter &
+		exit
+	    fi
+            ;;
+     edited)
+            echo "Edited recording $2"
+            echo "Source recording $3"
+            ;;
+     deleted)
+            echo "Deleted recording $2"
+            ;;
+     *)
+            echo "ERROR: unknown state: $1"
+
+            ;;
+     esac
+

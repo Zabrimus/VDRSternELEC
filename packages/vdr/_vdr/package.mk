@@ -105,6 +105,9 @@ EOF
   # move configuration to another folder to prevent overwriting existing configuration after installation
   mv ${VDR_DIR}/storage/.config/vdropt ${VDR_DIR}/storage/.config/vdropt-sample
 
+  # copy additional scripts to configuration directory
+  cp ${PKG_DIR}/scripts/* ${VDR_DIR}/storage/.config/vdropt-sample
+
   mkdir -p ${VDR_DIR}/storage/.config/vdropt-sample/conf.d
   cp -PR ${PKG_DIR}/conf.d/* ${VDR_DIR}/storage/.config/vdropt-sample/conf.d/
 

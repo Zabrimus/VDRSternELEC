@@ -1,0 +1,4 @@
+#!/bin/bash
+sleep 300
+/storage/.config/vdropt/stopmidas
+

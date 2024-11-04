@@ -103,6 +103,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-webapp"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-epgborder"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-xmltv4vdr"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-webbridge"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-statusleds"
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"

@@ -335,7 +335,7 @@ You can add a subdirectory to the above directories in the following logic:
 
 -> :file_folder: **package_patches**  
 Patches in the **package_patches** directory are intended to be copied to the upstream LE/CE version as is.
-You can build a patched from the package source (probably the already patched LE/CE source) and this patch will be applied
+You can build a new patch from the package source (probably the already patched LE/CE source) and this patch will be applied
 as if it would have been part of the original LE/CE.
 
 :file_folder: **package_patches**  
@@ -362,9 +362,9 @@ You also have the possibility to modify and add patches and files to the existin
 
 There is a special package [vdr-helper](packages/virtual/vdr-helper) with the [zip_config.sh](packages/virtual/vdr-helper/zip_config.sh) bash script.
 This script is used to package the VDR-Plugin libraries and is executed in nearly every plugin creation ([example](packages/vdr/_vdr-plugin-web/package.mk)) at the end.
-You can add the Plugin API version as a fourth parameter like ```$(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN} "2.6.3"```.  
+You can add a ```"true"``` as a fourth parameter like ```$(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN} "true"```.  
 In this case, the build process creates a new directory ```/storage/.config/vdrlibs/save``` in the image where the binary will be copied to.  
-Next, a ```/storage/.config/vdrlibs/bin``` directory is created, where a symlink to the binary in ```save``` is created. At last, the ```/usr/local/lib/vdr/libvdr.*.so.2.6.3``` is created
+Next, a ```/storage/.config/vdrlibs/bin``` directory is created, where a symlink to the binary in ```save``` is created. At last, the ```/usr/local/lib/vdr/libvdr.*.so.5``` is created
 as a symlink to ```bin```.  
 With this setup, you can simply place your new binary somewhere in ```/storage``` and let the symlink in ```/storage/.config/vdrlibs/bin``` point to the new file.
 

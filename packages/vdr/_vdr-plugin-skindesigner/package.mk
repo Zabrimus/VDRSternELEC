@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-skindesigner"
-PKG_VERSION="2bf514ce0b16f566ebd443da596e076a882a114e"
-PKG_SHA256="a268778de57f96e771ec0d81f1f7c5297ca034da6b64b56f75dcb5a7bc545510"
+PKG_VERSION="c70be67996830bfa43fbab7285fe8a9e64dfa341"
+PKG_SHA256="d17960de78ad6fd5d8c5992af63fd8d34ef5684f833ac3db20b5cd271815f966"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/kamel5/skindesigner.git"
 PKG_URL="https://gitlab.com/kamel5/skindesigner/-/archive/${PKG_VERSION}/skindesigner-${PKG_VERSION}.tar.gz"

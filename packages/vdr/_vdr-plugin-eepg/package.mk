@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-eepg"
-PKG_VERSION="6be7f2ee644aa33bd6e6e038548be8a85514272e"
-PKG_SHA256="50298adb6dc0826ffc93a9f87d7dc110ffdd4bfecab94690ea77c6477cff1cc0"
+PKG_VERSION="ecc8a7b47bed984f758aa3fb2c90869e0dc134e1"
+PKG_SHA256="73ae6173ffbc75465a4e4b70af9932124054b2ceb6561f4c555e17ea81979491"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-eepg"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-eepg/archive/${PKG_VERSION}.zip"

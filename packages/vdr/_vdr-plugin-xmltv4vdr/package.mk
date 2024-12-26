@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-xmltv4vdr"
-PKG_VERSION="ef1adcb9443dd87d80ba60ae4de0ca7bb6ebbe6f"
-PKG_SHA256="0f160cf8f6bd09a22596d0f1e39c4a23b0c7ff4ef9f07a8d69a30e7d2ab04fca"
+PKG_VERSION="2c627861bb71fe6676ad6120573e276c1151e742"
+PKG_SHA256="10c6a4c2c39fe27178033b5cff58e209656b913417306399f97e40f14711e557"
 PKG_LICENSE="GPL2"
 PKG_SITE="https://github.com/FireFlyVDR/vdr-plugin-xmltv4vdr"
 PKG_URL="https://github.com/FireFlyVDR/vdr-plugin-xmltv4vdr/archive/${PKG_VERSION}.zip"

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-mp3"
-PKG_VERSION="dd4ba2a0f56faae9f033876420886ec6875f0aad"
-PKG_SHA256="5cef6b757ca5f2ba774f41f43b1345cdbf6c9875c78fb1ef2ffa226e9829b70e"
+PKG_VERSION="ec219b3ece32686f72d8b1ad6b8de3b3a9dd3759"
+PKG_SHA256="81deca2b2603ebc49cd739c59f475b4a57fad7997cf5a78f6e56ab2a96f4cead"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-mp3"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-mp3/archive/${PKG_VERSION}.zip"

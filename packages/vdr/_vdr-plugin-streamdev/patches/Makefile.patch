@@ -1,8 +1,12 @@
-diff --git a/Makefile b/Makefile
-index 90f3261..7445c32 100644
---- a/Makefile
-+++ b/Makefile
-@@ -36,12 +36,6 @@ APIVERSION = $(call PKGCFG,apiversion)
+diff -ru8bBw a/Makefile b/Makefile
+--- a/Makefile	2025-01-02 15:28:35.000000000 +0100
++++ b/Makefile	2025-01-08 08:55:55.765819593 +0100
+@@ -30,22 +30,16 @@
+ ### The version number of VDR's plugin API:
+ 
+ APIVERSION = $(call PKGCFG,apiversion)
+ 
+ ### Allow user defined options to overwrite defaults:
  
  -include $(PLGCFG)
  
@@ -15,35 +19,46 @@ index 90f3261..7445c32 100644
  ### The name of the distribution archive:
  
  ARCHIVE = $(PLUGIN)-$(VERSION)
-@@ -69,21 +63,21 @@ all: client server
+ PACKAGE = vdr-$(ARCHIVE)
+ 
+ ### Includes and Defines (add further entries here):
+ 
+ INCLUDES += -I$(VDRDIR)/include -I..
+@@ -64,30 +58,30 @@
+ 
+ .PHONY: all client server install install-client install-server dist clean
+ all: client server
+ 
  ### Targets:
  
  client:
--	$(MAKE) -C ./tools
-+	$(MAKE) LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR) -C ./tools
- 	$(MAKE) -C ./client
+ 	$(Q)$(MAKE) --no-print-directory -C ./tools
+-	$(Q)$(MAKE) --no-print-directory -C ./client
++	$(Q)$(MAKE) --no-print-directory LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR) -C ./tools
  
  server:
--	$(MAKE) -C ./tools
--	$(MAKE) -C ./libdvbmpeg
--	$(MAKE) -C ./remux
--	$(MAKE) -C ./server
-+	$(MAKE) LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR)  -C ./tools
-+	$(MAKE) LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR)  -C ./libdvbmpeg
-+	$(MAKE) LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR)  -C ./remux
-+	$(MAKE) LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR)  -C ./server
+-	$(Q)$(MAKE) --no-print-directory -C ./tools
+-	$(Q)$(MAKE) --no-print-directory -C ./libdvbmpeg
+-	$(Q)$(MAKE) --no-print-directory -C ./remux
+-	$(Q)$(MAKE) --no-print-directory -C ./server
++	$(Q)$(MAKE) --no-print-directory LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR) -C ./tools
++	$(Q)$(MAKE) --no-print-directory LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR) -C ./libdvbmpeg
++	$(Q)$(MAKE) --no-print-directory LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR) -C ./remux
++	$(Q)$(MAKE) --no-print-directory LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR) -C ./server
  
  install-client: client
--	$(MAKE) -C ./client install
-+	$(MAKE) LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR) APIVERSION=$(APIVERSION) -C ./client install
- 	# installs to $(LIBDIR)/libvdr-streamdev-client.so.$(APIVERSION)
+-	$(Q)$(MAKE) --no-print-directory -C ./client install
++	$(Q)$(MAKE) --no-print-directory LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR) APIVERSION=$(APIVERSION) -C ./client install
+ 	$(Q)# installs to $(LIBDIR)/libvdr-streamdev-client.so.$(APIVERSION)
  
  install-server: server
--	$(MAKE) -C ./server install
-+	$(MAKE) LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR) APIVERSION=$(APIVERSION) -C ./server install
- 	# installs to $(LIBDIR)/libvdr-streamdev-server.so.$(APIVERSION)
+-	$(Q)$(MAKE) --no-print-directory -C ./server install
++	$(Q)$(MAKE) --no-print-directory LIBDIR=$(LIBDIR) LOCDIR=$(LOCDIR) APIVERSION=$(APIVERSION) -C ./server install
+ 	$(Q)# installs to $(LIBDIR)/libvdr-streamdev-server.so.$(APIVERSION)
  
  install: install-client install-server
--- 
-2.30.2
-
+ 
+ dist: clean
+ 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+ 	@mkdir $(TMPDIR)/$(ARCHIVE)
+ 	@cp -a * $(TMPDIR)/$(ARCHIVE)

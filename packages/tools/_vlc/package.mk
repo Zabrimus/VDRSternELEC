@@ -2,15 +2,15 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_vlc"
-PKG_VERSION="3.0.21"
-PKG_SHA256="24dbbe1d7dfaeea0994d5def0bbde200177347136dbfe573f5b6a4cee25afbb0"
+PKG_VERSION="7b58309ae72af83d2053bd88f0529e7addaddc6f"
+PKG_SHA256="14505af66ac5760abff02b29797cc8c6932e6466589694accc74c9c96b746bb2"
 PKG_LICENSE=""
 PKG_SITE="https://www.videolan.org/vlc/"
-PKG_URL="http://download.videolan.org/pub/videolan/vlc/${PKG_VERSION}/vlc-${PKG_VERSION}.tar.xz"
+PKG_URL="https://code.videolan.org/videolan/vlc/-/archive/${PKG_VERSION}/vlc-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain ffmpeg flac libmad libvorbis mpg123 soxr libogg taglib libarchive libmpeg2 _libdvbpsi libgcrypt gnutls libmtp libusb"
 PKG_SOURCE_DIR="vlc-${PKG_VERSION}"
 PKG_LONGDESC="VLC media player is a highly portable multimedia player"
-PKG_TOOLCHAIN="auto"
+PKG_TOOLCHAIN="configure"
 PKG_BUILD_FLAGS="+speed"
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-lua \
@@ -30,4 +30,5 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-lua \
 
 pre_configure_target() {
   export LDSHARED="${CC} -shared"
+  ./bootstrap
 }

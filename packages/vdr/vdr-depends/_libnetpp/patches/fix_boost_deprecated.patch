@@ -1,0 +1,25 @@
+diff -ru8bBwd a/TcpClient.cpp b/TcpClient.cpp
+--- a/TcpClient.cpp	2021-08-20 08:51:22.000000000 +0200
++++ b/TcpClient.cpp	2025-01-13 09:56:23.509092729 +0100
+@@ -51,17 +51,21 @@
+ 	std::getline(*stream, line);
+ 	if (line.length() > 0 && removeNewline)
+ 		line.erase(line.end()-1, line.end());
+ 	return line;
+ }
+ 
+ void TcpClient::expireStreamNow() {
+ 	if (stream)
++#if BOOST_VERSION <= 108400
+ 		stream->expires_from_now(boost::posix_time::seconds(0));
++#else
++		stream->expires_after(std::chrono::seconds(0));
++#endif
+ }
+ 
+ void TcpClient::disconnectStream() {
+ 	if (stream && connected) {
+ 		DBG("Disconnecting from " << host << ":" << port);
+ 		stream->close();
+ 		delete stream;
+ 	}

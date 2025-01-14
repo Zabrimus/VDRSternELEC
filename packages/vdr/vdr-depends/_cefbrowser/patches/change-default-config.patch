@@ -1,0 +1,18 @@
+diff -ru8bBwd a/config/sockets.ini b/config/sockets.ini
+--- a/config/sockets.ini	2024-07-09 06:26:43.000000000 +0200
++++ b/config/sockets.ini	2025-01-14 14:12:50.891548541 +0100
+@@ -1,11 +1,11 @@
+ [vdr]
+-http_ip = 192.168.178.20
++http_ip = 127.0.0.1
+ http_port = 50000
+ 
+ [browser]
+-http_ip = 192.168.178.20
++http_ip = 127.0.0.1
+ http_port = 50001
+ 
+ [transcoder]
+-http_ip = 192.168.178.20
++http_ip = 127.0.0.1
+ http_port = 50002

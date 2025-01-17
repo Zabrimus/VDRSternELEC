@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="dash2ts"
-PKG_VERSION="34ae8dca106e9d756f7e12c2e2ff68d80df9cb5d"
-PKG_SHA256="e7be4938ed73068a89855eb08ec963fbc5934fa47c2b912f665a99da0a747ea2"
+PKG_VERSION="5d1ea98eea8185f3702c7bc0c964948641d1c643"
+PKG_SHA256="640d9c3683ca7f46e3fb686e5984002fcf3cd09342e234ee2fac3f041faef07f"
 PKG_LICENSE="AGPLv3"
 PKG_SITE="https://github.com/jojo61/dash2ts"
 PKG_URL="https://github.com/jojo61/dash2ts/archive/${PKG_VERSION}.zip"
@@ -26,7 +26,7 @@ makeinstall_target() {
 post_makeinstall_target() {
   # prepare sample archive
   mkdir -p ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/
-  cp -r ${PKG_BUILD}/Test/dashstream.sh ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/
+  cp -r ${PKG_BUILD}/Test/orfstream.sh ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/
   cp -r ${PKG_BUILD}/Test/channels.conf ${INSTALL}/storage/.config/vdropt-sample/channels.conf.dash2ts-sample
 
   # zip everything

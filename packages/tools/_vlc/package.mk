@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_vlc"
-PKG_VERSION="7b58309ae72af83d2053bd88f0529e7addaddc6f"
-PKG_SHA256="14505af66ac5760abff02b29797cc8c6932e6466589694accc74c9c96b746bb2"
+PKG_VERSION="10aa0e6e1bba557409c9173c89dd3a9c199fccd4"
+PKG_SHA256="8f1c780a3b05d27b2edae073a9ce72167afad7e17eba198f8f6bc668a19c33fa"
 PKG_LICENSE=""
 PKG_SITE="https://www.videolan.org/vlc/"
 PKG_URL="https://code.videolan.org/videolan/vlc/-/archive/${PKG_VERSION}/vlc-${PKG_VERSION}.tar.gz"
@@ -26,7 +26,8 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-lua \
                            --disable-gles2 \
                            --disable-xvideo \
                            --disable-sdl-image \
-                           --disable-vdpau"
+                           --disable-vdpau \
+                           --disable-nfs"
 
 pre_configure_target() {
   export LDSHARED="${CC} -shared"

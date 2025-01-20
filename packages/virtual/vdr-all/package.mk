@@ -109,7 +109,7 @@ if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -ge "21" ]; then
    PKG_DEPENDS_TARGET+=" dash2ts"
 fi
 
-if [ "${DISTRONAME}" = "LibreELEC" ] && [ "${OS_VERSION}" -gt "12.0" ]; then
+if [ "${DISTRONAME}" = "LibreELEC" ] && [ "${OS_VERSION}" -ge "12.0" ]; then
    PKG_DEPENDS_TARGET+=" dash2ts"
 fi
 

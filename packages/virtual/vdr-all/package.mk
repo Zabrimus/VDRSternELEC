@@ -105,7 +105,13 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-xmltv4vdr"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-webbridge"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-statusleds"
 
-PKG_DEPENDS_TARGET+=" dash2ts"
+if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -ge "21" ]; then
+   PKG_DEPENDS_TARGET+=" dash2ts"
+fi
+
+if [ "${DISTRONAME}" = "LibreELEC" ] && [ "${OS_VERSION}" -gt "12.0" ]; then
+   PKG_DEPENDS_TARGET+=" dash2ts"
+fi
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"

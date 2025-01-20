@@ -1,12 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="dash2ts"
-PKG_VERSION="4fc4d43fe4185e40162631f0c0ed8b385067b4ab"
-PKG_SHA256="90a936136b3668002e9f50a44ceaaec06b70039d910255012969f07650b32a11"
+PKG_VERSION="9a7ec85bd5beccc376a97e8de0133eeb459c23d7"
+PKG_SHA256="289c116e6a626e078d3040cbcaa7d3ae54f7e66491090f335e45e32112e48899"
 PKG_LICENSE="AGPLv3"
 PKG_SITE="https://github.com/jojo61/dash2ts"
 PKG_URL="https://github.com/jojo61/dash2ts/archive/${PKG_VERSION}.zip"
 PKG_DEPENDS_TARGET="toolchain _vdr-plugin-iptv"
+PKG_NEED_UNPACK="$(get_pkg_directory kodi)"
 PKG_LONGDESC="A Stream Converter for MPD/DASH Streams for VDR, depends on Kodi addon inputstream-adaptive."
 PKG_TOOLCHAIN="auto"
 PKG_BUILD_FLAGS="+speed"
@@ -16,6 +17,10 @@ RT_PREFIX="/usr/local"
 pre_make_target() {
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
+}
+
+make_target() {
+	KODI_ADDON_INCLUDE=$(get_build_dir kodi)/xbmc/addons/kodi-dev-kit/include make -j
 }
 
 makeinstall_target() {

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="dash2ts"
-PKG_VERSION="d370e2d58a99a38e69b171b8fef92e32074c73f3"
-PKG_SHA256="a15deed2d0c7554425f541de4c03ec5f8368e24304c889a6eadff0e79059d3e8"
+PKG_VERSION="16cea2f8f73f79489297b23eedb9fc4e8daf3b7e"
+PKG_SHA256="68573e649324970d83fd33282ede5921f322cb3b48f493aa114c46d08700c64c"
 PKG_LICENSE="AGPLv3"
 PKG_SITE="https://github.com/jojo61/dash2ts"
 PKG_URL="https://github.com/jojo61/dash2ts/archive/${PKG_VERSION}.zip"
@@ -21,11 +21,14 @@ pre_make_target() {
 
 make_target() {
 	KODI_ADDON_INCLUDE=$(get_build_dir kodi)/xbmc/addons/kodi-dev-kit/include make -j
+	cd zattoo
+	KODI_ADDON_INCLUDE=$(get_build_dir kodi)/xbmc/addons/kodi-dev-kit/include make -j
 }
 
 makeinstall_target() {
 	mkdir -p ${INSTALL}/usr/local/bin
 	cp ${PKG_BUILD}/build/dash2ts ${INSTALL}/usr/local/bin
+	cp ${PKG_BUILD}/zattoo/build/zattoostream ${INSTALL}/usr/local/bin
 }
 
 post_makeinstall_target() {

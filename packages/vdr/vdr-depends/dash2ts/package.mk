@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="dash2ts"
-PKG_VERSION="40067b9ffc4632b6871906e7efee374365406ff8"
-PKG_SHA256="43580be94bb6a4e788cdc85e94e874cc089230c35c9e11140be570313bfc35a3"
+PKG_VERSION="609c6cb183579ee0751102fd42da5c9e3d06d893"
+PKG_SHA256="60c3107633c0d1fcf491ea4d7037db6af8b6a0034fc664c68841e1c482c2a121"
 PKG_LICENSE="AGPLv3"
 PKG_SITE="https://github.com/jojo61/dash2ts"
 PKG_URL="https://github.com/jojo61/dash2ts/archive/${PKG_VERSION}.zip"
@@ -29,13 +29,16 @@ makeinstall_target() {
 	mkdir -p ${INSTALL}/usr/local/bin
 	cp ${PKG_BUILD}/build/dash2ts ${INSTALL}/usr/local/bin
 	cp ${PKG_BUILD}/zattoo/build/zattoostream ${INSTALL}/usr/local/bin
+	cp ${PKG_BUILD}/zattoo/build/zattood ${INSTALL}/usr/local/bin
 }
 
 post_makeinstall_target() {
   # prepare sample archive
   mkdir -p ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/
   cp -r ${PKG_BUILD}/Test/orfstream.sh ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/
+  cp -r ${PKG_BUILD}/zattoo/Test/zattoostream.sh ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/
   cp -r ${PKG_BUILD}/Test/channels.conf ${INSTALL}/storage/.config/vdropt-sample/channels.conf.dash2ts-sample
+  cp -r ${PKG_BUILD}/zattoo/Test/zattood.service.sample ${INSTALL}/storage/.config/system.d
 
   # zip everything
   mkdir -p ${INSTALL}/usr/local/config

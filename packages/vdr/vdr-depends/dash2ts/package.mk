@@ -35,10 +35,12 @@ makeinstall_target() {
 post_makeinstall_target() {
   # prepare sample archive
   mkdir -p ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/
+  mkdir -p ${INSTALL}/storage/.config/system.d/
+
   cp -r ${PKG_BUILD}/Test/orfstream.sh ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/
   cp -r ${PKG_BUILD}/zattoo/Test/zattoostream.sh ${INSTALL}/storage/.config/vdropt-sample/plugins/iptv/
   cp -r ${PKG_BUILD}/Test/channels.conf ${INSTALL}/storage/.config/vdropt-sample/channels.conf.dash2ts-sample
-  cp -r ${PKG_BUILD}/zattoo/Test/zattood.service.sample ${INSTALL}/storage/.config/system.d
+  cp -r ${PKG_BUILD}/zattoo/Test/zattood.service.sample ${INSTALL}/storage/.config/system.d/
 
   # zip everything
   mkdir -p ${INSTALL}/usr/local/config

@@ -31,5 +31,9 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-lua \
 
 pre_configure_target() {
   export LDSHARED="${CC} -shared"
-  ./bootstrap
+
+  cd $(get_build_dir _vlc)
+  if [ -e bootstrap ]; then
+  	./bootstrap
+  fi
 }

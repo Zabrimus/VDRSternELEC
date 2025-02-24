@@ -47,7 +47,13 @@ install() {
     cp -a /storage/cefbrowser-sample /storage/cefbrowser
   fi
 
-  cp -a /usr/local/system.d/* /storage/.config/system.d
+  for i in `ls /usr/local/system.d/*`; do
+     FILENAME=$(basename $i)
+     if [ ! -e /storage/.config/system.d/${FILENAME} ]; then
+        cp -a /usr/local/system.d/${FILENAME} /storage/.config/system.d/${FILENAME}
+     fi
+  done
+
   systemctl daemon-reload
 
   # disable some services. This is important and shall not be changed!
@@ -58,7 +64,12 @@ install() {
   systemctl disable vdropt.target
 
   # copy sysctl.d files
-  cp -a /usr/local/sysctl.d/* /storage/.config/sysctl.d
+  for i in `ls /usr/local/sysctl.d/*`; do
+     FILENAME=$(basename $i)
+     if [ ! -e /storage/.config/sysctl.d/${FILENAME} ]; then
+        cp -a /usr/local/sysctl.d/${FILENAME} /storage/.config/sysctl.d/${FILENAME}
+     fi
+  done
 
   # create autostart.sh if it does not exists
   if [ ! -f /storage/.config/autostart.sh ]; then

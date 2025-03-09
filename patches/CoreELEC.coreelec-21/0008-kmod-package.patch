@@ -1,0 +1,17 @@
+diff --git a/packages/sysutils/kmod/package.mk b/packages/sysutils/kmod/package.mk
+index e957093e40..7ddef7105c 100644
+--- a/packages/sysutils/kmod/package.mk
++++ b/packages/sysutils/kmod/package.mk
+@@ -29,6 +29,12 @@ PKG_CONFIGURE_OPTS_TARGET="--enable-tools \
+                            --without-zlib \
+                            --without-zstd"
+ 
++pre_makeinstall_host() {
++	for tool in insmod lsmod rmmod depmod modprobe modinfo; do \
++		rm -f ${TOOLCHAIN}/bin/$tool
++	done
++}
++
+ post_makeinstall_host() {
+   ln -sf kmod ${TOOLCHAIN}/bin/depmod
+ }

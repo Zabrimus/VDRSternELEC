@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="dash2ts"
-PKG_VERSION="9999481cc6c9df82aeedd1e5724c782f8235c64d"
-PKG_SHA256="238b2d59550c1424a310a8be2bcbfaa46ac657962e3d0ae51bb3d3d1925c6cfd"
+PKG_VERSION="a0416e26d03612459575d786f53bc916ce989de3"
+PKG_SHA256="a073492228c841245983f2caf27d8d5848920a4eff792e70590832e22b2697eb"
 PKG_LICENSE="AGPLv3"
 PKG_SITE="https://github.com/jojo61/dash2ts"
 PKG_URL="https://github.com/jojo61/dash2ts/archive/${PKG_VERSION}.zip"

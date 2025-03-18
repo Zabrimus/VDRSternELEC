@@ -1,13 +1,27 @@
-diff --git a/meson.build b/meson.build
-index c0b4077..40b5d51 100644
---- a/meson.build
-+++ b/meson.build
-@@ -34,10 +34,9 @@ mini_dep = mini_proj.get_variable('mini_dep')
- exe = executable('remotrans', 'main.cpp', 'logger.cpp', 'ffmpeghandler.cpp', 'browserclient.cpp', 'transcodeconfig.cpp', 'vdrclient.cpp',
-                  'm3u8handler.cpp',
-                  install : true,
--                 install_dir : meson.current_build_dir() + '/Release',
-                  dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep, openssl_dep])
+diff -ru8bBwd a/meson.build b/meson.build
+--- a/meson.build	2025-03-17 18:17:41.000000000 +0100
++++ b/meson.build	2025-03-18 05:48:19.955731566 +0100
+@@ -35,25 +35,22 @@
+ # dash2ts
+ #
+ dash2ts_proj = subproject('dash2ts')
+ dash2ts_dep = dash2ts_proj.get_variable('dash2ts_dep')
+ 
+ remotrans = executable('remotrans', 'main.cpp', 'logger.cpp', 'streamhandler.cpp', 'browserclient.cpp', 'transcodeconfig.cpp', 'vdrclient.cpp',
+                         'm3u8handler.cpp',
+                         install : true,
+-                        install_dir : meson.current_build_dir() + '/Release',
+                         dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep, openssl_dep])
+ 
+ r_dash2ts = executable('r_dash2ts', 'r_dash2ts.cpp', 'logger.cpp',
+                        install : true,
+-                       install_dir : meson.current_build_dir() + '/Release',
+                        dependencies: [spdlog_dep, dash2ts_dep])
+ 
+ r_dash2tsd = executable('r_dash2ts_debug', 'r_dash2ts_debug.cpp', 'logger.cpp',
+                        install : true,
+-                       install_dir : meson.current_build_dir() + '/Release',
+                        dependencies: [spdlog_dep, dash2ts_dep])
  
  #
  # install

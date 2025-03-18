@@ -6,7 +6,7 @@ StartLimitIntervalSec=400
 StartLimitBurst=5
 
 [Service]
-ExecStart=/usr/local/bin/remotrans -c /storage/.config/vdropt/sockets.ini -m /usr/local/movie -a
+ExecStart=/usr/local/bin/remotrans -c /storage/.config/vdropt/sockets.ini -m /usr/local/movie -a -k /usr/lib/kodi
 Restart=always
 RestartSec=30
 StartLimitInterval=0

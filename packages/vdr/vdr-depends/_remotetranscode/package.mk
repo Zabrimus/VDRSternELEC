@@ -12,6 +12,10 @@ PKG_LONGDESC="remotetranscode"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed"
 
+if [ "${OS_MAJOR}" = "20" ]; then
+	PKG_DEPENDS_TARGET+=" _inputstream.adaptive"
+fi
+
 RT_PREFIX="/usr/local"
 
 PKG_MESON_OPTS_TARGET="--prefix=${RT_PREFIX} \
@@ -38,7 +42,12 @@ post_makeinstall_target() {
 
   # copy systemd services
   mkdir -p ${INSTALL}/usr/local/system.d
-  cp ${PKG_DIR}/_system.d/* ${INSTALL}/usr/local/system.d
+
+  if [ "${OS_MAJOR}" = "20" ]; then
+  	cp ${PKG_DIR}/_system.d/remotetranscode.service.CE20 ${INSTALL}/usr/local/system.d/remotetranscode.service
+  else
+  	cp ${PKG_DIR}/_system.d/remotetranscode.service ${INSTALL}/usr/local/system.d/remotetranscode.service
+  fi
 
   # zip everything
   mkdir -p ${INSTALL}/usr/local/config

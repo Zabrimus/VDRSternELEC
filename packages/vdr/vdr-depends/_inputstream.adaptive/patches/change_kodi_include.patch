@@ -1,0 +1,22 @@
+diff -ru8bBwd a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2025-01-19 10:11:59.000000000 +0100
++++ b/CMakeLists.txt	2025-03-18 10:51:17.297116513 +0100
+@@ -40,17 +40,17 @@
+ # Appends sources declared by add_dir_sources to main ADP_SOURCES/ADP_HEADERS lists,
+ # build_addon function requires those variables
+ get_property(SOURCES_LIST GLOBAL PROPERTY GlobalSourceList)
+ list(APPEND ADP_SOURCES ${SOURCES_LIST})
+ get_property(HEADERS_LIST GLOBAL PROPERTY GlobalHeaderList)
+ list(APPEND ADP_HEADERS ${HEADERS_LIST})
+ 
+ include_directories(${INCLUDES}
+-                    ${KODI_INCLUDE_DIR}/.. # Hack way with "/..", need bigger Kodi cmake rework to match right include ways (becomes done in future)
++                    include/
+                     src/
+ )
+ 
+ add_subdirectory(lib/mpegts)
+ add_subdirectory(lib/webm_parser)
+ 
+ if(ENABLE_INTERNAL_BENTO4)
+   include_directories(${BENTO4_INCLUDE_DIRS})

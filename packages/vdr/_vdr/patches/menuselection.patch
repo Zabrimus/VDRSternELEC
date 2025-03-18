@@ -1,0 +1,123 @@
+From 10de90f79e92f3147ad1e42b8b162d3ee4a44f8d Mon Sep 17 00:00:00 2001
+From: Stefan Hofmann <stefan.hofmann@t-online.de>
+Date: Fri, 25 Dec 2020 17:34:34 +0100
+Subject: [PATCH] Added numerical selection of multiple-digit menu items
+
+---
+ osdbase.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++------
+ osdbase.h |  2 ++
+ 2 files changed, 49 insertions(+), 6 deletions(-)
+
+diff --git a/osdbase.c b/osdbase.c
+index e7a9755e..4ef98b53 100644
+--- a/osdbase.c
++++ b/osdbase.c
+@@ -84,6 +84,7 @@ cOsdMenu::cOsdMenu(const char *Title, int c0, int c1, int c2, int c3, int c4)
+ {
+   isMenu = true;
+   digit = 0;
++  key_nr = -1;
+   hasHotkeys = false;
+   if (!topMenu)
+      topMenu = this;
+@@ -154,7 +155,7 @@ const char *cOsdMenu::hk(const char *s)
+         digit = -1; // prevents automatic hotkeys - input already has them
+      if (digit >= 0) {
+         digit++;
+-        buffer = cString::sprintf(" %c %s", (digit < 10) ? '0' + digit : ' ' , s);
++        buffer = cString::sprintf(" %2d%s %s", digit, (digit > 9) ? "" : " ", s);
+         s = buffer;
+         }
+      }
+@@ -526,21 +527,61 @@ void cOsdMenu::Mark(void)
+      }
+ }
+
++#define MENUKEY_TIMEOUT 1500
++
+ eOSState cOsdMenu::HotKey(eKeys Key)
+ {
+-  for (cOsdItem *item = First(); item; item = Next(item)) {
++  bool match = false;
++  bool highlight = false;
++  int  item_nr;
++  int  i;
++
++  if (Key == kNone) {
++     if (lastActivity.TimedOut())
++        Key = kOk;
++     else
++        return osContinue;
++     }
++  else
++     lastActivity.Set(MENUKEY_TIMEOUT);
++  for (cOsdItem *item = Last(); item; item = Prev(item)) {
+       const char *s = item->Text();
+-      if (s && (s = skipspace(s)) != NULL) {
+-         if (*s == Key - k1 + '1') {
++      i = 0;
++      item_nr = 0;
++      if (s && (s = skipspace(s)) != NULL && '0' <= s[i] && s[i] <= '9') {
++         do {
++            item_nr = item_nr * 10 + (s[i] - '0');
++            }
++         while ( !((s[++i] == '\t')||(s[i] == ' ')) && (s[i] != '\0') && ('0' <= s[i]) && (s[i] <= '9'));
++         if ((Key == kOk) && (item_nr == key_nr)) {
+             DisplayCurrent(false);
+             current = item->Index();
+             RefreshCurrent();
+             DisplayCurrent(true);
+             cRemote::Put(kOk, true);
++            key_nr = -1;
+             break;
+             }
++         else if (Key != kOk) {
++            if (!highlight && (item_nr == (Key - k0))) {
++               highlight = true;
++               current = item->Index();
++               }
++            if (!match && (key_nr == -1) && ((item_nr / 10) == (Key - k0))) {
++               match = true;
++               key_nr = (Key - k0);
++               }
++            else if (((key_nr == -1) && (item_nr == (Key - k0))) || (!match && (key_nr >= 0) && (item_nr == (10 * key_nr + Key - k0)))) {
++               current = item->Index();
++               cRemote::Put(kOk, true);
++               key_nr = -1;
++               break;
++               }
++            }
+          }
+       }
++  if ((!match) && (Key != kNone))
++     key_nr = -1;
+   return osContinue;
+ }
+
+@@ -585,8 +626,8 @@ eOSState cOsdMenu::ProcessKey(eKeys Key)
+         }
+      }
+   switch (int(Key)) {
+-    case k0:      return osUnknown;
+-    case k1...k9: return hasHotkeys ? HotKey(Key) : osUnknown;
++    case kNone:
++    case k0...k9: return hasHotkeys ? HotKey(Key) : osUnknown;
+     case kUp|k_Repeat:
+     case kUp:     if (menuOrientation == moHorizontal) PageUp();     else CursorUp(); break;
+     case kDown|k_Repeat:
+diff --git a/osdbase.h b/osdbase.h
+index a63f222b..631e93fa 100644
+--- a/osdbase.h
++++ b/osdbase.h
+@@ -103,6 +103,8 @@ private:
+   char *status;
+   int digit;
+   bool hasHotkeys;
++  int key_nr;
++  cTimeMs lastActivity;
+   bool active;
+   void SetActive(bool Active);
+   void DisplayHelp(bool Force = false);
+--
+2.48.1.windows.1
+

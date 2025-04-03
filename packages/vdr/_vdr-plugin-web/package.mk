@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0
 
 PKG_NAME="_vdr-plugin-web"
-PKG_VERSION="fa316dbb07167936837219f97cafa2b65e4879ea"
-PKG_SHA256="0c2f7d47afa15fd179755a6ec72e27358922c8a05a72804dc08649c1c597ec4b"
+PKG_VERSION="afa35c5144d7d353b2694e15645e15506b8be8f7"
+PKG_SHA256="da54501c75e37c1a0e0e321362845ea625573f335616887049c60e45386cd983"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/Zabrimus/vdr-plugin-web"
 PKG_URL="https://github.com/Zabrimus/vdr-plugin-web/archive/${PKG_VERSION}.zip"

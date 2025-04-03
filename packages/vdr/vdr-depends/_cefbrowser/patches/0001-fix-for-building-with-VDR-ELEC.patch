@@ -1,20 +1,7 @@
-From ded968d2bc69ee9e60dd0c8f07cd7db8b51521e4 Mon Sep 17 00:00:00 2001
-From: Andreas Baierl <ichgeh@imkreisrum.de>
-Date: Tue, 4 Jul 2023 16:21:34 +0200
-Subject: [PATCH] fix for building with VDR*ELEC
-
----
- meson.build                                   | 25 ++++++++++++-------
- meson_options.txt                             |  1 +
- .../packagefiles/mini-0.9.14/meson.build      |  2 +-
- .../meson.build                               |  2 +-
- 4 files changed, 19 insertions(+), 11 deletions(-)
-
-diff --git a/meson.build b/meson.build
-index 556b679..b341f60 100644
---- a/meson.build
-+++ b/meson.build
-@@ -1,11 +1,13 @@
+diff -ru8bBwd a/meson.build b/meson.build
+--- a/meson.build	2025-03-26 08:50:15.000000000 +0100
++++ b/meson.build	2025-03-26 12:08:04.833825238 +0100
+@@ -1,16 +1,18 @@
  project('cefbrowser', 'cpp', 'c',
    version : '0.1',
    default_options : ['warning_level=1', 'cpp_std=c++17', 'default_library=static', 'optimization=3' ],
@@ -23,14 +10,23 @@ index 556b679..b341f60 100644
  
  add_global_arguments('-O3', language : 'cpp')
  
--arch=get_option('arch')
-+arch = get_option('arch')
+ arch=get_option('arch')
 +subarch = '-march=' + get_option('subarch')
 +install_prefix = get_option('prefix')
  
  cmake = import('cmake')
  CXX = meson.get_compiler('cpp')
-@@ -23,9 +25,14 @@ cef_opt_var = cmake.subproject_options()
+ 
+ #
+ # Download and extract subprojects
+ #
+ run_command('./setup.sh', arch, meson.current_build_dir(), check: false)
+@@ -18,19 +20,24 @@
+ #
+ # Build cef
+ #
+ cef_opt_var = cmake.subproject_options()
+ 
  if arch == 'arm'
      cef_opt_var.add_cmake_defines({'PROJECT_ARCH': 'armhf'})
  elif arch == 'arm64'
@@ -46,22 +42,58 @@ index 556b679..b341f60 100644
  cef_opt_var.append_compile_args('cpp', '-Wno-unused-variable')
  cef_opt_var.add_cmake_defines({'CMAKE_BUILD_TYPE': 'Debug'})
  cef_proj = cmake.subproject('cef', options: cef_opt_var)
-@@ -78,7 +85,7 @@ exe = executable('cefbrowser', 'main.cpp', 'mainapp.cpp', 'logger.cpp',
-                  'httplib.cpp',
+ cef_lib = cef_proj.dependency('libcef_dll_wrapper')
+ 
+ #
+ # spdlog
+ #
+@@ -57,32 +64,17 @@
+ 
+ #
+ # ssl
+ #
+ dep_ssl = dependency('libssl')
+ dep_crypto = dependency('libcrypto')
+ 
+ # thrift
+-# thrift
+-thrift_opts = cmake.subproject_options()
+-thrift_opts.add_cmake_defines({'WITH_AS3': 'OFF',
+-                               'WITH_QT5': 'OFF',
+-                               'BUILD_JAVA': 'OFF',
+-                               'BUILD_JAVASCRIPT': 'OFF',
+-                               'BUILD_PYTHON': 'OFF',
+-                               'BUILD_TESTING': 'OFF',
+-                               'WITH_C_GLIB': 'OFF',
+-                               'WITH_OPENSSL': 'OFF',
+-                               'BUILD_SHARED_LIBS': 'OFF',
+-                               'BUILD_COMPILER': 'OFF',
+-                               'CMAKE_POSITION_INDEPENDENT_CODE': 'ON' })
+-
+-thrift_proj = cmake.subproject('thrift', options: thrift_opts)
+-thrift_dep = thrift_proj.get_variable('thrift_dep')
++thrift_dep = dependency('thrift')
+ 
+ #
+ # Build browser
+ #
+ shared_libs = ['cef', 'z']
+ deps = []
+ foreach lib_name : shared_libs
+         deps += CXX.find_library(lib_name, dirs : [meson.project_source_root() + '/subprojects/cef/Release'])
+@@ -97,19 +89,19 @@
+                  'thrift-services/src-client/VdrClient.cpp', 'thrift-services/src-client/TranscoderClient.cpp',
+                  'thrift-services/src-gen/CommonService.cpp', 'thrift-services/src-gen/common_types.cpp',
+                  'thrift-services/src-gen/CefBrowser.cpp', 'thrift-services/src-gen/cefbrowser_types.cpp',
+                  'thrift-services/src-gen/VdrPluginWeb.cpp', 'thrift-services/src-gen/pluginweb_types.cpp',
+                  'thrift-services/src-gen/RemoteTranscoder.cpp', 'thrift-services/src-gen/remotetranscoder_types.cpp',
+                  include_directories : incdir,
                   cpp_args : ['-DPHTTPLIB_ZLIB_SUPPORT', '-DCPPHTTPLIB_OPENSSL_SUPPORT'],
                   install : true,
 -                 install_dir : meson.current_build_dir() + '/Release',
 +                 link_args: '-lrt',
-                  dependencies: [mini_dep, cef_lib, spdlog_dep, deps, sqlite3_dep, dep_ssl, dep_crypto])
+                  dependencies: [mini_dep, cef_lib, spdlog_dep, deps, sqlite3_dep, dep_ssl, dep_crypto, thrift_dep])
  
- exe = executable('vdrclient', 'test-tools/vdr_tool.cpp', 'logger.cpp', 'sharedmemory.cpp', 'test-tools/common.cpp',
-@@ -86,13 +93,13 @@ exe = executable('vdrclient', 'test-tools/vdr_tool.cpp', 'logger.cpp', 'sharedme
-                 'httplib.cpp',
-                  cpp_args : ['-DCLIENT_ONLY', '-DPHTTPLIB_ZLIB_SUPPORT', '-DCPPHTTPLIB_OPENSSL_SUPPORT'],
-                  install : true,
--                 install_dir : meson.current_build_dir() + '/Release',
-+                 link_args: '-lrt',
-                  dependencies: [mini_dep, spdlog_dep, deps, tiny_process_library_dep, dep_ssl, dep_crypto])
  
  #
  # install static content
@@ -74,18 +106,19 @@ index 556b679..b341f60 100644
 +install_subdir('static-content/css', install_dir : 'cefbrowser')
 +install_subdir('static-content/database', install_dir : 'cefbrowser')
 +install_subdir('static-content/application', install_dir : 'cefbrowser')
-diff --git a/meson_options.txt b/meson_options.txt
-index f1b0b7b..b571a75 100644
---- a/meson_options.txt
-+++ b/meson_options.txt
+diff -ru8bBwd a/meson_options.txt b/meson_options.txt
+--- a/meson_options.txt	2025-03-26 08:50:15.000000000 +0100
++++ b/meson_options.txt	2025-03-26 12:05:05.539249752 +0100
 @@ -1 +1,2 @@
  option('arch', type : 'combo', choices : ['x86', 'arm', 'arm64'], value : 'x86')
 +option('subarch', type : 'string', value : 'armv8-a')
-diff --git a/subprojects/packagefiles/mini-0.9.14/meson.build b/subprojects/packagefiles/mini-0.9.14/meson.build
-index 9136107..c4f7f36 100644
---- a/subprojects/packagefiles/mini-0.9.14/meson.build
-+++ b/subprojects/packagefiles/mini-0.9.14/meson.build
-@@ -4,7 +4,7 @@ project(
+diff -ru8bBwd a/subprojects/packagefiles/mini-0.9.14/meson.build b/subprojects/packagefiles/mini-0.9.14/meson.build
+--- a/subprojects/packagefiles/mini-0.9.14/meson.build	2025-03-26 08:50:15.000000000 +0100
++++ b/subprojects/packagefiles/mini-0.9.14/meson.build	2025-03-26 12:05:05.539249752 +0100
+@@ -1,15 +1,15 @@
+ project(
+   'mINI',
+   'c', 'cpp',
    version: '0.8.5',
    license: 'Apache-2.0 license',
    default_options: ['cpp_std=c++17'],
@@ -94,11 +127,18 @@ index 9136107..c4f7f36 100644
  )
  
  inc = include_directories('src')
-diff --git a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build
-index 4d0e048..815d8f6 100644
---- a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build
-+++ b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build
-@@ -4,7 +4,7 @@ project(
+ 
+ mini_dependencies = []
+ mini_compile_args = ['-O3']
+ 
+ mini_dep = declare_dependency(
+diff -ru8bBwd a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build
+--- a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build	2025-03-26 08:50:15.000000000 +0100
++++ b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build	2025-03-26 12:05:05.539249752 +0100
+@@ -1,15 +1,15 @@
+ project(
+   'tiny_process_library',
+   'cpp',
    version: '4bf0e59e64f18d3080a1ce4e853775de2181e993',
    license: 'MIT',
    default_options: ['cpp_std=c++17'],
@@ -107,6 +147,8 @@ index 4d0e048..815d8f6 100644
  )
  
  src = files(
--- 
-2.39.2
-
+   'process.cpp',
+   'process_unix.cpp',
+ )
+ 
+ inc = include_directories('.')

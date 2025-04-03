@@ -1,14 +1,14 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_cefbrowser"
-PKG_VERSION="81daccf329629aea03186f81b34c7e9041a3ad4b"
-PKG_SHA256="7f26236951bcdc242e209f533b5f0a916854aed5e0ad969c60bd996c50cc251b"
+PKG_VERSION="becae19beb8769a89cc7f4178d7be0c4a68637b1"
+PKG_SHA256="5d08d5ebdd99c06b9b236d4c16875b221757dd47a5eeb846a2e595daa068172b"
 PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/Zabrimus/cefbrowser"
 PKG_URL="https://github.com/Zabrimus/cefbrowser/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="cefbrowser-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain atk libxml2 cups cef-at-spi2-core \
-                    libXcomposite libXdamage libXfixes libXrandr libXi libXft openssl _cef"
+                    libXcomposite libXdamage libXfixes libXrandr libXi libXft openssl _cef _thrift"
 PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
 PKG_DEPENDS_CONFIG="_cef"
 PKG_LONGDESC="cefbrowser"

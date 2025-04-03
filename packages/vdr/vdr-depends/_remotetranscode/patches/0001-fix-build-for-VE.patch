@@ -1,17 +1,49 @@
-diff -ru8bBwd a/meson.build b/meson.build
---- a/meson.build	2025-03-17 18:17:41.000000000 +0100
-+++ b/meson.build	2025-03-18 05:48:19.955731566 +0100
-@@ -35,25 +35,22 @@
- # dash2ts
- #
- dash2ts_proj = subproject('dash2ts')
- dash2ts_dep = dash2ts_proj.get_variable('dash2ts_dep')
+--- a/meson.build	2025-03-26 09:02:42.000000000 +0100
++++ b/meson.build	2025-03-26 11:17:34.499871930 +0100
+@@ -9,31 +9,17 @@
+ cpp = meson.get_compiler('cpp')
  
- remotrans = executable('remotrans', 'main.cpp', 'logger.cpp', 'streamhandler.cpp', 'browserclient.cpp', 'transcodeconfig.cpp', 'vdrclient.cpp',
-                         'm3u8handler.cpp',
+ #
+ # openssl
+ #
+ openssl_dep = dependency('openssl')
+ 
+ # thrift
+-thrift_opts = cmake.subproject_options()
+-thrift_opts.add_cmake_defines({'WITH_AS3': 'OFF',
+-                               'WITH_QT5': 'OFF',
+-                               'BUILD_JAVA': 'OFF',
+-                               'BUILD_JAVASCRIPT': 'OFF',
+-                               'BUILD_PYTHON': 'OFF',
+-                               'BUILD_TESTING': 'OFF',
+-                               'WITH_C_GLIB': 'OFF',
+-                               'WITH_OPENSSL': 'OFF',
+-                               'BUILD_SHARED_LIBS': 'OFF',
+-                               'BUILD_COMPILER': 'OFF',
+-                               'CMAKE_POSITION_INDEPENDENT_CODE': 'ON' })
+-
+-thrift_proj = cmake.subproject('thrift', options: thrift_opts)
+-thrift_dep = thrift_proj.get_variable('thrift_dep')
++thrift_dep = dependency('thrift')
+ 
+ #
+ # spdlog
+ #
+ spdlog_proj = subproject('spdlog')
+ spdlog_dep = spdlog_proj.get_variable('spdlog_dep', ['tests=disabled', 'compile_library=true'] )
+ 
+ #
+@@ -59,25 +45,22 @@
+ remotrans = executable('remotrans', 'main.cpp', 'logger.cpp', 'streamhandler.cpp', 'transcodeconfig.cpp',
+                         'm3u8handler.cpp', 'thrift-services/src-client/BrowserClient.cpp', 'thrift-services/src-client/VdrClient.cpp',
+                         'thrift-services/src-gen/CommonService.cpp', 'thrift-services/src-gen/common_types.cpp',
+ 	                    'thrift-services/src-gen/CefBrowser.cpp', 'thrift-services/src-gen/cefbrowser_types.cpp',
+ 	                    'thrift-services/src-gen/VdrPluginWeb.cpp', 'thrift-services/src-gen/pluginweb_types.cpp',
+                         'thrift-services/src-gen/RemoteTranscoder.cpp', 'thrift-services/src-gen/remotetranscoder_types.cpp',
+                         include_directories : incdir,
                          install : true,
 -                        install_dir : meson.current_build_dir() + '/Release',
-                         dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep, openssl_dep])
+                         dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep, openssl_dep, thrift_dep])
  
  r_dash2ts = executable('r_dash2ts', 'r_dash2ts.cpp', 'logger.cpp',
                         install : true,

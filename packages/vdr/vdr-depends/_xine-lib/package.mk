@@ -26,6 +26,7 @@ PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 						   --enable-v4l2 \
 						   --enable-vdr \
 						   --enable-avformat \
+						   --disable-nfs \
 						   --with-x \
 						   --with-alsa \
 						   "

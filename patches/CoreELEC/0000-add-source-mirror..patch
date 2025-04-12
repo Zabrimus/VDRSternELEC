@@ -1,0 +1,13 @@
+diff --git a/distributions/CoreELEC/options b/distributions/CoreELEC/options
+index 4d61b2423f..4494aeba05 100644
+--- a/distributions/CoreELEC/options
++++ b/distributions/CoreELEC/options
+@@ -161,7 +161,7 @@
+ ### KODI ADDONS ###
+ 
+ # Distribution Specific source location
+-  DISTRO_MIRROR="http://sources.coreelec.org http://sources.libreelec.tv/mirror"
++  DISTRO_MIRROR="http://sources.coreelec.org http://sources.libreelec.tv/mirror https://vdrsternelec.serversenke.de/packages"
+   DISTRO_SRC="http://sources.libreelec.tv/$LIBREELEC_VERSION"
+ 
+ # Addon Server Url

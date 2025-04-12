@@ -1,8 +1,12 @@
-diff --git a/config.c b/config.c
-index 23d9e1ee..16aa41c3 100644
---- a/config.c
-+++ b/config.c
-@@ -435,6 +435,8 @@ cSetup::cSetup(void)
+diff -ru8bBwd a/config.c b/config.c
+--- a/config.c	2025-04-12 08:32:04.000000000 +0200
++++ b/config.c	2025-04-12 16:47:00.732318383 +0200
+@@ -430,16 +430,18 @@
+   UseSubtitle = 1;
+   UseVps = 0;
+   VpsMargin = 120;
+   RecordingDirs = 1;
+   FoldersInTimerMenu = 1;
    AlwaysSortFoldersFirst = 1;
    DefaultSortModeRec = rsmTime;
    RecSortingDirection = rsdAscending;
@@ -11,7 +15,17 @@ index 23d9e1ee..16aa41c3 100644
    NumberKeysForChars = 1;
    ColorKey0 = 0;
    ColorKey1 = 1;
-@@ -665,6 +667,8 @@ bool cSetup::Parse(const char *Name, const char *Value)
+   ColorKey2 = 2;
+   ColorKey3 = 3;
+   VideoDisplayFormat = 1;
+   VideoFormat = 0;
+   UpdateChannels = 5;
+@@ -660,16 +662,18 @@
+   else if (!strcasecmp(Name, "UseSubtitle"))         UseSubtitle        = atoi(Value);
+   else if (!strcasecmp(Name, "UseVps"))              UseVps             = atoi(Value);
+   else if (!strcasecmp(Name, "VpsMargin"))           VpsMargin          = atoi(Value);
+   else if (!strcasecmp(Name, "RecordingDirs"))       RecordingDirs      = atoi(Value);
+   else if (!strcasecmp(Name, "FoldersInTimerMenu"))  FoldersInTimerMenu = atoi(Value);
    else if (!strcasecmp(Name, "AlwaysSortFoldersFirst")) AlwaysSortFoldersFirst = atoi(Value);
    else if (!strcasecmp(Name, "RecSortingDirection")) RecSortingDirection= atoi(Value);
    else if (!strcasecmp(Name, "DefaultSortModeRec"))  DefaultSortModeRec = atoi(Value);
@@ -20,7 +34,17 @@ index 23d9e1ee..16aa41c3 100644
    else if (!strcasecmp(Name, "NumberKeysForChars"))  NumberKeysForChars = atoi(Value);
    else if (!strcasecmp(Name, "ColorKey0"))           ColorKey0          = atoi(Value);
    else if (!strcasecmp(Name, "ColorKey1"))           ColorKey1          = atoi(Value);
-@@ -799,6 +803,8 @@ bool cSetup::Save(void)
+   else if (!strcasecmp(Name, "ColorKey2"))           ColorKey2          = atoi(Value);
+   else if (!strcasecmp(Name, "ColorKey3"))           ColorKey3          = atoi(Value);
+   else if (!strcasecmp(Name, "VideoDisplayFormat"))  VideoDisplayFormat = atoi(Value);
+   else if (!strcasecmp(Name, "VideoFormat"))         VideoFormat        = atoi(Value);
+   else if (!strcasecmp(Name, "UpdateChannels"))      UpdateChannels     = atoi(Value);
+@@ -794,16 +798,18 @@
+   Store("UseSubtitle",        UseSubtitle);
+   Store("UseVps",             UseVps);
+   Store("VpsMargin",          VpsMargin);
+   Store("RecordingDirs",      RecordingDirs);
+   Store("FoldersInTimerMenu", FoldersInTimerMenu);
    Store("AlwaysSortFoldersFirst", AlwaysSortFoldersFirst);
    Store("RecSortingDirection",RecSortingDirection);
    Store("DefaultSortModeRec", DefaultSortModeRec);
@@ -29,11 +53,20 @@ index 23d9e1ee..16aa41c3 100644
    Store("NumberKeysForChars", NumberKeysForChars);
    Store("ColorKey0",          ColorKey0);
    Store("ColorKey1",          ColorKey1);
-diff --git a/config.h b/config.h
-index 3eeb7084..23365d7b 100644
---- a/config.h
-+++ b/config.h
-@@ -316,6 +316,8 @@ public:
+   Store("ColorKey2",          ColorKey2);
+   Store("ColorKey3",          ColorKey3);
+   Store("VideoDisplayFormat", VideoDisplayFormat);
+   Store("VideoFormat",        VideoFormat);
+   Store("UpdateChannels",     UpdateChannels);
+diff -ru8bBwd a/config.h b/config.h
+--- a/config.h	2025-04-12 08:32:04.000000000 +0200
++++ b/config.h	2025-04-12 16:47:00.732318383 +0200
+@@ -319,16 +319,18 @@
+   int UseSubtitle;
+   int UseVps;
+   int VpsMargin;
+   int RecordingDirs;
+   int FoldersInTimerMenu;
    int AlwaysSortFoldersFirst;
    int DefaultSortModeRec;
    int RecSortingDirection;
@@ -42,11 +75,20 @@ index 3eeb7084..23365d7b 100644
    int NumberKeysForChars;
    int ColorKey0, ColorKey1, ColorKey2, ColorKey3;
    int VideoDisplayFormat;
-diff --git a/menu.c b/menu.c
-index 8c1c478a..f3e3f16f 100644
---- a/menu.c
-+++ b/menu.c
-@@ -2902,14 +2902,15 @@ private:
+   int VideoFormat;
+   int UpdateChannels;
+   int UseDolbyDigital;
+   int ChannelInfoPos;
+   int ChannelInfoTime;
+diff -ru8bBwd a/menu.c b/menu.c
+--- a/menu.c	2025-04-12 08:32:04.000000000 +0200
++++ b/menu.c	2025-04-12 16:48:22.564828189 +0200
+@@ -2903,39 +2903,44 @@
+ // --- cMenuRecording --------------------------------------------------------
+ 
+ class cMenuRecording : public cOsdMenu {
+ private:
+   const cRecording *recording;
    cString originalFileName;
    cStateKey recordingsStateKey;
    bool withButtons;
@@ -55,8 +97,8 @@ index 8c1c478a..f3e3f16f 100644
  public:
 -  cMenuRecording(const cRecording *Recording, bool WithButtons = false);
 +  cMenuRecording(const cRecording *Recording, bool WithButtons = false, bool DeletedRecording = false);
-   virtual void Display(void);
-   virtual eOSState ProcessKey(eKeys Key);
+   virtual void Display(void) override;
+   virtual eOSState ProcessKey(eKeys Key) override;
  };
  
 -cMenuRecording::cMenuRecording(const cRecording *Recording, bool WithButtons)
@@ -64,7 +106,8 @@ index 8c1c478a..f3e3f16f 100644
  :cOsdMenu(tr("Recording info"))
  {
    SetMenuCategory(mcRecordingInfo);
-@@ -2918,13 +2919,17 @@ cMenuRecording::cMenuRecording(const cRecording *Recording, bool WithButtons)
+   if (cRecordings::GetRecordingsRead(recordingsStateKey)) // initializes recordingsStateKey, so we don't call Display() unnecessarily
+      recordingsStateKey.Remove();
    recording = Recording;
    originalFileName = recording->FileName();
    withButtons = WithButtons;
@@ -83,7 +126,17 @@ index 8c1c478a..f3e3f16f 100644
       if ((recording = Recordings->GetByName(originalFileName)) != NULL)
          Display();
       else {
-@@ -2975,15 +2980,28 @@ eOSState cMenuRecording::ProcessKey(eKeys Key)
+         recordingsStateKey.Remove();
+         Skins.Message(mtWarning, tr("Recording vanished!"));
+         return false;
+         }
+      recordingsStateKey.Remove();
+@@ -2976,25 +2981,38 @@
+     case kInfo:   return osBack;
+     default: break;
+     }
+ 
+   eOSState state = cOsdMenu::ProcessKey(Key);
  
    if (state == osUnknown) {
       switch (Key) {
@@ -96,7 +149,9 @@ index 8c1c478a..f3e3f16f 100644
 +                        cRemote::Put(Key, true); // will play the recording, even if recording commands are defined
 +                        return osBack;
 +                        }
-+                     break;
+                         break;
+-                     cRemote::Put(Key, true);
+-                     // continue with osBack to close the info menu and process the key
 +       case kGreen:  if (withButtons) {
 +                        if (deletedRecording)
 +                           state = osContinue;
@@ -106,9 +161,7 @@ index 8c1c478a..f3e3f16f 100644
 +                           }
 +                        return state;
 +                        }
-                         break;
--                     cRemote::Put(Key, true);
--                     // continue with osBack to close the info menu and process the key
++                        break;
 +       case kYellow: return osContinue;
         case kOk:     return osBack;
         case kBlue:   if (withButtons)
@@ -118,7 +171,17 @@ index 8c1c478a..f3e3f16f 100644
                       break;
         default: break;
         }
-@@ -3051,14 +3069,17 @@ void cMenuRecordingItem::SetMenuItem(cSkinDisplayMenu *DisplayMenu, int Index, b
+      }
+   return state;
+ }
+ 
+ // --- cMenuRecordingItem ----------------------------------------------------
+@@ -3053,24 +3071,27 @@
+      DisplayMenu->SetItem(Text(), Index, Current, Selectable);
+ }
+ 
+ // --- cMenuRecordings -------------------------------------------------------
+ 
  cString cMenuRecordings::path;
  cString cMenuRecordings::fileName;
  
@@ -138,7 +201,17 @@ index 8c1c478a..f3e3f16f 100644
    Display(); // this keeps the higher level menus from showing up briefly when pressing 'Back' during replay
    Set();
    if (Current() < 0)
-@@ -3079,38 +3100,55 @@ cMenuRecordings::~cMenuRecordings()
+      SetCurrent(First());
+   else if (OpenSubMenus && (cReplayControl::LastReplayed() || *path || *fileName)) {
+      if (!*path || Level < strcountchr(path, FOLDERDELIMCHAR)) {
+         if (Open(true))
+            return;
+@@ -3081,48 +3102,65 @@
+ 
+ cMenuRecordings::~cMenuRecordings()
+ {
+   if (cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current())) {
+      if (!ri->IsDirectory())
          SetRecording(ri->Recording()->FileName());
       }
    free(base);
@@ -167,16 +240,16 @@ index 8c1c478a..f3e3f16f 100644
 +     DeletedRec = DeletedRecordings->Count() ? true : false;
 +  }
 +  if (delRecMenu)
-+     switch (NewHelpKeys) {
-+       case 0: SetHelp(NULL); break;
-+       case 1: SetHelp(tr("Button$RECORDINGS")); break;
-+       case 2: SetHelp(tr("Button$RECORDINGS"), tr("Button$Undelete"), tr("Button$Destroy"),  tr("Button$Info"));
-+     }
-+  else if (NewHelpKeys != helpKeys || DeletedRec != deletedRec) {
       switch (NewHelpKeys) {
         case 0: SetHelp(NULL); break;
 -       case 1: SetHelp(tr("Button$Open"), NULL, NULL, tr("Button$Edit")); break;
 -       case 2: SetHelp(RecordingCommands.Count() ? tr("Commands") : tr("Button$Play"), tr("Button$Rewind"), tr("Button$Delete"), tr("Button$Info"));
++       case 1: SetHelp(tr("Button$RECORDINGS")); break;
++       case 2: SetHelp(tr("Button$RECORDINGS"), tr("Button$Undelete"), tr("Button$Destroy"),  tr("Button$Info"));
++     }
++  else if (NewHelpKeys != helpKeys || DeletedRec != deletedRec) {
++     switch (NewHelpKeys) {
++       case 0: SetHelp(NULL); break;
 +       case 1: SetHelp(DeletedRec ? tr("Button$UNDELETE") : tr("Button$Open"), NULL, NULL, tr("Button$Edit")); break;
 +       case 2: SetHelp(DeletedRec ? tr("Button$UNDELETE") : RecordingCommands.Count() ? tr("Commands") : tr("Button$Play"), tr("Button$Rewind"), tr("Button$Delete"), tr("Button$Info"));
         default: ;
@@ -201,7 +274,17 @@ index 8c1c478a..f3e3f16f 100644
          CurrentRecording = *fileName ? *fileName : cReplayControl::LastReplayed();
       int current = Current();
       Clear();
-@@ -3187,7 +3225,7 @@ bool cMenuRecordings::Open(bool OpenSubMenus)
+      GetRecordingsSortMode(DirectoryName());
+      Recordings->Sort();
+      cMenuRecordingItem *CurrentItem = NULL;
+      cMenuRecordingItem *LastItem = NULL;
+      for (const cRecording *Recording = Recordings->First(); Recording; Recording = Recordings->Next(Recording)) {
+@@ -3189,17 +3227,17 @@
+   cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current());
+   if (ri && ri->IsDirectory() && (!*path || strcountchr(path, FOLDERDELIMCHAR) > 0)) {
+      const char *t = ri->Name();
+      cString buffer;
+      if (base) {
          buffer = cString::sprintf("%s%c%s", base, FOLDERDELIMCHAR, t);
          t = buffer;
          }
@@ -210,7 +293,17 @@ index 8c1c478a..f3e3f16f 100644
       return true;
       }
    return false;
-@@ -3320,6 +3358,83 @@ eOSState cMenuRecordings::Delete(void)
+ }
+ 
+ eOSState cMenuRecordings::Play(void)
+ {
+   cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current());
+@@ -3325,25 +3363,102 @@
+         else
+            Skins.Message(mtError, tr("Error while deleting recording!"));
+         recordingsStateKey.Remove();
+         }
+      }
    return osContinue;
  }
  
@@ -294,7 +387,8 @@ index 8c1c478a..f3e3f16f 100644
  eOSState cMenuRecordings::Info(void)
  {
    if (HasSubMenu() || Count() == 0)
-@@ -3328,7 +3443,7 @@ eOSState cMenuRecordings::Info(void)
+      return osContinue;
+   if (cMenuRecordingItem *ri = (cMenuRecordingItem *)Get(Current())) {
       if (ri->IsDirectory())
          return AddSubMenu(new cMenuPathEdit(cString(ri->Recording()->Name(), strchrn(ri->Recording()->Name(), FOLDERDELIMCHAR, ri->Level() + 1))));
       else
@@ -303,7 +397,17 @@ index 8c1c478a..f3e3f16f 100644
       }
    return osContinue;
  }
-@@ -3368,14 +3483,15 @@ eOSState cMenuRecordings::ProcessKey(eKeys Key)
+ 
+ eOSState cMenuRecordings::Commands(eKeys Key)
+ {
+   if (HasSubMenu() || Count() == 0)
+      return osContinue;
+@@ -3373,24 +3488,25 @@
+ eOSState cMenuRecordings::ProcessKey(eKeys Key)
+ {
+   eOSState state = cOsdMenu::ProcessKey(Key);
+ 
+   if (state == osUnknown) {
       switch (Key) {
         case kPlayPause:
         case kPlay:
@@ -324,7 +428,17 @@ index 8c1c478a..f3e3f16f 100644
         default: break;
         }
       }
-@@ -3413,16 +3529,29 @@ eOSState cMenuRecordings::ProcessKey(eKeys Key)
+   else if (state == osUserRecRenamed) {
+      // a recording was renamed (within the same folder), so let's refresh the menu
+      CloseSubMenu(false); // this is the cMenuRecordingEdit/cMenuPathEdit
+      path = NULL;
+      fileName = NULL;
+@@ -3418,26 +3534,39 @@
+         }
+      // no state change here, this report goes upstream!
+      }
+   else if (state == osUserRecEmpty) {
+      // a subfolder became empty, so let's go back up
       CloseSubMenu(false); // this is the now empty submenu
       cOsdMenu::Del(Current()); // the menu entry of the now empty subfolder
       Set(); // in case a recording was moved into a new subfolder of this folder
@@ -339,8 +453,8 @@ index 8c1c478a..f3e3f16f 100644
 -     if (Key != kNone)
 +     if (Key != kNone) {
 +        timeOut = 0;
-         SetHelpKeys();
-      }
++        SetHelpKeys();
++     }
 +     if (!delRecMenu && Setup.UndeleteTimeOut) {
 +        int delRecordings;
 +        {
@@ -349,14 +463,24 @@ index 8c1c478a..f3e3f16f 100644
 +        }
 +        if (delRecordings && timeOut < Setup.UndeleteTimeOut) {
 +           timeOut++;
-+           SetHelpKeys();
-+           }
+         SetHelpKeys();
+      }
 +        }
 +     }
    return state;
  }
  
-@@ -3456,6 +3585,7 @@ private:
+ // --- cMenuSetupBase --------------------------------------------------------
+ 
+ class cMenuSetupBase : public cMenuSetupPage {
+ protected:
+   cSetup data;
+@@ -3461,16 +3590,17 @@
+ // --- cMenuSetupOSD ---------------------------------------------------------
+ 
+ class cMenuSetupOSD : public cMenuSetupBase {
+ private:
+   const char *useSmallFontTexts[3];
    const char *recSortModeTexts[2];
    const char *recSortDirTexts[2];
    const char *keyColorTexts[4];
@@ -364,7 +488,17 @@ index 8c1c478a..f3e3f16f 100644
    int osdLanguageIndex;
    int numSkins;
    int originalSkinIndex;
-@@ -3511,6 +3641,8 @@ void cMenuSetupOSD::Set(void)
+   int skinIndex;
+   const char **skinDescriptions;
+   cThemes themes;
+   int originalThemeIndex;
+   int themeIndex;
+@@ -3516,16 +3646,18 @@
+       skinDescriptions[Skin->Index()] = Skin->Description();
+   useSmallFontTexts[0] = tr("never");
+   useSmallFontTexts[1] = tr("skin dependent");
+   useSmallFontTexts[2] = tr("always");
+   recSortModeTexts[0] = tr("by name");
    recSortModeTexts[1] = tr("by time");
    recSortDirTexts[0] = tr("ascending");
    recSortDirTexts[1] = tr("descending");
@@ -373,7 +507,17 @@ index 8c1c478a..f3e3f16f 100644
    keyColorTexts[0] = tr("Key$Red");
    keyColorTexts[1] = tr("Key$Green");
    keyColorTexts[2] = tr("Key$Yellow");
-@@ -3546,6 +3678,9 @@ void cMenuSetupOSD::Set(void)
+   keyColorTexts[3] = tr("Key$Blue");
+   Clear();
+   SetSection(tr("OSD"));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Language"),               &osdLanguageIndex, I18nNumLanguagesWithLocale(), &I18nLanguages()->At(0)));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Skin"),                   &skinIndex, numSkins, skinDescriptions));
+@@ -3551,16 +3683,19 @@
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Scroll pages"),           &data.MenuScrollPage));
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Scroll wraps"),           &data.MenuScrollWrap));
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Menu key closes"),        &data.MenuKeyCloses));
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Recording directories"),  &data.RecordingDirs));
+   Add(new cMenuEditBoolItem(tr("Setup.OSD$Folders in timer menu"),  &data.FoldersInTimerMenu));
    Add(new cMenuEditBoolItem(tr("Setup.OSD$Always sort folders first"), &data.AlwaysSortFoldersFirst));
    Add(new cMenuEditStraItem(tr("Setup.OSD$Default sort mode for recordings"), &data.DefaultSortModeRec, 2, recSortModeTexts));
    Add(new cMenuEditStraItem(tr("Setup.OSD$Sorting direction for recordings"), &data.RecSortingDirection, 2, recSortDirTexts));
@@ -383,7 +527,17 @@ index 8c1c478a..f3e3f16f 100644
    Add(new cMenuEditBoolItem(tr("Setup.OSD$Number keys for characters"), &data.NumberKeysForChars));
    Add(new cMenuEditStraItem(tr("Setup.OSD$Color key 0"),            &data.ColorKey0, 4, keyColorTexts));
    Add(new cMenuEditStraItem(tr("Setup.OSD$Color key 1"),            &data.ColorKey1, 4, keyColorTexts));
-@@ -3595,12 +3730,13 @@ eOSState cMenuSetupOSD::ProcessKey(eKeys Key)
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Color key 2"),            &data.ColorKey2, 4, keyColorTexts));
+   Add(new cMenuEditStraItem(tr("Setup.OSD$Color key 3"),            &data.ColorKey3, 4, keyColorTexts));
+   SetCurrent(Get(current));
+   Display();
+ }
+@@ -3600,22 +3735,23 @@
+      if (data.AlwaysSortFoldersFirst != Setup.AlwaysSortFoldersFirst || data.RecordingDirs != Setup.RecordingDirs || data.RecSortingDirection != Setup.RecSortingDirection) {
+         LOCK_RECORDINGS_WRITE;
+         Recordings->ClearSortNames();
+         }
+      }
  
    int oldSkinIndex = skinIndex;
    int oldOsdLanguageIndex = osdLanguageIndex;
@@ -398,11 +552,20 @@ index 8c1c478a..f3e3f16f 100644
       strn0cpy(data.OSDLanguage, I18nLocale(osdLanguageIndex), sizeof(data.OSDLanguage));
       int OriginalOSDLanguage = I18nCurrentLanguage();
       I18nSetLanguage(osdLanguageIndex);
-diff --git a/menu.h b/menu.h
-index 88583028..4363fbc4 100644
---- a/menu.h
-+++ b/menu.h
-@@ -213,6 +213,9 @@ private:
+ 
+      cSkin *Skin = Skins.Get(skinIndex);
+      if (Skin) {
+         char *d = themes.NumThemes() ? strdup(themes.Descriptions()[themeIndex]) : NULL;
+         themes.Load(Skin->Name());
+diff -ru8bBwd a/menu.h b/menu.h
+--- a/menu.h	2025-04-12 08:32:04.000000000 +0200
++++ b/menu.h	2025-04-12 16:47:00.732318383 +0200
+@@ -208,32 +208,37 @@
+ class cMenuRecordingItem;
+ 
+ class cMenuRecordings : public cOsdMenu {
+ private:
+   char *base;
    int level;
    cStateKey recordingsStateKey;
    int helpKeys;
@@ -412,7 +575,9 @@ index 88583028..4363fbc4 100644
    const cRecordingFilter *filter;
    static cString path;
    static cString fileName;
-@@ -222,13 +225,15 @@ private:
+   void SetHelpKeys(void);
+   void Set(bool Refresh = false);
+   bool Open(bool OpenSubMenus = false);
    eOSState Play(void);
    eOSState Rewind(void);
    eOSState Delete(void);
@@ -427,13 +592,22 @@ index 88583028..4363fbc4 100644
 -  cMenuRecordings(const char *Base = NULL, int Level = 0, bool OpenSubMenus = false, const cRecordingFilter *Filter = NULL);
 +  cMenuRecordings(const char *Base = NULL, int Level = 0, bool OpenSubMenus = false, const cRecordingFilter *Filter = NULL, bool DelRecMenu = false);
    ~cMenuRecordings();
-   virtual eOSState ProcessKey(eKeys Key);
+   virtual eOSState ProcessKey(eKeys Key) override;
    static void SetRecording(const char *FileName);
-diff --git a/po/de_DE.po b/po/de_DE.po
-index 9880f311..421ce51e 100644
---- a/po/de_DE.po
-+++ b/po/de_DE.po
-@@ -867,15 +867,33 @@ msgstr "Fehler beim 
+   };
+ 
+ class cRecordControl {
+ private:
+   cDevice *device;
+diff -ru8bBwd a/po/de_DE.po b/po/de_DE.po
+--- a/po/de_DE.po	2025-04-12 08:32:04.000000000 +0200
++++ b/po/de_DE.po	2025-04-12 16:47:00.736315868 +0200
+@@ -862,37 +862,64 @@
+ msgstr "Fehler beim Ändern der Priorität bzw. Lebensdauer!"
+ 
+ msgid "Error while changing folder/name!"
+ msgstr "Fehler beim Ändern des Ordners bzw. Namens!"
+ 
  msgid "Recording info"
  msgstr "Aufzeichnung"
  
@@ -467,7 +641,12 @@ index 9880f311..421ce51e 100644
  msgid "Commands"
  msgstr "Befehle"
  
-@@ -888,6 +906,15 @@ msgstr "Aufzeichnung wird bearbeitet - trotzdem l
+ msgid "Delete recording?"
+ msgstr "Aufzeichnung löschen?"
+ 
+ msgid "Recording is being edited - really delete?"
+ msgstr "Aufzeichnung wird bearbeitet - trotzdem löschen?"
+ 
  msgid "Error while deleting recording!"
  msgstr "Fehler beim Löschen der Aufzeichnung!"
  
@@ -483,7 +662,17 @@ index 9880f311..421ce51e 100644
  msgid "Recording commands"
  msgstr "Befehle für Aufzeichnungen"
  
-@@ -1005,6 +1032,12 @@ msgstr "Standard Sortierreihenfolge f
+ msgid "never"
+ msgstr "nie"
+ 
+ msgid "skin dependent"
+ msgstr "je nach Oberfläche"
+@@ -1000,16 +1027,22 @@
+ msgstr "Verzeichnisse immer zuerst einsortieren"
+ 
+ msgid "Setup.OSD$Default sort mode for recordings"
+ msgstr "Standard Sortierreihenfolge für Aufnahmen"
+ 
  msgid "Setup.OSD$Sorting direction for recordings"
  msgstr "Sortierreihenfolge für Aufnahmen"
  
@@ -496,3 +685,8 @@ index 9880f311..421ce51e 100644
  msgid "Setup.OSD$Number keys for characters"
  msgstr "Nummerntasten für Zeichen"
  
+ msgid "Setup.OSD$Color key 0"
+ msgstr "Farbtaste 0"
+ 
+ msgid "Setup.OSD$Color key 1"
+ msgstr "Farbtaste 1"

@@ -1,0 +1,30 @@
+diff -ru8bBwd a/PLUGINS/src/hello/hello.c b/PLUGINS/src/hello/hello.c
+--- a/PLUGINS/src/hello/hello.c	2025-04-12 08:32:04.000000000 +0200
++++ b/PLUGINS/src/hello/hello.c	2025-04-12 16:57:46.098846889 +0200
+@@ -19,23 +19,23 @@
+ class cPluginHello : public cPlugin {
+ private:
+   // Add any member variables or functions you may need here.
+   const char *option_a;
+   bool option_b;
+ public:
+   cPluginHello(void);
+   virtual ~cPluginHello() override;
+-  virtual const char *Version(void) { return VERSION;  override}
+-  virtual const char *Description(void) { return tr(DESCRIPTION);  override}
++  virtual const char *Version(void) override { return VERSION; }
++  virtual const char *Description(void) override { return tr(DESCRIPTION); }
+   virtual const char *CommandLineHelp(void) override;
+   virtual bool ProcessArgs(int argc, char *argv[]) override;
+   virtual bool Start(void) override;
+   virtual void Housekeeping(void) override;
+-  virtual const char *MainMenuEntry(void) { return tr(MAINMENUENTRY);  override}
++  virtual const char *MainMenuEntry(void) override { return tr(MAINMENUENTRY); }
+   virtual cOsdObject *MainMenuAction(void) override;
+   virtual cMenuSetupPage *SetupMenu(void) override;
+   virtual bool SetupParse(const char *Name, const char *Value) override;
+   };
+ 
+ // Global variables that control the overall behaviour:
+ 
+ int GreetingTime = 3;

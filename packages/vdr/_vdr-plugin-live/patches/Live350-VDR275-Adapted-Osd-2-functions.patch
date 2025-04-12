@@ -1,0 +1,79 @@
+From 2a432d6ffc850400b3a9f36276710aa6e0dae234 Mon Sep 17 00:00:00 2001
+From: Stefan Hofmann <stefan.hofmann@t-online.de>
+Date: Sat, 12 Apr 2025 19:01:01 +0200
+Subject: [PATCH] Adapted Osd*2 functions
+
+---
+ osd_status.cpp | 8 ++++----
+ osd_status.h   | 6 +++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/osd_status.cpp b/osd_status.cpp
+index e208886..bf63f2f 100644
+--- a/osd_status.cpp
++++ b/osd_status.cpp
+@@ -34,7 +34,7 @@ void OsdStatusMonitor::OsdTitle(const char *Title) {
+ }
+ 
+ #if VDRVERSNUM >= 20704
+-void OsdStatusMonitor::OsdStatusMessage2(eMessageType Type, const char *Message) {
++void OsdStatusMonitor::OsdStatusMessage(eMessageType Type, const char *Message) {
+   cOsdStatusMonitorLock lw(true);
+   m_message_type = Type;
+ #else
+@@ -68,7 +68,7 @@ void cLiveOsdItem::Update(const char* Text) {
+     // The OSD displays the given single line Text as menu item at Index.
+ */
+ #if VDRVERSNUM >= 20704 || (defined(OSDITEM) && OSDITEM == 2)
+-void OsdStatusMonitor::OsdItem2(const char *Text, int Index, bool Selectable) {
++void OsdStatusMonitor::OsdItem(const char *Text, int Index, bool Selectable) {
+   cOsdStatusMonitorLock lw(true);
+   m_items.emplace_back(Text,Selectable);
+ #else
+@@ -80,12 +80,12 @@ void OsdStatusMonitor::OsdItem(const char *Text, int Index) {
+ }
+ 
+ #if VDRVERSNUM >= 20704 || defined(OSDSELECTED_3)
+-void OsdStatusMonitor::OsdCurrentItem2(const char *Text, int Index) {
++void OsdStatusMonitor::OsdCurrentItem(const char *Text, int Index) {
+   cOsdStatusMonitorLock lw(true);
+   if (Index >= 0) m_selected = Index;
+   if (Text) {
+     if (m_selected < 0)
+-      esyslog("live: ERROR, OsdStatusMonitor::OsdItemChanged2, m_selected < 0, Text = %s", Text);
++      esyslog("live: ERROR, OsdStatusMonitor::OsdItemChanged, m_selected < 0, Text = %s", Text);
+     else
+       m_items[m_selected].Update(Text);
+   }
+diff --git a/osd_status.h b/osd_status.h
+index 1373136..4c9da20 100644
+--- a/osd_status.h
++++ b/osd_status.h
+@@ -236,7 +236,7 @@ template <size_t N> cToSvConcat<N>& appendHtml(cToSvConcat<N>& target) {
+   virtual void OsdTitle(const char *Title);
+                // Title has been displayed in the title line of the menu.
+ #if VDRVERSNUM >= 20704
+-  virtual void OsdStatusMessage2(eMessageType Type, const char *Message);
++  virtual void OsdStatusMessage(eMessageType Type, const char *Message);
+ #else
+   virtual void OsdStatusMessage(const char *Message);
+ #endif
+@@ -245,13 +245,13 @@ template <size_t N> cToSvConcat<N>& appendHtml(cToSvConcat<N>& target) {
+   virtual void OsdHelpKeys(const char *Red, const char *Green, const char *Yellow, const char *Blue);
+                // The help keys have been set to the given values (may be NULL).
+ #if VDRVERSNUM >= 20704 || (defined(OSDITEM) && OSDITEM == 2)
+-  virtual void OsdItem2(const char *Text, int Index, bool Selectable);
++  virtual void OsdItem(const char *Text, int Index, bool Selectable);
+ #else
+   virtual void OsdItem(const char *Text, int Index);
+                // The OSD displays the given single line Text as menu item at Index.
+ #endif
+ #if VDRVERSNUM >= 20704 || defined(OSDSELECTED_3)
+-  virtual void OsdCurrentItem2(const char *Text, int Index);
++  virtual void OsdCurrentItem(const char *Text, int Index);
+ #else
+   bool Select_if_matches(std::vector<cLiveOsdItem>::size_type line, const char *Text);
+   virtual void OsdCurrentItem(const char *Text);
+-- 
+2.49.0.windows.1
+

@@ -13,11 +13,13 @@ rm -f /storage/.cache/switch_kodi_vdr
 touch /storage/.cache/switch_kodi_vdr
 
 # if libcec exists, set a symbolic link
-for i in 6 7 8 9; do
-  if [ -L /usr/lib/libcec.so.${i} ] && [ ! -f /var/lib/libcec.so.${i} ]; then
-      (cd /var/lib && ln -s /usr/lib/libcec.so.${i} libcec.so.${i})
-  fi
-done
+if [ -f /usr/lib/libcec.so.6.0.2 ] && [ ! -f /var/lib/libcec.so.6 ]; then
+   (cd /var/lib && ln -s /usr/lib/libcec.so.6.0.2 libcec.so.6)
+fi
+
+if [ -f /usr/lib/libcec.so.7.0.0 ] && [ ! -f /var/lib/libcec.so.7 ]; then
+   (cd /var/lib && ln -s /usr/lib/libcec.so.7.0.0 libcec.so.7)
+fi
 
 # monitor file changes
 systemctl start switch_kodi_vdr.path

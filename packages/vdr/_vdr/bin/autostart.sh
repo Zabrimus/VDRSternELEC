@@ -14,7 +14,7 @@ touch /storage/.cache/switch_kodi_vdr
 
 # if libcec exists, set a symbolic link
 for i in 6 7 8 9; do
-  if [ -L /usr/lib/libcec.so.${i} ] && [ -e /usr/lib/libcec.so.${i} ]; then
+  if [ -L /usr/lib/libcec.so.${i} ] && [ ! -f /var/lib/libcec.so.${i} ]; then
       (cd /var/lib && ln -s /usr/lib/libcec.so.${i} libcec.so.${i})
   fi
 done

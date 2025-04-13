@@ -1,0 +1,25 @@
+diff --git a/scripts/get_archive b/scripts/get_archive
+index 1753c08378..c9232ab3b4 100755
+--- a/scripts/get_archive
++++ b/scripts/get_archive
+@@ -20,7 +20,10 @@ build_msg "CLR_GET" "GET" "${1} (archive)" "indent"
+ 
+ pkg_lock_status "GETPKG" "${PKG_NAME}" "unpack" "downloading package..."
+ 
+-PACKAGE_MIRROR="${DISTRO_MIRROR}/${PKG_NAME}/${PKG_SOURCE_NAME}"
++PACKAGE_MIRROR=""
++for mirror in ${DISTRO_MIRROR}; do
++  PACKAGE_MIRROR="${PACKAGE_MIRROR} ${mirror}/${PKG_NAME}/${PKG_SOURCE_NAME}"
++done;
+ 
+ [ "${VERBOSE}" != "yes" ] && GET_OPT="--silent --show-error"
+ GET_CMD="curl ${GET_OPT} --fail --connect-timeout 30 --retry 3 --continue-at - --location --max-redirs 5 --output ${PACKAGE}"
+@@ -33,7 +36,7 @@ rm -f "${STAMP_URL}" "${STAMP_SHA}"
+ NBGET=10
+ NBCHKS=2
+ while [ ${NBGET} -gt 0 -a ${NBCHKS} -gt 0 ]; do
+-  for url in "${PKG_URL}" "${PACKAGE_MIRROR}"; do
++  for url in "${PKG_URL}" ${PACKAGE_MIRROR}; do
+     rm -f "${PACKAGE}"
+     if ${GET_CMD} "${url}"; then
+       CALC_SHA256=$(sha256sum "${PACKAGE}" | cut -d" " -f1)

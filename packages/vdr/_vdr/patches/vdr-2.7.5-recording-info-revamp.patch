@@ -1,0 +1,187 @@
+--- a/recording.c	2025/04/11 12:39:03	5.39
++++ b/recording.c	2025/04/15 12:02:08
+@@ -467,6 +467,16 @@
+   framesPerSecond = FramesPerSecond;
+ }
+ 
++void cRecordingInfo::SetPriority(int Priority)
++{
++  priority = Priority;
++}
++
++void cRecordingInfo::SetLifetime(int Lifetime)
++{
++  lifetime = Lifetime;
++}
++
+ void cRecordingInfo::SetFrameParams(uint16_t FrameWidth, uint16_t FrameHeight, eScanType ScanType, eAspectRatio AspectRatio)
+ {
+   frameWidth  = FrameWidth;
+@@ -869,7 +879,6 @@
+   instanceId = InstanceId;
+   isPesRecording = false;
+   isOnVideoDirectoryFileSystem = -1; // unknown
+-  framesPerSecond = DEFAULTFRAMESPERSECOND;
+   numFrames = -1;
+   deleted = 0;
+   // set up the actual name:
+@@ -903,13 +912,11 @@
+   // substitute characters that would cause problems in file names:
+   strreplace(name, '\n', ' ');
+   start = Timer->StartTime();
+-  priority = Timer->Priority();
+-  lifetime = Timer->Lifetime();
+   // handle info:
+   info = new cRecordingInfo(Timer->Channel(), Event);
+   info->SetAux(Timer->Aux());
+-  info->priority = priority;
+-  info->lifetime = lifetime;
++  info->SetPriority(Timer->Priority());
++  info->SetLifetime(Timer->Lifetime());
+ }
+ 
+ cRecording::cRecording(const char *FileName)
+@@ -919,11 +926,8 @@
+   fileSizeMB = -1; // unknown
+   channel = -1;
+   instanceId = -1;
+-  priority = MAXPRIORITY; // assume maximum in case there is no info file
+-  lifetime = MAXLIFETIME;
+   isPesRecording = false;
+   isOnVideoDirectoryFileSystem = -1; // unknown
+-  framesPerSecond = DEFAULTFRAMESPERSECOND;
+   numFrames = -1;
+   deleted = 0;
+   titleBuffer = NULL;
+@@ -942,6 +946,8 @@
+      struct tm tm_r;
+      struct tm t = *localtime_r(&now, &tm_r); // this initializes the time zone in 't'
+      t.tm_isdst = -1; // makes sure mktime() will determine the correct DST setting
++     int priority = MAXPRIORITY;
++     int lifetime = MAXLIFETIME;
+      if (7 == sscanf(p + 1, DATAFORMATTS, &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &channel, &instanceId)
+       || 7 == sscanf(p + 1, DATAFORMATPES, &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &priority, &lifetime)) {
+         t.tm_year -= 1900;
+@@ -963,10 +969,9 @@
+      if (f) {
+         if (!info->Read(f))
+            esyslog("ERROR: EPG data problem in file %s", *InfoFileName);
+-        else if (!isPesRecording) {
+-           priority = info->priority;
+-           lifetime = info->lifetime;
+-           framesPerSecond = info->framesPerSecond;
++        else if (isPesRecording) {
++           info->SetPriority(priority);
++           info->SetLifetime(lifetime);
+            }
+         fclose(f);
+         }
+@@ -1156,8 +1161,8 @@
+      struct tm tm_r;
+      struct tm *t = localtime_r(&start, &tm_r);
+      const char *fmt = isPesRecording ? NAMEFORMATPES : NAMEFORMATTS;
+-     int ch = isPesRecording ? priority : channel;
+-     int ri = isPesRecording ? lifetime : instanceId;
++     int ch = isPesRecording ? info->Priority() : channel;
++     int ri = isPesRecording ? info->Lifetime() : instanceId;
+      char *Name = LimitNameLengths(strdup(name), DirectoryPathMax - strlen(cVideoDirectory::Name()) - 1 - 42, DirectoryNameMax); // 42 = length of an actual recording directory name (generated with DATAFORMATTS) plus some reserve
+      if (strcmp(Name, name) != 0)
+         dsyslog("recording file name '%s' truncated to '%s'", name, Name);
+@@ -1279,9 +1284,6 @@
+ void cRecording::ReadInfo(void)
+ {
+   info->Read();
+-  priority = info->priority;
+-  lifetime = info->lifetime;
+-  framesPerSecond = info->framesPerSecond;
+ }
+ 
+ bool cRecording::WriteInfo(const char *OtherFileName)
+@@ -1316,10 +1318,10 @@
+ {
+   if (NewPriority != Priority() || NewLifetime != Lifetime()) {
+      dsyslog("changing priority/lifetime of '%s' to %d/%d", Name(), NewPriority, NewLifetime);
++     info->SetPriority(NewPriority);
++     info->SetLifetime(NewLifetime);
+      if (IsPesRecording()) {
+         cString OldFileName = FileName();
+-        priority = NewPriority;
+-        lifetime = NewLifetime;
+         free(fileName);
+         fileName = NULL;
+         cString NewFileName = FileName();
+@@ -1328,8 +1330,6 @@
+         info->SetFileName(NewFileName);
+         }
+      else {
+-        priority = info->priority = NewPriority;
+-        lifetime = info->lifetime = NewLifetime;
+         if (!WriteInfo())
+            return false;
+         }
+@@ -1465,7 +1465,7 @@
+   int IndexLength = cIndexFile::GetLength(fileName, isPesRecording);
+   if (IndexLength > 0) {
+      cMarks Marks;
+-     if (Marks.Load(fileName, framesPerSecond, isPesRecording))
++     if (Marks.Load(fileName, FramesPerSecond(), isPesRecording))
+         return Marks.GetFrameAfterEdit(IndexLength - 1, IndexLength - 1);
+      }
+   return -1;
+--- a/recording.h	2025/03/02 11:03:35	5.13
++++ b/recording.h	2025/04/15 11:33:59
+@@ -93,6 +93,8 @@
+   const cComponents *Components(void) const { return event->Components(); }
+   const char *Aux(void) const { return aux; }
+   double FramesPerSecond(void) const { return framesPerSecond; }
++  int Priority(void) const { return priority; }
++  int Lifetime(void) const { return lifetime; }
+   uint16_t FrameWidth(void) const { return frameWidth; }
+   uint16_t FrameHeight(void) const { return frameHeight; }
+   eScanType ScanType(void) const { return scanType; }
+@@ -101,6 +103,8 @@
+   const char *AspectRatioText(void) const { return AspectRatioTexts[aspectRatio]; }
+   cString FrameParams(void) const;
+   void SetFramesPerSecond(double FramesPerSecond);
++  void SetPriority(int Priority);
++  void SetLifetime(int Lifetime);
+   void SetFrameParams(uint16_t FrameWidth, uint16_t FrameHeight, eScanType ScanType, eAspectRatio AspectRatio);
+   void SetFileName(const char *FileName);
+   int Errors(void) const { return errors; } // returns -1 if undefined
+@@ -128,7 +132,6 @@
+   int instanceId;
+   bool isPesRecording;
+   mutable int isOnVideoDirectoryFileSystem; // -1 = unknown, 0 = no, 1 = yes
+-  double framesPerSecond;
+   cRecordingInfo *info;
+   cRecording(const cRecording&); // can't copy cRecording
+   cRecording &operator=(const cRecording &); // can't assign cRecording
+@@ -137,8 +140,6 @@
+   void ClearSortName(void);
+   void SetId(int Id); // should only be set by cRecordings
+   time_t start;
+-  int priority;
+-  int lifetime;
+   time_t deleted;
+ public:
+   cRecording(cTimer *Timer, const cEvent *Event);
+@@ -146,8 +147,8 @@
+   virtual ~cRecording() override;
+   int Id(void) const { return id; }
+   time_t Start(void) const { return start; }
+-  int Priority(void) const { return priority; }
+-  int Lifetime(void) const { return lifetime; }
++  int Priority(void) const { return info->Priority(); }
++  int Lifetime(void) const { return info->Lifetime(); }
+   time_t Deleted(void) const { return deleted; }
+   void SetDeleted(void) { deleted = time(NULL); }
+   virtual int Compare(const cListObject &ListObject) const override;
+@@ -171,7 +172,7 @@
+   const char *PrefixFileName(char Prefix);
+   int HierarchyLevels(void) const;
+   void ResetResume(void) const;
+-  double FramesPerSecond(void) const { return framesPerSecond; }
++  double FramesPerSecond(void) const { return info->FramesPerSecond(); }
+   int NumFrames(void) const;
+        ///< Returns the number of frames in this recording.
+        ///< If the number of frames is unknown, -1 will be returned.

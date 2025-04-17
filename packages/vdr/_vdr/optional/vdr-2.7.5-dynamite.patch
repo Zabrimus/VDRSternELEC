@@ -1,20 +1,20 @@
-Index: vdr-2.7.3_sik/ci.h
+Index: vdr-2.7.5_sik/ci.h
 ===================================================================
---- vdr-2.7.3_sik.orig/ci.h	2024-10-30 19:18:40.714527909 +0100
-+++ vdr-2.7.3_sik/ci.h	2024-10-30 19:18:40.686528146 +0100
+--- vdr-2.7.5_sik.orig/ci.h	2025-04-17 18:34:19.397591613 +0200
++++ vdr-2.7.5_sik/ci.h	2025-04-17 18:34:19.381591760 +0200
 @@ -209,6 +209,8 @@
    cCiAdapter(void);
-   virtual ~cCiAdapter();
+   virtual ~cCiAdapter() override;
         ///< The derived class must call Cancel(3) in its destructor.
 +  virtual bool SetIdle(bool Idle, bool TestOnly) { return false; }
 +  virtual bool IsIdle(void) const { return false; }
    };
  
  class cTPDU;
-Index: vdr-2.7.3_sik/device.c
+Index: vdr-2.7.5_sik/device.c
 ===================================================================
---- vdr-2.7.3_sik.orig/device.c	2024-10-30 19:18:40.714527909 +0100
-+++ vdr-2.7.3_sik/device.c	2024-10-30 19:18:40.690528112 +0100
+--- vdr-2.7.5_sik.orig/device.c	2025-04-17 18:34:19.397591613 +0200
++++ vdr-2.7.5_sik/device.c	2025-04-17 18:34:19.381591760 +0200
 @@ -75,12 +75,22 @@
  cDevice *cDevice::device[MAXDEVICES] = { NULL };
  cDevice *cDevice::primaryDevice = NULL;
@@ -192,7 +192,7 @@ Index: vdr-2.7.3_sik/device.c
    if (From == 0)
       From = time(NULL);
    if (From == occupiedFrom)
-@@ -1382,7 +1447,10 @@
+@@ -1396,7 +1461,10 @@
  
  bool cDevice::AttachPlayer(cPlayer *Player)
  {
@@ -203,7 +203,7 @@ Index: vdr-2.7.3_sik/device.c
       if (player)
          Detach(player);
       DELETENULL(liveSubtitle);
-@@ -1401,6 +1469,8 @@
+@@ -1415,6 +1483,8 @@
  
  void cDevice::Detach(cPlayer *Player)
  {
@@ -212,7 +212,7 @@ Index: vdr-2.7.3_sik/device.c
    if (Player && player == Player) {
       cPlayer *p = player;
       player = NULL; // avoids recursive calls to Detach()
-@@ -1420,6 +1490,8 @@
+@@ -1434,6 +1504,8 @@
  
  void cDevice::StopReplay(void)
  {
@@ -221,7 +221,7 @@ Index: vdr-2.7.3_sik/device.c
    if (player) {
       Detach(player);
       if (IsPrimaryDevice())
-@@ -1694,6 +1766,8 @@
+@@ -1714,6 +1786,8 @@
  
  int cDevice::Priority(bool IgnoreOccupied) const
  {
@@ -230,7 +230,7 @@ Index: vdr-2.7.3_sik/device.c
    int priority = IDLEPRIORITY;
    if (IsPrimaryDevice() && !Replaying() && HasProgramme())
       priority = TRANSFERPRIORITY; // we use the same value here, no matter whether it's actual Transfer Mode or real live viewing
-@@ -1714,6 +1788,8 @@
+@@ -1734,6 +1808,8 @@
  
  bool cDevice::Receiving(bool Dummy) const
  {
@@ -239,7 +239,7 @@ Index: vdr-2.7.3_sik/device.c
    cMutexLock MutexLock(&mutexReceiver);
    for (int i = 0; i < MAXRECEIVERS; i++) {
        if (receiver[i])
-@@ -1814,10 +1890,13 @@
+@@ -1834,10 +1910,13 @@
  
  bool cDevice::AttachReceiver(cReceiver *Receiver)
  {
@@ -253,7 +253,7 @@ Index: vdr-2.7.3_sik/device.c
  // activate the following line if you need it - actually the driver should be fixed!
  //#define WAIT_FOR_TUNER_LOCK
  #ifdef WAIT_FOR_TUNER_LOCK
-@@ -1868,6 +1947,8 @@
+@@ -1888,6 +1967,8 @@
  
  void cDevice::Detach(cReceiver *Receiver, bool ReleaseCam)
  {
@@ -262,7 +262,7 @@ Index: vdr-2.7.3_sik/device.c
    if (!Receiver || Receiver->device != this)
       return;
    bool receiversLeft = false;
-@@ -1898,6 +1979,8 @@
+@@ -1918,6 +1999,8 @@
  
  void cDevice::DetachAll(int Pid)
  {
@@ -271,7 +271,7 @@ Index: vdr-2.7.3_sik/device.c
    if (Pid) {
       cMutexLock MutexLock(&mutexReceiver);
       for (int i = 0; i < MAXRECEIVERS; i++) {
-@@ -1911,6 +1994,8 @@
+@@ -1931,6 +2014,8 @@
  
  void cDevice::DetachAllReceivers(void)
  {
@@ -280,7 +280,7 @@ Index: vdr-2.7.3_sik/device.c
    cMutexLock MutexLock(&mutexReceiver);
    for (int i = 0; i < MAXRECEIVERS; i++)
        Detach(receiver[i], false);
-@@ -1994,3 +2079,25 @@
+@@ -2014,3 +2099,25 @@
  {
    delivered = Count;
  }
@@ -306,16 +306,16 @@ Index: vdr-2.7.3_sik/device.c
 +{
 +  DynamicDeviceProbes.Del(this, false);
 +}
-Index: vdr-2.7.3_sik/device.h
+Index: vdr-2.7.5_sik/device.h
 ===================================================================
---- vdr-2.7.3_sik.orig/device.h	2024-10-30 19:18:40.714527909 +0100
-+++ vdr-2.7.3_sik/device.h	2024-10-30 19:22:42.668413837 +0100
+--- vdr-2.7.5_sik.orig/device.h	2025-04-17 18:34:19.397591613 +0200
++++ vdr-2.7.5_sik/device.h	2025-04-17 18:34:19.381591760 +0200
 @@ -188,7 +188,6 @@
    static int nextCardIndex;
    int cardIndex;
  protected:
 -  cDevice(void);
-   virtual ~cDevice();
+   virtual ~cDevice() override;
    virtual bool Ready(void);
           ///< Returns true if this device is ready. Devices with conditional
 @@ -220,9 +219,6 @@
@@ -349,7 +349,7 @@ Index: vdr-2.7.3_sik/device.h
  
  // Image Grab facilities
  
-@@ -655,9 +648,6 @@
+@@ -657,9 +650,6 @@
    cTsToPes tsToPesSubtitle;
    bool isPlayingVideo;
  protected:
@@ -359,7 +359,7 @@ Index: vdr-2.7.3_sik/device.h
    virtual bool CanReplay(void) const;
         ///< Returns true if this device can currently start a replay session.
    virtual bool SetPlayMode(ePlayMode PlayMode);
-@@ -876,6 +866,38 @@
+@@ -878,6 +868,38 @@
         ///< Detaches all receivers from this device for this pid.
    virtual void DetachAllReceivers(void);
         ///< Detaches all receivers from this device.
@@ -398,7 +398,7 @@ Index: vdr-2.7.3_sik/device.h
    };
  
  /// Derived cDevice classes that can receive channels will have to provide
-@@ -916,4 +938,47 @@
+@@ -918,4 +940,47 @@
       ///< to Get().
    };
  
@@ -426,8 +426,8 @@ Index: vdr-2.7.3_sik/device.h
 +    };
 +  static cList<cDynamicDeviceProbeItem> commandQueue;
 +     ///< A list where all attach/detach commands are queued
-+     ///< so they can be processed in the cDynamiteWorker thread
-+     ///< of the dynamite plugin.
++     ///< so they can be processed in the MainThreadHook of
++     ///< the dynamite plugin.
 +public:
 +  static void QueueDynamicDeviceCommand(eDynamicDeviceProbeCommand Cmd, const char *DevPath);
 +     ///< Plugins which support cDynamicDeviceProbe must use this function
@@ -446,10 +446,10 @@ Index: vdr-2.7.3_sik/device.h
 +extern cList<cDynamicDeviceProbe> DynamicDeviceProbes;
 +
  #endif //__DEVICE_H
-Index: vdr-2.7.3_sik/dvbci.c
+Index: vdr-2.7.5_sik/dvbci.c
 ===================================================================
---- vdr-2.7.3_sik.orig/dvbci.c	2024-10-30 19:18:40.714527909 +0100
-+++ vdr-2.7.3_sik/dvbci.c	2024-10-30 19:18:40.698528044 +0100
+--- vdr-2.7.5_sik.orig/dvbci.c	2025-04-17 18:34:19.397591613 +0200
++++ vdr-2.7.5_sik/dvbci.c	2025-04-17 18:34:19.385591723 +0200
 @@ -10,15 +10,18 @@
  #include "dvbci.h"
  #include <linux/dvb/ca.h>
@@ -556,10 +556,10 @@ Index: vdr-2.7.3_sik/dvbci.c
 +     return new cDvbCiAdapter(Device, Fd, Adapter, Frontend);
    return NULL;
  }
-Index: vdr-2.7.3_sik/dvbci.h
+Index: vdr-2.7.5_sik/dvbci.h
 ===================================================================
---- vdr-2.7.3_sik.orig/dvbci.h	2024-10-30 19:18:40.714527909 +0100
-+++ vdr-2.7.3_sik/dvbci.h	2024-10-30 19:18:40.698528044 +0100
+--- vdr-2.7.5_sik.orig/dvbci.h	2025-04-17 18:34:19.397591613 +0200
++++ vdr-2.7.5_sik/dvbci.h	2025-04-17 18:34:19.385591723 +0200
 @@ -16,16 +16,24 @@
  private:
    cDevice *device;
@@ -571,15 +571,15 @@ Index: vdr-2.7.3_sik/dvbci.h
 +  bool OpenCa(void);
 +  void CloseCa(void);
  protected:
-   virtual int Read(uint8_t *Buffer, int MaxLength);
-   virtual void Write(const uint8_t *Buffer, int Length);
-   virtual bool Reset(int Slot);
-   virtual eModuleStatus ModuleStatus(int Slot);
-   virtual bool Assign(cDevice *Device, bool Query = false);
+   virtual int Read(uint8_t *Buffer, int MaxLength) override;
+   virtual void Write(const uint8_t *Buffer, int Length) override;
+   virtual bool Reset(int Slot) override;
+   virtual eModuleStatus ModuleStatus(int Slot) override;
+   virtual bool Assign(cDevice *Device, bool Query = false) override;
 -  cDvbCiAdapter(cDevice *Device, int Fd);
 +  cDvbCiAdapter(cDevice *Device, int Fd, int Adapter = -1, int Frontend = -1);
  public:
-   virtual ~cDvbCiAdapter();
+   virtual ~cDvbCiAdapter() override;
 -  static cDvbCiAdapter *CreateCiAdapter(cDevice *Device, int Fd);
 +  virtual bool SetIdle(bool Idle, bool TestOnly);
 +  virtual bool IsIdle(void) const { return idle; }
@@ -587,21 +587,21 @@ Index: vdr-2.7.3_sik/dvbci.h
    };
  
  #endif //__DVBCI_H
-Index: vdr-2.7.3_sik/dvbdevice.c
+Index: vdr-2.7.5_sik/dvbdevice.c
 ===================================================================
---- vdr-2.7.3_sik.orig/dvbdevice.c	2024-10-30 19:18:40.714527909 +0100
-+++ vdr-2.7.3_sik/dvbdevice.c	2024-10-30 19:18:40.706527977 +0100
+--- vdr-2.7.5_sik.orig/dvbdevice.c	2025-04-17 18:34:19.397591613 +0200
++++ vdr-2.7.5_sik/dvbdevice.c	2025-04-17 18:34:19.385591723 +0200
 @@ -571,6 +571,10 @@
    void ResetToneAndVoltage(void);
    bool SetFrontend(void);
-   virtual void Action(void);
+   virtual void Action(void) override;
 +
 +  mutable bool isIdle;
 +  bool OpenFrontend(void) const;
 +  bool CloseFrontend(void);
  public:
    cDvbTuner(const cDvbDevice *Device, int Adapter, int Frontend);
-   virtual ~cDvbTuner();
+   virtual ~cDvbTuner() override;
 @@ -594,6 +598,8 @@
    int GetSignalStrength(void) const;
    int GetSignalQuality(void) const;
@@ -794,21 +794,21 @@ Index: vdr-2.7.3_sik/dvbdevice.c
  }
  
  int cDvbDevice::NumProvidedSystems(void) const
-Index: vdr-2.7.3_sik/dvbdevice.h
+Index: vdr-2.7.5_sik/dvbdevice.h
 ===================================================================
---- vdr-2.7.3_sik.orig/dvbdevice.h	2024-10-30 19:18:40.714527909 +0100
-+++ vdr-2.7.3_sik/dvbdevice.h	2024-10-30 19:18:40.706527977 +0100
+--- vdr-2.7.5_sik.orig/dvbdevice.h	2025-04-17 18:34:19.397591613 +0200
++++ vdr-2.7.5_sik/dvbdevice.h	2025-04-17 18:34:19.385591723 +0200
 @@ -187,12 +187,14 @@
    cDvbDevice *bondedDevice;
    mutable bool needsDetachBondedReceivers;
  public:
 -  cDvbDevice(int Adapter, int Frontend);
 +  cDvbDevice(int Adapter, int Frontend, cDevice *ParentDevice = NULL);
-   virtual ~cDvbDevice();
+   virtual ~cDvbDevice() override;
    int Adapter(void) const { return adapter; }
    int Frontend(void) const;
-   virtual cString DeviceType(void) const;
-   virtual cString DeviceName(void) const;
+   virtual cString DeviceType(void) const override;
+   virtual cString DeviceName(void) const override;
 +  virtual bool SetIdleDevice(bool Idle, bool TestOnly);
 +
    static bool BondDevices(const char *Bondings);

@@ -1,6 +1,6 @@
 diff -ru8bBwd a/meson.build b/meson.build
---- a/meson.build	2025-04-04 19:21:22.000000000 +0200
-+++ b/meson.build	2025-04-05 14:37:24.551885321 +0200
+--- a/meson.build	2025-04-16 16:25:54.000000000 +0200
++++ b/meson.build	2025-04-17 10:43:03.788695092 +0200
 @@ -1,16 +1,18 @@
  project('cefbrowser', 'cpp', 'c',
    version : '0.1',
@@ -47,8 +47,7 @@ diff -ru8bBwd a/meson.build b/meson.build
  #
  # spdlog
  #
-@@ -57,32 +64,17 @@
- 
+@@ -58,32 +65,17 @@
  #
  # ssl
  #
@@ -56,7 +55,7 @@ diff -ru8bBwd a/meson.build b/meson.build
  dep_crypto = dependency('libcrypto')
  
  # thrift
--# thrift
+ # thrift
 -thrift_opts = cmake.subproject_options()
 -thrift_opts.add_cmake_defines({'WITH_AS3': 'OFF',
 -                               'WITH_QT5': 'OFF',
@@ -68,6 +67,7 @@ diff -ru8bBwd a/meson.build b/meson.build
 -                               'WITH_OPENSSL': 'OFF',
 -                               'BUILD_SHARED_LIBS': 'OFF',
 -                               'BUILD_COMPILER': 'OFF',
+-                               'CMAKE_INSTALL_PREFIX': '.',
 -                               'CMAKE_POSITION_INDEPENDENT_CODE': 'ON' })
 -
 -thrift_proj = cmake.subproject('thrift', options: thrift_opts)
@@ -81,7 +81,7 @@ diff -ru8bBwd a/meson.build b/meson.build
  deps = []
  foreach lib_name : shared_libs
          deps += CXX.find_library(lib_name, dirs : [meson.project_source_root() + '/subprojects/cef/Release'])
-@@ -97,19 +89,19 @@
+@@ -98,19 +90,19 @@
                   'thrift-services/src-client/VdrClient.cpp', 'thrift-services/src-client/TranscoderClient.cpp',
                   'thrift-services/src-gen/CommonService.cpp', 'thrift-services/src-gen/common_types.cpp',
                   'thrift-services/src-gen/CefBrowser.cpp', 'thrift-services/src-gen/cefbrowser_types.cpp',
@@ -107,14 +107,14 @@ diff -ru8bBwd a/meson.build b/meson.build
 +install_subdir('static-content/database', install_dir : 'cefbrowser')
 +install_subdir('static-content/application', install_dir : 'cefbrowser')
 diff -ru8bBwd a/meson_options.txt b/meson_options.txt
---- a/meson_options.txt	2025-04-04 19:21:22.000000000 +0200
-+++ b/meson_options.txt	2025-04-05 14:36:38.861670076 +0200
+--- a/meson_options.txt	2025-04-16 16:25:54.000000000 +0200
++++ b/meson_options.txt	2025-04-17 10:42:27.152531287 +0200
 @@ -1 +1,2 @@
  option('arch', type : 'combo', choices : ['x86', 'arm', 'arm64'], value : 'x86')
 +option('subarch', type : 'string', value : 'armv8-a')
 diff -ru8bBwd a/subprojects/packagefiles/mini-0.9.14/meson.build b/subprojects/packagefiles/mini-0.9.14/meson.build
---- a/subprojects/packagefiles/mini-0.9.14/meson.build	2025-04-04 19:21:22.000000000 +0200
-+++ b/subprojects/packagefiles/mini-0.9.14/meson.build	2025-04-05 14:36:38.861670076 +0200
+--- a/subprojects/packagefiles/mini-0.9.14/meson.build	2025-04-16 16:25:54.000000000 +0200
++++ b/subprojects/packagefiles/mini-0.9.14/meson.build	2025-04-17 10:42:27.152531287 +0200
 @@ -1,15 +1,15 @@
  project(
    'mINI',
@@ -133,8 +133,8 @@ diff -ru8bBwd a/subprojects/packagefiles/mini-0.9.14/meson.build b/subprojects/p
  
  mini_dep = declare_dependency(
 diff -ru8bBwd a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build
---- a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build	2025-04-04 19:21:22.000000000 +0200
-+++ b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build	2025-04-05 14:36:38.861670076 +0200
+--- a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build	2025-04-16 16:25:54.000000000 +0200
++++ b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build	2025-04-17 10:42:27.152531287 +0200
 @@ -1,15 +1,15 @@
  project(
    'tiny_process_library',

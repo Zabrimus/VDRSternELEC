@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-skinflatplus"
-PKG_VERSION="b43b79915a5a75b56718e5905ac03fe4c637eb86"
-PKG_SHA256="ce11a890c8a5bc46a915d9c09adbfabc6a3695effef98299a0f605eaaa0aac49"
+PKG_VERSION="831a6b87f01a9a9fafae15cc5ed8ae2737427f5c"
+PKG_SHA256="47dc680d14ca75119223333ffb1c67dca5b6fd23bbc65267c0deba6e82a7c3fc"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/MegaV0lt/vdr-plugin-skinflatplus"
 PKG_URL="https://github.com/MegaV0lt/vdr-plugin-skinflatplus/archive/${PKG_VERSION}.zip"

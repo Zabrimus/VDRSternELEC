@@ -10,7 +10,7 @@ jobs:
   # If you also want to run this workflow, then change or remove the condition in job 'cron'
 
   buildtype:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     outputs:
       type: ${{ steps.get.outputs.type }}
 

@@ -50,6 +50,33 @@ jobs:
       - name: Create dir and determine source artifact
         id: source_artifact
         run: |
+          echo "Apt Update"
+          sudo apt update
+          
+          echo "Install packages"
+          sudo apt -y install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless libxml-parser-perl lzop libjson-parse-perl libjson-perl \
+                      libparse-yapp-perl libncurses5-dev bc bzip2 diffutils gawk gcc gperf gzip file patchutils lzop make patch perl sed tar unzip wget xz-utils zip zstd \
+                      libncurses5-dev libc6-dev libparse-yapp-perl libxml-parser-perl qemu-user-binfmt g++ xfonts-utils xsltproc rdfind
+          
+          echo "Apt Clean"
+          sudo apt -y clean
+  
+          echo "Remove"
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /usr/share/man /usr/share/doc \
+                      /usr/local/aws-sam-cli /usr/local/aws-cli /usr/local/share/powershell /usr/share/maven-repo /usr/share/maven-repo \
+                      /usr/share/az_11.3.1 /var/lib/gems /opt/az /usr/libexec/docker /etc/docker \
+                      /usr/lib/heroku /usr/lib/llvm-14 /usr/lib/ruby /usr/local/include/node /usr/local/lib/node_modules \
+                      /usr/local/.ghcup /usr/local/n /usr/local/doc /usr/local/share/vcpkg /usr/local/julia1.10.2 \
+                      /usr/share/ri /var/lib/docker /var/lib/php /opt/pipx /opt/microsoft \
+                      /usr/include/ruby* /usr/include/postgresql /usr/lib/jvm/java-11-openjdk-amd64/legal usr/lib/jvm/java-11-openjdk-amd64/man \
+                      /usr/lib/x86_64-linux-gnu/ruby /usr/local/share/chromium /usr/local/man /usr/share/swig4.0 /usr/share/apache-maven* \
+                      /usr/share/rubygems-integration /usr/share/miniconda /usr/share/swift /usr/share/alsa /usr/share/icons /var/lib/waagent \
+                      /var/lib/apt/lists /root/.dotnet /root/.npm /root/.mozilla /root/.local/share/powershell /root/.gradle \
+                      /root/.android
+          
+          echo "Apt Autoremove"
+          sudo apt -y autoremove
+          
           echo "Clone submodules"
           git submodule update --init -- CoreELEC
           git submodule update --init -- LibreELEC.tv

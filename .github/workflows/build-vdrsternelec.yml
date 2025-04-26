@@ -31,17 +31,7 @@ jobs:
     name: ${{ inputs.config }}
     steps:
       - name: Maximize build space
-        uses: AdityaGarg8/remove-unwanted-software@v5
-        with:
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
-          remove-large-packages: 'true'
-          remove-cached-tools: 'true'
-          remove-swapfile: 'true'
-          verbose: 'false'
+        uses: Zabrimus/maximize-build-space@master
 
       - uses: actions/checkout@v3
         with:
@@ -50,61 +40,6 @@ jobs:
       - name: Create dir and determine source artifact
         id: source_artifact
         run: |
-          echo "==> apt Update"
-          sudo apt update
-          
-          echo "==> deinstall packages"
-          for i in apache2 apache2-bin apache2-utils \
-                clang-format-13 clang-format-14 clang-format-15 clang-13 clang-14 clang-15 clang-tidy-13 clang-tidy-14 clang-tidy-15 clang-tools-13 clang-tools-14 clang-tools-15 \
-                lld-13 lld-14 lld-15 llvm-13 llvm-14 llvm-15 \
-                cloud-guest-utils cloud-init cloud-initramfs-copymods cloud-initramfs-dyn-netconf \
-                cpp-9 cpp-10 cpp-11 g++-9 g++-10 g++-11 gcc-9 gcc-10 gcc-11 \
-                gfortran gfortran-9 gfortran-10 gfortran-11 gfortran-12 \
-                mercurial mercurial-common mono-gac mono-llvm-tools mono-runtime mono-runtime-common mssql-tools \
-                aspnetcore-runtime-6.0 aspnetcore-runtime-8.0 aspnetcore-runtime-9.0 aspnetcore-targeting-pack-6.0 aspnetcore-targeting-pack-8.0 aspnetcore-targeting-pack-9.0 \
-                docker-ce docker-ce-cli firefox azure-cli microsoft-edge-stable \
-                dotnet-apphost-pack-6.0 dotnet-apphost-pack-8.0 dotnet-apphost-pack-9.0 \
-                dotnet-hostfxr-6.0 dotnet-hostfxr-8.0 dotnet-hostfxr-9.0 \
-                dotnet-runtime-6.0 dotnet-runtime-8.0 dotnet-runtime-9.0 \
-                dotnet-runtime-deps-6.0 dotnet-runtime-deps-8.0 dotnet-runtime-deps-9.0 \
-                dotnet-sdk-6.0 dotnet-sdk-8.0 dotnet-sdk-9.0 \
-                dotnet-targeting-pack-6.0 dotnet-targeting-pack-8.0 dotnet-targeting-pack-9.0 \
-                google-chrome-stable \
-                mysql-client mysql-server \
-                php8.1 powershell tcl \
-                temurin-11-jdk temurin-21-jdk temurin-17-jdk temurin-8-jdk \
-                postgresql-14 postgresql-client-14 r-base r-base-core r-base-dev r-recommended \
-                php8* ; do
-                sudo apt -y remove --purge $i
-          done 
-          
-          echo "==> Install packages"
-          sudo apt -y install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless libxml-parser-perl lzop libjson-parse-perl libjson-perl \
-            libparse-yapp-perl libncurses5-dev bc bzip2 diffutils gawk gcc gperf gzip file patchutils lzop make patch perl sed tar unzip wget xz-utils zip zstd \
-            libncurses5-dev libc6-dev libparse-yapp-perl libxml-parser-perl qemu-user-binfmt g++ xfonts-utils xsltproc rdfind
-          
-          # echo "==> List packages"
-          # dpkg -l
-          
-          echo "==> apt clean"
-          sudo apt -y clean          
-
-          echo "==> apt autoremove"
-          sudo apt -y autoremove
-  
-          echo "==> remove dirs"
-          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /usr/share/man /usr/share/doc \
-                      /usr/local/aws-sam-cli /usr/local/aws-cli /usr/local/share/powershell /usr/share/maven-repo /usr/share/maven-repo \
-                      /usr/share/az_11.3.1 /var/lib/gems /opt/az /usr/libexec/docker /etc/docker \
-                      /usr/lib/heroku /usr/lib/llvm-14 /usr/lib/ruby /usr/local/include/node /usr/local/lib/node_modules \
-                      /usr/local/.ghcup /usr/local/n /usr/local/doc /usr/local/share/vcpkg /usr/local/julia1.10.2 \
-                      /usr/share/ri /var/lib/docker /var/lib/php /opt/pipx /opt/microsoft \
-                      /usr/include/ruby* /usr/include/postgresql /usr/lib/jvm/java-11-openjdk-amd64/legal usr/lib/jvm/java-11-openjdk-amd64/man \
-                      /usr/lib/x86_64-linux-gnu/ruby /usr/local/share/chromium /usr/local/man /usr/share/swig4.0 /usr/share/apache-maven* \
-                      /usr/share/rubygems-integration /usr/share/miniconda /usr/share/swift /usr/share/alsa /usr/share/icons /var/lib/waagent \
-                      /var/lib/apt/lists /root/.dotnet /root/.npm /root/.mozilla /root/.local/share/powershell /root/.gradle \
-                      /root/.android
-          
           echo "Clone submodules"
           git submodule update --init -- CoreELEC
           git submodule update --init -- LibreELEC.tv

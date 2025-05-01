@@ -83,7 +83,7 @@ on:
 
 jobs:
   prepare:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       CURRENT_RELEASE_TAG: ${{ steps.create_release_tag.outputs.CURRENT_RELEASE_TAG }}
     permissions:
@@ -139,7 +139,7 @@ jobs:
           echo "CURRENT_RELASE_TAG = ${TAG}"
 
   prepare-matrix:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
         matrix: ${{ steps.setmatrix.outputs.matrix }}
     steps:
@@ -192,7 +192,7 @@ jobs:
 
   create-release:
     needs: [ prepare, prepare-matrix, build-all ]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: ${{ always() }}
 
     steps:

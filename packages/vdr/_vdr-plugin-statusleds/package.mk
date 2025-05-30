@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-statusleds"
-PKG_VERSION="dc3c0256957d97290e346df276f00345226498e0"
-PKG_SHA256="fbc6b4867fdaaa3c5ea8f035505d3d6a040bdfc26d3966ce8cddd4136ba30743"
+PKG_VERSION="cba41b0bb19fd85ad1e00db883a8df84a79b866e"
+PKG_SHA256="6fc624930f134166c52722ed30c7d5cf97a3d096661049a888f11e9ce0d1f41a"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/j1rie/vdr-plugin-statusleds"
 PKG_URL="https://github.com/j1rie/vdr-plugin-statusleds/archive/${PKG_VERSION}.zip"

@@ -1,13 +1,13 @@
 diff --git a/distributions/LibreELEC/options b/distributions/LibreELEC/options
-index 0b93737c0f..760df07d2a 100644
+index e1a4a708ae..5e01c9547d 100644
 --- a/distributions/LibreELEC/options
 +++ b/distributions/LibreELEC/options
-@@ -171,7 +171,7 @@
- ### KODI ADDONS ###
+@@ -7,7 +7,7 @@
+   DESCRIPTION="LibreELEC is a fast and user-friendly Kodi Entertainment Center distribution."
  
- # Distribution Specific source location
--  DISTRO_MIRROR="http://sources.libreelec.tv/mirror"
-+  DISTRO_MIRROR="http://sources.libreelec.tv/mirror https://vdrsternelec.serversenke.de/packages"
-   DISTRO_SRC="http://sources.libreelec.tv/$LIBREELEC_VERSION"
+ # Distribution Source location
+-  DISTRO_MIRROR="https://sources.libreelec.tv/mirror"
++  DISTRO_MIRROR="https://sources.libreelec.tv/mirror https://vdrsternelec.serversenke.de/packages"
+   DISTRO_SRC="https://sources.libreelec.tv/$DISTRO_VERSION"
  
- # Addon Server Url
+ # Distribution Home URL

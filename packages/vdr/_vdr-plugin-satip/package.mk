@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-satip"
-PKG_VERSION="be96a982ca6ece186c6cece7aea0455d3ed817af"
-PKG_SHA256="4f092585074bab00750f11bddb2facdf351994ea84563b58a07028f8c78d227b"
+PKG_VERSION="7e2a7790068e710d5a684fbe848429b9d865baae"
+PKG_SHA256="885310e63379ab8182ffabaef8ed098e15fefe1a2d8fc95409feef14d5e37c3f"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/wirbel-at-vdr-portal/vdr-plugin-satip"
-PKG_URL="https://github.com/wirbel-at-vdr-portal/vdr-plugin-satip/archive/${PKG_VERSION}.zip"
+PKG_SITE="https://github.com/FireFlyVDR/vdr-plugin-satip"
+PKG_URL="https://github.com/FireFlyVDR/vdr-plugin-satip/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="wirbel"
 PKG_DEPENDS_TARGET="toolchain _vdr curl tinyxml _librepfunc vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"

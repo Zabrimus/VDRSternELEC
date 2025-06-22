@@ -104,6 +104,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-epgborder"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-xmltv4vdr"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-webbridge"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-statusleds"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-cinebars"
 PKG_DEPENDS_TARGET+=" dash2ts"
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then

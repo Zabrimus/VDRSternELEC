@@ -13,4 +13,5 @@ PKG_BUILD_FLAGS="-gold +speed"
 PKG_CMAKE_OPTS_TARGET="-DINSTALL_LIBDIR=lib \
                        -DINSTALL_PLUGINDIR=lib \
                        -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+                       -DWITH_EXTERNAL_ZLIB=ON
 					  "

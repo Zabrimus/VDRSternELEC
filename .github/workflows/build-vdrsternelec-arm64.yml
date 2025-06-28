@@ -30,8 +30,8 @@ jobs:
     runs-on: ubuntu-24.04-arm
     name: ${{ inputs.config }}
     steps:
-      - name: Maximize build space
-        uses: Zabrimus/maximize-build-space@master
+      # - name: Maximize build space
+      #  uses: Zabrimus/maximize-build-space@master
 
       - uses: actions/checkout@v3
         with:

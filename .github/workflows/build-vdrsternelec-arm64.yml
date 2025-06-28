@@ -42,6 +42,8 @@ jobs:
 
           sudo snap remove $(snap list | awk '!/^Name|^core|^snapd/ {print $1}') || true
           sudo apt -y --purge purge snapd || true
+          sudo apt -y --purge autoremove
+          sudo apt clean
 
       - uses: actions/checkout@v3
         with:

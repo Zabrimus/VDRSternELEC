@@ -38,12 +38,15 @@ jobs:
           sudo apt update
           sudo apt -y install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless libxml-parser-perl lzop libjson-parse-perl libjson-perl \
               libparse-yapp-perl libncurses5-dev bc bzip2 diffutils gawk gcc gperf gzip file patchutils lzop make patch perl sed tar unzip wget xz-utils zip zstd \
-              libncurses5-dev libc6-dev libparse-yapp-perl libxml-parser-perl qemu-user-binfmt g++ xfonts-utils xsltproc rdfind libc6-amd64-cross libglib2.0-0
+              libncurses5-dev libc6-dev libparse-yapp-perl libxml-parser-perl qemu-user-binfmt g++ xfonts-utils xsltproc rdfind libc6-amd64-cross libglib2.0-0 \
+              libelf-dev elfutils
 
           sudo snap remove $(snap list | awk '!/^Name|^core|^snapd/ {print $1}') || true
           sudo apt -y --purge purge snapd || true
           sudo apt -y --purge autoremove
           sudo apt clean
+
+          (cd / && sudo ln -s /usr/x86_64-linux-gnu/lib64 lib64)
 
       - uses: actions/checkout@v3
         with:

@@ -1,0 +1,268 @@
+name: Build Artifacts arm64
+
+on:
+  workflow_call:
+    inputs:
+      config:
+        description: "Configuration to build"
+        default: CoreELEC-22-no
+        type: string
+
+      releasetag:
+        description: "Release Tag"
+        required: true
+        type: string
+
+      addons:
+        description: "addons"
+        type: string
+
+      extras:
+        description: "extras"
+        type: string
+
+      extraparameter:
+        description: "extra parameter"
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    name: ${{ inputs.config }}
+    steps:
+      - name: Maximize build space
+        uses: Zabrimus/maximize-build-space@master
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Create dir and determine source artifact
+        id: source_artifact
+        run: |
+          echo "Clone submodules"
+          git submodule update --init -- CoreELEC
+          git submodule update --init -- LibreELEC.tv
+
+          echo "Pre-Create directories"
+          mkdir -p CoreELEC/sources
+          mkdir -p LibreELEC.tv/sources
+          
+          mkdir -p CoreELEC/target
+          mkdir -p LibreELEC.tv/target
+          
+          # get config values (hack)
+          branch=$(grep "^PATCHDIR" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          project=$(grep "^PROJECT" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          device=$(grep "^DEVICE" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          
+          echo "BRANCH=$branch" >> "$GITHUB_ENV"
+          echo "PROJECT=$project" >> "$GITHUB_ENV"
+          echo "DEVICE=$device" >> "$GITHUB_ENV"
+          
+          if [ "$branch" = "coreelec-20" ]; then
+              echo "ARTIFACT=cache-coreelec-20-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep "COREELEC20=" config/versions | awk -F= '{ print $2 }')
+          elif [ "$branch" = "coreelec-21" ]; then
+              echo "ARTIFACT=cache-coreelec-21-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep "COREELEC21=" config/versions | awk -F= '{ print $2 }')
+          elif [ "$branch" = "coreelec-22" ]; then
+              echo "ARTIFACT=cache-coreelec-22-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep "COREELEC22=" config/versions | awk -F= '{ print $2 }')          
+          elif [ "$branch" = "libreelec-12" ]; then
+              echo "ARTIFACT=cache-libreelec-12-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"
+              rev=$(grep "LIBREELEC12=" config/versions | awk -F= '{ print $2 }')
+          elif [ "$branch" = "libreelec-13" ]; then
+              echo "ARTIFACT=cache-libreelec-13-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"
+              rev=$(grep "LIBREELEC13=" config/versions | awk -F= '{ print $2 }')          
+          fi
+          
+          echo "REVISION=$rev" >> "$GITHUB_ENV"
+
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: ${{ env.ARTIFACT }}
+          name_is_regexp: false
+          path: ${{ env.DISTRO }}/sources
+
+      - name: Build
+        run: |
+          BUILD_FAILED="false"
+
+          if [ ! "${{ inputs.addons }}" = "" ] && [ ! "${{ inputs.addons }}" = "-" ] && [ ! "${{ inputs.addons }}" = "'-'" ]; then
+             ADDONS="-addon ${{ inputs.addons }}"
+          else
+             ADDONS=""
+          fi
+          
+          if [ ! "${{ inputs.extras }}" = "" ] && [ ! "${{ inputs.extras }}" = "-" ] && [ ! "${{ inputs.extras }}" = "'-'" ]; then
+             EXTRAS="-extra ${{ inputs.extras }}"
+          else
+             EXTRAS=""
+          fi
+
+          if [ ! "${{ inputs.extraparameter }}" = "" ] && [ ! "${{ inputs.extraparameter }}" = "-" ] && [ ! "${{ inputs.extraparameter }}" = "'-'" ]; then
+             EXTRA_PARAMETER="${{ inputs.extraparameter }}"
+          else
+             EXTRA_PARAMETER=""
+          fi
+          
+          # build at first the whole toolchain
+          #if ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER} -package toolchain; then
+          #    # build everything else          
+              if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+                BUILD_FAILED="true"
+              fi
+          #else
+          #  BUILD_FAILED="true"
+          #fi
+
+          echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"
+
+          # create summary
+          function bool_emo() {
+              if [ $1 = 'false' ]; then
+                eval "$2=':white_check_mark:'"
+              else
+                eval "$2=':fire:'"
+              fi;
+          }
+          emo=''
+          
+          bool_emo "$BUILD_FAILED" emo                 
+          
+          if [ "${{ env.DISTRO }}" == "CoreELEC" ]; then
+              echo "| ${emo} | ${{ inputs.config }} | ${{ env.PROJECT }} | ${{ env.DEVICE }} | [${{ env.BRANCH }}@${{ env.REVISION }}](https://github.com/CoreELEC/CoreELEC/tree/${{ env.REVISION }}) |" > build-summary-${{ inputs.config }}
+          else
+              echo "| ${emo} | ${{ inputs.config }} | ${{ env.PROJECT }} | ${{ env.DEVICE }} | [${{ env.BRANCH }}@${{ env.REVISION }}](https://github.com/LibreELEC/LibreELEC.tv/tree/${{ env.REVISION }}) |" > build-summary-${{ inputs.config }}
+          fi
+          
+          if [ "$BUILD_FAILED" == "false" ]; then          
+              # rename target files
+              if [ "$DISTRO" == "CoreELEC" ]; then
+                  (
+                    cd CoreELEC/target
+              
+                    echo "============================="
+                    echo " TEST: List target files"
+                    echo "============================="
+                    ls -laR .
+              
+                    # release files
+                    echo "=> CoreELEC release files"
+                    for i in $(ls CoreELEC*{tar,img.gz,sha256}); do
+                      if [ -f $i ]; then
+                        NEWNAME=`echo $i | perl -pe "s/^(CoreELEC.*?)_(.*?)((_*.img.gz)|(\.tar))?(\.sha256)?$/VDR-\1-${{ inputs.releasetag }}\3\6/"`;
+                        echo "mv $i $NEWNAME"
+                        mv $i $NEWNAME || true;
+                      fi
+                    done;          
+              
+                    # addons
+                    echo "=> CoreELEC addons"
+                    if [ -d addons ]; then
+                      for i in $(find addons -name "*zip"); do
+                        if [ -f $i ]; then
+                          NACE=(${i//\// })
+                          echo "mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]}"
+                          mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]} || true
+                        fi
+                      done
+                    fi
+                  )
+              fi
+    
+              if [ "$DISTRO" == "LibreELEC.tv" ]; then          
+                  (
+                    cd LibreELEC.tv/target
+              
+                    # release files
+                    echo "=> LibreELEC release files"
+                    for i in `ls LibreELEC*{tar,img.gz,sha256}`; do
+                      if [ -f $i ]; then
+                        NEWNAME=`echo $i | perl -pe "s/^(LibreELEC.*?)-devel-\d+-.*?((-.*?)?(.img.gz)|(.tar))(\.sha256)?$/VDR-\1\3-${{ inputs.releasetag }}\4\5\6/"`;
+                        echo "mv $i $NEWNAME"
+                        mv $i $NEWNAME || true;
+                      fi
+                    done;
+              
+                    # addons
+                    echo "=> LibreELEC addons"
+                    if [ -d addons ]; then
+                      for i in $(find addons -name "*zip"); do
+                        if [ -f $i ]; then
+                          NACE=(${i//\// })
+                          echo "mv $i addons/LibreELEC-${NACE[1]}-${NACE[5]}"
+                          mv $i addons/LibreELEC-${NACE[1]}-${NACE[5]} || true
+                        fi
+                      done
+                    fi
+                  )
+              fi
+          fi
+                    
+
+      - name: Save summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-summary-${{ inputs.config }}"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            build-summary-${{ inputs.config }}
+
+      - name: Check build
+        run: |
+          if [ "${{ env.BUILD_FAILED }}" == "true" ]; then
+              # abort this build
+              false
+          fi
+
+      - name: Save release target files
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-artifacts-${{ inputs.releasetag }}-${{ inputs.config }}"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+              CoreELEC/target/VDR*
+              LibreELEC.tv/target/VDR*
+
+      - name: Save addon target files
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-addon-${{ inputs.config }}"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            CoreELEC/target/addons/CoreELEC*zip 
+            LibreELEC.tv/target/addons/LibreELEC*zip
+
+      - name: Save cef files
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-cef-${{ inputs.config }}"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            cef/cef*.zip

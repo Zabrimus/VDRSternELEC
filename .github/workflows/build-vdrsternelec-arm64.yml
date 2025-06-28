@@ -84,18 +84,18 @@ jobs:
           
           echo "REVISION=$rev" >> "$GITHUB_ENV"
 
-      - name: Download artifact
-        id: download-artifact
-        uses: dawidd6/action-download-artifact@v3
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: precache-sources.yml
-          if_no_artifact_found: ignore
-          check_artifacts: true
-          search_artifacts: true
-          name: ${{ env.ARTIFACT }}
-          name_is_regexp: false
-          path: ${{ env.DISTRO }}/sources
+      #- name: Download artifact
+      #  id: download-artifact
+      #  uses: dawidd6/action-download-artifact@v3
+      #  with:
+      #    github_token: ${{secrets.GITHUB_TOKEN}}
+      #    workflow: precache-sources.yml
+      #    if_no_artifact_found: ignore
+      #    check_artifacts: true
+      #    search_artifacts: true
+      #    name: ${{ env.ARTIFACT }}
+      #    name_is_regexp: false
+      #    path: ${{ env.DISTRO }}/sources
 
       - name: Build
         run: |

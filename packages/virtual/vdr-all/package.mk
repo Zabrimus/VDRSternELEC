@@ -106,6 +106,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-webbridge"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-statusleds"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-cinebars"
 PKG_DEPENDS_TARGET+=" dash2ts"
+PKG_DEPENDS_TARGET+=" _preloader"
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"

@@ -1,12 +1,8 @@
-diff -ru8bBwd a/meson.build b/meson.build
---- a/meson.build	2025-04-17 04:38:53.000000000 +0200
-+++ b/meson.build	2025-04-17 10:31:43.376862151 +0200
-@@ -9,32 +9,17 @@
- cpp = meson.get_compiler('cpp')
- 
- #
- # openssl
- #
+diff --git a/meson.build b/meson.build
+index 9da2047..6fdbf26 100644
+--- a/meson.build
++++ b/meson.build
+@@ -14,22 +14,7 @@ cpp = meson.get_compiler('cpp')
  openssl_dep = dependency('openssl')
  
  # thrift
@@ -30,29 +26,21 @@ diff -ru8bBwd a/meson.build b/meson.build
  
  #
  # spdlog
- #
- spdlog_proj = subproject('spdlog')
- spdlog_dep = spdlog_proj.get_variable('spdlog_dep', ['tests=disabled', 'compile_library=true'] )
- 
- #
-@@ -60,25 +45,22 @@
- remotrans = executable('remotrans', 'main.cpp', 'logger.cpp', 'streamhandler.cpp', 'transcodeconfig.cpp',
-                         'm3u8handler.cpp', 'thrift-services/src-client/BrowserClient.cpp', 'thrift-services/src-client/VdrClient.cpp',
-                         'thrift-services/src-gen/CommonService.cpp', 'thrift-services/src-gen/common_types.cpp',
- 	                    'thrift-services/src-gen/CefBrowser.cpp', 'thrift-services/src-gen/cefbrowser_types.cpp',
- 	                    'thrift-services/src-gen/VdrPluginWeb.cpp', 'thrift-services/src-gen/pluginweb_types.cpp',
-                         'thrift-services/src-gen/RemoteTranscoder.cpp', 'thrift-services/src-gen/remotetranscoder_types.cpp',
+@@ -71,22 +56,19 @@ remotrans = executable('remotrans', 'main.cpp', 'logger.cpp', 'streamhandler.cpp
                          include_directories : incdir,
+                         cpp_args : trans_compile_args,
                          install : true,
 -                        install_dir : meson.current_build_dir() + '/Release',
                          dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep, openssl_dep, thrift_dep])
  
  r_dash2ts = executable('r_dash2ts', 'r_dash2ts.cpp', 'logger.cpp',
+                        cpp_args : trans_compile_args,
                         install : true,
 -                       install_dir : meson.current_build_dir() + '/Release',
                         dependencies: [spdlog_dep, dash2ts_dep])
  
  r_dash2tsd = executable('r_dash2ts_debug', 'r_dash2ts_debug.cpp', 'logger.cpp',
+                        cpp_args : trans_compile_args,
                         install : true,
 -                       install_dir : meson.current_build_dir() + '/Release',
                         dependencies: [spdlog_dep, dash2ts_dep])

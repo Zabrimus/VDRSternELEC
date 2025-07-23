@@ -1,7 +1,8 @@
-diff -ru8bBwd a/meson.build b/meson.build
---- a/meson.build	2025-04-16 16:25:54.000000000 +0200
-+++ b/meson.build	2025-04-17 10:43:03.788695092 +0200
-@@ -1,16 +1,18 @@
+diff --git a/meson.build b/meson.build
+index c35c7ce..a77e993 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,11 +1,13 @@
  project('cefbrowser', 'cpp', 'c',
    version : '0.1',
    default_options : ['warning_level=1', 'cpp_std=c++17', 'default_library=static', 'optimization=3', 'buildtype=debug' ],
@@ -16,17 +17,7 @@ diff -ru8bBwd a/meson.build b/meson.build
  
  cmake = import('cmake')
  CXX = meson.get_compiler('cpp')
- 
- #
- # Download and extract subprojects
- #
- run_command('./setup.sh', arch, meson.current_build_dir(), check: false)
-@@ -18,19 +20,24 @@
- #
- # Build cef
- #
- cef_opt_var = cmake.subproject_options()
- 
+@@ -23,9 +25,14 @@ cef_opt_var = cmake.subproject_options()
  if arch == 'arm'
      cef_opt_var.add_cmake_defines({'PROJECT_ARCH': 'armhf'})
  elif arch == 'arm64'
@@ -42,17 +33,7 @@ diff -ru8bBwd a/meson.build b/meson.build
  cef_opt_var.append_compile_args('cpp', '-Wno-unused-variable')
  cef_opt_var.add_cmake_defines({'CMAKE_BUILD_TYPE': 'Debug'})
  cef_proj = cmake.subproject('cef', options: cef_opt_var)
- cef_lib = cef_proj.dependency('libcef_dll_wrapper')
- 
- #
- # spdlog
- #
-@@ -58,32 +65,17 @@
- #
- # ssl
- #
- dep_ssl = dependency('libssl')
- dep_crypto = dependency('libcrypto')
+@@ -63,22 +70,7 @@ dep_crypto = dependency('libcrypto')
  
  # thrift
  # thrift
@@ -76,19 +57,9 @@ diff -ru8bBwd a/meson.build b/meson.build
  
  #
  # Build browser
- #
- shared_libs = ['cef', 'z']
- deps = []
- foreach lib_name : shared_libs
-         deps += CXX.find_library(lib_name, dirs : [meson.project_source_root() + '/subprojects/cef/Release'])
-@@ -98,19 +90,19 @@
-                  'thrift-services/src-client/VdrClient.cpp', 'thrift-services/src-client/TranscoderClient.cpp',
-                  'thrift-services/src-gen/CommonService.cpp', 'thrift-services/src-gen/common_types.cpp',
-                  'thrift-services/src-gen/CefBrowser.cpp', 'thrift-services/src-gen/cefbrowser_types.cpp',
-                  'thrift-services/src-gen/VdrPluginWeb.cpp', 'thrift-services/src-gen/pluginweb_types.cpp',
-                  'thrift-services/src-gen/RemoteTranscoder.cpp', 'thrift-services/src-gen/remotetranscoder_types.cpp',
+@@ -108,14 +100,14 @@ exe = executable('cefbrowser', 'main.cpp', 'mainapp.cpp', 'logger.cpp',
                   include_directories : incdir,
-                  cpp_args : ['-DPHTTPLIB_ZLIB_SUPPORT', '-DCPPHTTPLIB_OPENSSL_SUPPORT'],
+                  cpp_args : browser_compile_args,
                   install : true,
 -                 install_dir : meson.current_build_dir() + '/Release',
 +                 link_args: '-lrt',
@@ -106,49 +77,12 @@ diff -ru8bBwd a/meson.build b/meson.build
 +install_subdir('static-content/css', install_dir : 'cefbrowser')
 +install_subdir('static-content/database', install_dir : 'cefbrowser')
 +install_subdir('static-content/application', install_dir : 'cefbrowser')
-diff -ru8bBwd a/meson_options.txt b/meson_options.txt
---- a/meson_options.txt	2025-04-16 16:25:54.000000000 +0200
-+++ b/meson_options.txt	2025-04-17 10:42:27.152531287 +0200
-@@ -1 +1,2 @@
+diff --git a/meson_options.txt b/meson_options.txt
+index 83e87ea..c543615 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -1,2 +1,3 @@
  option('arch', type : 'combo', choices : ['x86', 'arm', 'arm64'], value : 'x86')
 +option('subarch', type : 'string', value : 'armv8-a')
-diff -ru8bBwd a/subprojects/packagefiles/mini-0.9.14/meson.build b/subprojects/packagefiles/mini-0.9.14/meson.build
---- a/subprojects/packagefiles/mini-0.9.14/meson.build	2025-04-16 16:25:54.000000000 +0200
-+++ b/subprojects/packagefiles/mini-0.9.14/meson.build	2025-04-17 10:42:27.152531287 +0200
-@@ -1,15 +1,15 @@
- project(
-   'mINI',
-   'c', 'cpp',
-   version: '0.8.5',
-   license: 'Apache-2.0 license',
-   default_options: ['cpp_std=c++17'],
--  meson_version: '>=0.63.0',
-+  meson_version: '>=0.57.1',
- )
- 
- inc = include_directories('src')
- 
- mini_dependencies = []
- mini_compile_args = ['-O3']
- 
- mini_dep = declare_dependency(
-diff -ru8bBwd a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build
---- a/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build	2025-04-16 16:25:54.000000000 +0200
-+++ b/subprojects/packagefiles/tiny-process-library-4bf0e59e64f18d3080a1ce4e853775de2181e993/meson.build	2025-04-17 10:42:27.152531287 +0200
-@@ -1,15 +1,15 @@
- project(
-   'tiny_process_library',
-   'cpp',
-   version: '4bf0e59e64f18d3080a1ce4e853775de2181e993',
-   license: 'MIT',
-   default_options: ['cpp_std=c++17'],
--  meson_version: '>=0.63.0',
-+  meson_version: '>=0.57.1',
- )
- 
- src = files(
-   'process.cpp',
-   'process_unix.cpp',
- )
- 
- inc = include_directories('.')
+ option('debug_thrift', type: 'boolean', value: false, description: 'Enable more debug logging')
+\ No newline at end of file

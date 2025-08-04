@@ -122,15 +122,9 @@ jobs:
              EXTRA_PARAMETER=""
           fi
           
-          # build at first the whole toolchain
-          #if ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER} -package toolchain; then
-          #    # build everything else          
-              if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
-                BUILD_FAILED="true"
-              fi
-          #else
-          #  BUILD_FAILED="true"
-          #fi
+          if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+             BUILD_FAILED="true"
+          fi
 
           echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"
 

@@ -52,7 +52,7 @@ jobs:
           mkdir -p LibreELEC.tv/target
           
           # enable tmp patch to disable some subdevices
-          mv patches/CoreELEC.coreelec-22/tmp_remove_subdevices_compile_problems.patch.disabled patches/CoreELEC.coreelec-22/tmp_remove_subdevices_compile_problems.patch
+          # mv patches/CoreELEC.coreelec-22/tmp_remove_subdevices_compile_problems.patch.disabled patches/CoreELEC.coreelec-22/tmp_remove_subdevices_compile_problems.patch
           
           # get config values (hack)
           branch=$(grep "^PATCHDIR" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')

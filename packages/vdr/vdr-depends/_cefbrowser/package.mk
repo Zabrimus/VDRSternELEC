@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_cefbrowser"
-PKG_VERSION="5c92eec16c99a9753fa1caba4e8ef37d4dea0449"
-PKG_SHA256="ac593d17c561ed4e99f4c5fc55fe5271f620cc94791540698d2e4dc128293651"
+PKG_VERSION="781bbecb28dac6ebc6685665bc8e25a023242836"
+PKG_SHA256="7ad3bdd520a2e0a6d6e402e382af760b503d8a5bdc4d8b2c4618657022bffef6"
 PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/Zabrimus/cefbrowser"
 PKG_URL="https://github.com/Zabrimus/cefbrowser/archive/${PKG_VERSION}.zip"
@@ -44,7 +44,7 @@ case "${ARCH}" in
   x86_64)  DSUBARCH="x86-64";;
 esac
 
-PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} \
+PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} -Dvdrsternelec=true \
                        --prefix=${CEF_PREFIX} \
                        --bindir=${CEF_PREFIX}/bin \
                        --libdir=${CEF_PREFIX}/lib \

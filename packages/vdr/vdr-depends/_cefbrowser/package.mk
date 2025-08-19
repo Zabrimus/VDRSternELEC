@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_cefbrowser"
-PKG_VERSION="6ee952c8bad316c481d2ab7314f1bdc9be3b323b"
-PKG_SHA256="42b65a8edda87c36df046b5b4a76fb9c1bc0f79531640514de3a9fdb3281f6ed"
+PKG_VERSION="e22fde95086c0cc4dc4ef14fef57f3885d01f305"
+PKG_SHA256="cf65fdbcc3a92cce875fa51ce88f91b99ac3b81ca563d644152137a2dcbe5672"
 PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/Zabrimus/cefbrowser"
 PKG_URL="https://github.com/Zabrimus/cefbrowser/archive/${PKG_VERSION}.zip"
@@ -17,11 +17,11 @@ PKG_BUILD_FLAGS="+speed"
 
 # CoreELEC <= 20
 if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -le "20" ]; then
-   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
+   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk _mesa"
 fi
 
-# CoreELEC >= 22
-if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -ge "22" ]; then
+# CoreELEC >= 21
+if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -ge "21" ]; then
    PKG_DEPENDS_TARGET+=" _mesa"
 fi
 
@@ -78,13 +78,4 @@ post_makeinstall_target() {
   cd ${INSTALL}
   zip -qrum9 ${INSTALL}/usr/local/config/web-cefbrowser-sample.zip storage/cefbrowser-sample
   zip -qrum9 ${INSTALL}/usr/local/config/cefbrowser-sample-config.zip storage/.config
-
-  # for CoreELEC-22-no we need some additional libraries
-  if [ "${DISTRONAME}" = "CoreELEC" ] && [ ${OS_MAJOR} -ge 22 ]; then
-  	  mkdir -p ${INSTALL}/usr/local/lib/private/dri
-  	  cp $(get_install_dir _mesa)/usr/lib/libgbm* ${INSTALL}/usr/local/lib/private
-  	  cp $(get_install_dir _mesa)/usr/lib/dri/mali-dp_dri.so ${INSTALL}/usr/local/lib/private/dri
-  	  cp $(get_install_dir _mesa)/usr/lib/dri/meson_dri.so ${INSTALL}/usr/local/lib/private/dri
-  	  cp $(get_install_dir _mesa)/usr/lib/dri/panfrost_dri.so ${INSTALL}/usr/local/lib/private/dri
-  fi
 }

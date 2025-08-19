@@ -17,11 +17,11 @@ PKG_BUILD_FLAGS="+speed"
 
 # CoreELEC <= 20
 if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -le "20" ]; then
-   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
+   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk _mesa"
 fi
 
-# CoreELEC >= 22
-if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -ge "22" ]; then
+# CoreELEC >= 21
+if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -ge "21" ]; then
    PKG_DEPENDS_TARGET+=" _mesa"
 fi
 
@@ -78,13 +78,4 @@ post_makeinstall_target() {
   cd ${INSTALL}
   zip -qrum9 ${INSTALL}/usr/local/config/web-cefbrowser-sample.zip storage/cefbrowser-sample
   zip -qrum9 ${INSTALL}/usr/local/config/cefbrowser-sample-config.zip storage/.config
-
-  # for CoreELEC-22-no we need some additional libraries
-  if [ "${DISTRONAME}" = "CoreELEC" ] && [ ${OS_MAJOR} -ge 22 ]; then
-  	  mkdir -p ${INSTALL}/usr/local/lib/private/dri
-  	  cp $(get_install_dir _mesa)/usr/lib/libgbm* ${INSTALL}/usr/local/lib/private
-  	  cp $(get_install_dir _mesa)/usr/lib/dri/mali-dp_dri.so ${INSTALL}/usr/local/lib/private/dri
-  	  cp $(get_install_dir _mesa)/usr/lib/dri/meson_dri.so ${INSTALL}/usr/local/lib/private/dri
-  	  cp $(get_install_dir _mesa)/usr/lib/dri/panfrost_dri.so ${INSTALL}/usr/local/lib/private/dri
-  fi
 }

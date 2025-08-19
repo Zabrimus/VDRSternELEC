@@ -3,17 +3,18 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_mesa"
-PKG_VERSION="24.1.1"
-PKG_SHA256="0038826c6f7e88d90b4ce6f719192fa58ca7dedf4edcaa1174cf7bd920ef89ea"
+PKG_VERSION="24.0.8"
+PKG_SHA256="d1ed86a266d5b7b8c136ae587ef5618ed1a9837a43440f3713622bf0123bf5c1"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.mesa3d.org/"
 PKG_URL="https://mesa.freedesktop.org/archive/mesa-${PKG_VERSION}.tar.xz"
-PKG_DEPENDS_HOST="toolchain:host expat:host libclc:host libdrm:host Mako:host spirv-tools:host"
+PKG_DEPENDS_HOST="toolchain:host expat:host libdrm:host Mako:host spirv-tools:host"
 PKG_DEPENDS_TARGET="toolchain expat libdrm Mako:host"
 PKG_LONGDESC="Mesa is a 3-D graphics library with an API."
 PKG_BUILD_FLAGS="+speed -sysroot"
 
-PKG_MESON_OPTS_TARGET="-Dgallium-drivers=panfrost \
+PKG_MESON_OPTS_TARGET="-Dgallium-drivers=panfrost,swrast \
+					   -Dosmesa=true \
  					   -Dllvm=disabled \
  					   -Dvulkan-drivers= \
  					   -Dplatforms="" \
@@ -21,4 +22,6 @@ PKG_MESON_OPTS_TARGET="-Dgallium-drivers=panfrost \
 					   -Dgbm=enabled \
                        -Degl=enabled \
                        -Dglx=disabled \
+                       --prefix=/usr/local/private \
+                       --libdir=/usr/local/private \
  					   "

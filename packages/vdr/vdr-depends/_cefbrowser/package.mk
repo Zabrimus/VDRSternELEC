@@ -35,7 +35,7 @@ CEF_PREFIX="/usr/local"
 case "${ARCH}" in
   arm)     DARCH="arm";;
   aarch64) DARCH="arm64";;
-  x86_64)  DARCH="x86";;
+  x86_64)  DARCH="x86_64";;
 esac
 
 case "${ARCH}" in

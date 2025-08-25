@@ -1,8 +1,8 @@
 diff --git a/scripts/get_archive b/scripts/get_archive
-index 9f5b768e47..4a7c10c23a 100755
+index 734e5da3a9..12adecce95 100755
 --- a/scripts/get_archive
 +++ b/scripts/get_archive
-@@ -20,7 +20,11 @@ build_msg "CLR_GET" "GET" "${1} (archive)" "indent"
+@@ -20,7 +20,10 @@ build_msg "CLR_GET" "GET" "${1} (archive)" "indent"
  
  pkg_lock_status "GETPKG" "${PKG_NAME}" "unpack" "downloading package..."
  
@@ -11,16 +11,15 @@ index 9f5b768e47..4a7c10c23a 100755
 +for mirror in ${DISTRO_MIRROR}; do
 +  PACKAGE_MIRROR="${PACKAGE_MIRROR} ${mirror}/${PKG_NAME}/${PKG_SOURCE_NAME}"
 +done;
-+
- [ "${VERBOSE}" != "yes" ] && WGET_OPT=-q
- WGET_CMD="wget --output-file=- --timeout=30 --tries=3 --no-check-certificate -c ${WGET_OPT} --progress=bar:force --show-progress -O ${PACKAGE}"
- 
-@@ -32,7 +36,7 @@ rm -f "${STAMP_URL}" "${STAMP_SHA}"
- NBWGET=10
+ if command -v wget >/dev/null; then
+   [ "${VERBOSE}" != "yes" ] && GET_OPT=-q
+   GET_CMD="wget --output-file=- --timeout=30 --tries=3 --no-check-certificate -c ${GET_OPT} --progress=bar:force --show-progress -O ${PACKAGE}"
+@@ -38,7 +41,7 @@ rm -f "${STAMP_URL}" "${STAMP_SHA}"
+ NBGET=10
  NBCHKS=2
- while [ ${NBWGET} -gt 0 -a ${NBCHKS} -gt 0 ]; do
+ while [ ${NBGET} -gt 0 -a ${NBCHKS} -gt 0 ]; do
 -  for url in "${PKG_URL}" "${PACKAGE_MIRROR}"; do
 +  for url in "${PKG_URL}" ${PACKAGE_MIRROR}; do
      rm -f "${PACKAGE}"
-     [[ "${url}" =~ ^[fF][tT][pP]:* ]] && WGET_FTP=--passive-ftp || WGET_FTP=
-     if ${WGET_CMD} ${WGET_FTP} "${url}"; then
+     if command -v wget >/dev/null; then
+       [[ "${url}" =~ ^[fF][tT][pP]:* ]] && GET_FTP=--passive-ftp || GET_FTP=

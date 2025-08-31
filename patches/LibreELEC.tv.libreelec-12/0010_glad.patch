@@ -1,0 +1,12 @@
+diff --git a/packages/python/graphics/glad/package.mk b/packages/python/graphics/glad/package.mk
+index 9a1fe81574..dff0405929 100644
+--- a/packages/python/graphics/glad/package.mk
++++ b/packages/python/graphics/glad/package.mk
+@@ -12,6 +12,6 @@ PKG_LONGDESC="Multi-Language Vulkan/GL/GLES/EGL/GLX/WGL Loader-Generator based o
+ PKG_TOOLCHAIN="manual"
+ 
+ makeinstall_host() {
+-  export DONT_BUILD_LEGACY_PYC=1
++  # export DONT_BUILD_LEGACY_PYC=1
+   exec_thread_safe python3 setup.py install --prefix=${TOOLCHAIN}
+ }

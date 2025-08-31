@@ -16,7 +16,7 @@ PKG_BUILD_FLAGS="+speed"
 post_unpack() {
   rm -f ${PKG_DIR}/patches/interlaced_frame.patch
 
-  if [ "${ARCH}" = "x86_64" ] && [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION}" = "12.0" ]; then
+  if [ "${ARCH}" = "x86_64" ] && [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" = "12" ]; then
   	 mkdir -p ${PKG_DIR}/patches
      cp ${PKG_DIR}/le12/interlaced_frame.patch ${PKG_DIR}/patches/interlaced_frame.patch
   fi

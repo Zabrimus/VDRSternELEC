@@ -1,0 +1,24 @@
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2025-05-07 13:38:38.000000000 +0200
++++ b/Makefile	2025-08-31 11:33:48.351403966 +0200
+@@ -255,18 +255,18 @@
+ ifeq ($(SCREENSAVER),1)
+ CONFIG += -DUSE_SCREENSAVER
+ _CFLAGS += $(shell pkg-config --cflags xcb-screensaver xcb-dpms)
+ LIBS += $(shell pkg-config --libs xcb-screensaver xcb-dpms)
+ endif
+ 
+ #_CFLAGS += $(shell pkg-config --cflags libavcodec x11 x11-xcb xcb xcb-icccm)
+ #LIBS += -lrt $(shell pkg-config --libs libavcodec x11 x11-xcb xcb xcb-icccm)
+-_CFLAGS += $(shell pkg-config --cflags x11 x11-xcb xcb xcb-icccm)
+-LIBS += -lrt $(shell pkg-config --libs x11 x11-xcb xcb xcb-icccm)
++_CFLAGS += $(shell pkg-config --cflags x11 x11-xcb xcb xcb-icccm xcb-randr xi xrandr xrender xext xxf86vm)
++LIBS += -lrt $(shell pkg-config --libs x11 x11-xcb xcb xcb-icccm xcb-randr xi xrandr xrender xext xxf86vm)
+ 
+ _CFLAGS += -I./opengl -I./
+ 
+ LIBS += -L/usr/lib64
+ 
+ 
+ ifeq ($(CUVID),1)
+ LIBS += -lcuda -lnvcuvid

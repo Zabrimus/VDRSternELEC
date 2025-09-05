@@ -23,7 +23,7 @@ jobs:
         run: |
           git submodule update --init -- CoreELEC
           git submodule update --init -- LibreELEC.tv
-
+          
           if [[ "${{ inputs.config }}" == "CoreELEC-20" ]]; then
               echo "CACHE_NAME=cache-coreelec-20-sources" >> "$GITHUB_OUTPUT"
               echo "CACHE_PATH=CoreELEC/sources" >> "$GITHUB_OUTPUT"
@@ -102,11 +102,23 @@ jobs:
             ls -lR LibreELEC.tv/sources/
           fi
 
+      # [a-h0-9_]*
+      # [i-z]*
       - name: upload sources
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.download.outputs.CACHE_NAME }}
-          path: ${{ steps.download.outputs.CACHE_PATH }}
+          name: ${{ steps.download.outputs.CACHE_NAME }}-1
+          path: ${{ steps.download.outputs.CACHE_PATH }}/[a-h0-9_]*
+          compression-level: 0
+          retention-days: 61
+          overwrite: true
+          if-no-files-found: ignore
+
+      - name: upload sources2
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.download.outputs.CACHE_NAME }}-2
+          path: ${{ steps.download.outputs.CACHE_PATH }}/[i-z]*
           compression-level: 0
           retention-days: 61
           overwrite: true

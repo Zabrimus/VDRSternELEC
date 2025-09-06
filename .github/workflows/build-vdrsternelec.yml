@@ -33,10 +33,6 @@ jobs:
       - name: Maximize build space
         uses: Zabrimus/maximize-build-space@master
 
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
       - name: Install packages
         run: |
           sudo apt update
@@ -46,6 +42,10 @@ jobs:
              libc6-dev libncurses5-dev libjson-perl libxml-parser-perl libparse-yapp-perl rdfind \
              golang-1.23-go git openssh-client rsync upx-ucl wget \
             --no-install-recommends || true
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Create dir and determine source artifact
         id: source_artifact

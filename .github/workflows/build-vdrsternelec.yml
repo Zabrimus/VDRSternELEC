@@ -46,10 +46,6 @@ jobs:
              libc6-dev libncurses5-dev libjson-perl libxml-parser-perl libparse-yapp-perl rdfind \
              golang-1.23-go git openssh-client rsync upx-ucl wget \
             --no-install-recommends
-          
-          sudo ln -s /usr/lib/go-1.23 /usr/lib/go
-          sudo ln -s /usr/lib/go-1.23/bin/go /usr/bin/go 
-          sudo ln -s /usr/lib/go-1.23/bin/gofmt /usr/bin/gofmt
 
       - name: Create dir and determine source artifact
         id: source_artifact

@@ -10,6 +10,7 @@ PKG_SOURCE_DIR="cefbrowser-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain atk libxml2 cups cef-at-spi2-core \
                     libXcomposite libXdamage libXfixes libXrandr libXi libXft openssl _cef _thrift"
 PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
+PKG_DEPENDS_UNPACK="_cef"
 PKG_DEPENDS_CONFIG="_cef"
 PKG_LONGDESC="cefbrowser"
 PKG_TOOLCHAIN="meson"

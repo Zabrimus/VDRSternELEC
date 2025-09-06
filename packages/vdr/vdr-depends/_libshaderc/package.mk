@@ -9,7 +9,7 @@ PKG_LICENSE="Apache"
 PKG_SITE="https://github.com/google/shaderc"
 PKG_URL="https://github.com/google/shaderc/archive/refs/tags/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain glslang"
-PKG_DEPENDS_UNPACK="spirv-tools spirv-headers"
+PKG_DEPENDS_UNPACK="spirv-tools spirv-headers glslang"
 PKG_LONGDESC="A collection of tools, libraries and tests for shader compilation."
 PKG_BUILD_FLAGS="+pic +speed"
 

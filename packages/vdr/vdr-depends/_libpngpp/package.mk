@@ -12,8 +12,7 @@ PKG_LONGDESC="PNG++ aims to provide simple yet powerful C++ interface to libpng,
 PKG_TOOLCHAIN="manual"
 PKG_BUILD_FLAGS="+speed"
 
-make_target() {
-	# reorganize build folder
-	mkdir $(get_build_dir _libpngpp)/png++
-	cp *.hpp $(get_build_dir _libpngpp)/png++
+makeinstall_target() {
+	mkdir -p $(get_install_dir _libpngpp)/usr/local/include/png++
+	cp *.hpp $(get_install_dir _libpngpp)/usr/local/include/png++
 }

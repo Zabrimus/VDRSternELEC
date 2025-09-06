@@ -9,7 +9,8 @@ PKG_URL="https://github.com/jojo61/vdr-plugin-softhdodroid/archive/${PKG_VERSION
 PKG_SOURCE_DIR="vdr-plugin-softhdodroid-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain glm alsa freetype ffmpeg _vdr libdrm vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
+PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_LONGDESC="VDR Output Device (softhdodroid)"
 PKG_MAKE_OPTS_TARGET="KODIBUILD=1"
 PKG_MAKEINSTALL_OPTS_TARGET="KODIBUILD=1"
@@ -24,6 +25,7 @@ fi;
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib -L${SYSROOT_PREFIX}/usr/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
   export GIT_REV=${PKG_VERSION}
 }
 

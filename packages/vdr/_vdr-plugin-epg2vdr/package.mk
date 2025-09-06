@@ -10,7 +10,8 @@ PKG_BRANCH="master"
 PKG_SOURCE_DIR="vdr-plugin-epg2vdr-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr Python3 util-linux _mariadb-connector-c _jansson tinyxml2 libarchive vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr _mariadb-connector-c"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr Python3 _mariadb-connector-c vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
+PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_LONGDESC="This plugin is used to retrieve EPG data into the VDR. The EPG data was loaded from a mariadb database."
 PKG_BUILD_FLAGS="+speed"
 
@@ -26,6 +27,7 @@ post_unpack() {
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 }
 
 post_makeinstall_target() {

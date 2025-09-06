@@ -10,7 +10,8 @@ PKG_BRANCH="master"
 PKG_DEPENDS_TARGET="toolchain _vdr _vdr-plugin-wirbelscan vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_SOURCE_DIR="vdr-plugin-vnsiserver-${PKG_VERSION}"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr ${WIRBELSCAN} vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper) $(get_pkg_directory _vdr-plugin-wirbelscan)"
+PKG_DEPENDS_UNPACK="vdr-helper _vdr-plugin-wirbelscan"
 PKG_LONGDESC="VDR plugin to handle Kodi clients."
 PKG_BUILD_FLAGS="+speed"
 
@@ -22,6 +23,7 @@ pre_build_target() {
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 }
 
 post_makeinstall_target() {

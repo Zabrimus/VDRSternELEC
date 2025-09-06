@@ -10,7 +10,8 @@ PKG_BRANCH="master"
 PKG_DEPENDS_TARGET="toolchain _vdr vdr-helper _graphicsmagick _thrift"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_SOURCE_DIR="vdr-plugin-web-${PKG_VERSION}"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
+PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr _graphicsmagick"
 PKG_LONGDESC="HbbTV Plugin. Needs cefbrowser and remotetranscoder"
 PKG_MAKE_OPTS_TARGET="ENABLE_FAST_SCALE=1"
@@ -19,6 +20,7 @@ PKG_BUILD_FLAGS="+speed"
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
   export USE_THRIFT_PKGCONFIG="1"
 }
 

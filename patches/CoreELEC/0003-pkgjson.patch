@@ -1,0 +1,45 @@
+diff --git a/scripts/pkgjson b/scripts/pkgjson
+index dfe0dc2ae2..f951e3ed7f 100755
+--- a/scripts/pkgjson
++++ b/scripts/pkgjson
+@@ -5,6 +5,8 @@
+ 
+ . config/options ""
+ 
++rm -f dont_delete_packages tmp_dont_delete_packages
++
+ # This function is passed a list of package.mk paths to be processed.
+ # Each package.mk is sourced with relevant variables output in JSON format.
+ json_worker() {
+@@ -30,8 +32,22 @@ json_worker() {
+       hierarchy="project"
+     elif [[ "${pkgpath}" =~ ^${ROOT}/projects/${PROJECT}/devices/${DEVICE}/* ]]; then
+       hierarchy="device"
++    else
++      hierarchy="global"
+     fi
+ 
++    for i in $(echo ${PKG_NEED_UNPACK}| tr " " "\n")
++    do
++        (
++           if [ -f $i/package.mk ]; then
++              . $i/package.mk
++
++              echo $(get_build_dir ${PKG_NAME}) | tee -a tmp_dont_delete_packages >/dev/null
++           fi
++        )
++    done
++
++
+     cat <<EOF
+   {
+     "name": "${PKG_NAME}",
+@@ -46,6 +62,8 @@ json_worker() {
+ EOF
+   done
+   unset -f exit
++
++  sort -u tmp_dont_delete_packages -o dont_delete_packages
+ }
+ 
+ if [ "$1" = "--worker" ]; then

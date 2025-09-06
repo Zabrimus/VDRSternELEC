@@ -10,14 +10,16 @@ PKG_BRANCH="master"
 PKG_SOURCE_DIR="vdr-plugin-dbus2vdr-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _libpngpp dbus glib libjpeg-turbo vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr _libpngpp"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr _libpngpp vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper) $(get_pkg_directory _libpngpp)"
+PKG_DEPENDS_UNPACK="vdr-helper _libpngpp"
 PKG_LONGDESC="This plugin will expose some methods via DBus to control the vdr."
 PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
-  export CPLUS_INCLUDE_PATH=$(get_build_dir _libpngpp)
+  export CPLUS_INCLUDE_PATH=$(get_install_dir _libpngpp)/usr/local/include
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 }
 
 post_makeinstall_target() {

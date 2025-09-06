@@ -9,7 +9,8 @@ PKG_URL="https://github.com/jojo61/vdr-plugin-softhdcuvid/archive/${PKG_VERSION}
 PKG_SOURCE_DIR="vdr-plugin-softhdcuvid-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr mesa glu glew _freeglut libxcb libX11 _xcb-util-wm libplacebo vdr-helper libXi libXrandr libXrender libXext libXxf86vm"
 PKG_DEPENDS_CONFIG="_vdr libplacebo"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
+PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_LONGDESC="VDR Output Device (softhdddrm"
 PKG_BUILD_FLAGS="+speed"
 
@@ -25,6 +26,7 @@ post_unpack() {
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 
   # build configuration
   export VAAPI=0

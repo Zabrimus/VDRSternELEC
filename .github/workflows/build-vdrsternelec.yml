@@ -50,6 +50,8 @@ jobs:
       - name: Create dir and determine source artifact
         id: source_artifact
         run: |
+          cd /home/runner/work/VDRSternELEC/VDRSternELEC
+          
           echo "Clone submodules"
           git submodule update --init -- CoreELEC
           git submodule update --init -- LibreELEC.tv

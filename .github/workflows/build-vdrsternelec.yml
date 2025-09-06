@@ -51,9 +51,6 @@ jobs:
           mkdir -p CoreELEC/target
           mkdir -p LibreELEC.tv/target
           
-          # enable tmp patch to disable some subdevices
-          # mv patches/CoreELEC.coreelec-22/tmp_remove_subdevices_compile_problems.patch.disabled patches/CoreELEC.coreelec-22/tmp_remove_subdevices_compile_problems.patch
-          
           # get config values (hack)
           branch=$(grep "^PATCHDIR" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
           project=$(grep "^PROJECT" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
@@ -96,7 +93,20 @@ jobs:
           if_no_artifact_found: ignore
           check_artifacts: true
           search_artifacts: true
-          name: ${{ env.ARTIFACT }}
+          name: ${{ env.ARTIFACT }}-1
+          name_is_regexp: false
+          path: ${{ env.DISTRO }}/sources
+
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: ${{ env.ARTIFACT }}-2
           name_is_regexp: false
           path: ${{ env.DISTRO }}/sources
 
@@ -122,7 +132,7 @@ jobs:
              EXTRA_PARAMETER=""
           fi
           
-          if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+          if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
              BUILD_FAILED="true"
           fi
 

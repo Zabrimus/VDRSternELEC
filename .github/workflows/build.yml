@@ -300,7 +300,7 @@ jobs:
           # upload cef files
           for i in $(ls build-cef/*.zip); do          
               echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-              gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
+              gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
           done
           
           echo "-------------------------------"
@@ -310,12 +310,12 @@ jobs:
           # upload addon files
           for i in $(ls build-addon/CoreELEC/target/addons/CoreELEC*zip); do          
               echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-              gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
+              gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
           done
 
           for i in $(ls build-addon/LibreELEC.tv/target/addons/LibreELEC*zip); do          
               echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-              gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
+              gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
           done
           
           echo "-------------------------------"
@@ -325,12 +325,12 @@ jobs:
           # upload release files
           for i in $(ls build-artifacts/CoreELEC/target/VDR*); do          
               echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-              gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
+              gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
           done
           
           for i in $(ls build-artifacts/LibreELEC.tv/target/VDR*); do          
              echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-             gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }}
+             gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
           done
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

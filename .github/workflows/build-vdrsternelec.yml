@@ -85,7 +85,7 @@ jobs:
           echo "REVISION=$rev" >> "$GITHUB_ENV"
 
       - name: Download artifact
-        id: download-artifact
+        id: download-artifact-1
         uses: dawidd6/action-download-artifact@v3
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
@@ -98,7 +98,7 @@ jobs:
           path: ${{ env.DISTRO }}/sources
 
       - name: Download artifact
-        id: download-artifact
+        id: download-artifact-2
         uses: dawidd6/action-download-artifact@v3
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}

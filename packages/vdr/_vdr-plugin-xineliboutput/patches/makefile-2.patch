@@ -1,0 +1,26 @@
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2022-01-12 19:25:02.000000000 +0100
++++ b/Makefile	2025-09-06 14:44:50.598912171 +0200
+@@ -95,22 +95,17 @@
+     $(warning ********************************************************)
+     $(warning VDR not detected ! VDR plugins will not be compiled.    )
+     $(warning ********************************************************)
+     CONFIGURE_OPTS += --disable-vdr
+ else
+     export CFLAGS   = $(call PKGCFG,cflags)
+     export CXXFLAGS = $(call PKGCFG,cxxflags)
+ 
+-    ifeq ($(VDRDIR),)
+         $(warning Building outside VDR source tree)
+-    else
+-        $(warning Building inside VDR source tree)
+-        VDR_TREE = yes
+-    endif
+ endif
+ 
+ CFLAGS += -Wextra -Wno-unused-parameter -Wmissing-prototypes -Wimplicit-function-declaration -Wshadow
+ CXXFLAGS += -Wextra -Wno-unused-parameter
+ 
+ ### Allow user defined options to overwrite defaults:
+ -include $(PLGCFG)
+ 

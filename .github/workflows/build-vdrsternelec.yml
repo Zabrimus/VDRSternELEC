@@ -50,9 +50,11 @@ jobs:
       - name: Create dir and determine source artifact
         id: source_artifact
         run: |
-          ls -la .git
+          pwd
+          ls -laR          
           ls -la CoreELEC
           ls -la LibreELEC
+          ls -la .git
           
           echo "Clone submodules"
           git submodule update --init -- CoreELEC

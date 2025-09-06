@@ -1,5 +1,5 @@
 diff --git a/scripts/pkgjson b/scripts/pkgjson
-index 91b55efaa1..545da212b6 100755
+index 91b55efaa1..94b1e9e267 100755
 --- a/scripts/pkgjson
 +++ b/scripts/pkgjson
 @@ -5,6 +5,8 @@
@@ -29,12 +29,15 @@ index 91b55efaa1..545da212b6 100755
      cat <<EOF
    {
      "name": "${PKG_NAME}",
-@@ -39,6 +52,9 @@ json_worker() {
+@@ -39,6 +52,12 @@ json_worker() {
    },
  EOF
    done
 +
-+  sort -u tmp_dont_delete_packages -o dont_delete_packages
++
++  if [ -f tmp_dont_delete_packages ]; then
++    sort -u tmp_dont_delete_packages -o dont_delete_packages
++  fi
 +
    unset -f exit
  }

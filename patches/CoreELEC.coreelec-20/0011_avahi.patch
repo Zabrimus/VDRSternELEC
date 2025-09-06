@@ -1,0 +1,15 @@
+diff --git a/packages/network/avahi/package.mk b/packages/network/avahi/package.mk
+index f1ab0817d7..58399d93f6 100644
+--- a/packages/network/avahi/package.mk
++++ b/packages/network/avahi/package.mk
+@@ -57,7 +57,9 @@ PKG_CONFIGURE_OPTS_TARGET="py_cv_mod_gtk_=yes \
+                            --disable-nls"
+ 
+ pre_configure_target() {
+-  NOCONFIGURE=1 ./autogen.sh
++  if [ -e autogen.sh ]; then
++     NOCONFIGURE=1 ./autogen.sh
++  fi
+ }
+ 
+ post_configure_target() {

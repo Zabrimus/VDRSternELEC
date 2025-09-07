@@ -40,7 +40,7 @@ jobs:
              curl bash bc gcc cpp sed patch patchutils tar bzip2 gzip xz-utils zstd perl gawk gperf zip \
              unzip diffutils lzop make file g++ xfonts-utils xsltproc default-jre-headless python3 \
              libc6-dev libncurses5-dev libjson-perl libxml-parser-perl libparse-yapp-perl rdfind \
-             golang-1.23-go git openssh-client rsync upx-ucl wget \
+             golang-1.23-go git openssh-client rsync upx-ucl wget libglib2.0-dev cpio \
             --no-install-recommends || true          
 
       - uses: actions/checkout@v3
@@ -142,7 +142,8 @@ jobs:
              EXTRA_PARAMETER=""
           fi
           
-          if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+          # build withput addons          
+          if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER}; then
              BUILD_FAILED="true"
           fi
 
@@ -172,11 +173,6 @@ jobs:
                   (
                     cd CoreELEC/target
               
-                    echo "============================="
-                    echo " TEST: List target files"
-                    echo "============================="
-                    ls -laR .
-              
                     # release files
                     echo "=> CoreELEC release files"
                     for i in $(ls CoreELEC*{tar,img.gz,sha256}); do
@@ -186,18 +182,6 @@ jobs:
                         mv $i $NEWNAME || true;
                       fi
                     done;          
-              
-                    # addons
-                    echo "=> CoreELEC addons"
-                    if [ -d addons ]; then
-                      for i in $(find addons -name "*zip"); do
-                        if [ -f $i ]; then
-                          NACE=(${i//\// })
-                          echo "mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]}"
-                          mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]} || true
-                        fi
-                      done
-                    fi
                   )
               fi
     
@@ -214,7 +198,36 @@ jobs:
                         mv $i $NEWNAME || true;
                       fi
                     done;
-              
+                  )
+              fi
+          fi
+                    
+          # build addons
+          if [ -n "$ADDONS" ] ; then
+              ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER} ${ADDONS} -addononly || true
+
+              if [ "$DISTRO" == "CoreELEC" ]; then
+                  (
+                    cd CoreELEC/target
+
+                    # addons
+                    echo "=> CoreELEC addons"
+                    if [ -d addons ]; then
+                      for i in $(find addons -name "*zip"); do
+                        if [ -f $i ]; then
+                          NACE=(${i//\// })
+                          echo "mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]}"
+                          mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]} || true
+                        fi
+                      done
+                    fi
+                  )
+              fi
+          
+              if [ "$DISTRO" == "LibreELEC.tv" ]; then          
+                  (
+                    cd LibreELEC.tv/target
+          
                     # addons
                     echo "=> LibreELEC addons"
                     if [ -d addons ]; then
@@ -229,7 +242,6 @@ jobs:
                   )
               fi
           fi
-                    
 
       - name: Save summary
         uses: actions/upload-artifact@v4

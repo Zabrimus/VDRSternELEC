@@ -38,6 +38,6 @@ post_makeinstall_target() {
     )
 
   # copy libskindesignerapi.pc to install directory
-  cp ${PKG_DIR}/addinstall/libskindesignerapi.pc ${INSTALL}/usr/local/lib/pkgconfigs
+  cp ${PKG_DIR}/addinstall/libskindesignerapi.pc ${INSTALL}/usr/local/lib/pkgconfig
 }
 

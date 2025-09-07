@@ -1,0 +1,40 @@
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2016-01-26 18:38:37.000000000 +0100
++++ b/Makefile	2025-09-07 11:38:53.704168727 +0200
+@@ -50,36 +50,20 @@
+ 
+ INCLUDES +=
+ 
+ DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
+ 
+ LIBS += $(shell pkg-config --libs libcurl)
+ LIBS += $(shell pkg-config --cflags --libs jansson)
+ 
+-ifdef LCLBLD
+-
+-SKINDESIGNER_PATH = $(shell pwd)/../skindesigner
+-LIBSKINDESIGNERAPI_PATH = $(SKINDESIGNER_PATH)/libskindesignerapi
+-
+-# make sure the lib and pkg-config file exists
+-DUMMY:=$(shell $(MAKE) -C $(LIBSKINDESIGNERAPI_PATH) LCLBLD=$(LCLBLD))
+-
+-INCLUDES += -I$(SKINDESIGNER_PATH)
+-LIBS += -L$(LIBSKINDESIGNERAPI_PATH) $(shell pkg-config --libs $(LIBSKINDESIGNERAPI_PATH)/libskindesignerapi.pc)
+-DEFINES += -DLIBSKINDESIGNERAPIVERSION='"$(shell pkg-config --modversion $(LIBSKINDESIGNERAPI_PATH)/libskindesignerapi.pc)"'
+-
+-else
+-
+ INCLUDES += $(shell pkg-config --cflags libskindesignerapi)
+ LIBS += $(shell pkg-config --libs libskindesignerapi)
+ DEFINES += -DLIBSKINDESIGNERAPIVERSION='"$(shell pkg-config --modversion libskindesignerapi)"'
+ 
+-endif
+-
+ ### The object files (add further files here):
+ 
+ OBJS = $(PLUGIN).o \
+        config.o \
+        setup.o \
+        tools/curlfuncs.o \
+        tools/jsonhelpers.o \
+        tools/filesystem.o \

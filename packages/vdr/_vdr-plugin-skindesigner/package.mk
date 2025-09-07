@@ -22,6 +22,11 @@ pre_make_target() {
   export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 }
 
+make_target() {
+	DESTDIR="${INSTALL}" make libskindesignerapi install-subprojects
+	DESTDIR="${INSTALL}" make
+}
+
 post_makeinstall_target() {
   PLUGIN="$(cat ${PKG_BUILD}/Makefile | grep 'PLUGIN = ' | cut -d ' ' -f 3)"
   $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN}
@@ -31,5 +36,8 @@ post_makeinstall_target() {
      cd ${INSTALL}/usr/local/lib/vdr/
   	 ln -s libskindesignerapi.so libskindesignerapi.so.0
     )
+
+  # copy libskindesignerapi.pc to install directory
+  cp ${PKG_DIR}/addinstall/libskindesignerapi.pc ${INSTALL}/usr/local/lib/pkgconfigs
 }
 

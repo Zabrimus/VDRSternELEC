@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
+
+. config/options ""
+
+rm -f dont_delete_packages tmp_a tmp_b
+touch dont_delete_packages
+
+# projects, packages, ../packages
+touch tmp_a
+while IFS= read -r -d '' pkg; do
+    if [ -f $pkg ] && [ $(grep -c PKG_NEED_UNPACK $pkg) = 0 ]; then
+        continue
+    fi
+
+    echo $pkg >> tmp_a
+done <   <(find packages projects ../packages -name 'package.mk' -print0)
+
+for i in $(sed '/^[[:space:]]*$/d' tmp_a | sort -u); do
+    if [ -f $i ]; then
+        . $i
+
+        for j in ${PKG_NEED_UNPACK}; do
+            echo "$(basename $j)" >> tmp_b
+        done
+    fi
+done
+
+for i in $(sed '/^[[:space:]]*$/d' tmp_b | sort -u); do
+    echo "$(get_build_dir $i)" >> dont_delete_packages
+done
+
+
+# rm -f tmp_a
+sed -i '/^[[:space:]]*$/d' dont_delete_packages
+
+rm -f tmp_a tmp_b

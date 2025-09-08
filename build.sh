@@ -379,6 +379,8 @@ prepare_sources
 set_env
 
 if [ ! "${PATCH_ONLY}" = "true" ]; then
+    ../prepare-autoremove
+
     build_addons
 
     if [ ! "${ADDON_ONLY}" = "true" ]; then

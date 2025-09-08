@@ -379,7 +379,11 @@ prepare_sources
 set_env
 
 if [ ! "${PATCH_ONLY}" = "true" ]; then
+    OLD_DISTRO=$DISTRO
+    unset DISTRO
     ../prepare-autoremove
+    DISTRO=$OLD_DISTRO
+    unset OLD_DISTRO
 
     build_addons
 

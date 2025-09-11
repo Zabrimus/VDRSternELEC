@@ -12,13 +12,12 @@ PKG_LONGDESC="A DVB TV server application."
 PKG_DEPENDS_TARGET+=" _vdr"
 
 if [ "${VDR_OUTPUTDEVICE}" = "softhdodroid" ]; then
-   #PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid _vdr-plugin-softhdodroid-gxl"
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid"
 elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ] || [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm-gles" ]; then
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm _vdr-plugin-softhddevice-drm-gles"
 fi
 
-if [ "${ARCH}" = "x86_64" ]; then
+if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && ([ "${DEVICE}" = "x11" ] || [ "${DEVICE}" = "Generic-legacy" ]); then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdcuvid"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdvaapi"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
@@ -26,6 +25,14 @@ if [ "${ARCH}" = "x86_64" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-xineliboutput"
+fi
+
+if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && [ "${DEVICE}" = "Generic" ]; then
+	# Fixme: Dependency problem
+	# PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
+
+	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
+	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
 fi
 
 PKG_DEPENDS_TARGET+=" _vdr-plugin-satip"

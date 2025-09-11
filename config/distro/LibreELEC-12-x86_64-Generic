@@ -1,0 +1,15 @@
+DISTRO=LibreELEC.tv
+SHA=${LIBREELEC12}
+PATCHDIR=libreelec-12
+
+# Use which patch-set (patches/LibreELEC/patch-sets/)
+VARIANT=
+
+# Build settings
+PROJECT=Generic
+DEVICE=Generic
+ARCH=x86_64
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhddevice
+VDR_INPUTDEVICE=satip

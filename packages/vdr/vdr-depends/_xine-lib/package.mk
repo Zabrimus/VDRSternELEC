@@ -34,5 +34,7 @@ PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 pre_configure_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
 
-  ./autogen.sh noconfig
+  if [ -f ./autogen.sh ]; then
+  	./autogen.sh noconfig
+  fi
 }

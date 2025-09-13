@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_freeglut"
-PKG_VERSION="3.2.2"
-PKG_SHA256="c5944a082df0bba96b5756dddb1f75d0cd72ce27b5395c6c1dde85c2ff297a50"
+PKG_VERSION="3.6.0"
+PKG_SHA256="9c3d4d6516fbfa0280edc93c77698fb7303e443c1aaaf37d269e3288a6c3ea52"
 PKG_LICENSE="MIT"
 PKG_SITE="http://freeglut.sourceforge.net/"
 PKG_URL="https://github.com/FreeGLUTProject/freeglut/releases/download/v${PKG_VERSION}/freeglut-${PKG_VERSION}.tar.gz"

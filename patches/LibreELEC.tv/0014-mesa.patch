@@ -1,0 +1,14 @@
+diff --git a/packages/graphics/mesa/package.mk b/packages/graphics/mesa/package.mk
+index c9c0e7f9fa..ea91c763d0 100644
+--- a/packages/graphics/mesa/package.mk
++++ b/packages/graphics/mesa/package.mk
+@@ -146,3 +146,8 @@ makeinstall_host() {
+   mkdir -p "${TOOLCHAIN}/bin"
+     cp -a ${host_files} "${TOOLCHAIN}/bin"
+ }
++
++post_makeinstall_target() {
++  mkdir -p ${INSTALL}/usr/include/GLES2
++    cp -PR $(get_build_dir mesa)/include/GLES2/*.h ${INSTALL}/usr/include/GLES2
++}
+\ No newline at end of file

@@ -1,0 +1,14 @@
+diff --git a/packages/x11/lib/libxcb/package.mk b/packages/x11/lib/libxcb/package.mk
+index 5590a6be91..19fd0e2317 100644
+--- a/packages/x11/lib/libxcb/package.mk
++++ b/packages/x11/lib/libxcb/package.mk
+@@ -12,8 +12,7 @@ PKG_DEPENDS_TARGET="toolchain util-macros Python3:host xcb-proto libpthread-stub
+ PKG_LONGDESC="X C-language Bindings library."
+ PKG_BUILD_FLAGS="+pic"
+ 
+-PKG_CONFIGURE_OPTS_TARGET="--disable-screensaver \
+-                           --disable-xprint \
++PKG_CONFIGURE_OPTS_TARGET="--disable-xprint \
+                            --disable-selinux \
+                            --disable-xvmc"
+ 

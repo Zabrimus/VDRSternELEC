@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_gumbo"
-PKG_VERSION="14e3d4a0583aaabe92ad9735d4a127fb2d7ea969"
-PKG_SHA256="840756f31c4c7201895805f783668985017b0a6e09aea19a099786af3738be0c"
+PKG_VERSION="cc82e492a6d4604c4c5143851933ade388beeffe"
+PKG_SHA256="07d82f050e96fc0cd4f77e3e8aa206e5bebc7c5e45b86bf55d040e3e614686e3"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/GerHobbelt/gumbo-parser"
 PKG_URL="https://github.com/GerHobbelt/gumbo-parser/archive/${PKG_VERSION}.zip"

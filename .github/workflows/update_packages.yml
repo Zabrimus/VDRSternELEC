@@ -20,7 +20,7 @@ jobs:
 
       - name: Update packages
         run: |
-          ./update.sh -p > commit.body.full
+          ./update.sh -a > commit.body.full
           ./update.sh -s _cefbrowser >> commit.body.full
           ./update.sh -s _remotetranscode >> commit.body.full
           ./update.sh -s _vtuner-ng >> commit.body.full

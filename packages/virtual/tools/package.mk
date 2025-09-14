@@ -9,8 +9,8 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="virtual"
 PKG_LONGDESC="Tools which can be useful"
 
-PKG_DEPENDS_TARGET+=" _triggerhappy _python-evdev _irmplircd _vtuner-ng _vlc"
+PKG_DEPENDS_TARGET+=" _triggerhappy _irmplircd _vtuner-ng _vlc"
 
 if [ "${DISTRO}" = "CoreELEC" ]; then
-	PKG_DEPENDS_TARGET+=" _amremote"
+	PKG_DEPENDS_TARGET+=" _amremote _python-evdev"
 fi

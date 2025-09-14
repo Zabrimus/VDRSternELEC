@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_python-evdev"
-PKG_VERSION="2dd6ce6364bb67eedb209f6aa0bace0c18a3a40a"
-PKG_SHA256="b802f9e25c6c218facd54780c4b3d6436fb769d51e3aa286df63a382a4c799ab"
+PKG_VERSION="a5d8cf0749f15d44feb76bbed27b30a75b3c7c1f"
+PKG_SHA256="cb641d8a57749017083c33a546b80659706b1e78cce3e8d60367692ad0dc25c7"
 PKG_LICENSE=""
 PKG_SITE="https://github.com/gvalkov/python-evdev/"
 PKG_URL="https://github.com/gvalkov/python-evdev/archive/${PKG_VERSION}.zip"

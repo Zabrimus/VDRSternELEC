@@ -25,8 +25,10 @@ if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && ([ "${DEVICE}" = 
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
 
-	# tmp. disabled because of compile errors
-	# PKG_DEPENDS_TARGET+=" _vdr-plugin-xineliboutput"
+	# compile problems with LE 13
+	if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" = "12" ]; then
+		PKG_DEPENDS_TARGET+=" _vdr-plugin-xineliboutput"
+	fi
 fi
 
 if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && [ "${DEVICE}" = "Generic" ]; then
@@ -75,10 +77,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-skinsimple"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-tvguide"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-tvguideng"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-weatherforecast"
-
-# tmp. disabled until compile problems are solved
-# PKG_DEPENDS_TARGET+=" _vdr-plugin-systeminfo"
-
+PKG_DEPENDS_TARGET+=" _vdr-plugin-systeminfo"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-radio"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-radio-ng"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-fritzbox"

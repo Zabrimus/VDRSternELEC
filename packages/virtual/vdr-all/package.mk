@@ -24,7 +24,9 @@ if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && ([ "${DEVICE}" = 
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
-	PKG_DEPENDS_TARGET+=" _vdr-plugin-xineliboutput"
+
+	# tmp. disabled because of compile errors
+	# PKG_DEPENDS_TARGET+=" _vdr-plugin-xineliboutput"
 fi
 
 if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && [ "${DEVICE}" = "Generic" ]; then

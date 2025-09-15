@@ -1,0 +1,107 @@
+Submitted By:            Douglas R. Reno <renodr at linuxfromscratch dot org>
+Date:                    2025-08-14
+Initial Package Version: 1.2.13
+Origin:                  Upstream (commits a38be3 and b5fd08)
+Upstream Status:         Applied
+Description:             Fixes building xine-lib-1.2.13 with gcc-15 by adjusting
+                         it's qsort compare wrappers. GCC 15 no longer accepts
+                         "type (*func) ()" as a generic pointer to any function
+                         returning "type", so xine-lib needed to be adjusted.
+
+diff -Naurp xine-lib-1.2.13.orig/contrib/libfaad/sbr_fbt.c xine-lib-1.2.13/contrib/libfaad/sbr_fbt.c
+--- xine-lib-1.2.13.orig/contrib/libfaad/sbr_fbt.c	2018-07-14 11:11:45.000000000 -0500
++++ xine-lib-1.2.13/contrib/libfaad/sbr_fbt.c	2025-08-14 20:04:42.464839821 -0500
+@@ -107,7 +107,10 @@ uint8_t qmf_start_channel(uint8_t bs_sta
+ 
+ static int longcmp(const void *a, const void *b)
+ {
+-    return ((int)(*(int32_t*)a - *(int32_t*)b));
++    const int32_t *d = (const int32_t *)a;
++    const int32_t *e = (const int32_t *)b;
++
++    return(int)(*d - *e);
+ }
+ 
+ /* calculate the stop QMF channel for the master frequency band table */
+diff -Naurp xine-lib-1.2.13.orig/src/input/input_file.c xine-lib-1.2.13/src/input/input_file.c
+--- xine-lib-1.2.13.orig/src/input/input_file.c	2023-01-25 10:03:17.000000000 -0600
++++ xine-lib-1.2.13/src/input/input_file.c	2025-08-14 20:09:44.528122725 -0500
+@@ -651,8 +651,11 @@ static int file_input_strverscmp (const
+ /*
+  * Wrapper to file_input_strverscmp() for qsort() calls, which sort mrl_t type array.
+  */
+-static int file_input_sortfiles_default (const xine_mrl_t *s1, const xine_mrl_t *s2) {
+-  return(file_input_strverscmp(s1->mrl, s2->mrl));
++static int file_input_sortfiles_default (const void *a, const void *b) {
++  const xine_mrl_t *d = (const xine_mrl_t *)a;
++  const xine_mrl_t *e = (const xine_mrl_t *)b;
++
++  return file_input_strverscmp (d->mrl, e->mrl);
+ }
+ 
+ /*
+@@ -735,7 +738,7 @@ static xine_mrl_t **file_input_class_get
+   int                   num_dir_files   = 0;
+   int                   num_norm_files  = 0;
+   int                   num_files       = -1;
+-  int                 (*func) ()        = file_input_sortfiles_default;
++  int                 (*cmp) (const void *a, const void *b) = file_input_sortfiles_default;
+   int                   already_tried   = 0;
+   int                   show_hidden_files;
+ 
+@@ -915,13 +918,13 @@ static xine_mrl_t **file_input_class_get
+      * Sort arrays
+      */
+     if(num_dir_files)
+-      qsort(dir_files, num_dir_files, sizeof(xine_mrl_t), func);
++      qsort(dir_files, num_dir_files, sizeof(xine_mrl_t), cmp);
+ 
+     if(num_hide_files)
+-      qsort(hide_files, num_hide_files, sizeof(xine_mrl_t), func);
++      qsort(hide_files, num_hide_files, sizeof(xine_mrl_t), cmp);
+ 
+     if(num_norm_files)
+-      qsort(norm_files, num_norm_files, sizeof(xine_mrl_t), func);
++      qsort(norm_files, num_norm_files, sizeof(xine_mrl_t), cmp);
+ 
+     /*
+      * Add directories entries
+diff -Naurp xine-lib-1.2.13.orig/src/input/input_smb.c xine-lib-1.2.13/src/input/input_smb.c
+--- xine-lib-1.2.13.orig/src/input/input_smb.c	2020-06-29 16:11:48.000000000 -0500
++++ xine-lib-1.2.13/src/input/input_smb.c	2025-08-14 20:12:43.628114861 -0500
+@@ -231,8 +231,11 @@ static int _strverscmp(const char *s1, c
+ /*
+  * Wrapper to _strverscmp() for qsort() calls, which sort mrl_t type array.
+  */
+-static int _sortfiles_default(const xine_mrl_t *s1, const xine_mrl_t *s2) {
+-  return(_strverscmp(s1->mrl, s2->mrl));
++static int smb_input_sortfiles_default(const void *a, const void *b) {
++  const xine_mrl_t *d = (const xine_mrl_t *)a;
++  const xine_mrl_t *e = (const xine_mrl_t *)b;
++
++  return _strverscmp (d->mrl, e->mrl);
+ }
+ 
+ 
+@@ -240,7 +243,7 @@ static xine_mrl_t **smb_class_get_dir (i
+           const char *filename, int *nFiles) {
+ 
+ 	smb_input_class_t   *this = (smb_input_class_t *) this_gen;
+-	int                 (*func) ()        = _sortfiles_default;
++	int                 (*cmp) (const void *a, const void *b) = smb_input_sortfiles_default;
+ 	int        dir;
+ 	int i;
+ 	struct smbc_dirent  *pdirent;
+@@ -339,10 +342,10 @@ static xine_mrl_t **smb_class_get_dir (i
+ 		 * Sort arrays
+ 		 */
+ 		if(num_dir_files)
+-			qsort(dir_files, num_dir_files, sizeof(xine_mrl_t), func);
++			qsort(dir_files, num_dir_files, sizeof(xine_mrl_t), cmp);
+ 
+ 		if(num_norm_files)
+-			qsort(norm_files, num_norm_files, sizeof(xine_mrl_t), func);
++			qsort(norm_files, num_norm_files, sizeof(xine_mrl_t), cmp);
+ 
+ 		/*
+ 		 * Add directories entries

@@ -16,6 +16,7 @@ PKG_CMAKE_OPTS_TARGET="-DOpenGL_GL_PREFERENCE=GLVND \
 					   -DFREEGLUT_BUILD_DEMOS=off \
 					   -DFREEGLUT_BUILD_SHARED_LIBS=off \
 					   -DFREEGLUT_BUILD_STATIC_LIBS=on \
+					   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
                       "
 
 pre_configure_target() {
@@ -26,5 +27,4 @@ post_makeinstall_target() {
   # drop all unneeded
   rm -rf ${INSTALL}/usr/local/{bin,share,etc}
 }
-
 

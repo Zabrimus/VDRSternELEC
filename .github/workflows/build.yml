@@ -239,8 +239,8 @@ jobs:
     if: ${{ always() }}
 
     steps:
-      - name: Maximize build space
-        uses: Zabrimus/maximize-build-space@master
+      #- name: Maximize build space
+      #  uses: Zabrimus/maximize-build-space@master
 
       - name: Download summary
         uses: actions/download-artifact@v4

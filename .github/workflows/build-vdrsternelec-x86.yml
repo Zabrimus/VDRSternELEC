@@ -1,4 +1,4 @@
-name: Build Artifacts arm64
+name: Build Artifacts
 
 on:
   workflow_call:
@@ -27,26 +27,25 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04-arm
+    runs-on: ubuntu-24.04
     name: ${{ inputs.config }}
     steps:
       - name: Maximize build space
         uses: Zabrimus/maximize-build-space@master
 
-      - name: install dependencies
+      - name: Install packages
         run: |
+          # TEST TEST TEST
+          echo "Build on ubuntu-24.04"
+          exit 1
+                    
           sudo apt update
-          sudo apt -y install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless libxml-parser-perl lzop libjson-parse-perl libjson-perl \
-              libparse-yapp-perl libncurses5-dev bc bzip2 diffutils gawk gcc gperf gzip file patchutils lzop make patch perl sed tar unzip wget xz-utils zip zstd \
-              libncurses5-dev libc6-dev libparse-yapp-perl libxml-parser-perl qemu-user-binfmt g++ xfonts-utils xsltproc rdfind libc6-amd64-cross libglib2.0-0 \
-              libelf-dev elfutils rsync
-
-          sudo snap remove $(snap list | awk '!/^Name|^core|^snapd/ {print $1}') || true
-          sudo apt -y --purge purge snapd || true
-          sudo apt -y --purge autoremove
-          sudo apt clean
-
-          (cd / && sudo ln -s /usr/x86_64-linux-gnu/lib64 lib64)
+          sudo apt-get install -y \
+             curl bash bc gcc cpp sed patch patchutils tar bzip2 gzip xz-utils zstd perl gawk gperf zip \
+             unzip diffutils lzop make file g++ xfonts-utils xsltproc default-jre-headless python3 \
+             libc6-dev libncurses5-dev libjson-perl libxml-parser-perl libparse-yapp-perl rdfind \
+             golang-1.23-go git openssh-client rsync upx-ucl wget libglib2.0-dev cpio \
+            --no-install-recommends || true          
 
       - uses: actions/checkout@v3
         with:
@@ -99,27 +98,44 @@ jobs:
           
           echo "REVISION=$rev" >> "$GITHUB_ENV"
 
-      #- name: Download artifact
-      #  id: download-artifact
-      #  uses: dawidd6/action-download-artifact@v3
-      #  with:
-      #    github_token: ${{secrets.GITHUB_TOKEN}}
-      #    workflow: precache-sources.yml
-      #    if_no_artifact_found: ignore
-      #    check_artifacts: true
-      #    search_artifacts: true
-      #    name: ${{ env.ARTIFACT }}
-      #    name_is_regexp: false
-      #    path: ${{ env.DISTRO }}/sources
+      - name: Download artifact
+        id: download-artifact-1
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: ${{ env.ARTIFACT }}-1
+          name_is_regexp: false
+          path: ${{ env.DISTRO }}/sources
+
+      - name: Download artifact
+        id: download-artifact-2
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: ${{ env.ARTIFACT }}-2
+          name_is_regexp: false
+          path: ${{ env.DISTRO }}/sources
 
       - name: Build
         run: |
           BUILD_FAILED="false"
 
-          if [ ! "${{ inputs.addons }}" = "" ] && [ ! "${{ inputs.addons }}" = "-" ] && [ ! "${{ inputs.addons }}" = "'-'" ]; then
-             ADDONS="-addon ${{ inputs.addons }}"
+          if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
+              if [ ! "${{ inputs.addons }}" = "" ] && [ ! "${{ inputs.addons }}" = "-" ] && [ ! "${{ inputs.addons }}" = "'-'" ]; then
+                 ADDONS="-addon ${{ inputs.addons }}"
+              else
+                 ADDONS=""
+              fi
           else
-             ADDONS=""
+              ADDONS=""
           fi
           
           if [ ! "${{ inputs.extras }}" = "" ] && [ ! "${{ inputs.extras }}" = "-" ] && [ ! "${{ inputs.extras }}" = "'-'" ]; then
@@ -134,15 +150,10 @@ jobs:
              EXTRA_PARAMETER=""
           fi
           
-          # build at first the whole toolchain
-          #if ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER} -package toolchain; then
-          #    # build everything else          
-              if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
-                BUILD_FAILED="true"
-              fi
-          #else
-          #  BUILD_FAILED="true"
-          #fi
+          # build withput addons          
+          if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER}; then
+             BUILD_FAILED="true"
+          fi
 
           echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"
 
@@ -170,11 +181,6 @@ jobs:
                   (
                     cd CoreELEC/target
               
-                    echo "============================="
-                    echo " TEST: List target files"
-                    echo "============================="
-                    ls -laR .
-              
                     # release files
                     echo "=> CoreELEC release files"
                     for i in $(ls CoreELEC*{tar,img.gz,sha256}); do
@@ -184,18 +190,6 @@ jobs:
                         mv $i $NEWNAME || true;
                       fi
                     done;          
-              
-                    # addons
-                    echo "=> CoreELEC addons"
-                    if [ -d addons ]; then
-                      for i in $(find addons -name "*zip"); do
-                        if [ -f $i ]; then
-                          NACE=(${i//\// })
-                          echo "mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]}"
-                          mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]} || true
-                        fi
-                      done
-                    fi
                   )
               fi
     
@@ -212,7 +206,36 @@ jobs:
                         mv $i $NEWNAME || true;
                       fi
                     done;
-              
+                  )
+              fi
+          fi
+                    
+          # build addons
+          if [ -n "$ADDONS" ] ; then
+              ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER} ${ADDONS} -addononly || true
+
+              if [ "$DISTRO" == "CoreELEC" ]; then
+                  (
+                    cd CoreELEC/target
+
+                    # addons
+                    echo "=> CoreELEC addons"
+                    if [ -d addons ]; then
+                      for i in $(find addons -name "*zip"); do
+                        if [ -f $i ]; then
+                          NACE=(${i//\// })
+                          echo "mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]}"
+                          mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]} || true
+                        fi
+                      done
+                    fi
+                  )
+              fi
+          
+              if [ "$DISTRO" == "LibreELEC.tv" ]; then          
+                  (
+                    cd LibreELEC.tv/target
+          
                     # addons
                     echo "=> LibreELEC addons"
                     if [ -d addons ]; then
@@ -227,7 +250,6 @@ jobs:
                   )
               fi
           fi
-                    
 
       - name: Save summary
         uses: actions/upload-artifact@v4

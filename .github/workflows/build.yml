@@ -32,9 +32,7 @@ on:
         required: true
         type: choice
         options:
-          - all default
-          - CoreELEC (all default)
-          - LibreELEC (all default)
+          - all
           - CoreELEC-20-ng
           - CoreELEC-20-ne
           - CoreELEC-21-ng
@@ -51,7 +49,8 @@ on:
           - LibreELEC-12-aarch64-Rockchip-RK3328
           - LibreELEC-12-aarch64-RPi-RPi4
           - LibreELEC-12-aarch64-RPi-RPi5
-          - LibreELEC-12-x86_64-x11
+          - LibreELEC-12-x86_64-Generic
+          - LibreELEC-12-x86_64-GenericLegacy
           - LibreELEC-13-aarch64-AMLGX
           - LibreELEC-13-aarch64-Allwinner-H6
           - LibreELEC-13-aarch64-Allwinner-A64
@@ -63,7 +62,11 @@ on:
           - LibreELEC-13-aarch64-Rockchip-RK3328
           - LibreELEC-13-aarch64-RPi-RPi4
           - LibreELEC-13-aarch64-RPi-RPi5
-          - LibreELEC-13-x86_64-x11
+          - LibreELEC-13-x86_64-Generic
+          - LibreELEC-13-x86_64-GenericLegacy
+          - LibreELEC-13-aarch64-Rockchip-RK356x
+          - LibreELEC-13-aarch64-Rockchip-RK3576
+          - LibreELEC-13-aarch64-Rockchip-RK3588
       defaulttarget:
         description: "Default targets (used by target: all)"
         default: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5 LibreELEC-13-aarch64-AMLGX LibreELEC-13-aarch64-Allwinner-H6 LibreELEC-13-aarch64-Rockchip-RK3399 LibreELEC-13-aarch64-RPi-RPi4 LibreELEC-13-aarch64-RPi-RPi5"
@@ -141,47 +144,87 @@ jobs:
   prepare-matrix:
     runs-on: ubuntu-24.04
     outputs:
-        matrix: ${{ steps.setmatrix.outputs.matrix }}
+        matrixx86: ${{ steps.setmatrix.outputs.matrix.x86 }}
+        matrixarm: ${{ steps.setmatrix.outputs.matrix.arm }}
     steps:
       - name: Set Dynamic Matrix
         id: setmatrix
         run: |
           ALL_DEFAULT="${{ inputs.defaulttarget }}"
           
-          JSON="{\"include\":["
+          JSONX86="{\"include\":["
+          JSONARM="{\"include\":["
 
           if [ "${{ inputs.target }}" = "all default" ] || [ "${{ inputs.target }}" = "" ]; then
-              BUILD=$ALL_DEFAULT
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC* ]]; then
+                      BUILDX86="$BUILDX86 $i"
+                  elsif [[ "$i" == *x86_64* ]]; then
+                      BUILDX86="$BUILDX86 $i"
+                  else
+                      BUILDARM="$BUILDARM $i"
+                  fi
+              done
           elif [ "${{ inputs.target }}" = "CoreELEC (all default)" ]; then
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == CoreELEC* ]]; then
-                      BUILD="$BUILD $i"
+                      BUILDX86="$BUILDX86 $i"
                   fi
               done
           elif [ "${{ inputs.target }}" = "LibreELEC (all default)" ]; then
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == LibreELEC* ]]; then
-                      BUILD="$BUILD $i"
+                      if [[ "$i" == *x86_64* ]]; then
+                          BUILDX86="$BUILDX86 $i"
+                      else
+                          BUILDARM="$BUILDARM $i"
+                      fi
                   fi
               done
           else
-              BUILD="${{ inputs.target }}"
+              if [[ ${{ inputs.target }} == CoreELEC* ]]; then
+                  BUILDX86="$BUILDX86 ${{ inputs.target }}"
+              elsif [[ ${{ inputs.target }} == *x86_64* ]]; then
+                  BUILDX86="$BUILDX86 ${{ inputs.target }}"
+              else
+                  BUILDARM="$BUILDARM ${{ inputs.target }}"
+              fi
           fi
   
-          for i in $BUILD; do
-              JSON="${JSON} {\"run\":\"$i\"},"
+          for i in $BUILDX86; do
+              JSONX86="${JSONX86} {\"run\":\"$i\"},"
+          done
+
+          for i in $BUILDARM; do
+              JSONARM="${JSONARM} {\"run\":\"$i\"},"
           done
           
-          JSON="${JSON} ]}"
-      
-          echo "matrix=${JSON}" >> "$GITHUB_OUTPUT"
+          JSONX86="${JSONX86} ]}"
+          JSONARM="${JSONARM} ]}"
 
-  build-all:
+          echo "matrixx86=${JSONX86}" >> "$GITHUB_OUTPUT"
+          echo "matrixarm=${JSONARM}" >> "$GITHUB_OUTPUT"
+
+  build-all-x86:
     needs: [ prepare, prepare-matrix ]
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
-    uses: ./.github/workflows/build-vdrsternelec.yml
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixx86) }}
+    uses: ./.github/workflows/build-vdrsternelec-x86.yml
+    with:
+      config: ${{ matrix.run }}
+      releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
+      addons: ${{ inputs.addons }}
+      extras: ${{ inputs.extras }}
+      extraparameter: ${{ inputs.extraparameter }}
+    secrets: inherit
+
+  build-all-arm:
+    needs: [ prepare, prepare-matrix ]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixxarm) }}
+    uses: ./.github/workflows/build-vdrsternelec-arm.yml
     with:
       config: ${{ matrix.run }}
       releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
@@ -191,7 +234,7 @@ jobs:
     secrets: inherit
 
   create-release:
-    needs: [ prepare, prepare-matrix, build-all ]
+    needs: [ prepare, prepare-matrix, build-all-x86, build-all-arm ]
     runs-on: ubuntu-24.04
     if: ${{ always() }}
 

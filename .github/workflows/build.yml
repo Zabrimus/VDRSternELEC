@@ -146,15 +146,13 @@ jobs:
   prepare-matrix:
     runs-on: ubuntu-24.04
     outputs:
-        matrixx86: ${{ steps.setmatrix.outputs.matrix.x86 }}
-        matrixarm: ${{ steps.setmatrix.outputs.matrix.arm }}
+        matrixx86: ${{ steps.setmatrix.outputs.matrixx86 }}
+        matrixarm: ${{ steps.setmatrix.outputs.matrixarm }}
     steps:
       - name: Set Dynamic Matrix
         id: setmatrix
         run: |
           ALL_DEFAULT="${{ inputs.defaulttarget }}"
-          
-          echo "ALL_DEFAULT: ${ALL_DEFAULT}" 
           
           JSONX86="{\"include\":["
           JSONARM="{\"include\":["
@@ -230,7 +228,7 @@ jobs:
     needs: [ prepare, prepare-matrix ]
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixxarm) }}
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixarm) }}
     uses: ./.github/workflows/build-vdrsternelec-arm.yml
     with:
       config: ${{ matrix.run }}

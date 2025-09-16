@@ -35,16 +35,11 @@ jobs:
 
       - name: install dependencies
         run: |
-          
-          # TEST TEST TEST
-          echo "Build on ubuntu-22.04-arm"
-          exit 1
-          
           sudo apt update
           sudo apt -y install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless libxml-parser-perl lzop libjson-parse-perl libjson-perl \
               libparse-yapp-perl libncurses5-dev bc bzip2 diffutils gawk gcc gperf gzip file patchutils lzop make patch perl sed tar unzip wget xz-utils zip zstd \
               libncurses5-dev libc6-dev libparse-yapp-perl libxml-parser-perl qemu-user-binfmt g++ xfonts-utils xsltproc rdfind libc6-amd64-cross libglib2.0-0 \
-              libelf-dev elfutils rsync
+              libelf-dev elfutils rsync upx-ucl wget libglib2.0-dev cpio temurin-21-jdk
 
           sudo snap remove $(snap list | awk '!/^Name|^core|^snapd/ {print $1}') || true
           sudo apt -y --purge purge snapd || true
@@ -52,6 +47,10 @@ jobs:
           sudo apt clean
 
           (cd / && sudo ln -s /usr/x86_64-linux-gnu/lib64 lib64)
+
+          # TEST TEST TEST
+          echo "Build on ubuntu-24.04-arm"
+          exit 1
 
       - uses: actions/checkout@v3
         with:

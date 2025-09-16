@@ -159,7 +159,7 @@ jobs:
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == CoreELEC* ]]; then
                       BUILDX86="$BUILDX86 $i"
-                  elsif [[ "$i" == *x86_64* ]]; then
+                  elif [[ "$i" == *x86_64* ]]; then
                       BUILDX86="$BUILDX86 $i"
                   else
                       BUILDARM="$BUILDARM $i"
@@ -184,7 +184,7 @@ jobs:
           else
               if [[ ${{ inputs.target }} == CoreELEC* ]]; then
                   BUILDX86="$BUILDX86 ${{ inputs.target }}"
-              elsif [[ ${{ inputs.target }} == *x86_64* ]]; then
+              elif [[ ${{ inputs.target }} == *x86_64* ]]; then
                   BUILDX86="$BUILDX86 ${{ inputs.target }}"
               else
                   BUILDARM="$BUILDARM ${{ inputs.target }}"

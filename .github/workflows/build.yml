@@ -205,6 +205,9 @@ jobs:
           echo "matrixx86=${JSONX86}" >> "$GITHUB_OUTPUT"
           echo "matrixarm=${JSONARM}" >> "$GITHUB_OUTPUT"
 
+          echo "Matrix X86: ${JSONX86}"
+          echo "Matrix arm: ${JSONARM}"
+
   build-all-x86:
     needs: [ prepare, prepare-matrix ]
     strategy:

@@ -48,10 +48,6 @@ jobs:
 
           (cd / && sudo ln -s /usr/x86_64-linux-gnu/lib64 lib64)
 
-          # TEST TEST TEST
-          echo "Build on ubuntu-24.04-arm"
-          exit 1
-
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0

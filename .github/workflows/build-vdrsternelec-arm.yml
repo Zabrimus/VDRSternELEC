@@ -151,8 +151,16 @@ jobs:
               EXTRA_PARAMETER=""
           fi
           
-          # build everything else          
-          if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+          # build at first some special packages and then the main build
+          if AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER} -package libtool:host; then
+              if AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER} -package glad:host; then
+                  if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+                      BUILD_FAILED="true"
+                  fi                  
+              else
+                BUILD_FAILED="true"
+              fi                        
+          else
               BUILD_FAILED="true"
           fi
 

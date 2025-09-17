@@ -151,9 +151,17 @@ jobs:
              EXTRA_PARAMETER=""
           fi
           
-          # build withput addons          
-          if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER}; then
-             BUILD_FAILED="true"
+          # build at first some special packages and then the main build (without addons)
+          if AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER} -package libtool:host; then
+              if AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER} -package glad:host; then
+                  if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER}; then
+                      BUILD_FAILED="true"
+                  fi                  
+              else
+                BUILD_FAILED="true"
+              fi                        
+          else
+              BUILD_FAILED="true"
           fi
 
           echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"

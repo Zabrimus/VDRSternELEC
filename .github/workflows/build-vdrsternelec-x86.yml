@@ -40,7 +40,7 @@ jobs:
              curl bash bc gcc cpp sed patch patchutils tar bzip2 gzip xz-utils zstd perl gawk gperf zip \
              unzip diffutils lzop make file g++ xfonts-utils xsltproc default-jre-headless python3 \
              libc6-dev libncurses5-dev libjson-perl libxml-parser-perl libparse-yapp-perl rdfind \
-             golang-1.23-go git openssh-client rsync upx-ucl wget libglib2.0-dev cpio openjdk-21-jdk \
+             golang-1.23-go git openssh-client rsync upx-ucl wget libglib2.0-dev cpio openjdk-11-jdk \
              python3-build python3-setuptools python3-installer python3-wheel \
              --no-install-recommends || true          
 

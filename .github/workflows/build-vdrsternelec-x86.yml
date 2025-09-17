@@ -152,18 +152,16 @@ jobs:
           fi
           
           # build at first some special packages and then the main build (without addons)
-          if AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER} -package libtool:host; then
-              if AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER} -package glad:host; then
-                  if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER}; then
-                      BUILD_FAILED="true"
-                  fi                  
-              else
-                BUILD_FAILED="true"
-              fi                        
-          else
-              BUILD_FAILED="true"
+          if [ "${{ inputs.config }}" = "LibreELEC-12-x86_64-GenericLegacy" ] || [ "${{ inputs.config }}" = "LibreELEC-13-x86_64-GenericLegacy" ]; then
+              AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package glad:host || true
           fi
-
+          
+          AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package libtool:host || true 
+          
+          if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${EXTRA_PARAMETER}; then
+              BUILD_FAILED="true"
+          fi                  
+          
           echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"
 
           # create summary

@@ -1,5 +1,5 @@
 diff --git a/scripts/get_archive b/scripts/get_archive
-index 1753c08378..c9232ab3b4 100755
+index 17dbf37b6a..562734a62c 100755
 --- a/scripts/get_archive
 +++ b/scripts/get_archive
 @@ -20,7 +20,10 @@ build_msg "CLR_GET" "GET" "${1} (archive)" "indent"
@@ -17,7 +17,7 @@ index 1753c08378..c9232ab3b4 100755
 @@ -33,7 +36,7 @@ rm -f "${STAMP_URL}" "${STAMP_SHA}"
  NBGET=10
  NBCHKS=2
- while [ ${NBGET} -gt 0 -a ${NBCHKS} -gt 0 ]; do
+ while [ ${NBGET} -gt 0 ] && [ ${NBCHKS} -gt 0 ]; do
 -  for url in "${PKG_URL}" "${PACKAGE_MIRROR}"; do
 +  for url in "${PKG_URL}" ${PACKAGE_MIRROR}; do
      rm -f "${PACKAGE}"

@@ -1,0 +1,17 @@
+diff --git a/scripts/autoremove b/scripts/autoremove
+index 3d13803148..c3a273d370 100755
+--- a/scripts/autoremove
++++ b/scripts/autoremove
+@@ -5,6 +5,12 @@
+ 
+ . config/options "${1}"
+ 
++if [ -f dont_delete_packages ]; then
++  grep -q "${PKG_BUILD}" dont_delete_packages && exit 0
++else
++  exit 0
++fi
++
+ if [ -d "${PKG_BUILD}" ] && [ "${PKG_SECTION}" != "virtual" ]; then
+   print_color CLR_AUTOREMOVE "AUTOREMOVE ${PKG_BUILD}"
+   echo

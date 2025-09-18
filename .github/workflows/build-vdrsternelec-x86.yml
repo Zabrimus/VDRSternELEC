@@ -44,7 +44,7 @@ jobs:
              python3-build python3-setuptools python3-installer python3-wheel python-is-python3            
 
           sudo snap remove $(snap list | awk '!/^Name|^core|^snapd/ {print $1}') || true
-          sudo apt -y --purge purge snapd openjdk-21-jdk || true
+          sudo apt -y --purge purge snapd openjdk-21-jre-headless || true
           sudo apt -y --purge autoremove
           sudo apt clean
           

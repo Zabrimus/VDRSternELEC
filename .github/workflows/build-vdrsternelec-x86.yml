@@ -49,6 +49,12 @@ jobs:
           sudo apt clean
           
           update-java-alternatives --list
+          
+          if [[ "$(uname -a)" = *x86* ]]; then
+              sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin/java" 1
+          else
+              echo "Arm Version"
+          fi
 
           java -version 
           exit 1

@@ -46,7 +46,19 @@ jobs:
           sudo apt -y --purge autoremove
           sudo apt clean
 
-          (cd / && sudo ln -s /usr/x86_64-linux-gnu/lib64 lib64)
+          update-java-alternatives --list
+          
+          if [[ "$(uname -a)" = *x86* ]]; then
+              sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin/java" 1
+          else
+              echo "Arm Version"
+          fi
+
+          java -version 
+          exit 1
+
+
+          # (cd / && sudo ln -s /usr/x86_64-linux-gnu/lib64 lib64)
 
       - uses: actions/checkout@v3
         with:

@@ -42,17 +42,11 @@ jobs:
               libelf-dev elfutils rsync upx-ucl wget libglib2.0-dev cpio openjdk-11-jdk python3-build python3-setuptools python3-installer python3-wheel python-is-python3s 
 
           sudo snap remove $(snap list | awk '!/^Name|^core|^snapd/ {print $1}') || true
-          sudo apt -y --purge purge snapd || true
+          sudo apt -y --purge purge snapd openjdk-21-jdk || true
           sudo apt -y --purge autoremove
           sudo apt clean
 
           update-java-alternatives --list
-          
-          if [[ "$(uname -a)" = *x86* ]]; then
-              sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin/java" 1
-          else
-              echo "Arm Version"
-          fi
 
           java -version 
           exit 1

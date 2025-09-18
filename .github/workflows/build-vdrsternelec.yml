@@ -1,4 +1,4 @@
-name: Build Artifacts arm64
+name: Build Artifacts
 
 on:
   workflow_call:
@@ -25,27 +25,53 @@ on:
         description: "extra parameter"
         type: string
 
+      runner:
+        description: "Runner"
+        default: ubuntu-22.04
+        required: true
+        type: string
+
 jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-22.04
+    outputs:
+      runner: ${{ steps.runner.outputs.runner }}
+    steps:
+      - name: Choose runner
+        id: runner
+        run: |
+          echo "runner=${{ inputs.runner }}" >> $GITHUB_OUTPUT
+
   build:
-    runs-on: ubuntu-22.04-arm
+    needs: [ setup ]
+    runs-on: ${{ needs.setup.outputs.runner }}
     name: ${{ inputs.config }}
     steps:
+      - name: It's only a test
+        run: |
+          uname -a
+          exit 1
+
       - name: Maximize build space
         uses: Zabrimus/maximize-build-space@master
 
-      - name: install dependencies
+      - name: Install packages
         run: |
           sudo apt update
-          sudo apt -y install curl gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless libxml-parser-perl lzop libjson-parse-perl libjson-perl \
-              libparse-yapp-perl libncurses5-dev bc bzip2 diffutils gawk gcc gperf gzip file patchutils lzop make patch perl sed tar unzip wget xz-utils zip zstd \
-              libncurses5-dev libc6-dev libparse-yapp-perl libxml-parser-perl qemu-user-binfmt g++ xfonts-utils xsltproc rdfind libc6-amd64-cross libglib2.0-0 \
-              libelf-dev elfutils rsync upx-ucl wget libglib2.0-dev cpio openjdk-11-jdk python3-build python3-setuptools python3-installer python3-wheel python-is-python3s 
+          sudo apt-get install -y \
+             curl bash bc gcc cpp sed patch patchutils tar bzip2 gzip xz-utils zstd perl gawk gperf zip \
+             unzip diffutils lzop make file g++ xfonts-utils xsltproc python3 \
+             libc6-dev libncurses5-dev libjson-perl libxml-parser-perl libparse-yapp-perl rdfind \
+             golang-1.23-go git openssh-client rsync upx-ucl wget libglib2.0-dev cpio openjdk-11-jdk \
+             python3-build python3-setuptools python3-installer python3-wheel python-is-python3 \
+             libc6-amd64-cross libelf-dev elfutils
 
           sudo snap remove $(snap list | awk '!/^Name|^core|^snapd/ {print $1}') || true
           sudo apt -y --purge purge snapd openjdk-21-jre-headless || true
           sudo apt -y --purge autoremove
           sudo apt clean
-
+          
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -144,12 +170,12 @@ jobs:
           fi
 
           if [ ! "${{ inputs.extraparameter }}" = "" ] && [ ! "${{ inputs.extraparameter }}" = "-" ] && [ ! "${{ inputs.extraparameter }}" = "'-'" ]; then
-              EXTRA_PARAMETER="${{ inputs.extraparameter }}"
+             EXTRA_PARAMETER="${{ inputs.extraparameter }}"
           else
-              EXTRA_PARAMETER=""
+             EXTRA_PARAMETER=""
           fi
           
-          # build at first some special packages and then the main build
+          # build at first some special packages and then the main build (without addons)
           if [ "${{ inputs.config }}" = "LibreELEC-12-x86_64-GenericLegacy" ] || [ "${{ inputs.config }}" = "LibreELEC-13-x86_64-GenericLegacy" ]; then
               AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package glad:host || true
           fi
@@ -159,7 +185,7 @@ jobs:
           if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
               BUILD_FAILED="true"
           fi                  
-
+          
           echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"
 
           # create summary
@@ -186,11 +212,6 @@ jobs:
                   (
                     cd CoreELEC/target
               
-                    echo "============================="
-                    echo " TEST: List target files"
-                    echo "============================="
-                    ls -laR .
-              
                     # release files
                     echo "=> CoreELEC release files"
                     for i in $(ls CoreELEC*{tar,img.gz,sha256}); do
@@ -200,7 +221,7 @@ jobs:
                         mv $i $NEWNAME || true;
                       fi
                     done;          
-              
+
                     # addons
                     echo "=> CoreELEC addons"
                     if [ -d addons ]; then
@@ -214,11 +235,11 @@ jobs:
                     fi
                   )
               fi
-    
+          
               if [ "$DISTRO" == "LibreELEC.tv" ]; then          
                   (
                     cd LibreELEC.tv/target
-              
+          
                     # release files
                     echo "=> LibreELEC release files"
                     for i in `ls LibreELEC*{tar,img.gz,sha256}`; do
@@ -243,7 +264,6 @@ jobs:
                   )
               fi
           fi
-                    
 
       - name: Save summary
         uses: actions/upload-artifact@v4

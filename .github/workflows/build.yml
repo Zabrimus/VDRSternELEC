@@ -215,13 +215,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixx86) }}
-    uses: ./.github/workflows/build-vdrsternelec-x86.yml
+    uses: ./.github/workflows/build-vdrsternelec.yml
     with:
       config: ${{ matrix.run }}
       releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
       addons: ${{ inputs.addons }}
       extras: ${{ inputs.extras }}
       extraparameter: ${{ inputs.extraparameter }}
+      runner: ubuntu-22.04
     secrets: inherit
 
   build-all-arm:
@@ -229,13 +230,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixarm) }}
-    uses: ./.github/workflows/build-vdrsternelec-arm.yml
+    uses: ./.github/workflows/build-vdrsternelec.yml
     with:
       config: ${{ matrix.run }}
       releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
       addons: ${{ inputs.addons }}
       extras: ${{ inputs.extras }}
       extraparameter: ${{ inputs.extraparameter }}
+      runner: ubuntu-22.04-arm
     secrets: inherit
 
   create-release:

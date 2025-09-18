@@ -48,11 +48,6 @@ jobs:
     runs-on: ${{ needs.setup.outputs.runner }}
     name: ${{ inputs.config }}
     steps:
-      - name: It's only a test
-        run: |
-          uname -a
-          exit 1
-
       - name: Maximize build space
         uses: Zabrimus/maximize-build-space@master
 

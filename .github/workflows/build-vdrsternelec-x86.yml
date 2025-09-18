@@ -49,6 +49,8 @@ jobs:
           sudo apt clean
           
           java -version 
+          python --version | true
+          python3 --version | true
           exit 1
 
       - uses: actions/checkout@v3

@@ -27,7 +27,3 @@ make_target() {
 makeinstall_target() {
   python setup.py install --root=$INSTALL/usr --home=""
 }
-
-post_makeinstall_target() {
-  find ${INSTALL}/usr/lib -name "*py" -exec rm -rf "{}" ";"
-}

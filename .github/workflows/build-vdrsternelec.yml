@@ -60,8 +60,8 @@ jobs:
              libc6-dev libncurses5-dev libjson-perl libxml-parser-perl libparse-yapp-perl rdfind \
              golang-1.23-go git openssh-client rsync upx-ucl wget libglib2.0-dev cpio openjdk-11-jdk \
              python3-build python3-setuptools python3-installer python3-wheel python-is-python3 \
-             libc6-amd64-cross libelf-dev elfutils
-
+             libc6-amd64-cross libelf-dev elfutils qemu-user-binfmt
+ 
           sudo snap remove $(snap list | awk '!/^Name|^core|^snapd/ {print $1}') || true
           sudo apt -y --purge purge snapd openjdk-21-jre-headless || true
           sudo apt -y --purge autoremove

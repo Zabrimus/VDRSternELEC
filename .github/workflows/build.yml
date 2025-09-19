@@ -33,8 +33,8 @@ on:
         type: choice
         options:
           - all
-          - CoreELEC (all default)
-          - LibreELEC (all default)
+          - CoreELEC all
+          - LibreELEC all
           - CoreELEC-20-ng
           - CoreELEC-20-ne
           - CoreELEC-21-ng
@@ -167,13 +167,13 @@ jobs:
                       BUILDARM="$BUILDARM $i"
                   fi
               done
-          elif [[ "${{ inputs.target }}" == "CoreELEC (all default)" ]]; then
+          elif [[ "${{ inputs.target }}" == "CoreELEC all" ]]; then
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == CoreELEC* ]]; then
                       BUILDX86="$BUILDX86 $i"
                   fi
               done
-          elif [[ "${{ inputs.target }}" == "LibreELEC (all default)" ]]; then
+          elif [[ "${{ inputs.target }}" == "LibreELEC all" ]]; then
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == LibreELEC* ]]; then
                       if [[ "$i" == *x86_64* ]]; then

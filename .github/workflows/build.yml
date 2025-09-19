@@ -157,7 +157,7 @@ jobs:
           JSONX86="{\"include\":["
           JSONARM="{\"include\":["
 
-          if [ "${{ inputs.target }}" = "all" ] || [ "${{ inputs.target }}" = "" ]; then
+          if [[ "${{ inputs.target }}" = "all" ]] || [[ "${{ inputs.target }}" = "" ]]; then
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == CoreELEC* ]]; then
                       BUILDX86="$BUILDX86 $i"
@@ -167,13 +167,13 @@ jobs:
                       BUILDARM="$BUILDARM $i"
                   fi
               done
-          elif [ "${{ inputs.target }}" = "CoreELEC (all default)" ]; then
+          elif [[ "${{ inputs.target }}" = "CoreELEC (all default)" ]]; then
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == CoreELEC* ]]; then
                       BUILDX86="$BUILDX86 $i"
                   fi
               done
-          elif [ "${{ inputs.target }}" = "LibreELEC (all default)" ]; then
+          elif [[ "${{ inputs.target }}" = "LibreELEC (all default)" ]]; then
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == LibreELEC* ]]; then
                       if [[ "$i" == *x86_64* ]]; then

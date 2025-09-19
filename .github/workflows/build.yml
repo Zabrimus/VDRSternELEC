@@ -186,7 +186,7 @@ jobs:
           else
               if [[ "${{ inputs.target }}" == CoreELEC* ]]; then
                   BUILDX86="$BUILDX86 ${{ inputs.target }}"
-              elif [[ ${{ inputs.target }} == *x86_64* ]]; then
+              elif [[ "${{ inputs.target }}" == *x86_64* ]]; then
                   BUILDX86="$BUILDX86 ${{ inputs.target }}"
               else
                   BUILDARM="$BUILDARM ${{ inputs.target }}"

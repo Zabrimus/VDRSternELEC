@@ -1,0 +1,50 @@
+name: Build VDRSternELEC (CoreELEC)
+
+# Cron every Tuesday at 00:01
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '01 0 * * 3'
+
+jobs:
+  # This workflow is configured to run only in repository 'Zabrimus/VDRSternELEC'
+  # If you also want to run this workflow, then change or remove the condition in job 'cron'
+
+  buildtype:
+    runs-on: ubuntu-22.04
+    outputs:
+      type: ${{ steps.get.outputs.type }}
+
+    steps:
+      - name: Get type of build
+        id: get
+        run: |
+          if [ $(date +"%d") -lt 7 ]; then
+              echo "type=full" >> "$GITHUB_OUTPUT"
+          else
+              echo "type=tar" >> "$GITHUB_OUTPUT"
+          fi
+
+  cron_tar:
+    needs: [ buildtype ]
+    if: ${{ github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'tar' }}
+    uses: ./.github/workflows/build.yml
+    with:
+      target: "CoreELEC all"
+      defaulttarget: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Allwinner-A64 LibreELEC-12-arm-Allwinner-R40 LibreELEC-12-arm-Allwinner-H3 LibreELEC-12-aarch64-Allwinner-H5 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-arm-Rockchip-RK3288 LibreELEC-12-aarch64-Rockchip-RK3328 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5 LibreELEC-13-aarch64-AMLGX LibreELEC-13-aarch64-Allwinner-H6 LibreELEC-13-aarch64-Allwinner-A64 LibreELEC-13-arm-Allwinner-R40 LibreELEC-13-arm-Allwinner-H3 LibreELEC-13-aarch64-Allwinner-H5 LibreELEC-13-aarch64-Rockchip-RK3399 LibreELEC-13-arm-Rockchip-RK3288 LibreELEC-13-aarch64-Rockchip-RK3328 LibreELEC-13-aarch64-RPi-RPi4 LibreELEC-13-aarch64-RPi-RPi5 LibreELEC-13-aarch64-Rockchip-RK356x LibreELEC-13-aarch64-Rockchip-RK3576 LibreELEC-13-aarch64-Rockchip-RK3588"
+      addons: "dvb-latest"
+      extras: "easyvdr,channellogos,remotetranscode,cefbrowser"
+      extraparameter: "-releaseonly"
+    secrets: inherit
+
+  cron_full:
+    needs: [ buildtype ]
+    if: ${{ github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'full' }}
+    uses: ./.github/workflows/build.yml
+    with:
+      target: "CoreELEC all"
+      defaulttarget: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Allwinner-A64 LibreELEC-12-arm-Allwinner-R40 LibreELEC-12-arm-Allwinner-H3 LibreELEC-12-aarch64-Allwinner-H5 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-arm-Rockchip-RK3288 LibreELEC-12-aarch64-Rockchip-RK3328 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5 LibreELEC-13-aarch64-AMLGX LibreELEC-13-aarch64-Allwinner-H6 LibreELEC-13-aarch64-Allwinner-A64 LibreELEC-13-arm-Allwinner-R40 LibreELEC-13-arm-Allwinner-H3 LibreELEC-13-aarch64-Allwinner-H5 LibreELEC-13-aarch64-Rockchip-RK3399 LibreELEC-13-arm-Rockchip-RK3288 LibreELEC-13-aarch64-Rockchip-RK3328 LibreELEC-13-aarch64-RPi-RPi4 LibreELEC-13-aarch64-RPi-RPi5 LibreELEC-13-aarch64-Rockchip-RK356x LibreELEC-13-aarch64-Rockchip-RK3576 LibreELEC-13-aarch64-Rockchip-RK3588"
+      addons: "dvb-latest"
+      extras: "easyvdr,channellogos,remotetranscode,cefbrowser"
+      extraparameter: "-"
+    secrets: inherit

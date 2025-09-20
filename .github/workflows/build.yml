@@ -129,6 +129,7 @@ jobs:
         id: create_release_tag
         run: |
           CURRENT_TAG=${{ steps.current_release_tag.outputs.tag }}
+          CURRENT_TAG=$(echo $CURRENT_TAG | sed -e "s/[[:space:]]*(.*$//")
           
           if [[ ! ${CURRENT_TAG} =~ ^${{ steps.date.outputs.date }} ]]; then
             TAG="${{ steps.date.outputs.date }}.1"
@@ -141,7 +142,6 @@ jobs:
           fi
 
           echo "CURRENT_RELEASE_TAG=${TAG}" >> "$GITHUB_OUTPUT"
-          echo "CURRENT_RELASE_TAG = ${TAG}"
 
   prepare-matrix:
     runs-on: ubuntu-24.04
@@ -341,7 +341,7 @@ jobs:
           echo "-------------------------------"
 
           # create release
-          gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" -R ${{ github.repository }} -F release_notes --title "Github Build: ${{ inputs.target }}" --draft
+          gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" -R ${{ github.repository }} -F release_notes --title "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }} (${{ inputs.target }})" --draft
           
           echo "-------------------------------"
           echo "Upload cef..."

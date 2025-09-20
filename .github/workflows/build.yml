@@ -96,6 +96,7 @@ jobs:
       contents: read
     steps:
       - name: Prepare
+        shell: bash
         run: |
           gh extension install actions/gh-actions-cache
           
@@ -127,6 +128,7 @@ jobs:
 
       - name: create release tag file
         id: create_release_tag
+        shell: bash
         run: |
           CURRENT_TAG=${{ steps.current_release_tag.outputs.tag }}
           CURRENT_TAG=$(echo $CURRENT_TAG | sed -e "s/[[:space:]]*(.*$//")
@@ -151,6 +153,7 @@ jobs:
     steps:
       - name: Set Dynamic Matrix
         id: setmatrix
+        shell: bash
         run: |
           ALL_DEFAULT="${{ inputs.defaulttarget }}"
           
@@ -278,6 +281,7 @@ jobs:
           merge-multiple: true
 
       - name: Create release and upload files
+        shell: bash
         run: |
           echo "-------------------------------"
           echo "List build summaries...."

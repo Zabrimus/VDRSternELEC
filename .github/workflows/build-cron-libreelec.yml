@@ -17,6 +17,7 @@ jobs:
 
     steps:
       - name: Get type of build
+        shell: bash
         id: get
         run: |
           if [ $(date +"%d") -lt 7 ]; then

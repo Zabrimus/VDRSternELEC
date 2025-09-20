@@ -52,6 +52,7 @@ jobs:
         uses: Zabrimus/maximize-build-space@master
 
       - name: Install packages
+        shell: bash
         run: |
           sudo apt update
           sudo apt-get install -y \
@@ -74,6 +75,7 @@ jobs:
           fetch-depth: 0
 
       - name: Create dir and determine source artifact
+        shell: bash
         id: source_artifact
         run: |
           echo "Clone submodules"
@@ -147,6 +149,7 @@ jobs:
           path: ${{ env.DISTRO }}/sources
 
       - name: Build
+        shell: bash
         run: |
           BUILD_FAILED="false"
 
@@ -274,6 +277,7 @@ jobs:
             build-summary-${{ inputs.config }}
 
       - name: Check build
+        shell: bash
         run: |
           if [ "${{ env.BUILD_FAILED }}" == "true" ]; then
               # abort this build

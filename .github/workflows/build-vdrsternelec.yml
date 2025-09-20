@@ -55,13 +55,13 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install -y \
-             curl bash bc gcc cpp sed patch patchutils tar bzip2 gzip xz-utils zstd perl gawk gperf zip \
-             unzip diffutils lzop make file g++ xfonts-utils xsltproc python3 \
-             libc6-dev libncurses5-dev libjson-perl libxml-parser-perl libparse-yapp-perl rdfind \
-             golang-1.23-go git openssh-client rsync upx-ucl wget libglib2.0-dev cpio openjdk-11-jdk \
-             python3-build python3-setuptools python3-installer python3-wheel python-is-python3 \
-             libc6-amd64-cross libelf-dev elfutils qemu-user-binfmt
- 
+             bash bc bzip2 cpio cpp curl diffutils elfutils file g++ gawk gcc git golang-1.23-go gperf gzip \
+             libc6-amd64-cross libc6-dev libelf-dev libglib2.0-0 libglib2.0-dev libjson-perl libncurses5-dev \
+             libparse-yapp-perl libxml-parser-perl lzop make openjdk-11-jdk openssh-client patch patchutils perl \
+             python3 python3-build python3-installer python3-setuptools python3-wheel python-is-python3 \
+             qemu-user-binfmt qemu-user-binfmts rdfind rsync sed slibjson-parse-perl tar unzip upx-ucl wget \
+             xfonts-utils xsltproc xz-utils zip zstd          
+              
           sudo snap remove $(snap list | awk '!/^Name|^core|^snapd/ {print $1}') || true
           sudo apt -y --purge purge snapd openjdk-21-jre-headless || true
           sudo apt -y --purge autoremove

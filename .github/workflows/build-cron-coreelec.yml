@@ -11,7 +11,7 @@ jobs:
   # If you also want to run this workflow, then change or remove the condition in job 'cron'
 
   buildtype:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       type: ${{ steps.get.outputs.type }}
 

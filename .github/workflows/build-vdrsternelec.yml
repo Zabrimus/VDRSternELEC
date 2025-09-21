@@ -81,6 +81,15 @@ jobs:
           
           (cd / && sudo ln -s /usr/x86_64-linux-gnu/lib64 lib64)
 
+          # fix some links
+          if [ ! -f /usr/bin/cc ]; then 
+              ln -s /usr/bin/gcc /usr/bin/cc
+          fi
+
+          if [ ! -f /usr/bin/c++ ]; then 
+              ln -s /usr/bin/g++ /usr/bin/c++
+          fi
+
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0

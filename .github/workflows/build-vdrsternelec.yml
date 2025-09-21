@@ -63,10 +63,6 @@ jobs:
              rdfind rsync sed libjson-parse-perl tar unzip upx-ucl wget \
              xfonts-utils xsltproc xz-utils zip zstd \
              --no-install-recommends
-              
-          sudo ln -s /usr/lib/go-1.23 /usr/lib/go
-          sudo ln -s /usr/lib/go-1.23/bin/go /usr/bin/go \
-          sudo ln -s /usr/lib/go-1.23/bin/gofmt /usr/bin/gofmt
   
           if [ "$(uname -m)" = "aarch64" ]; then
             sudo apt-get install -y libc6-amd64-cross qemu-user-binfmt --no-install-recommends;

@@ -89,6 +89,23 @@ jobs:
           if [ ! -f /usr/bin/c++ ]; then 
               sudo ln -s /usr/bin/g++ /usr/bin/c++
           fi
+          
+          if [ ! -f /usr/bin/c99-gcc ]; then
+              sudo ln /usr/bin/gcc /usr/bin/c99-gcc
+          fi
+          
+          if [ ! -f /usr/bin/c99 ]; then
+              sudo ln /usr/bin/c99-gcc /usr/bin/c99
+          fi
+
+          if [ ! -f /usr/bin/c89-gcc ]; then
+              sudo ln /usr/bin/gcc /usr/bin/c89-gcc
+          fi
+          
+          if [ ! -f /usr/bin/c89 ]; then
+              sudo ln /usr/bin/c89-gcc /usr/bin/c89
+          fi
+          
 
       - uses: actions/checkout@v3
         with:

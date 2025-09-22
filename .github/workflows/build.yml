@@ -326,39 +326,19 @@ jobs:
           echo "-------------------------------"
           echo "Create Release notes..."
           echo "-------------------------------"
-        
-          VREV=$(git ls-remote https://github.com/${{ github.repository }} | head -1 | sed "s/HEAD//" | cut -c 1-7)
           
-          echo ">>> Step 1"
-          
-          echo "VDRSternELEC: [master@${VREV}](https://github.com/${{ github.repository }}/tree/${VREV})" >> release_notes
-          
-          echo ">>> Step 2"
-          
+          # VREV=$(git ls-remote https://github.com/${{ github.repository }} | head -1 | sed "s/HEAD//" | cut -c 1-7)
+          # echo "VDRSternELEC: [master@${VREV}](https://github.com/${{ github.repository }}/tree/${VREV})" >> release_notes
+
           echo "" >> release_notes
-          
-          echo ">>> Step 3"
-          
           echo "----------------------------------------------------------------------------" >> release_notes
-          
-          echo ">>> Step 4"
-          
           echo "| Status  | Distro | Project | Device | Revision |" >> release_notes
-          
-          echo ">>> Step 5"
-          
           echo "| ------- | ------ | ------- | ------ | -------- |" >> release_notes
-          
-          echo ">>> Step 6"
-          
+
           cat build-summary/build-summary* >> release_notes || true
-          
-          echo ">>> Step 7"
-          
+
           cat release_notes
-          
-          echo ">>> Step 8"
-          
+
           echo "-------------------------------"
           echo "Create Release..."
           echo "-------------------------------"

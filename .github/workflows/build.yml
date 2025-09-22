@@ -352,8 +352,8 @@ jobs:
           echo "-------------------------------"
 
           # upload cef files
-          for i in $(ls build-cef/*.zip || echo "not found"); do
-              if [ ! "$i" == "not found" ]; then 
+          for i in $(ls build-cef/*.zip || echo "notfound"); do
+              if [ ! "$i" == "notfound" ]; then 
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
                   gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
               fi
@@ -364,15 +364,15 @@ jobs:
           echo "-------------------------------"
           
           # upload addon files
-          for i in $(ls build-addon/CoreELEC/target/addons/CoreELEC*zip || echo "not found"); do
-              if [ ! "$i" == "not found" ]; then
+          for i in $(ls build-addon/CoreELEC/target/addons/CoreELEC*zip || echo "notfound"); do
+              if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
                   gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
               fi
           done
-
-          for i in $(ls build-addon/LibreELEC.tv/target/addons/LibreELEC*zip || echo "not found"); do
-              if [ ! "$i" == "not found" ]; then
+          
+          for i in $(ls build-addon/LibreELEC.tv/target/addons/LibreELEC*zip || echo "notfound"); do
+              if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
                   gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
               fi
@@ -383,15 +383,15 @@ jobs:
           echo "-------------------------------"
           
           # upload release files
-          for i in $(ls build-artifacts/CoreELEC/target/VDR* || echo "not found"); do
-              if [ ! "$i" == "not found" ]; then
+          for i in $(ls build-artifacts/CoreELEC/target/VDR* || echo "notfound"); do
+              if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
                   gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
               fi
           done
           
-          for i in $(ls build-artifacts/LibreELEC.tv/target/VDR* || echo "not found"); do
-              if [ ! "$i" == "not found" ]; then
+          for i in $(ls build-artifacts/LibreELEC.tv/target/VDR* || echo "notfound"); do
+              if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
                   gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
               fi

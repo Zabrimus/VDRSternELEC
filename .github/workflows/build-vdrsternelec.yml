@@ -213,7 +213,12 @@ jobs:
           fi
           
           # build at first some special packages and then the main build (without addons)
-          THREADCOUNT=0 ./build.sh -config ${{ inputs.config }} -package ccache:host || true
+          if [ ! THREADCOUNT=0 ./build.sh -config ${{ inputs.config }} -package ccache:host ]; then
+              THREADCOUNT=0 ./clean-package.sh -config ${{ inputs.config }} ccache:host
+              THREADCOUNT=0 ./clean-package.sh -config ${{ inputs.config }} ccache
+              THREADCOUNT=0 ./build.sh -config ${{ inputs.config }} -package ccache:host || true
+          fi
+          
           THREADCOUNT=0 ./build.sh -config ${{ inputs.config }} -package libtool:host || true 
           
           if [ "${{ inputs.config }}" = "LibreELEC-12-x86_64-GenericLegacy" ] || [ "${{ inputs.config }}" = "LibreELEC-13-x86_64-GenericLegacy" ]; then

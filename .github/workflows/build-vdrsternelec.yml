@@ -213,11 +213,11 @@ jobs:
           fi
           
           # build at first some special packages and then the main build (without addons)
-          ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package ccache:host || true
-          ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package libtool:host || true 
+          THREADCOUNT=0 ./build.sh -config ${{ inputs.config }} -package ccache:host || true
+          THREADCOUNT=0 ./build.sh -config ${{ inputs.config }} -package libtool:host || true 
           
           if [ "${{ inputs.config }}" = "LibreELEC-12-x86_64-GenericLegacy" ] || [ "${{ inputs.config }}" = "LibreELEC-13-x86_64-GenericLegacy" ]; then
-              ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package glad:host || true
+               THREADCOUNT=0 ./build.sh -config ${{ inputs.config }} -package glad:host || true
           fi
                     
           if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then

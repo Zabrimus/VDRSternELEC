@@ -35,6 +35,11 @@ on:
           - all
           - CoreELEC all
           - LibreELEC all
+          - CoreELEC-20
+          - CoreELEC-21
+          - CoreELEC-22
+          - LibreELEC-12
+          - LibreELEC-13
           - CoreELEC-20-ng
           - CoreELEC-20-ne
           - CoreELEC-21-ng
@@ -186,6 +191,44 @@ jobs:
                       fi
                   fi
               done
+          elif [[ "${{ inputs.target }}" == "CoreELEC-20" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC-20* ]]; then
+                      BUILDX86="$BUILDX86 $i"
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "CoreELEC-21" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC-21* ]]; then
+                      BUILDX86="$BUILDX86 $i"
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "CoreELEC-22" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC-22* ]]; then
+                      BUILDX86="$BUILDX86 $i"
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "LibreELEC-12" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == LibreELEC-12* ]]; then
+                      if [[ "$i" == *x86_64* ]]; then
+                          BUILDX86="$BUILDX86 $i"
+                      else
+                          BUILDARM="$BUILDARM $i"
+                      fi
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "LibreELEC-13" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == LibreELEC-13* ]]; then
+                      if [[ "$i" == *x86_64* ]]; then
+                          BUILDX86="$BUILDX86 $i"
+                      else
+                          BUILDARM="$BUILDARM $i"
+                      fi
+                  fi
+              done                              
           else
               if [[ "${{ inputs.target }}" == CoreELEC* ]]; then
                   BUILDX86="$BUILDX86 ${{ inputs.target }}"
@@ -195,25 +238,28 @@ jobs:
                   BUILDARM="$BUILDARM ${{ inputs.target }}"
               fi
           fi
-  
-          for i in $BUILDX86; do
-              JSONX86="${JSONX86} {\"run\":\"$i\"},"
-          done
-
-          for i in $BUILDARM; do
-              JSONARM="${JSONARM} {\"run\":\"$i\"},"
-          done
           
-          JSONX86="${JSONX86} ]}"
-          JSONARM="${JSONARM} ]}"
-
-          echo "matrixx86=${JSONX86}" >> "$GITHUB_OUTPUT"
-          echo "matrixarm=${JSONARM}" >> "$GITHUB_OUTPUT"
-
-          echo "Matrix X86: ${JSONX86}"
-          echo "Matrix arm: ${JSONARM}"
+          if [[ -n ${BUILDX86} ]]; then
+              for i in $BUILDX86; do
+                  JSONX86="${JSONX86} {\"run\":\"$i\"},"
+              done          
+              JSONX86="${JSONX86} ]}"
+              echo "matrixx86=${JSONX86}" >> "$GITHUB_OUTPUT"
+              echo "Matrix X86: ${JSONX86}"
+          fi
+          
+          if [[ -n ${BUILDARM} ]]; then
+              for i in $BUILDARM; do
+                  JSONARM="${JSONARM} {\"run\":\"$i\"},"
+              done
+          
+              JSONARM="${JSONARM} ]}"
+              echo "matrixarm=${JSONARM}" >> "$GITHUB_OUTPUT"
+              echo "Matrix arm: ${JSONARM}"
+          fi
 
   build-all-x86:
+    if: startsWith(needs.prepare-matrix.outputs.matrixx86, '{')
     needs: [ prepare, prepare-matrix ]
     strategy:
       fail-fast: false
@@ -229,6 +275,7 @@ jobs:
     secrets: inherit
 
   build-all-arm:
+    if: startsWith(needs.prepare-matrix.outputs.matrixarm, '{')
     needs: [ prepare, prepare-matrix ]
     strategy:
       fail-fast: false
@@ -344,7 +391,15 @@ jobs:
           echo "-------------------------------"
 
           # create release
-          gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" -R ${{ github.repository }} -F release_notes --title "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }} (${{ inputs.target }})" --draft
+          if [[ "${{ inputs.extraparameter }}" =~ "releaseonly" ]]; then
+              RELEASETYPE="Release"
+          else
+              RELEASETYPE="Image"
+          fi
+          
+          TITLE="(${{ inputs.target }}, ${RELEASETYPE})"
+
+          gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" -R ${{ github.repository }} -F release_notes --title "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }} (${TITLE})"
           
           echo "-------------------------------"
           echo "Upload cef..."
@@ -399,13 +454,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
-#  delete-old-releases:
-#    needs: [create-release]
-#    name: delete-old-releases
-#    runs-on: ubuntu-20.04
-#    if: ${{ always() }}
-#    steps:
-#      - uses: dev-drprasad/delete-older-releases@v0.2.0
-#        with:
-#          repo: ${{ github.repository }}
-#          keep_latest: 8
+  delete-old-releases:
+    needs: [create-release]
+    name: delete-old-releases
+    runs-on: ubuntu-24.04
+    if: ${{ always() }}
+    steps:
+      - uses: dev-drprasad/delete-older-releases@v0.2.0
+        with:
+          repo: ${{ github.repository }}
+          keep_latest: 20

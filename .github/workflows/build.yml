@@ -225,7 +225,7 @@ jobs:
       addons: ${{ inputs.addons }}
       extras: ${{ inputs.extras }}
       extraparameter: ${{ inputs.extraparameter }}
-      runner: ubuntu-22.04
+      runner: ubuntu-24.04
     secrets: inherit
 
   build-all-arm:

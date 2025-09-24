@@ -397,9 +397,9 @@ jobs:
               RELEASETYPE="Image"
           fi
           
-          TITLE="(${{ inputs.target }}, ${RELEASETYPE})"
+          TITLE="${{ inputs.target }}, ${RELEASETYPE}"
 
-          gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" -R ${{ github.repository }} -F release_notes --title "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }} (${TITLE})"
+          gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" -R ${{ github.repository }} -F release_notes --title "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }} (${TITLE})" ---draft
           
           echo "-------------------------------"
           echo "Upload cef..."
@@ -454,13 +454,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
-  delete-old-releases:
-    needs: [create-release]
-    name: delete-old-releases
-    runs-on: ubuntu-24.04
-    if: ${{ always() }}
-    steps:
-      - uses: dev-drprasad/delete-older-releases@v0.2.0
-        with:
-          repo: ${{ github.repository }}
-          keep_latest: 20
+#  delete-old-releases:
+#    needs: [create-release]
+#    name: delete-old-releases
+#    runs-on: ubuntu-24.04
+#    if: ${{ always() }}
+#    steps:
+#      - uses: dev-drprasad/delete-older-releases@v0.2.0
+#        with:
+#          repo: ${{ github.repository }}
+#          keep_latest: 20

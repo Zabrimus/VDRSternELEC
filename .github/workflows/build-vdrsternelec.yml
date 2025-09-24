@@ -221,12 +221,18 @@ jobs:
           if [ "${{ inputs.config }}" = "LibreELEC-12-x86_64-GenericLegacy" ] || [ "${{ inputs.config }}" = "LibreELEC-13-x86_64-GenericLegacy" ]; then
                ./build.sh -config ${{ inputs.config }} -package glad:host || true
           fi
+          
+          echo "==> Free space after first build"
+          df -h
 
           # build all                    
-          if ! AUTOREMOVE=yes ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+          if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
               BUILD_FAILED="true"
           fi                  
-          
+
+          echo "==> Free space after second build"
+          df -h
+
           echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"
 
           # create summary

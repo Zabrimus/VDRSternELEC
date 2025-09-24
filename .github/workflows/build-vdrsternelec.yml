@@ -213,10 +213,10 @@ jobs:
           fi
           
           # build at first some special packages and then the main build
-          ./build.sh -config ${{ inputs.config }} -package gcc:host
-          ./build.sh -config ${{ inputs.config }} -package gcc
-          ./build.sh -config ${{ inputs.config }} -package ccache:host
-          ./build.sh -config ${{ inputs.config }} -package libtool:host
+          #./build.sh -config ${{ inputs.config }} -package gcc:host
+          #./build.sh -config ${{ inputs.config }} -package gcc
+          #./build.sh -config ${{ inputs.config }} -package ccache:host
+          #./build.sh -config ${{ inputs.config }} -package libtool:host
           
           if [ "${{ inputs.config }}" = "LibreELEC-12-x86_64-GenericLegacy" ] || [ "${{ inputs.config }}" = "LibreELEC-13-x86_64-GenericLegacy" ]; then
                ./build.sh -config ${{ inputs.config }} -package glad:host || true

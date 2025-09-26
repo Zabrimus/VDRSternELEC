@@ -364,28 +364,28 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: build-summary
-          pattern: build-summary-*
+          pattern: build-summary-${{ inputs.target }}*
           merge-multiple: true
 
       - name: Download release artifacts
         uses: actions/download-artifact@v4
         with:
           path: build-artifacts
-          pattern: build-artifacts-*
+          pattern: build-artifacts-*-${{ inputs.target }}*
           merge-multiple: true
 
       - name: Download addon artifacts
         uses: actions/download-artifact@v4
         with:
           path: build-addon
-          pattern: build-addon-*
+          pattern: build-addon-${{ inputs.target }}*
           merge-multiple: true
 
       - name: Download cef artifacts
         uses: actions/download-artifact@v4
         with:
           path: build-cef
-          pattern: build-cef-*
+          pattern: build-cef-${{ inputs.target }}*
           merge-multiple: true
 
       - name: Create release and upload files
@@ -470,7 +470,7 @@ jobs:
           for i in $(ls build-cef/*.zip || echo "notfound"); do
               if [ ! "$i" == "notfound" ]; then 
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
+                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}" $i --clobber -R ${{ github.repository }} || true
               fi
           done
           
@@ -482,14 +482,14 @@ jobs:
           for i in $(ls build-addon/CoreELEC/target/addons/CoreELEC*zip || echo "notfound"); do
               if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
+                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}" $i --clobber -R ${{ github.repository }} || true
               fi
           done
           
           for i in $(ls build-addon/LibreELEC.tv/target/addons/LibreELEC*zip || echo "notfound"); do
               if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
+                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}" $i --clobber -R ${{ github.repository }} || true
               fi
           done
           
@@ -501,14 +501,14 @@ jobs:
           for i in $(ls build-artifacts/CoreELEC/target/VDR* || echo "notfound"); do
               if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
+                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}" $i --clobber -R ${{ github.repository }} || true
               fi
           done
           
           for i in $(ls build-artifacts/LibreELEC.tv/target/VDR* || echo "notfound"); do
               if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}" $i --clobber -R ${{ github.repository }} || true
+                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}" $i --clobber -R ${{ github.repository }} || true
               fi
           done
         env:

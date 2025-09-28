@@ -9,9 +9,12 @@ rm -f dont_delete_packages tmp_a tmp_b
 touch dont_delete_packages
 
 # projects, packages, ../packages
+
+# TODO PKG_DEPENDS_UNPACK
+
 touch tmp_a
 while IFS= read -r -d '' pkg; do
-    if [ -f $pkg ] && [ $(grep -c PKG_NEED_UNPACK $pkg) = 0 ]; then
+    if [ -f $pkg ] && [ $(grep -c PKG_NEED_UNPACK $pkg) = 0 ] && [ $(grep -c PKG_DEPENDS_UNPACK $pkg) = 0 ]; then
         continue
     fi
 
@@ -20,9 +23,13 @@ done <   <(find packages projects ../packages -name 'package.mk' -print0)
 
 for i in $(sed '/^[[:space:]]*$/d' tmp_a | sort -u); do
     if [ -f $i ]; then
-        . $i
+        . $i || continue
 
         for j in ${PKG_NEED_UNPACK}; do
+            echo "$(basename $j)" >> tmp_b
+        done
+
+        for j in ${PKG_DEPENDS_UNPACK}; do
             echo "$(basename $j)" >> tmp_b
         done
     fi

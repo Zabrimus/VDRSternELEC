@@ -1,0 +1,43 @@
+diff -ru8bBwd a/Fonbook.h b/Fonbook.h
+--- a/Fonbook.h	2020-05-20 15:03:14.000000000 +0200
++++ b/Fonbook.h	2025-10-01 10:19:04.746175155 +0200
+@@ -82,34 +82,34 @@
+ 	 * @param quickdial The quickdial extension
+ 	 * @param vanity The vanity extension
+ 	 * @param prority '1' marks the default number of this contact, otherwise 0
+ 	 */
+ 	void addNumber(std::string number, eType type = TYPE_NONE, std::string quickdial = "", std::string vanity = "", int priority = 0);
+ 	std::string getName() const { return name; }
+ 	void setName(std::string name) { this->name = name; }
+ 
+-    #define CHECK(x) if (numbers.size() <= pos) return x;
++    #define CHECKFON(x) if (numbers.size() <= pos) return x;
+ 
+-    std::string getNumber(size_t pos) const { CHECK(""); return numbers[pos].number; }
++    std::string getNumber(size_t pos) const { CHECKFON(""); return numbers[pos].number; }
+ 	const std::vector<sNumber> &getNumbers() const { return numbers; }
+-    void setNumber(std::string number,size_t pos) { CHECK(); numbers[pos].number = number; }
+-    eType getType(size_t pos) const { CHECK(FonbookEntry::TYPE_NONE); return numbers[pos].type; }
++    void setNumber(std::string number,size_t pos) { CHECKFON(); numbers[pos].number = number; }
++    eType getType(size_t pos) const { CHECKFON(FonbookEntry::TYPE_NONE); return numbers[pos].type; }
+ 	void setType(eType type, size_t pos) { numbers[pos].type = type; }
+ 	bool isImportant() const { return important; }
+ 	void setImportant(bool important) { this->important = important; }
+ 	size_t getDefault() const;
+ 	void setDefault(size_t pos);
+ 	std::string getQuickdialFormatted( size_t pos = std::string::npos) const;
+ 	std::string getQuickdial(size_t pos = std::string::npos) const;
+ 	void setQuickdial(std::string quickdial, size_t pos = std::string::npos);
+ 	std::string getVanity(size_t pos = std::string::npos) const;
+ 	std::string getVanityFormatted(size_t pos = std::string::npos) const;
+ 	void setVanity(std::string vanity, size_t pos = std::string::npos);
+-    int getPriority(size_t pos) const { CHECK(0); return numbers[pos].priority; }
++    int getPriority(size_t pos) const { CHECKFON(0); return numbers[pos].priority; }
+ 	void setPrioriy(int priority, size_t pos) { numbers[pos].priority = priority; }
+ 	bool operator<(const FonbookEntry & fe) const;
+ 	/*
+ 	 * Get number of typed numbers (TYPE_NONE is ignored)
+ 	 * @return count of different numbers available
+ 	 */
+ 	size_t getSize() const;
+ };

@@ -20,7 +20,7 @@ pre_configure_target() {
 make_target() {
   python setup.py \
          build \
-         build_ecodes --evdev-headers ${SYSROOT_PREFIX}/usr/include/linux/input.h:${SYSROOT_PREFIX}/usr/include/linux/input-event-codes.h \
+         build_ecodes --evdev-headers ${SYSROOT_PREFIX}/usr/include/linux/input.h:${SYSROOT_PREFIX}/usr/include/linux/input-event-codes.h:${SYSROOT_PREFIX}/usr/include/linux/uinput.h \
          build_ext --include-dirs ${SYSROOT_PREFIX}/
 }
 

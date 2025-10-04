@@ -21,6 +21,10 @@ jobs:
       - name: Download sources
         id: download
         run: |
+          sudo apt update
+          sudo apt -y install parallel
+          sudo apt clean
+          
           git submodule update --init -- CoreELEC
           git submodule update --init -- LibreELEC.tv
           
@@ -63,43 +67,15 @@ jobs:
               ( cd LibreELEC.tv && git checkout master )
               ./build.sh -config LibreELEC-13-aarch64-AMLGX -patchonly
           fi
-  
+          
+          mproject=$(grep "^PROJECT" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          mdevice=$(grep "^DEVICE" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          march=$(grep "^ARCH" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          
           if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
-            ( cd CoreELEC              
-          
-              for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-                  if [[ "$i" != *:* ]]; then
-                      echo "===================================="
-                      echo "Download $i"
-                      echo "===================================="
-                      scripts/get $i
-                  else
-                      echo "===================================="
-                      echo "Prevent Download of $i" 
-                      echo "===================================="
-                  fi
-              done
-            )
-          
-            ls -lR CoreELEC/sources/
+              (cd CoreELEC && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
           else
-            ( cd LibreELEC.tv
-          
-              for i in $(tools/viewplan | awk '{ print $2 }' | sed "s/:host//g" | sort -u); do 
-                  if [[ "$i" != *:* ]]; then
-                      echo "===================================="
-                      echo "Download $i"
-                      echo "===================================="
-                      scripts/get $i
-                  else
-                      echo "===================================="
-                      echo "Prevent Download of $i" 
-                      echo "===================================="
-                  fi
-              done
-            )
-          
-            ls -lR LibreELEC.tv/sources/
+              (cd LibreELEC.tv && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
           fi
 
       # [a-h0-9_]*

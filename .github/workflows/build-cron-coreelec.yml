@@ -27,7 +27,7 @@ jobs:
 
   cron_tar_20:
     needs: [ buildtype ]
-    if: ${{ github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'tar' }}
+    if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'tar'
     uses: ./.github/workflows/build.yml
     with:
       target: "CoreELEC-20"
@@ -39,7 +39,7 @@ jobs:
 
   cron_tar_21:
     needs: [ buildtype ]
-    if: ${{ github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'tar' }}
+    if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'tar'
     uses: ./.github/workflows/build.yml
     with:
       target: "CoreELEC-21"
@@ -51,7 +51,7 @@ jobs:
 
   cron_tar_22:
     needs: [ buildtype ]
-    if: ${{ github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'tar' }}
+    if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'tar'
     uses: ./.github/workflows/build.yml
     with:
       target: "CoreELEC-22"
@@ -63,7 +63,7 @@ jobs:
 
   cron_full_20:
     needs: [ buildtype ]
-    if: ${{ github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'full' }}
+    if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'full'
     uses: ./.github/workflows/build.yml
     with:
       target: "CoreELEC-20"
@@ -75,7 +75,7 @@ jobs:
 
   cron_full_21:
     needs: [ buildtype ]
-    if: ${{ github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'full' }}
+    if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'full'
     uses: ./.github/workflows/build.yml
     with:
       target: "CoreELEC-21"
@@ -87,7 +87,7 @@ jobs:
 
   cron_full_22:
     needs: [ buildtype ]
-    if: ${{ github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'full' }}
+    if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'full'
     uses: ./.github/workflows/build.yml
     with:
       target: "CoreELEC-22"

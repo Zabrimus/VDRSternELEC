@@ -231,8 +231,16 @@ jobs:
                ./build.sh -config ${{ inputs.config }} -package glad:host || true
           fi
           
-          echo "==> Free space after first build"
+          echo "==> Free space before build"
           df -h
+      
+          # download at first all sources (fail fast if it's not poassible)
+          ./build.sh -config ${{ inputs.config }} ${EXTRAS} -patchonly
+          if [ "${{ env.DISTRO }}" == "CoreELEC" ]; then
+              (cd CoreELEC && tools/download-tool -a)
+          else
+              (cd LibreELEC.tv && tools/download-tool -a)
+          fi
 
           # build all                    
           if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then

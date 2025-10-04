@@ -62,7 +62,7 @@ jobs:
              libparse-yapp-perl libxml-parser-perl lzop make openjdk-11-jdk openssh-client patch patchutils perl \
              python3 python3-build python3-installer python3-setuptools python3-wheel python-is-python3 \
              rdfind rsync sed libjson-parse-perl tar unzip upx-ucl wget \
-             xfonts-utils xsltproc xz-utils zip zstd \
+             xfonts-utils xsltproc xz-utils zip zstd parallel \
              --no-install-recommends
           
           if [[ "${{ inputs.config }}" == CoreELEC-20* ]] || [[ "${{ inputs.config }}" == CoreELEC-21* ]] ; then
@@ -231,23 +231,30 @@ jobs:
                ./build.sh -config ${{ inputs.config }} -package glad:host || true
           fi
           
-          echo "==> Free space before build"
+          echo "==> Free space before downloading sources"
           df -h
-      
-          # download at first all sources (fail fast if it's not poassible)
+          
+          # download at first all sources (fail fast if it's not poassible)                    
+          mproject=$(grep "^PROJECT" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          mdevice=$(grep "^DEVICE" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          march=$(grep "^ARCH" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          
           ./build.sh -config ${{ inputs.config }} ${EXTRAS} -patchonly
           if [ "${{ env.DISTRO }}" == "CoreELEC" ]; then
-              (cd CoreELEC && tools/download-tool -a)
+              (cd CoreELEC && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
           else
-              (cd LibreELEC.tv && tools/download-tool -a)
+              (cd LibreELEC.tv && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
           fi
-
+#
+          echo "==> Free space after downloading sources"
+          df -h
+                         
           # build all                    
-          if ! ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+          if ! AUTOREMOVE="yes" ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
               BUILD_FAILED="true"
           fi                  
 
-          echo "==> Free space after second build"
+          echo "==> Free space after build"
           df -h
 
           echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"

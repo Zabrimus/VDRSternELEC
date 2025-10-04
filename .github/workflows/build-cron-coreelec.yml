@@ -26,7 +26,7 @@ jobs:
           fi
 
   cron_tar_20:
-    needs: [ buildtype ]
+    needs: buildtype
     if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'tar'
     uses: ./.github/workflows/build.yml
     with:
@@ -38,7 +38,7 @@ jobs:
     secrets: inherit
 
   cron_tar_21:
-    needs: [ buildtype ]
+    needs: buildtype
     if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'tar'
     uses: ./.github/workflows/build.yml
     with:
@@ -50,7 +50,7 @@ jobs:
     secrets: inherit
 
   cron_tar_22:
-    needs: [ buildtype ]
+    needs: buildtype
     if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'tar'
     uses: ./.github/workflows/build.yml
     with:
@@ -62,7 +62,7 @@ jobs:
     secrets: inherit
 
   cron_full_20:
-    needs: [ buildtype ]
+    needs: buildtype
     if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'full'
     uses: ./.github/workflows/build.yml
     with:
@@ -74,7 +74,7 @@ jobs:
     secrets: inherit
 
   cron_full_21:
-    needs: [ buildtype ]
+    needs: buildtype
     if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'full'
     uses: ./.github/workflows/build.yml
     with:
@@ -86,7 +86,7 @@ jobs:
     secrets: inherit
 
   cron_full_22:
-    needs: [ buildtype ]
+    needs: buildtype
     if: github.repository == 'Zabrimus/VDRSternELEC' && needs.buildType.outputs.type == 'full'
     uses: ./.github/workflows/build.yml
     with:

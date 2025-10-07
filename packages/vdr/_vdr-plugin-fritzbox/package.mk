@@ -27,6 +27,16 @@ pre_make_target() {
    ln -s $(get_build_dir _libconvpp) ${FRITZ_DIR}/libconv++
    ln -s $(get_build_dir _liblogpp) ${FRITZ_DIR}/liblog++
    ln -s $(get_build_dir _libfritzpp) ${FRITZ_DIR}/libfritz++
+
+   # since boost 1.89 the stub library boost_system is not available anymore
+   # the plugin Makefile needs to be patched
+   if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" -ge "13" ]; then
+   		sed -i -e "s/-lboost_system//" $(get_build_dir _vdr-plugin-fritzbox)/Makefile
+   fi
+
+   if [ "${DISTRO}" = "CoreELEC" ] && [ "${OS_VERSION:0:2}" -ge "22" ]; then
+   		sed -i -e "s/-lboost_system//" $(get_build_dir _vdr-plugin-fritzbox)/Makefile
+   fi
 }
 
 post_makeinstall_target() {

@@ -241,9 +241,9 @@ jobs:
           
           ./build.sh -config ${{ inputs.config }} ${EXTRAS} -patchonly
           if [ "${{ env.DISTRO }}" == "CoreELEC" ]; then
-              (cd CoreELEC && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+              (cd CoreELEC && unset DISTRO && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
           else
-              (cd LibreELEC.tv && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+              (cd LibreELEC.tv && unset DISTRO && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
           fi
           
           echo "==> Free space after downloading sources"

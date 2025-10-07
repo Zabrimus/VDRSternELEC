@@ -31,6 +31,11 @@ on:
         required: true
         type: string
 
+      remote:
+        description: "Use a remote rummer"
+        type: boolean
+        required: true
+
 jobs:
   setup:
     name: Setup
@@ -49,9 +54,11 @@ jobs:
     name: ${{ inputs.config }}
     steps:
       - name: Maximize build space
+        if: ${{ inputs.remote != true }}
         uses: Zabrimus/maximize-build-space@master
 
       - name: Install packages
+        if: ${{ inputs.remote != true }}
         shell: bash
         run: |
           sudo apt update
@@ -175,6 +182,7 @@ jobs:
           echo "REVISION=$rev" >> "$GITHUB_ENV"
 
       - name: Download artifact
+        if: ${{ inputs.remote != true }}
         id: download-artifact-1
         uses: dawidd6/action-download-artifact@v3
         with:
@@ -187,7 +195,8 @@ jobs:
           name_is_regexp: false
           path: ${{ env.DISTRO }}/sources
 
-      - name: Download artifact
+      - name: Download artifacts
+        if: ${{ inputs.remote != true }}
         id: download-artifact-2
         uses: dawidd6/action-download-artifact@v3
         with:

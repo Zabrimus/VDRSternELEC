@@ -35,6 +35,7 @@ on:
           - all
           - CoreELEC-all
           - LibreELEC-all
+          - LibreELEC-Generic
           - CoreELEC-20
           - CoreELEC-21
           - CoreELEC-22
@@ -301,6 +302,7 @@ jobs:
       extras: ${{ inputs.extras }}
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-22.04
+      remote: false
     secrets: inherit
 
   build-all-x86-24:
@@ -317,6 +319,7 @@ jobs:
       extras: ${{ inputs.extras }}
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-24.04
+      remote: false
     secrets: inherit
 
   build-all-arm-22:
@@ -333,6 +336,7 @@ jobs:
       extras: ${{ inputs.extras }}
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-22.04-arm
+      remote: false
     secrets: inherit
 
   build-all-arm-24:
@@ -349,6 +353,7 @@ jobs:
       extras: ${{ inputs.extras }}
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-24.04-arm
+      remote: false
     secrets: inherit
 
   create-release:

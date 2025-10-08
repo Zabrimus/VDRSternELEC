@@ -68,15 +68,17 @@ jobs:
               ./build.sh -config LibreELEC-13-aarch64-AMLGX -patchonly
           fi
           
-          mproject=$(grep "^PROJECT" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
-          mdevice=$(grep "^DEVICE" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
-          march=$(grep "^ARCH" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
-          
-          if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
-              (cd CoreELEC && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
-          else
-              (cd LibreELEC.tv && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
-          fi
+          for i in $(ls config/distro/${{ inputs.config }}*); do
+              mproject=$(grep "^PROJECT" "${i}" | awk -F= '{ print $2 }')
+              mdevice=$(grep "^DEVICE" "${i}" | awk -F= '{ print $2 }')
+              march=$(grep "^ARCH" "${i}" | awk -F= '{ print $2 }')
+  
+              if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
+                (cd CoreELEC && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+              else
+                (cd LibreELEC.tv && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+              fi
+          done
 
       # [a-h0-9_]*
       # [i-z]*

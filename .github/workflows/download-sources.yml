@@ -74,9 +74,9 @@ jobs:
               march=$(grep "^ARCH" "${i}" | awk -F= '{ print $2 }')
   
               if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
-                (cd CoreELEC && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+                (cd CoreELEC && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool)
               else
-                (cd LibreELEC.tv && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+                (cd LibreELEC.tv && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool)
               fi
           done
 

@@ -3,11 +3,11 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_squashfs-tools"
-PKG_VERSION="4.6.1"
+PKG_VERSION="4.7.2"
 PKG_SHA256="94201754b36121a9f022a190c75f718441df15402df32c2b520ca331a107511c"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/plougher/squashfs-tools"
-PKG_URL="https://github.com/plougher/squashfs-tools/archive/${PKG_VERSION}.tar.gz"
+PKG_URL="https://github.com/plougher/squashfs-tools/archive/refs/tags/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain zlib lzo xz _zstd"
 PKG_DEPENDS_UNPACK="_zstd"
 PKG_LONGDESC="Tools for squashfs, a highly compressed read-only filesystem for Linux."

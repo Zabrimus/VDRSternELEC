@@ -2,7 +2,7 @@
 
 PKG_NAME="tsduck"
 PKG_VERSION="v3.37-3670"
-PKG_SHA256="dbb7c654330108c509f2d8a97fe0346e3a1f55ad959e13dcee4a40dd04507886"
+PKG_SHA256="6e8728ce469a6a12931a455e889d7fd9d2c0acd2960dd370210318a7f28933cc"
 PKG_LICENSE="BSD-2-Clause license "
 PKG_SITE="https://tsduck.io/"
 PKG_URL="https://github.com/tsduck/tsduck/archive/refs/tags/${PKG_VERSION}.tar.gz"

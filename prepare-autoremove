@@ -46,6 +46,7 @@ echo "make" >> tmp_b
 echo "openssl" >> tmp_b
 echo "pkg-config" >> tmp_b
 echo "zstd" >> tmp_b
+echo "llvm" >> tmp_b
 
 for i in $(sed '/^[[:space:]]*$/d' tmp_b | sort -u); do
     echo "$(get_build_dir $i)" >> dont_delete_packages

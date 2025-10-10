@@ -1,0 +1,159 @@
+name: Init Remote Runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  init:
+    runs-on: self-hosted
+    name: Init
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Create dir and determine source artifact
+        shell: bash
+        id: source_artifact
+        run: |
+          echo "Clone submodules"
+          git submodule update --init -- CoreELEC
+          git submodule update --init -- LibreELEC.tv
+
+          echo "Pre-Create directories"
+          mkdir -p CoreELEC/target
+          mkdir -p LibreELEC.tv/target
+
+          mkdir -p ../sources
+          (cd CoreELEC && ln -s ../../sources sources)
+          (cd LibreELEC.tv && ln -s ../../sources sources)
+
+      - name: Download artifact CE20-1
+        id: download-artifact-ce20-1
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: cache-coreelec-20-sources-1
+          name_is_regexp: false
+          path: ../sources
+
+      - name: Download artifact CE20-2
+        id: download-artifact-ce20-2
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: cache-coreelec-20-sources-2
+          name_is_regexp: false
+          path: ../sources
+
+      - name: Download artifact CE21-1
+        id: download-artifact-ce21-1
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: cache-coreelec-21-sources-1
+          name_is_regexp: false
+          path: ../sources
+
+      - name: Download artifact CE21-2
+        id: download-artifact-ce21-2
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: cache-coreelec-21-sources-2
+          name_is_regexp: false
+          path: ../sources
+
+      - name: Download artifact CE22-1
+        id: download-artifact-ce22-1
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: cache-coreelec-22-sources-1
+          name_is_regexp: false
+          path: ../sources
+
+      - name: Download artifact CE22-2
+        id: download-artifact-ce22-2
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: cache-coreelec-22-sources-2
+          name_is_regexp: false
+          path: ../sources
+
+      - name: Download artifact LE12-1
+        id: download-artifact-le12-1
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: cache-libreelec-12-sources-1
+          name_is_regexp: false
+          path: ../sources
+
+      - name: Download artifact LE12-2
+        id: download-artifact-le12-2
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: cache-libreelec-12-sources-2
+          name_is_regexp: false
+          path: ../sources
+
+      - name: Download artifact LE13-1
+        id: download-artifact-le13-1
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: cache-libreelec-13-sources-1
+          name_is_regexp: false
+          path: ../sources
+
+      - name: Download artifact LE13-2
+        id: download-artifact-le13-2
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: cache-libreelec-13-sources-2
+          name_is_regexp: false
+          path: ../sources

@@ -169,6 +169,7 @@ jobs:
           JSONX8624="{\"include\":["
           JSONARM22="{\"include\":["
           JSONARM24="{\"include\":["
+          JSONREMOTE="{\"include\":["
 
           if [[ "${{ inputs.target }}" == "all" ]] || [[ "${{ inputs.target }}" == "" ]]; then
               for i in $ALL_DEFAULT; do
@@ -237,6 +238,10 @@ jobs:
                           BUILDARM22="$BUILDARM22 $i"
                       fi
                   fi
+              done
+          elif [[ "${{ inputs.target }}" == "LibreELEC-Generic" ]]; then
+              for i in LibreELEC-12-x86_64-Generic LibreELEC-12-x86_64-GenericLegacy LibreELEC-13-x86_64-Generic LibreELEC-13-x86_64-GenericLegacy; do
+                  BUILDREMOTE="$BUILDREMOTE $i"
               done                              
           else
               if [[ "${{ inputs.target }}" == CoreELEC-20* ]] || [[ "${{ inputs.target }}" == CoreELEC-21* ]]; then
@@ -286,6 +291,16 @@ jobs:
               JSONARM24="${JSONARM24} ]}"
               echo "matrixarm24=${JSONARM24}" >> "$GITHUB_OUTPUT"
               echo "Matrix arm24: ${JSONARM24}"
+          fi
+
+          if [[ -n ${BUILDREMOTE} ]]; then
+              for i in $BUILDREMOTE; do
+                  JSONREMOTE="${JSONREMOTE} {\"run\":\"$i\"},"
+              done
+          
+              JSONREMOTE="${JSONREMOTE} ]}"
+              echo "matrixremote=${JSONREMOTE}" >> "$GITHUB_OUTPUT"
+              echo "Matrix remote: ${JSONREMOTE}"
           fi
 
   build-all-x86-22:
@@ -356,6 +371,23 @@ jobs:
       remote: false
     secrets: inherit
 
+  build-remote:
+    if: startsWith(needs.prepare-matrix.outputs.matrixremote, '{')
+    needs: [ prepare, prepare-matrix ]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixremote) }}
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: ${{ matrix.run }}
+      releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
+      addons: '-'
+      extras: ${{ inputs.extras }}
+      extraparameter: ${{ inputs.extraparameter }}
+      runner: self-hosted
+      remote: true
+    secrets: inherit
+
   create-release:
     needs: [ prepare, prepare-matrix, build-all-x86-22, build-all-x86-24, build-all-arm-22, build-all-arm-24 ]
     runs-on: ubuntu-24.04
@@ -412,8 +444,10 @@ jobs:
 
           if [ -d build-artifacts ]; then 
             ls -R build-artifacts
+            COUNTA=$(find build-artifacts -type f | wc -l)
           else
             echo "Directory build-artifacts does not exists"
+            COUNTA=0
           fi
 
           echo "-------------------------------"
@@ -434,6 +468,11 @@ jobs:
             ls -R build-addon
           else
             echo "Directory build-addon does not exists"          
+          fi
+
+          if [ $COUNTA -le 0 ]; then 
+              echo "No files found. Prevent creating an empty release"
+              exit 0
           fi
 
           echo "-------------------------------"

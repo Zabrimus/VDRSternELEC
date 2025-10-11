@@ -209,6 +209,17 @@ jobs:
           name_is_regexp: false
           path: ${{ env.DISTRO }}/sources
 
+      - name: Prepare remote
+        if: ${{ inputs.remote == true }}
+        shell: bash
+        run: |
+          git reset --hard
+          git pull --all
+          if [ -d ../sources ]; then 
+              rm -f sources  
+              ln -s ../sources sources
+          fi
+
       - name: Build
         shell: bash
         run: |

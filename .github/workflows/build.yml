@@ -390,7 +390,7 @@ jobs:
     secrets: inherit
 
   create-release:
-    needs: [ prepare, prepare-matrix, build-all-x86-22, build-all-x86-24, build-all-arm-22, build-all-arm-24 ]
+    needs: [ prepare, prepare-matrix, build-all-x86-22, build-all-x86-24, build-all-arm-22, build-all-arm-24, build-remote ]
     runs-on: ubuntu-24.04
     if: ${{ always() }}
 

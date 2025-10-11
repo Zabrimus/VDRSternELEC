@@ -263,7 +263,7 @@ jobs:
           if [ "${{ env.DISTRO }}" == "CoreELEC" ]; then
               (cd CoreELEC && unset DISTRO && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
           else
-              (cd LibreELEC.tv && unset DISTRO && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+              (cd LibreELEC.tv && unset DISTRO && cp ../CoreELEC/tools/download-tool tools && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
           fi
           
           echo "==> Free space after downloading sources"

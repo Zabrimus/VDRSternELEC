@@ -315,7 +315,7 @@ jobs:
                     echo "=> CoreELEC release files"
                     ls -la || true
           
-                    for i in $(ls CoreELEC*{tar,img.gz,sha256}); do
+                    for i in $(ls *.{tar,img.gz,sha256}); do
                       if [ -f $i ]; then
                         mv $i "VDR-$i" || true
                       fi
@@ -345,7 +345,7 @@ jobs:
           
                     # release files
                     echo "=> LibreELEC release files"
-                    for i in `ls LibreELEC*{tar,img.gz,sha256,ova}`; do
+                    for i in `ls *.{tar,img.gz,sha256,ova}`; do
                       if [ -f $i ]; then
                         mv $i "VDR-$i" || true
                       fi

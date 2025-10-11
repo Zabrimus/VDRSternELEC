@@ -158,6 +158,7 @@ jobs:
         matrixx8624: ${{ steps.setmatrix.outputs.matrixx8624 }}
         matrixarm22: ${{ steps.setmatrix.outputs.matrixarm22 }}
         matrixarm24: ${{ steps.setmatrix.outputs.matrixarm24 }}
+        matrixremote: ${{ steps.setmatrix.outputs.matrixremote }}
     steps:
       - name: Set Dynamic Matrix
         id: setmatrix

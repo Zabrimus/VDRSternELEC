@@ -133,9 +133,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create dir and determine source artifact
+      - name: Create dir and checkout
+        if: ${{ inputs.remote != true }}
         shell: bash
-        id: source_artifact
+        id: checkout
         run: |
           echo "Clone submodules"
           git submodule update --init -- CoreELEC
@@ -147,7 +148,11 @@ jobs:
           
           mkdir -p CoreELEC/target
           mkdir -p LibreELEC.tv/target
-          
+
+      - name: Determine source artifact
+        shell: bash
+        id: source_artifact
+        run: |                    
           # get config values (hack)
           branch=$(grep "^PATCHDIR" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
           project=$(grep "^PROJECT" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')

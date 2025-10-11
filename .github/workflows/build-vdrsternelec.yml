@@ -218,9 +218,9 @@ jobs:
         if: ${{ inputs.remote == true }}
         shell: bash
         run: |
-          git stash
+          git stash || true
           git pull --all
-          git stash pop
+          git stash pop || true
           if [ -d ../sources ]; then 
               rm -f sources  
               ln -s ../sources sources

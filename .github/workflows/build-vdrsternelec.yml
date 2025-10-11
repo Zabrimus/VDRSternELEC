@@ -315,9 +315,7 @@ jobs:
                     echo "=> CoreELEC release files"
                     for i in $(ls CoreELEC*{tar,img.gz,sha256}); do
                       if [ -f $i ]; then
-                        NEWNAME=`echo $i | perl -pe "s/^(.*)_devel_(\d+)(-?)(.*?)$/VDR-\1-\2\3\4/"`;
-                        echo "mv $i $NEWNAME"
-                        mv $i $NEWNAME || true;
+                        mv $i "VDR-$i" || true
                       fi
                     done;          
 
@@ -343,9 +341,7 @@ jobs:
                     echo "=> LibreELEC release files"
                     for i in `ls LibreELEC*{tar,img.gz,sha256,ova}`; do
                       if [ -f $i ]; then
-                        NEWNAME=`echo $i | perl -pe "s/^(.*)_devel_(\d+)(-?)(.*?)$/VDR-\1-\2\3\4/"`;
-                        echo "mv $i $NEWNAME"
-                        mv $i $NEWNAME || true;
+                        mv $i "VDR-$i" || true
                       fi
                     done;
               

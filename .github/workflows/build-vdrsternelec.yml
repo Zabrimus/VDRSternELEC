@@ -313,6 +313,8 @@ jobs:
               
                     # release files
                     echo "=> CoreELEC release files"
+                    ls -la || true
+          
                     for i in $(ls CoreELEC*{tar,img.gz,sha256}); do
                       if [ -f $i ]; then
                         mv $i "VDR-$i" || true
@@ -321,7 +323,10 @@ jobs:
 
                     # addons
                     echo "=> CoreELEC addons"
+                    
                     if [ -d addons ]; then
+                      ls -la addons || true
+          
                       for i in $(find addons -name "*zip"); do
                         if [ -f $i ]; then
                           NACE=(${i//\// })
@@ -336,6 +341,7 @@ jobs:
               if [ "$DISTRO" == "LibreELEC.tv" ]; then          
                   (
                     cd LibreELEC.tv/target
+                    ls -la || true
           
                     # release files
                     echo "=> LibreELEC release files"
@@ -348,6 +354,8 @@ jobs:
                     # addons
                     echo "=> LibreELEC addons"
                     if [ -d addons ]; then
+                      ls -la addons || true
+          
                       for i in $(find addons -name "*zip"); do
                         if [ -f $i ]; then
                           NACE=(${i//\// })

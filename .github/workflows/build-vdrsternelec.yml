@@ -274,9 +274,9 @@ jobs:
           echo "==> Free space after downloading sources"
           df -h
           
+          BUILD_DATE="$(date +%m%d)"
           if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
-              . CoreELEC/distributions/CoreELEC/version
-              BUILD_DATE="$(date +%m%d)"
+              . CoreELEC/distributions/CoreELEC/version              
               MYCUSTOM_VERSION="-${OS_VERSION}-VDR-${BUILD_DATE}"
           else
               MYCUSTOM_VERSION="VDR-${BUILD_DATE}"

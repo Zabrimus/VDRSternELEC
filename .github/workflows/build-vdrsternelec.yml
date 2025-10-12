@@ -408,8 +408,8 @@ jobs:
           overwrite: true
           if-no-files-found: ignore
           path: |
-              CoreELEC/target/VDR*
-              LibreELEC.tv/target/VDR*
+              CoreELEC/target/CE*
+              LibreELEC.tv/target/LE*
 
       - name: Save addon target files
         uses: actions/upload-artifact@v4

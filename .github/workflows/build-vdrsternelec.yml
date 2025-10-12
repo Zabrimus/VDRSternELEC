@@ -273,15 +273,23 @@ jobs:
           
           echo "==> Free space after downloading sources"
           df -h
+          
+          if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
+              . CoreELEC/distributions/CoreELEC/version
+              BUILD_DATE="$(date +%m%d)"
+              MYCUSTOM_VERSION="-${OS_VERSION}-VDR-${BUILD_DATE}"
+          else
+              MYCUSTOM_VERSION="VDR-${BUILD_DATE}"
+          fi
                          
           # build libtool first
           ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package libtool:host
 
           # build all                    
-          if ! AUTOREMOVE="yes" ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+          if ! AUTOREMOVE="yes" CUSTOM_VERSION="${MYCUSTOM_VERSION}" ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
               BUILD_FAILED="true"
           fi                  
-
+          
           echo "==> Free space after build"
           df -h
 
@@ -317,7 +325,9 @@ jobs:
           
                     for i in $(ls *.{tar,img.gz,sha256}); do
                       if [ -f $i ]; then
-                        mv $i "VDR-$i" || true
+                        NEWNAME=$(echo $i | perl -pe "s/^LibreELEC/LE/");
+                        NEWNAME=$(echo $NEWNAME | perl -pe "s/^CoreELEC/CE/");
+                        mv $i $NEWNAME || true
                       fi
                     done;          
 
@@ -347,7 +357,9 @@ jobs:
                     echo "=> LibreELEC release files"
                     for i in `ls *.{tar,img.gz,sha256,ova}`; do
                       if [ -f $i ]; then
-                        mv $i "VDR-$i" || true
+                        NEWNAME=$(echo $i | perl -pe "s/^LibreELEC/LE/");
+                        NEWNAME=$(echo $NEWNAME | perl -pe "s/^CoreELEC/CE/");
+                        mv $i $NEWNAME || true
                       fi
                     done;
               

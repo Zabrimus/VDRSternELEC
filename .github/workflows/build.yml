@@ -543,14 +543,14 @@ jobs:
           echo "-------------------------------"
           
           # upload release files
-          for i in $(ls build-artifacts/CoreELEC/target/VDR* || echo "notfound"); do
+          for i in $(ls build-artifacts/CoreELEC/target/CE* || echo "notfound"); do
               if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
                   gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" $i --clobber -R ${{ github.repository }} || true
               fi
           done
           
-          for i in $(ls build-artifacts/LibreELEC.tv/target/VDR* || echo "notfound"); do
+          for i in $(ls build-artifacts/LibreELEC.tv/target/LE* || echo "notfound"); do
               if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
                   gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" $i --clobber -R ${{ github.repository }} || true

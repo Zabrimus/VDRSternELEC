@@ -399,17 +399,29 @@ jobs:
               false
           fi
 
-      - name: Save release target files
+      - name: Save release target files (part 1)
         uses: actions/upload-artifact@v4
         with:
-          name: "build-artifacts-${{ inputs.releasetag }}-${{ inputs.config }}"
+          name: "build-artifacts-${{ inputs.releasetag }}-${{ inputs.config }}-1"
           compression-level: 0
           retention-days: 1
           overwrite: true
           if-no-files-found: ignore
           path: |
-              CoreELEC/target/CE*
-              LibreELEC.tv/target/LE*
+              CoreELEC/target/CE*-????-[a-k]*
+              LibreELEC.tv/target/LE*-????-[a-k]*
+
+      - name: Save release target files (part 2)
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-artifacts-${{ inputs.releasetag }}-${{ inputs.config }}-2"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            CoreELEC/target/CE*-????-[l-z]*
+            LibreELEC.tv/target/LE*-????-[l-z]*
 
       - name: Save addon target files
         uses: actions/upload-artifact@v4

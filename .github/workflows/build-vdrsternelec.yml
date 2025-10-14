@@ -408,8 +408,8 @@ jobs:
           overwrite: true
           if-no-files-found: ignore
           path: |
-              CoreELEC/target/CE*-????-[a-k]*
-              LibreELEC.tv/target/LE*-????-[a-k]*
+            CoreELEC/target/CE*-VDR-????-[a-kA-K]*
+            LibreELEC.tv/target/LE*-VDR-????-[a-kA-K]*
 
       - name: Save release target files (part 2)
         uses: actions/upload-artifact@v4
@@ -420,8 +420,20 @@ jobs:
           overwrite: true
           if-no-files-found: ignore
           path: |
-            CoreELEC/target/CE*-????-[l-z]*
-            LibreELEC.tv/target/LE*-????-[l-z]*
+            CoreELEC/target/CE*-VDR-????-[l-zL-Z]*
+            LibreELEC.tv/target/LE*-VDR-????-[l-zL-Z]*
+
+      - name: Save release target files (part 3)
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-artifacts-${{ inputs.releasetag }}-${{ inputs.config }}-3"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            CoreELEC/target/CE*-VDR-????.*
+            LibreELEC.tv/target/LE*-VDR-????.*
 
       - name: Save addon target files
         uses: actions/upload-artifact@v4

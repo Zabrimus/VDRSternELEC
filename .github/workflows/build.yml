@@ -428,6 +428,38 @@ jobs:
           pattern: build-cef-*${{ inputs.target }}*
           merge-multiple: true
 
+      - name: Download summary Generic
+        if: ${{ inputs.target == 'LibreELEC-Generic' }}
+        uses: actions/download-artifact@v4
+        with:
+          path: build-summary
+          pattern: build-summary-*Generic*
+          merge-multiple: true
+
+      - name: Download release artifacts Generic
+        if: ${{ inputs.target == 'LibreELEC-Generic' }}
+        uses: actions/download-artifact@v4
+        with:
+          path: build-artifacts
+          pattern: build-artifacts-*Generic*
+          merge-multiple: true
+
+      - name: Download addon artifacts Generic
+        if: ${{ inputs.target == 'LibreELEC-Generic' }}
+        uses: actions/download-artifact@v4
+        with:
+          path: build-addon
+          pattern: build-addon-*Generic*
+          merge-multiple: true
+
+      - name: Download cef artifacts Generic
+        if: ${{ inputs.target == 'LibreELEC-Generic' }}
+        uses: actions/download-artifact@v4
+        with:
+          path: build-cef
+          pattern: build-cef-*Generic*
+          merge-multiple: true
+
       - name: Create release and upload files
         shell: bash
         run: |

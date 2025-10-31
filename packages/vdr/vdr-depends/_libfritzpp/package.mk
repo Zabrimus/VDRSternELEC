@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_libfritzpp"
-PKG_VERSION="c74fd462285ade1054784b97b6dce22d55196c01"
-PKG_SHA256="54bd7d01301406b00bb8145fdf9213cd942219ab7553c48ad0fc89a03fba8de4"
+PKG_VERSION="0b87ad3b75614bfb12473996588cd6fa68a1b2fc"
+PKG_SHA256="171394066c33c8138ab2a45eb3d73241f3ba880c1ff79ed4cf600862de7a18cb"
 PKG_LICENSE="GPL2"
 PKG_SITE="https://github.com/jowi24/libfritzpp"
 PKG_URL="https://github.com/jowi24/libfritzpp/archive/${PKG_VERSION}.zip"

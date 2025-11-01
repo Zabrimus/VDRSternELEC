@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-fritzbox"
-PKG_VERSION="368a393a3e56f49d5f8b3c4411acf511e1796690"
-PKG_SHA256="164c622ec32a4dbe2e448da94ad03ffb252f05602a4c1b31239ddf2082b39a4c"
+PKG_VERSION="f481f76ae51ab3150b4784285715d4a3349bfdcd"
+PKG_SHA256="db5f5e78e2b7dc18819aa9bcacdf0be8378e7b8b20599bcbc260fe3f0d89c4ef"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/jowi24/vdr-fritz"
 PKG_URL="https://github.com/jowi24/vdr-fritz/archive/${PKG_VERSION}.zip"

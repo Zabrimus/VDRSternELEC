@@ -20,10 +20,7 @@ fi
 if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && ([ "${DEVICE}" = "x11" ] || [ "${DEVICE}" = "Generic-legacy" ]); then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdcuvid"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdvaapi"
-	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice"
-	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
-	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
 
 	# compile problems with LE 13
 	if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" = "12" ]; then

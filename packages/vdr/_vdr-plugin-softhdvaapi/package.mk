@@ -35,7 +35,12 @@ pre_make_target() {
   export CUVID=0
   export DRM=0
   export LIBPLACEBO=0
-  export LIBPLACEBO_GL=1
+
+  if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" -ge "13" ]; then
+  	export LIBPLACEBO_GL=0
+  else
+  	export LIBPLACEBO_GL=1
+  fi
 }
 
 post_makeinstall_target() {

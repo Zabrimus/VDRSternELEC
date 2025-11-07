@@ -6,7 +6,7 @@ PKG_SHA256="9ee45cd502a49dbd29bed491286a4926e5e53f14a8aacad413c0cf4a057abee0"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/nats-io/nats.c"
 PKG_URL="https://github.com/nats-io/nats.c/archive/refs/tags/v3.11.0.tar.gz"
-PKG_DEPENDS_TARGET="toolchain libsodium openssl"
+PKG_DEPENDS_TARGET="toolchain _libsodium openssl"
 PKG_LONGDESC="A C client for NATS"
 PKG_BUILD_FLAGS="+speed"
 

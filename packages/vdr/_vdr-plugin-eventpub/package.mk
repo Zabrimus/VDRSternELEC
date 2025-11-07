@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-eventpub"
-PKG_VERSION="41fb57ab0cb4e9c423345d202350725521ebcff6"
-PKG_SHA256="5f7923b326ac3775003df3f58acb731f33ac081982956c4a2449fc4fb525e5d9"
+PKG_VERSION="c4bca0baef368a36be1a981017d6396e374f8e82"
+PKG_SHA256="d097186199489bfe27d45af9d8cef6da77d00efb6484e85025ab93761273209d"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/Zabrimus/vdr-plugin-eventpub"
 PKG_URL="https://github.com/Zabrimus/vdr-plugin-eventpub/archive/${PKG_VERSION}.zip"

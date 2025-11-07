@@ -13,7 +13,8 @@ PKG_BUILD_FLAGS="+speed"
 PKG_CMAKE_OPTS_TARGET="-DNATS_BUILD_WITH_TLS=ON \
 					   -DNATS_BUILD_USE_SODIUM=ON \
 					   -DCMAKE_INSTALL_PREFIX=/usr \
-					   -DPOSITION_INDEPENDENT_CODE=ON \
+					   -DNATS_BUILD_LIB_STATIC=OFF\
+					   -DBUILD_TESTING=OFF \
                       "
 
 pre_configure_target() {

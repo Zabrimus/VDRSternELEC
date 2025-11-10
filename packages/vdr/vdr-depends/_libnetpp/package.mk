@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_libnetpp"
-PKG_VERSION="9b5400cbed4d84dcf539791774041a3bd9c5263d"
-PKG_SHA256="ebeb8beeeb8d4a21344669b5946228a3765c31269c8d4406b9b0964484284051"
+PKG_VERSION="81381ca4cb35a48ce56b5e8b751838b6181b6b70"
+PKG_SHA256="4169fd7874d2ed6afeef09a27360bebd2fd31e1290a065d81064f6749224fd8d"
 PKG_LICENSE="GPL2"
 PKG_SITE="https://github.com/jowi24/libnetpp"
 PKG_URL="https://github.com/jowi24/libnetpp/archive/${PKG_VERSION}.zip"

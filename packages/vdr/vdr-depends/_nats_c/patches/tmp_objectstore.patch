@@ -1,0 +1,280 @@
+From 69e18ded41cccba21b4da3ab849133ad14a5159e Mon Sep 17 00:00:00 2001
+From: Ivan Kozlovic <ivan@synadia.com>
+Date: Wed, 19 Nov 2025 19:12:53 -0700
+Subject: [PATCH] [FIXED] ObjectStore: Wrong encoding of meta subject
+
+The library was incorrectly using base64 raw URL encoding instead
+of URL encoding, missing padding. For some object name, this will
+cause other client libraries to be unable to read objects written
+by the C library, or the C library not being able to get meta data
+from objects written by other libraries (or nats CLI).
+
+The fix here is to use the proper encoding.
+
+However, existing C applications may no longer be able to retrieve
+objects that were previously stored.
+
+A tool written in Golang has been added to `toos/objstorefix`.
+Running this pointing to a NATS Server will list all object stores
+and check the meta data records for all of them, fixing the ones
+with bad encoding (that is rewrite them with correct encoding)
+and deleting the old ones.
+```
+cd tools/objstorefix
+go run main.go -url "nats://<nats server host>:<port>" -user "<user>" -password "<password>"
+```
+(this assumes that you have Golang installed on your system).
+
+Signed-off-by: Ivan Kozlovic <ivan@synadia.com>
+---
+ src/object.c              |   2 +-
+ test/test.c               |  18 +++++
+ tools/objstorefix/go.mod  |  13 ++++
+ tools/objstorefix/go.sum  |  12 ++++
+ tools/objstorefix/main.go | 142 ++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 186 insertions(+), 1 deletion(-)
+ create mode 100644 tools/objstorefix/go.mod
+ create mode 100644 tools/objstorefix/go.sum
+ create mode 100644 tools/objstorefix/main.go
+
+diff --git a/src/object.c b/src/object.c
+index 76b4408e9..44b907367 100644
+--- a/src/object.c
++++ b/src/object.c
+@@ -614,7 +614,7 @@ objStoreInfo_Destroy(objStoreInfo *info)
+ static natsStatus
+ _encodeName(char **en, const char *name)
+ {
+-    natsStatus  s = nats_Base64RawURL_EncodeString((const unsigned char*) name, (int) strlen(name), en);
++    natsStatus  s = nats_Base64URL_EncodeString((const unsigned char*) name, (int) strlen(name), en);
+     return NATS_UPDATE_ERR_STACK(s);
+ }
+ 
+diff --git a/test/test.c b/test/test.c
+index 4b5e69812..2085539d8 100644
+--- a/test/test.c
++++ b/test/test.c
+@@ -36835,6 +36835,8 @@ void test_ObjectStore_StoreMgt(void)
+     const char          *esha = NULL;
+     const char          **keys= NULL;
+     const char          **vals= NULL;
++    natsSubscription    *sub  = NULL;
++    natsMsg             *msg  = NULL;
+     int                 count = 0;
+ #ifndef NATS_HAS_TLS
+     const char          *nosha= "SHA-256=bm90IHN1cHBvcnRlZA==";
+@@ -36875,6 +36877,10 @@ void test_ObjectStore_StoreMgt(void)
+     s = objStore_GetInfo(&info, obs, "notfound", NULL);
+     testCond((s == NATS_NOT_FOUND) && (info == NULL) && (nats_GetLastError(NULL) == NULL));
+ 
++    test("Create subscription to check encoding: ");
++    s = natsConnection_SubscribeSync(&sub, nc, "$O.TEST.M.>");
++    testCond(s == NATS_OK);
++
+ #ifndef NATS_HAS_TLS
+     nats_hashNoErrorOnNoSSL(true);
+ #endif
+@@ -36883,6 +36889,18 @@ void test_ObjectStore_StoreMgt(void)
+     IFOK(s, objStore_GetInfo(&info, obs, "test", NULL));
+     testCond((s == NATS_OK) && (info != NULL));
+ 
++    test("Check encoding for test: ");
++    s = natsSubscription_NextMsg(&msg, sub, 1000);
++    // Proper encoding of "test" should be "dGVzdA==".
++    // We used to wrongly use nats_Base64RawURL_EncodeString
++    // which would lead to "dGVzdA".
++    testCond((s == NATS_OK) && (msg != NULL)
++        && (strcmp(natsMsg_GetSubject(msg), "$O.TEST.M.dGVzdA==") == 0));
++    natsMsg_Destroy(msg);
++    msg = NULL;
++    natsSubscription_Destroy(sub);
++    sub = NULL;
++
+ #if defined(NATS_HAS_TLS)
+     esha = "SHA-256=9ndFGdHHozie8yfpwEdmuZnbjN-4XRNGxHHuhtZYhbw=";
+ #else
+diff --git a/tools/objstorefix/go.mod b/tools/objstorefix/go.mod
+new file mode 100644
+index 000000000..279b89c22
+--- /dev/null
++++ b/tools/objstorefix/go.mod
+@@ -0,0 +1,13 @@
++module github.com/nats-io/nats.c/tools/objstorefix
++
++go 1.24.6
++
++require github.com/nats-io/nats.go v1.47.0
++
++require (
++	github.com/klauspost/compress v1.18.0 // indirect
++	github.com/nats-io/nkeys v0.4.11 // indirect
++	github.com/nats-io/nuid v1.0.1 // indirect
++	golang.org/x/crypto v0.37.0 // indirect
++	golang.org/x/sys v0.32.0 // indirect
++)
+diff --git a/tools/objstorefix/go.sum b/tools/objstorefix/go.sum
+new file mode 100644
+index 000000000..76dd28153
+--- /dev/null
++++ b/tools/objstorefix/go.sum
+@@ -0,0 +1,12 @@
++github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
++github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
++github.com/nats-io/nats.go v1.47.0 h1:YQdADw6J/UfGUd2Oy6tn4Hq6YHxCaJrVKayxxFqYrgM=
++github.com/nats-io/nats.go v1.47.0/go.mod h1:iRWIPokVIFbVijxuMQq4y9ttaBTMe0SFdlZfMDd+33g=
++github.com/nats-io/nkeys v0.4.11 h1:q44qGV008kYd9W1b1nEBkNzvnWxtRSQ7A8BoqRrcfa0=
++github.com/nats-io/nkeys v0.4.11/go.mod h1:szDimtgmfOi9n25JpfIdGw12tZFYXqhGxjhVxsatHVE=
++github.com/nats-io/nuid v1.0.1 h1:5iA8DT8V7q8WK2EScv2padNa/rTESc1KdnPw4TC2paw=
++github.com/nats-io/nuid v1.0.1/go.mod h1:19wcPz3Ph3q0Jbyiqsd0kePYG7A95tJPxeL+1OSON2c=
++golang.org/x/crypto v0.37.0 h1:kJNSjF/Xp7kU0iB2Z+9viTPMW4EqqsrywMXLJOOsXSE=
++golang.org/x/crypto v0.37.0/go.mod h1:vg+k43peMZ0pUMhYmVAWysMK35e6ioLh3wB8ZCAfbVc=
++golang.org/x/sys v0.32.0 h1:s77OFDvIQeibCmezSnk/q6iAfkdiQaJi4VzroCFrN20=
++golang.org/x/sys v0.32.0/go.mod h1:BJP2sWEmIv4KK5OTEluFJCKSidICx8ciO85XgH3Ak8k=
+diff --git a/tools/objstorefix/main.go b/tools/objstorefix/main.go
+new file mode 100644
+index 000000000..7563cfa95
+--- /dev/null
++++ b/tools/objstorefix/main.go
+@@ -0,0 +1,142 @@
++package main
++
++import (
++	"context"
++	"encoding/base64"
++	"encoding/json"
++	"flag"
++	"fmt"
++	"log"
++	"os"
++	"strings"
++
++	"github.com/nats-io/nats.go"
++	"github.com/nats-io/nats.go/jetstream"
++)
++
++func main() {
++	var (
++		url      string
++		user     string
++		password string
++		help     bool
++	)
++
++	flag.StringVar(&url, "url", "nats://127.0.0.1:4222", "Server url")
++	flag.StringVar(&user, "user", "", "Username")
++	flag.StringVar(&password, "password", "", "Username")
++	flag.BoolVar(&help, "help", false, "Show this help")
++
++	flag.Parse()
++
++	if help {
++		flag.Usage()
++		os.Exit(1)
++	}
++
++	var opts []nats.Option
++	if user != "" {
++		opts = append(opts, nats.UserInfo(user, password))
++	}
++	nc, err := nats.Connect(url, opts...)
++	if err != nil {
++		log.Fatalf("Unable to connect: %v", err)
++	}
++	defer nc.Close()
++
++	js, err := jetstream.New(nc)
++	if err != nil {
++		log.Fatalf("Unable to get JetStream context: %v", err)
++	}
++
++	var (
++		fixed        int
++		ctx          = context.Background()
++		objectStores = js.ObjectStores(ctx)
++	)
++	for info := range objectStores.Status() {
++		n, err := fixStore(ctx, js, info)
++		fixed += n
++		log.Println("")
++		log.Println("")
++		if err != nil {
++			log.Printf("Error: %s", err)
++			log.Printf("Fixed %v entries", fixed)
++			os.Exit(1)
++		}
++	}
++	log.Printf("Fixed %v entries!", fixed)
++}
++
++func fixStore(ctx context.Context, js jetstream.JetStream, info jetstream.ObjectStoreStatus) (int, error) {
++	storeName := info.Bucket()
++	streamName := fmt.Sprintf("OBJ_%s", storeName)
++	metaSubjPrexix := fmt.Sprintf("$O.%s.M.", storeName)
++
++	stream, err := js.Stream(ctx, streamName)
++	if err != nil {
++		return 0, fmt.Errorf("unable to get stream %q: %v", streamName, err)
++	}
++
++	log.Printf("============= Fixing object store %q =============", storeName)
++	metaSubj := metaSubjPrexix + ">"
++
++	log.Printf(" - Subscribe to stream %q subject %q", streamName, metaSubj)
++	cons, err := js.CreateConsumer(ctx, streamName, jetstream.ConsumerConfig{
++		FilterSubject: metaSubj,
++		AckPolicy:     jetstream.AckExplicitPolicy,
++	})
++	if err != nil {
++		return 0, fmt.Errorf("unable to create subscription on %q: %v", metaSubj, err)
++	}
++	defer js.DeleteConsumer(ctx, streamName, cons.CachedInfo().Name)
++	ci, err := cons.Info(ctx)
++	if err != nil {
++		return 0, fmt.Errorf("unable to create subscription on %q: %v", metaSubj, err)
++	}
++	var fixed int
++	for range ci.NumPending {
++		msg, err := cons.Next()
++		if err != nil {
++			return fixed, fmt.Errorf("unable to get next message: %v", err)
++		}
++		data := map[string]any{}
++		err = json.Unmarshal(msg.Data(), &data)
++		if err != nil {
++			return fixed, fmt.Errorf("unable to parse %q: %v", msg.Data(), err)
++		}
++		namei, ok := data["name"]
++		if !ok {
++			return fixed, fmt.Errorf("field %q missing", "name")
++		}
++		if _, ok := namei.(string); !ok {
++			return fixed, fmt.Errorf("field %q is of wrong type %T", "name", namei)
++		}
++		name := namei.(string)
++		result := base64.URLEncoding.EncodeToString([]byte(name))
++		if strings.HasSuffix(msg.Subject(), result) {
++			log.Printf("  [.] name=%q has correct encoding %q", name, result)
++		} else {
++			enc := strings.TrimPrefix(msg.Subject(), metaSubjPrexix)
++			log.Printf("  [X] name=%q has wrong encoding %q should be %q", name, enc, result)
++
++			md, err := msg.Metadata()
++			if err != nil {
++				return fixed, fmt.Errorf("unable to get message metadata: %v", err)
++			}
++			seq := md.Sequence.Stream
++			correctSubj := metaSubjPrexix + result
++			correctMsg := nats.NewMsg(correctSubj)
++			correctMsg.Header = msg.Headers()
++			correctMsg.Data = msg.Data()
++			if _, err := js.PublishMsg(ctx, correctMsg); err != nil {
++				return fixed, fmt.Errorf("Error ")
++			}
++			err = stream.DeleteMsg(ctx, seq)
++			log.Printf("    => Entry fixed - deleted old entry at sequence %v err=%v", seq, err)
++			fixed++
++		}
++		msg.Ack()
++	}
++	return fixed, nil
++}

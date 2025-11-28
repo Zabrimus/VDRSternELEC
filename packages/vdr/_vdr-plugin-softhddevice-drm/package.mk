@@ -16,6 +16,15 @@ PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_LONGDESC="VDR Output Device (softhddevice-drm)"
 PKG_BUILD_FLAGS="+speed"
 
+post_unpack() {
+  rm -f ${PKG_DIR}/patches/interlaced_frame.patch
+
+  if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" = "12" ]; then
+  	 mkdir -p ${PKG_DIR}/patches
+     cp ${PKG_DIR}/le12/interlaced_frame.patch ${PKG_DIR}/patches/interlaced_frame.patch
+  fi
+}
+
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib -L${SYSROOT_PREFIX}/usr/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"

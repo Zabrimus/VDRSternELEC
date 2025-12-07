@@ -29,6 +29,18 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-lua \
                            --disable-vdpau \
                            --disable-nfs"
 
+post_unpack() {
+    rm -f ${PKG_DIR}/patches/vlc-3.0.21-ffmpeg8-1.patch
+
+    if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" -ge "13" ]; then
+   		cp ${PKG_DIR}/le13ce22/vlc-3.0.21-ffmpeg8-1.patch ${PKG_DIR}/patches/vlc-3.0.21-ffmpeg8-1.patch
+    fi
+
+    if [ "${DISTRO}" = "CoreELEC" ] && [ "${OS_VERSION:0:2}" -ge "22" ]; then
+   		cp ${PKG_DIR}/le13ce22/vlc-3.0.21-ffmpeg8-1.patch ${PKG_DIR}/patches/vlc-3.0.21-ffmpeg8-1.patch
+    fi
+}
+
 pre_configure_target() {
   export LDSHARED="${CC} -shared"
 

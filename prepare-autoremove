@@ -48,11 +48,15 @@ echo "pkg-config" >> tmp_b
 echo "zstd" >> tmp_b
 echo "llvm" >> tmp_b
 
+# regularly check these bl301
+echo "bl301_221119" >> tmp_b
+echo "bl301_xxxxxx" >> tmp_b
+echo "bl301_091020" >> tmp_b
+
 for i in $(sed '/^[[:space:]]*$/d' tmp_b | sort -u); do
     echo "$(get_build_dir $i)" >> dont_delete_packages
 done
 
-# rm -f tmp_a
 sed -i '/^[[:space:]]*$/d' dont_delete_packages
 
 rm -f tmp_a tmp_b

@@ -22,6 +22,10 @@ PKG_MESON_OPTS_TARGET="-Dgallium-drivers=panfrost,swrast \
 					   -Dgbm=enabled \
                        -Degl=enabled \
                        -Dglx=disabled \
-                       --prefix=/usr/local/private \
-                       --libdir=/usr/local/private \
+                       --prefix=$(get_build_dir _mesa)/private.install \
+                       --libdir=$(get_build_dir _mesa)/private.install \
  					   "
+
+makeinstall_target() {
+    :
+}

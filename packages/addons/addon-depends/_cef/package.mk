@@ -47,14 +47,5 @@ makeinstall_target() {
     zip -qrum9 ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip storage
   fi
 
-# package cef binaries into image if wanted
-  if [ ${CEF_BINARIES} ]; then
-    mkdir -p ${INSTALL}/usr/local/config
-    cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip ${INSTALL}/usr/local/config/cef-binaries.zip
-  fi
-
   echo "${PKG_VERSION}" > ${PKG_BUILD}/VERSION
-
-# coreelec-19 needs this
-  sed -i "s/VERSION 3.21/VERSION 3.19/" ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/CMakeLists.txt
 }

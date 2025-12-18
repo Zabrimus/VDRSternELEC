@@ -40,3 +40,6 @@ tsduck:ADDON_TSDUCK
 
 # Install incus
 incus:ADDON_INCUS
+
+# Install cefbrowser
+cefbrowser:ADDON_CEFBROWSER

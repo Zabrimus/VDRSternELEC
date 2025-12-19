@@ -9,9 +9,15 @@ PKG_URL=""
 PKG_DEPENDS_UNPACK+=" libXft"
 PKG_BUILD_FLAGS="-sysroot"
 
-PKG_MESON_OPTS_TARGET="-Ddefault_library=shared"
+# build tool switched from configure to meson
+if [ "${PKG_MESON_OPTS_TARGET}" != "" ]; then
+	PKG_MESON_OPTS_TARGET="-Ddefault_library=shared"
+else
+	PKG_CONFIGURE_OPTS_TARGET="--enable-shared --disable-static"
+fi
 
 unpack() {
   mkdir -p ${PKG_BUILD}
   tar --strip-components=1 -xf ${SOURCES}/${PKG_NAME:4}/${PKG_NAME:4}-${PKG_VERSION}.tar.xz -C ${PKG_BUILD}
 }
+

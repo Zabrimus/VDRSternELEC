@@ -25,7 +25,6 @@ PKG_SECTION="service"
 PKG_ADDON_NAME="cefbrowser"
 PKG_ADDON_TYPE="xbmc.service"
 
-
 # CoreELEC <= 20
 if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -le "20" ]; then
    PKG_DEPENDS_TARGET+=" cef-at-spi2-atk _mesa"
@@ -94,6 +93,13 @@ addon() {
   	cp -P  ${PKG_BUILD}/config/sockets.ini ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/
   	cp -P  ${PKG_DIR}/_system.d/* ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
 
+	# set some links
+	#(
+	#	cd ${ADDON_BUILD}/${PKG_ADDON_ID}/data
+	#	mv database database.released
+	#	ln -s /storage/cefbrowser/database database
+	#)
+
   	# copy cef-at-spi2-core
   	for i in $(find $(get_build_dir cef-at-spi2-core)/.${TARGET_NAME} -name *.so*) ]; do
 		if [ -f $i ]; then
@@ -157,5 +163,5 @@ addon() {
 	# copy libXrender
 	cp -PL $(get_install_dir cef-libXrender)/usr/lib/libXrender.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
 
-	rm ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/*.symbols || true
+	rm -f ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/*.symbols || true
 }

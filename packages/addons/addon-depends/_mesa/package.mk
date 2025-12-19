@@ -22,6 +22,7 @@ PKG_MESON_OPTS_TARGET="-Dgallium-drivers=panfrost,swrast \
 					   -Dgbm=enabled \
                        -Degl=enabled \
                        -Dglx=disabled \
+                       -Ddri-drivers-path=/storage/.kodi/addons/service.cefbrowser/lib/private/dri \
                        --prefix=$(get_build_dir _mesa)/private.install \
                        --libdir=$(get_build_dir _mesa)/private.install \
  					   "

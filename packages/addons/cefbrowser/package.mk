@@ -8,7 +8,9 @@ PKG_SITE="https://github.com/Zabrimus/cefbrowser"
 PKG_URL="https://github.com/Zabrimus/cefbrowser/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="cefbrowser-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain atk libxml2 cups cef-at-spi2-core \
-                    cef-libXcomposite cef-libXdamage cef-libXfixes cef-libXrandr cef-libXi cef-libXft openssl _cef _thrift"
+                    cef-libXcomposite cef-libXdamage cef-libXfixes cef-libXrandr cef-libXi cef-libXft \
+                    cef-libX11 cef-libXext cef-libxcb cef-libXrender \
+                    openssl _cef _thrift"
 PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
 PKG_DEPENDS_UNPACK="_cef"
 PKG_DEPENDS_CONFIG="_cef"
@@ -143,24 +145,17 @@ addon() {
 	# copy libXi
 	cp -PL $(get_install_dir cef-libXi)/usr/lib/libXi.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
 
+	# copy libX11
+	cp -PL $(get_install_dir cef-libX11)/usr/lib/libX11*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libXext
+	cp -PL $(get_install_dir cef-libXext)/usr/lib/libXext.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libxcb
+	cp -PL $(get_install_dir cef-libxcb)/usr/lib/libxcb*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libXrender
+	cp -PL $(get_install_dir cef-libXrender)/usr/lib/libXrender.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
 	rm ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/*.symbols || true
-
-#             $(get_install_dir cairo)/usr/lib/{libcairo-gobject.so.2,libcairo.so.2} \
-#             $(get_install_dir gdk-pixbuf)/usr/lib/libgdk_pixbuf-2.0.so.0 \
-#             $(get_install_dir gtk3)/usr/lib/{libgtk-3.so.0,libgdk-3.so.0} \
-#             $(get_install_dir harfbuzz-icu)/usr/lib/{libharfbuzz.so.0,libharfbuzz-icu.so*} \
-#             $(get_install_dir at-spi2-core)/usr/lib/{libatk-bridge-2.0.so.0,libatspi.so.0} \
-#             $(get_install_dir chrome-libxcb)/usr/lib/{libxcb.so.1,libxcb-dri3.so.0} \
-#             $(get_install_dir chrome-libXcomposite)/usr/lib/libXcomposite.so.1 \
-#             $(get_install_dir libXcursor)/usr/lib/libXcursor.so.1 \
-#             $(get_install_dir chrome-libXdamage)/usr/lib/libXdamage.so.1 \
-#             $(get_install_dir chrome-libXfixes)/usr/lib/libXfixes.so.3 \
-#             $(get_install_dir chrome-libXi)/usr/lib/libXi.so.6 \
-#             $(get_install_dir chrome-libxkbcommon)/usr/lib/libxkbcommon.so.0 \
-#             $(get_install_dir chrome-libXrender)/usr/lib/libXrender.so.1 \
-#             $(get_install_dir chrome-libxshmfence)/usr/lib/libxshmfence.so.1 \
-#             $(get_install_dir libxss)/usr/lib/libXss.so.1 \
-#             $(get_install_dir chrome-libXtst)/usr/lib/libXtst.so.6 \
-#             $(get_install_dir pango)/usr/lib/{libpangocairo-1.0.so.0,libpango-1.0.so.0,libpangoft2-1.0.so.0}
-
 }

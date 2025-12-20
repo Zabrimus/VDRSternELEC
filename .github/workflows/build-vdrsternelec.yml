@@ -193,7 +193,7 @@ jobs:
           
           echo "REVISION=$rev" >> "$GITHUB_ENV"
 
-      - name: Download artifact
+      - name: Download artifact 1
         if: ${{ inputs.remote != true }}
         id: download-artifact-1
         uses: dawidd6/action-download-artifact@v3
@@ -207,13 +207,41 @@ jobs:
           name_is_regexp: false
           path: ${{ env.DISTRO }}/sources
 
-      - name: Download artifacts
+      - name: Download artifacts 2
         if: ${{ inputs.remote != true }}
         id: download-artifact-2
         uses: dawidd6/action-download-artifact@v3
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: ${{ env.ARTIFACT }}-2
+          name_is_regexp: false
+          path: ${{ env.DISTRO }}/sources
+
+      - name: Download artifact 3
+        if: ${{ inputs.remote != true }}
+        id: download-artifact-1
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: cron_precache_sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: ${{ env.ARTIFACT }}-1
+          name_is_regexp: false
+          path: ${{ env.DISTRO }}/sources
+
+      - name: Download artifacts 4
+        if: ${{ inputs.remote != true }}
+        id: download-artifact-2
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: cron_precache_sources.yml
           if_no_artifact_found: ignore
           check_artifacts: true
           search_artifacts: true

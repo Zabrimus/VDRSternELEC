@@ -36,6 +36,7 @@ jobs:
       addons: "-"
       extras: "easyvdr,channellogos,remotetranscode,cefbrowser"
       extraparameter: "-releaseonly"
+      buildbranch: 'master'
     secrets: inherit
 
   cron_full:
@@ -48,4 +49,5 @@ jobs:
       addons: "-"
       extras: "easyvdr,channellogos,remotetranscode,cefbrowser"
       extraparameter: "-"
+      buildbranch: 'master'
     secrets: inherit

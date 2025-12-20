@@ -35,8 +35,6 @@ if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -ge "21" ]; then
    PKG_DEPENDS_TARGET+=" _mesa"
 fi
 
-CEF_PREFIX="/usr/local"
-
 case "${ARCH}" in
   arm)     DARCH="arm";;
   aarch64) DARCH="arm64";;
@@ -50,11 +48,11 @@ case "${ARCH}" in
 esac
 
 PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} -Dvdrsternelec=true \
-                       --prefix=${CEF_PREFIX} \
-                       --bindir=${CEF_PREFIX}/bin \
-                       --libdir=${CEF_PREFIX}/lib \
-                       --libexecdir=${CEF_PREFIX}/lib \
-                       --sbindir=${CEF_PREFIX}/bin"
+                       --prefix=/usr/local \
+                       --bindir=/usr/local/bin \
+                       --libdir=/usr/local/lib \
+                       --libexecdir=/usr/local/lib \
+                       --sbindir=/usr/local/bin"
 
 pre_configure_target() {
 	CEF_DIR="$(get_build_dir _cef)/../../../../cef"
@@ -71,6 +69,18 @@ pre_make_target() {
 	export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
 }
 
+makeinstall_target() {
+	mkdir -p ${INSTALL}/usr/local/lib
+	mkdir -p ${INSTALL}/usr/local/bin
+	mkdir -p ${INSTALL}/usr/local/etc
+	mkdir -p ${INSTALL}/usr/local/data
+
+	cp -Pr ${PKG_BUILD}/.${TARGET_NAME}/Release/* ${INSTALL}/usr/local/lib/
+	cp -Pr ${PKG_BUILD}/.${TARGET_NAME}/cefbrowser ${INSTALL}/usr/local/bin
+    cp -Pr ${PKG_BUILD}/static-content/* ${INSTALL}/usr/local/data
+    cp -P  ${PKG_BUILD}/config/sockets.ini ${INSTALL}/usr/local/etc/
+}
+
 addon() {
 	# create directories
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
@@ -82,15 +92,11 @@ addon() {
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
 
   	# copy cefbrowser
-  	cp -Pr ${PKG_BUILD}/.${TARGET_NAME}/Release/* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/
-  	cp -Pr ${PKG_BUILD}/.${TARGET_NAME}/cefbrowser ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
-
-  	cp -Pr ${PKG_BUILD}/static-content/* ${ADDON_BUILD}/${PKG_ADDON_ID}/data
-  	cp -P  ${PKG_BUILD}/config/sockets.ini ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/
+  	cp -Pr $(get_install_dir cefbrowser)/usr/local/lib/* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/
+  	cp -Pr $(get_install_dir cefbrowser)/usr/local/bin/cefbrowser ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+	cp -Pr $(get_install_dir cefbrowser)/usr/local/data/* ${ADDON_BUILD}/${PKG_ADDON_ID}/data
+	cp -P  $(get_install_dir cefbrowser)/usr/local/etc/sockets.ini ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/
   	cp -P  ${PKG_DIR}/_system.d/* ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
-
-	# copy cef
-
 
   	# copy cef-at-spi2-core
   	for i in $(find $(get_install_dir cef-at-spi2-core)/usr/lib -name *.so*) ]; do

@@ -7,7 +7,7 @@ PKG_NAME="cef-libXext"
 PKG_LONGDESC="libXext for cef"
 PKG_URL=""
 PKG_DEPENDS_UNPACK+=" libXext"
-PKG_BUILD_FLAGS="-sysroot"
+PKG_BUILD_FLAGS="-sysroot +speed"
 
 PKG_CONFIGURE_OPTS_TARGET="${PKG_CONFIGURE_OPTS_TARGET} \
                            --disable-static \

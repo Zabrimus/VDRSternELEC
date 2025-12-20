@@ -7,7 +7,7 @@ PKG_NAME="cef-libxcb"
 PKG_LONGDESC="libxcb for cef"
 PKG_URL=""
 PKG_DEPENDS_UNPACK+=" libxcb"
-PKG_BUILD_FLAGS="-sysroot"
+PKG_BUILD_FLAGS="-sysroot +speed"
 
 PKG_CONFIGURE_OPTS_TARGET="${PKG_CONFIGURE_OPTS_TARGET} \
                            --disable-static \

@@ -7,7 +7,7 @@ PKG_NAME="cef-libXft"
 PKG_LONGDESC="libXft for cef"
 PKG_URL=""
 PKG_DEPENDS_UNPACK+=" libXft"
-PKG_BUILD_FLAGS="-sysroot"
+PKG_BUILD_FLAGS="-sysroot +speed"
 
 # build tool switched from configure to meson
 if [ "${PKG_MESON_OPTS_TARGET}" != "" ]; then

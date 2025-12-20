@@ -22,11 +22,5 @@ PKG_MESON_OPTS_TARGET="-Dgallium-drivers=panfrost,swrast \
 					   -Dgbm=enabled \
                        -Degl=enabled \
                        -Dglx=disabled \
-                       -Ddri-drivers-path=\$ORIGIN/dri \
-                       --prefix=$(get_build_dir _mesa)/private.install \
-                       --libdir=$(get_build_dir _mesa)/private.install \
+                       -Ddri-drivers-path=\$ORIGIN/dri
  					   "
-
-makeinstall_target() {
-    :
-}

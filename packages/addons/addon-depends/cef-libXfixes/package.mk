@@ -7,7 +7,7 @@ PKG_NAME="cef-libXfixes"
 PKG_LONGDESC="libXfixes for cef"
 PKG_URL=""
 PKG_DEPENDS_UNPACK+=" libXfixes"
-PKG_BUILD_FLAGS="-sysroot"
+PKG_BUILD_FLAGS="-sysroot +speed"
 
 unpack() {
   mkdir -p ${PKG_BUILD}

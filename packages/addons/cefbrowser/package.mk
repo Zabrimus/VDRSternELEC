@@ -71,10 +71,6 @@ pre_make_target() {
 	export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
 }
 
-makeinstall_target() {
-    :
-}
-
 addon() {
 	# create directories
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
@@ -93,15 +89,11 @@ addon() {
   	cp -P  ${PKG_BUILD}/config/sockets.ini ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/
   	cp -P  ${PKG_DIR}/_system.d/* ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
 
-	# set some links
-	#(
-	#	cd ${ADDON_BUILD}/${PKG_ADDON_ID}/data
-	#	mv database database.released
-	#	ln -s /storage/cefbrowser/database database
-	#)
+	# copy cef
+
 
   	# copy cef-at-spi2-core
-  	for i in $(find $(get_build_dir cef-at-spi2-core)/.${TARGET_NAME} -name *.so*) ]; do
+  	for i in $(find $(get_install_dir cef-at-spi2-core)/usr/lib -name *.so*) ]; do
 		if [ -f $i ]; then
 			cp -P $i ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
 		fi
@@ -109,9 +101,9 @@ addon() {
 
 	# TODO: prüfen, ob das richtig ist
 	# copy cef-at-spi2-atk
-	A=$(get_build_dir cef-at-spi2-atk) || ""
+	A=$(get_install_dir cef-at-spi2-atk) || ""
 	if [ "$A" != "" ]; then
-		for i in $(find $(get_build_dir cef-at-spi2-atk)/.${TARGET_NAME} -name *.so*) ]; do
+		for i in $(find $(get_install_dir cef-at-spi2-atk)/usr/lib -name *.so*) ]; do
 			if [ -f $i ]; then
 				cp -P $i ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
 			fi
@@ -120,12 +112,8 @@ addon() {
 	fi
 
   	# copy mesa
-  	cp -Pr $(get_build_dir _mesa)/.${TARGET_NAME}/src/gallium/targets/dri/*.so ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/dri
-  	for i in $(find $(get_build_dir _mesa)/.${TARGET_NAME} -name *.so* ! -path "*/gallium/targets/dri/*"); do
-  		if [ -f $i ]; then
-  	   		cp -P $i ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-  	   	fi
-  	done
+  	cp -Pr $(get_install_dir _mesa)/usr/lib/*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+  	cp -Pr $(get_install_dir _mesa)/usr/\$ORIGIN/dri/*.so ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/dri
 
   	# copy atk
   	cp -PL $(get_install_dir atk)/usr/lib/libatk-1.0.so.0 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private

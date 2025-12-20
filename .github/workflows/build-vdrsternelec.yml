@@ -36,7 +36,7 @@ on:
         type: boolean
         required: true
 
-      branch:
+      buildbranch:
         description: "Build branch"
         type: string
         default: "master"
@@ -235,7 +235,7 @@ jobs:
         shell: bash
         run: |
           # switch branch
-          git checkout ${{ inputs.branch }}
+          git checkout ${{ inputs.buildbranch }}
           
           BUILD_FAILED="false"
 

@@ -267,14 +267,20 @@ jobs:
           
           BUILD_FAILED="false"
 
-          if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
+           if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
               if [ ! "${{ inputs.addons }}" = "" ] && [ ! "${{ inputs.addons }}" = "-" ] && [ ! "${{ inputs.addons }}" = "'-'" ]; then
                  ADDONS="-addon ${{ inputs.addons }}"
               else
                  ADDONS=""
               fi
           else
-              ADDONS=""
+              ADDONLIST=$(echo ${{ inputs.addons }} | sed -e "s/,\?dvb-latest,\?//g")
+          
+              if [ ! "${ADDONLIST}" = "" ] && [ ! "${ADDONLIST}" = "-" ] && [ ! "${ADDONLIST}" = "'-'" ]; then
+                 ADDONS="-addon ${ADDONLIST}"
+              else
+                 ADDONS=""
+              fi
           fi
           
           if [ ! "${{ inputs.extras }}" = "" ] && [ ! "${{ inputs.extras }}" = "-" ] && [ ! "${{ inputs.extras }}" = "'-'" ]; then
@@ -409,7 +415,7 @@ jobs:
                       for i in $(find addons -name "*zip"); do
                         if [ -f $i ]; then
                           ADDONNAME=$(echo ${NACE[5]} | sed -e s/service.//)
-                          echo "mv $i addons/CE-${NACE[1]}-${NACE[5]}"
+                          echo "mv $i addons/LE-${NACE[1]}-${NACE[5]}"
                           cp $i addons/LE-${NACE[1]}-${NACE[3]}-$ADDONNAME || true                        
                         fi
                       done

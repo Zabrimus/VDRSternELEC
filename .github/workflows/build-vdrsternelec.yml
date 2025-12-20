@@ -223,7 +223,7 @@ jobs:
 
       - name: Download artifact 3
         if: ${{ inputs.remote != true }}
-        id: download-artifact-1
+        id: download-artifact-3
         uses: dawidd6/action-download-artifact@v3
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
@@ -237,7 +237,7 @@ jobs:
 
       - name: Download artifacts 4
         if: ${{ inputs.remote != true }}
-        id: download-artifact-2
+        id: download-artifact-4
         uses: dawidd6/action-download-artifact@v3
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}

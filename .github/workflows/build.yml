@@ -321,6 +321,7 @@ jobs:
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-22.04
       remote: false
+      branch: master
     secrets: inherit
 
   build-all-x86-24:
@@ -338,6 +339,7 @@ jobs:
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-24.04
       remote: false
+      branch: master
     secrets: inherit
 
   build-all-arm-22:
@@ -355,6 +357,7 @@ jobs:
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-22.04-arm
       remote: false
+      branch: master
     secrets: inherit
 
   build-all-arm-24:
@@ -372,6 +375,7 @@ jobs:
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-24.04-arm
       remote: false
+      branch: master
     secrets: inherit
 
   build-remote:
@@ -389,6 +393,7 @@ jobs:
       extraparameter: ${{ inputs.extraparameter }}
       runner: self-hosted
       remote: true
+      branch: master
     secrets: inherit
 
   create-release:

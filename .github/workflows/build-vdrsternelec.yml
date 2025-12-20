@@ -32,8 +32,14 @@ on:
         type: string
 
       remote:
-        description: "Use a remote rummer"
+        description: "Use a remote runner"
         type: boolean
+        required: true
+
+      branch:
+        description: "Build branch"
+        type: string
+        default: "master"
         required: true
 
 jobs:
@@ -228,6 +234,9 @@ jobs:
       - name: Build
         shell: bash
         run: |
+          # switch branch
+          git checkout ${{ inputs.branch }}
+          
           BUILD_FAILED="false"
 
           if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
@@ -340,8 +349,9 @@ jobs:
                       for i in $(find addons -name "*zip"); do
                         if [ -f $i ]; then
                           NACE=(${i//\// })
-                          echo "mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]}"
-                          mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]} || true
+                          ADDONNAME=$(echo ${NACE[5]} | sed -e s/service.//)
+                          echo "mv $i addons/CE-${NACE[1]}-${NACE[5]}"
+                          cp $i addons/CE-${NACE[1]}-${NACE[3]}-$ADDONNAME || true
                         fi
                       done
                     fi
@@ -370,9 +380,9 @@ jobs:
           
                       for i in $(find addons -name "*zip"); do
                         if [ -f $i ]; then
-                          NACE=(${i//\// })
-                          echo "mv $i addons/LibreELEC-${NACE[1]}-${NACE[5]}"
-                          mv $i addons/LibreELEC-${NACE[1]}-${NACE[5]} || true
+                          ADDONNAME=$(echo ${NACE[5]} | sed -e s/service.//)
+                          echo "mv $i addons/CE-${NACE[1]}-${NACE[5]}"
+                          cp $i addons/LE-${NACE[1]}-${NACE[3]}-$ADDONNAME || true                        
                         fi
                       done
                     fi
@@ -444,8 +454,8 @@ jobs:
           overwrite: true
           if-no-files-found: ignore
           path: |
-            CoreELEC/target/addons/CoreELEC*zip 
-            LibreELEC.tv/target/addons/LibreELEC*zip
+            CoreELEC/target/addons/CE*zip 
+            LibreELEC.tv/target/addons/LE*zip
 
       - name: Save cef files
         uses: actions/upload-artifact@v4

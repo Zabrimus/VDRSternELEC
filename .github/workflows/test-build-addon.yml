@@ -1,0 +1,608 @@
+name: Test Build VDRSternELEC with cefbrowser
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        description: "build"
+        type: string
+        required: true
+      defaulttarget:
+        description: "Default targets (used by target: all)"
+        type: string
+        required: true
+      addons:
+        description: "addons. Use '-' if no addon shall be build"
+        type: string
+        required: true
+      extras:
+        description: "extras. Use '-' if no parameter extra be used"
+        type: string
+        required: true
+      extraparameter:
+        description: "extra parameter. Use '-' if no parameter shall be used"
+        type: string
+        required: true
+
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "build"
+        default: CoreELEC-22-no
+        required: true
+        type: choice
+        options:
+          - all
+          - CoreELEC-all
+          - LibreELEC-all
+          - LibreELEC-Generic
+          - CoreELEC-20
+          - CoreELEC-21
+          - CoreELEC-22
+          - LibreELEC-12
+          - LibreELEC-13
+          - CoreELEC-20-ng
+          - CoreELEC-20-ne
+          - CoreELEC-21-ng
+          - CoreELEC-21-ne
+          - CoreELEC-22-no
+          - LibreELEC-12-aarch64-AMLGX
+          - LibreELEC-12-aarch64-Allwinner-H6
+          - LibreELEC-12-aarch64-Allwinner-A64
+          - LibreELEC-12-arm-Allwinner-R40
+          - LibreELEC-12-arm-Allwinner-H3
+          - LibreELEC-12-aarch64-Allwinner-H5
+          - LibreELEC-12-aarch64-Rockchip-RK3399
+          - LibreELEC-12-arm-Rockchip-RK3288
+          - LibreELEC-12-aarch64-Rockchip-RK3328
+          - LibreELEC-12-arm-RPi-RPi2-3
+          - LibreELEC-12-aarch64-RPi-RPi4
+          - LibreELEC-12-aarch64-RPi-RPi5
+          - LibreELEC-12-x86_64-Generic
+          - LibreELEC-12-x86_64-GenericLegacy
+          - LibreELEC-13-aarch64-AMLGX
+          - LibreELEC-13-aarch64-Allwinner-H6
+          - LibreELEC-13-aarch64-Allwinner-A64
+          - LibreELEC-13-arm-Allwinner-R40
+          - LibreELEC-13-arm-Allwinner-H3
+          - LibreELEC-13-aarch64-Allwinner-H5
+          - LibreELEC-13-aarch64-Rockchip-RK3399
+          - LibreELEC-13-arm-Rockchip-RK3288
+          - LibreELEC-13-aarch64-Rockchip-RK3328
+          - LibreELEC-13-arm-RPi-RPi2-3
+          - LibreELEC-13-aarch64-RPi-RPi4
+          - LibreELEC-13-aarch64-RPi-RPi5
+          - LibreELEC-13-x86_64-Generic
+          - LibreELEC-13-x86_64-GenericLegacy
+          - LibreELEC-13-aarch64-Rockchip-RK356x
+          - LibreELEC-13-aarch64-Rockchip-RK3576
+          - LibreELEC-13-aarch64-Rockchip-RK3588
+      defaulttarget:
+        description: "Default targets (used by target: all)"
+        default: "CoreELEC-20-ng CoreELEC-21-ng CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-13-aarch64-AMLGX"
+        type: string
+      addons:
+        description: "addons. Use '-' if no addon shall be build"
+        default: dvb-latest,cefbrowser
+        type: string
+      extras:
+        description: "extras. Use '-' if no parameter extra be used"
+        default: easyvdr,channellogos,remotetranscode
+        type: string
+      extraparameter:
+        description: "extra parameter. Use '-' if no parameter shall be used"
+        default: '-releaseonly'
+        type: string
+
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    outputs:
+      CURRENT_RELEASE_TAG: ${{ steps.create_release_tag.outputs.CURRENT_RELEASE_TAG }}
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Prepare
+        shell: bash
+        run: |
+          gh extension install actions/gh-actions-cache
+          
+          REPO=${{ github.repository }}
+          BRANCH="main"
+          
+          echo "Fetching list of cache key"
+          cacheKeysForPR=$(gh actions-cache list -R $REPO -B $BRANCH | cut -f 1 )
+          
+          ## Setting this to not fail the workflow while deleting cache keys. 
+          set +e
+          for cacheKey in $cacheKeysForPR
+          do
+              echo "Delete cache entry $cacheKey in repo $REPO and branch $BRANCH" 
+              gh actions-cache delete $cacheKey -R $REPO -B $BRANCH --confirm
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: oprypin/find-latest-tag@v1
+        with:
+          repository:  ${{ github.repository }}
+          releases-only: false
+        id: current_release_tag
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+      - name: create release tag file
+        id: create_release_tag
+        shell: bash
+        run: |
+          CURRENT_TAG=${{ steps.current_release_tag.outputs.tag }}
+          CURRENT_TAG=$(echo $CURRENT_TAG | sed -e "s/[[:space:]]*(.*$//")
+          
+          if [[ ! ${CURRENT_TAG} =~ ^${{ steps.date.outputs.date }} ]]; then
+            TAG="${{ steps.date.outputs.date }}.1"
+          else
+            if [[ "${CURRENT_TAG}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\.[0-9]+$ ]]; then
+              TAG=$(echo "${CURRENT_TAG}" | perl -pe 's/(\d+)(?!.*\d+)/$1+1/e')
+            else
+              TAG="${{ steps.date.outputs.date }}.1"
+            fi
+          fi
+
+          echo "CURRENT_RELEASE_TAG=${TAG}" >> "$GITHUB_OUTPUT"
+
+  prepare-matrix:
+    runs-on: ubuntu-24.04
+    outputs:
+        matrixx8622: ${{ steps.setmatrix.outputs.matrixx8622 }}
+        matrixx8624: ${{ steps.setmatrix.outputs.matrixx8624 }}
+        matrixarm22: ${{ steps.setmatrix.outputs.matrixarm22 }}
+        matrixarm24: ${{ steps.setmatrix.outputs.matrixarm24 }}
+        matrixremote: ${{ steps.setmatrix.outputs.matrixremote }}
+    steps:
+      - name: Set Dynamic Matrix
+        id: setmatrix
+        shell: bash
+        run: |
+          ALL_DEFAULT="${{ inputs.defaulttarget }}"
+          
+          JSONX8622="{\"include\":["
+          JSONX8624="{\"include\":["
+          JSONARM22="{\"include\":["
+          JSONARM24="{\"include\":["
+          JSONREMOTE="{\"include\":["
+
+          if [[ "${{ inputs.target }}" == "all" ]] || [[ "${{ inputs.target }}" == "" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC-20* ]] || [[ "$i" == CoreELEC-21* ]]; then
+                      BUILDX8622="$BUILDX8622 $i"
+                  elif [[ "$i" == CoreELEC-22* ]]; then
+                      BUILDX8624="$BUILDX8624 $i"
+                  elif [[ "$i" == *x86_64* ]]; then
+                      BUILDX8624="$BUILDX8624 $i"
+                  else
+                      BUILDARM22="$BUILDARM22 $i"
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "CoreELEC-all" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC-20* ]] || [[ "$i" == CoreELEC-21* ]]; then
+                      BUILDX8622="$BUILDX8622 $i"
+                  elif [[ "$i" == CoreELEC-22* ]]; then
+                      BUILDX8624="$BUILDX8624 $i"
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "LibreELEC-all" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == LibreELEC* ]]; then
+                      if [[ "$i" == *x86_64* ]]; then
+                          BUILDX8624="$BUILDX8624 $i"
+                      else
+                          BUILDARM22="$BUILDARM22 $i"
+                      fi
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "CoreELEC-20" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC-20* ]]; then
+                      BUILDX8622="$BUILDX8622 $i"
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "CoreELEC-21" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC-21* ]]; then
+                      BUILDX8622="$BUILDX8622 $i"
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "CoreELEC-22" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC-22* ]]; then
+                      BUILDX8624="$BUILDX8624 $i"
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "LibreELEC-12" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == LibreELEC-12* ]]; then
+                      if [[ "$i" == *x86_64* ]]; then
+                          BUILDX8624="$BUILDX8624 $i"
+                      else
+                          BUILDARM22="$BUILDARM22 $i"
+                      fi
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "LibreELEC-13" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == LibreELEC-13* ]]; then
+                      if [[ "$i" == *x86_64* ]]; then
+                          BUILDX8624="$BUILDX8624 $i"
+                      else
+                          BUILDARM22="$BUILDARM22 $i"
+                      fi
+                  fi
+              done
+          elif [[ "${{ inputs.target }}" == "LibreELEC-Generic" ]]; then
+              for i in LibreELEC-12-x86_64-Generic LibreELEC-12-x86_64-GenericLegacy LibreELEC-13-x86_64-Generic LibreELEC-13-x86_64-GenericLegacy; do
+                  BUILDREMOTE="$BUILDREMOTE $i"
+              done                              
+          else
+              if [[ "${{ inputs.target }}" == CoreELEC-20* ]] || [[ "${{ inputs.target }}" == CoreELEC-21* ]]; then
+                  BUILDX8622="$BUILDX8622 ${{ inputs.target }}"
+              elif [[ "${{ inputs.target }}" == CoreELEC-22* ]]; then
+                  BUILDX8624="$BUILDX8624 ${{ inputs.target }}"
+              elif [[ "${{ inputs.target }}" == *x86_64* ]]; then
+                  BUILDX8624="$BUILDX8624 ${{ inputs.target }}"
+              else
+                  BUILDARM22="$BUILDARM22 ${{ inputs.target }}"
+              fi
+          fi
+          
+          if [[ -n ${BUILDX8622} ]]; then
+              for i in $BUILDX8622; do
+                  JSONX8622="${JSONX8622} {\"run\":\"$i\"},"
+              done          
+              JSONX8622="${JSONX8622} ]}"
+              echo "matrixx8622=${JSONX8622}" >> "$GITHUB_OUTPUT"
+              echo "Matrix X8622: ${JSONX8622}"
+          fi
+          
+          if [[ -n ${BUILDX8624} ]]; then
+              for i in $BUILDX8624; do
+                  JSONX8624="${JSONX8624} {\"run\":\"$i\"},"
+              done          
+              JSONX8624="${JSONX8624} ]}"
+              echo "matrixx8624=${JSONX8624}" >> "$GITHUB_OUTPUT"
+              echo "Matrix X8624: ${JSONX8624}"
+          fi
+          
+          if [[ -n ${BUILDARM22} ]]; then
+              for i in $BUILDARM22; do
+                  JSONARM22="${JSONARM22} {\"run\":\"$i\"},"
+              done
+          
+              JSONARM22="${JSONARM22} ]}"
+              echo "matrixarm22=${JSONARM22}" >> "$GITHUB_OUTPUT"
+              echo "Matrix arm22: ${JSONARM22}"
+          fi
+
+          if [[ -n ${BUILDARM24} ]]; then
+              for i in $BUILDARM24; do
+                  JSONARM24="${JSONARM24} {\"run\":\"$i\"},"
+              done
+          
+              JSONARM24="${JSONARM24} ]}"
+              echo "matrixarm24=${JSONARM24}" >> "$GITHUB_OUTPUT"
+              echo "Matrix arm24: ${JSONARM24}"
+          fi
+
+          if [[ -n ${BUILDREMOTE} ]]; then
+              for i in $BUILDREMOTE; do
+                  JSONREMOTE="${JSONREMOTE} {\"run\":\"$i\"},"
+              done
+          
+              JSONREMOTE="${JSONREMOTE} ]}"
+              echo "matrixremote=${JSONREMOTE}" >> "$GITHUB_OUTPUT"
+              echo "Matrix remote: ${JSONREMOTE}"
+          fi
+
+  build-all-x86-22:
+    if: startsWith(needs.prepare-matrix.outputs.matrixx8622, '{')
+    needs: [ prepare, prepare-matrix ]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixx8622) }}
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: ${{ matrix.run }}
+      releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
+      addons: ${{ inputs.addons }}
+      extras: ${{ inputs.extras }}
+      extraparameter: ${{ inputs.extraparameter }}
+      runner: ubuntu-22.04
+      remote: false
+    secrets: inherit
+
+  build-all-x86-24:
+    if: startsWith(needs.prepare-matrix.outputs.matrixx8624, '{')
+    needs: [ prepare, prepare-matrix ]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixx8624) }}
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: ${{ matrix.run }}
+      releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
+      addons: ${{ inputs.addons }}
+      extras: ${{ inputs.extras }}
+      extraparameter: ${{ inputs.extraparameter }}
+      runner: ubuntu-24.04
+      remote: false
+    secrets: inherit
+
+  build-all-arm-22:
+    if: startsWith(needs.prepare-matrix.outputs.matrixarm22, '{')
+    needs: [ prepare, prepare-matrix ]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixarm22) }}
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: ${{ matrix.run }}
+      releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
+      addons: ${{ inputs.addons }}
+      extras: ${{ inputs.extras }}
+      extraparameter: ${{ inputs.extraparameter }}
+      runner: ubuntu-22.04-arm
+      remote: false
+    secrets: inherit
+
+  build-all-arm-24:
+    if: startsWith(needs.prepare-matrix.outputs.matrixarm24, '{')
+    needs: [ prepare, prepare-matrix ]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixarm24) }}
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: ${{ matrix.run }}
+      releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
+      addons: ${{ inputs.addons }}
+      extras: ${{ inputs.extras }}
+      extraparameter: ${{ inputs.extraparameter }}
+      runner: ubuntu-24.04-arm
+      remote: false
+    secrets: inherit
+
+  build-remote:
+    if: startsWith(needs.prepare-matrix.outputs.matrixremote, '{')
+    needs: [ prepare, prepare-matrix ]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrixremote) }}
+    uses: ./.github/workflows/build-vdrsternelec.yml
+    with:
+      config: ${{ matrix.run }}
+      releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
+      addons: '-'
+      extras: ${{ inputs.extras }}
+      extraparameter: ${{ inputs.extraparameter }}
+      runner: self-hosted
+      remote: true
+    secrets: inherit
+
+  create-release:
+    needs: [ prepare, prepare-matrix, build-all-x86-22, build-all-x86-24, build-all-arm-22, build-all-arm-24, build-remote ]
+    runs-on: ubuntu-24.04
+    if: ${{ always() }}
+
+    steps:
+      - name: Maximize build space
+        uses: Zabrimus/maximize-build-space@master
+
+      - name: Download summary
+        uses: actions/download-artifact@v4
+        with:
+          path: build-summary
+          pattern: build-summary-*${{ inputs.target }}*
+          merge-multiple: true
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build-artifacts
+          pattern: build-artifacts-*${{ inputs.target }}*
+          merge-multiple: true
+
+      - name: Download addon artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build-addon
+          pattern: build-addon-*${{ inputs.target }}*
+          merge-multiple: true
+
+      - name: Download cef artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build-cef
+          pattern: build-cef-*${{ inputs.target }}*
+          merge-multiple: true
+
+      - name: Download summary Generic
+        if: ${{ inputs.target == 'LibreELEC-Generic' }}
+        uses: actions/download-artifact@v4
+        with:
+          path: build-summary
+          pattern: build-summary-*Generic*
+          merge-multiple: true
+
+      - name: Download release artifacts Generic
+        if: ${{ inputs.target == 'LibreELEC-Generic' }}
+        uses: actions/download-artifact@v4
+        with:
+          path: build-artifacts
+          pattern: build-artifacts-*Generic*
+          merge-multiple: true
+
+      - name: Download addon artifacts Generic
+        if: ${{ inputs.target == 'LibreELEC-Generic' }}
+        uses: actions/download-artifact@v4
+        with:
+          path: build-addon
+          pattern: build-addon-*Generic*
+          merge-multiple: true
+
+      - name: Download cef artifacts Generic
+        if: ${{ inputs.target == 'LibreELEC-Generic' }}
+        uses: actions/download-artifact@v4
+        with:
+          path: build-cef
+          pattern: build-cef-*Generic*
+          merge-multiple: true
+
+      - name: Create release and upload files
+        shell: bash
+        run: |
+          echo "-------------------------------"
+          echo "List build summaries...."
+          echo "-------------------------------"
+          
+          if [ -d build-summary ]; then 
+            ls -R build-summary
+          else
+            echo "Directory build-summary does not exists"
+          fi
+          
+          echo "-------------------------------"
+          echo "List build artifacts...."
+          echo "-------------------------------"
+
+          if [ -d build-artifacts ]; then 
+            ls -R build-artifacts
+            COUNTA=$(find build-artifacts -type f | wc -l)
+          else
+            echo "Directory build-artifacts does not exists"
+            COUNTA=0
+          fi
+
+          echo "-------------------------------"
+          echo "List cef...."
+          echo "-------------------------------"
+
+          if [ -d build-cef ]; then 
+            ls -R build-cef
+          else
+            echo "Directory build-cef does not exists"          
+          fi
+
+          echo "-------------------------------"
+          echo "List addons...."
+          echo "-------------------------------"
+
+          if [ -d build-addon ]; then 
+            ls -R build-addon
+          else
+            echo "Directory build-addon does not exists"          
+          fi
+
+          if [ $COUNTA -le 0 ]; then 
+              echo "No files found. Prevent creating an empty release"
+              exit 0
+          fi
+
+          echo "-------------------------------"
+          echo "Create Release notes..."
+          echo "-------------------------------"
+          
+          # VREV=$(git ls-remote https://github.com/${{ github.repository }} | head -1 | sed "s/HEAD//" | cut -c 1-7)
+          # echo "VDRSternELEC: [master@${VREV}](https://github.com/${{ github.repository }}/tree/${VREV})" >> release_notes
+
+          echo "" >> release_notes
+          echo "----------------------------------------------------------------------------" >> release_notes
+          echo "| Status  | Distro | Project | Device | Revision |" >> release_notes
+          echo "| ------- | ------ | ------- | ------ | -------- |" >> release_notes
+
+          cat build-summary/build-summary* >> release_notes || true
+
+          cat release_notes
+
+          echo "-------------------------------"
+          echo "Create Release..."
+          echo "-------------------------------"
+
+          # create release
+          if [[ "${{ inputs.extraparameter }}" =~ "releaseonly" ]]; then
+              RELEASETYPE="Release"
+          else
+              RELEASETYPE="Image"
+          fi
+          
+          TITLE="${{ inputs.target }}, ${RELEASETYPE}"
+
+          gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" -R ${{ github.repository }} -F release_notes --title "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }} (${TITLE})" --draft
+          
+          echo "-------------------------------"
+          echo "Upload cef..."
+          echo "-------------------------------"
+
+          # upload cef files
+          for i in $(ls build-cef/*.zip || echo "notfound"); do
+              if [ ! "$i" == "notfound" ]; then 
+                  echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
+                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" $i --clobber -R ${{ github.repository }} || true
+              fi
+          done
+          
+          echo "-------------------------------"
+          echo "Upload addons..."
+          echo "-------------------------------"
+          
+          # upload addon files
+          for i in $(ls build-addon/CoreELEC/target/addons/CoreELEC*zip || echo "notfound"); do
+              if [ ! "$i" == "notfound" ]; then
+                  echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
+                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" $i --clobber -R ${{ github.repository }} || true
+              fi
+          done
+          
+          for i in $(ls build-addon/LibreELEC.tv/target/addons/LibreELEC*zip || echo "notfound"); do
+              if [ ! "$i" == "notfound" ]; then
+                  echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
+                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" $i --clobber -R ${{ github.repository }} || true
+              fi
+          done
+          
+          echo "-------------------------------"
+          echo "Upload release..."
+          echo "-------------------------------"
+          
+          # upload release files
+          for i in $(ls build-artifacts/CoreELEC/target/CE* || echo "notfound"); do
+              if [ ! "$i" == "notfound" ]; then
+                  echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
+                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" $i --clobber -R ${{ github.repository }} || true
+              fi
+          done
+          
+          for i in $(ls build-artifacts/LibreELEC.tv/target/LE* || echo "notfound"); do
+              if [ ! "$i" == "notfound" ]; then
+                  echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
+                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" $i --clobber -R ${{ github.repository }} || true
+              fi
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  delete-old-releases:
+    needs: [create-release]
+    name: delete-old-releases
+    runs-on: ubuntu-24.04
+    if: ${{ always() }}
+    steps:
+      - uses: dev-drprasad/delete-older-releases@v0.2.0
+        with:
+          repo: ${{ github.repository }}
+          keep_latest: 20
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

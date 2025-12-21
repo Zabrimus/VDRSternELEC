@@ -13,7 +13,8 @@ PKG_DEPENDS_TARGET="toolchain expat libdrm Mako:host"
 PKG_LONGDESC="Mesa is a 3-D graphics library with an API."
 PKG_BUILD_FLAGS="+speed -sysroot"
 
-PKG_MESON_OPTS_TARGET="-Dgallium-drivers=panfrost,swrast \
+# PKG_MESON_OPTS_TARGET="-Dgallium-drivers=panfrost,swrast
+PKG_MESON_OPTS_TARGET="-Dgallium-drivers=${GALLIUM_DRIVERS// /,},swrast \
 					   -Dosmesa=true \
  					   -Dllvm=disabled \
  					   -Dvulkan-drivers= \

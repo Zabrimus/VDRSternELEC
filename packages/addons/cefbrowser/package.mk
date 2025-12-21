@@ -10,7 +10,7 @@ PKG_SOURCE_DIR="cefbrowser-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain atk libxml2 cups cef-at-spi2-core \
                     cef-libXcomposite cef-libXdamage cef-libXfixes cef-libXrandr cef-libXi cef-libXft \
                     cef-libX11 cef-libXext cef-libxcb cef-libXrender \
-                    openssl _cef _thrift"
+                    openssl _cef _thrift _mesa"
 PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
 PKG_DEPENDS_UNPACK="_cef"
 PKG_DEPENDS_CONFIG="_cef"
@@ -27,14 +27,9 @@ PKG_ADDON_TYPE="xbmc.service"
 
 # CoreELEC <= 20
 if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -le "20" ]; then
-   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk _mesa"
+   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
 fi
-
-# CoreELEC >= 21
-if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -ge "21" ]; then
-   PKG_DEPENDS_TARGET+=" _mesa"
-fi
-
+s
 case "${ARCH}" in
   arm)     DARCH="arm";;
   aarch64) DARCH="arm64";;

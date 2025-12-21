@@ -1,4 +1,4 @@
-name: Test Build VDRSternELEC with cefbrowser
+name: Test Build VDRSternELEC
 
 on:
   workflow_call:
@@ -23,12 +23,15 @@ on:
         description: "extra parameter. Use '-' if no parameter shall be used"
         type: string
         required: true
+      buildbranch:
+        description: "Build branch"
+        type: string
 
   workflow_dispatch:
     inputs:
       target:
         description: "build"
-        default: CoreELEC-22-no
+        default: all
         required: true
         type: choice
         options:
@@ -92,6 +95,10 @@ on:
       extraparameter:
         description: "extra parameter. Use '-' if no parameter shall be used"
         default: '-releaseonly'
+        type: string
+      buildbranch:
+        description: "Build branch"
+        default: 'addon'
         type: string
 
 jobs:
@@ -321,6 +328,7 @@ jobs:
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-22.04
       remote: false
+      buildbranch: ${{ inputs.buildbranch }}
     secrets: inherit
 
   build-all-x86-24:
@@ -338,6 +346,7 @@ jobs:
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-24.04
       remote: false
+      buildbranch: ${{ inputs.buildbranch }}
     secrets: inherit
 
   build-all-arm-22:
@@ -355,6 +364,7 @@ jobs:
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-22.04-arm
       remote: false
+      buildbranch: ${{ inputs.buildbranch }}
     secrets: inherit
 
   build-all-arm-24:
@@ -372,6 +382,7 @@ jobs:
       extraparameter: ${{ inputs.extraparameter }}
       runner: ubuntu-24.04-arm
       remote: false
+      buildbranch: ${{ inputs.buildbranch }}
     secrets: inherit
 
   build-remote:
@@ -389,6 +400,7 @@ jobs:
       extraparameter: ${{ inputs.extraparameter }}
       runner: self-hosted
       remote: true
+      buildbranch: ${{ inputs.buildbranch }}
     secrets: inherit
 
   create-release:

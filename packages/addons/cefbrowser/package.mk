@@ -29,7 +29,7 @@ PKG_ADDON_TYPE="xbmc.service"
 if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -le "20" ]; then
    PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
 fi
-s
+
 case "${ARCH}" in
   arm)     DARCH="arm";;
   aarch64) DARCH="arm64";;

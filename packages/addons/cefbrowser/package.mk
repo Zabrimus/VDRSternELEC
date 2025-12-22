@@ -25,10 +25,10 @@ PKG_SECTION="service"
 PKG_ADDON_NAME="cefbrowser"
 PKG_ADDON_TYPE="xbmc.service"
 
-# CoreELEC <= 20
-if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -le "20" ]; then
-   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
-fi
+# CoreELEC <= 20 (TODO: is this really necessary?)
+#if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -le "20" ]; then
+#   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
+#fi
 
 case "${ARCH}" in
   arm)     DARCH="arm";;

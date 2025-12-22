@@ -558,14 +558,14 @@ jobs:
           echo "-------------------------------"
           
           # upload addon files
-          for i in $(ls build-addon/CoreELEC/target/addons/CoreELEC*zip || echo "notfound"); do
+          for i in $(ls build-addon/CoreELEC/target/addons/CE*zip || echo "notfound"); do
               if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
                   gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" $i --clobber -R ${{ github.repository }} || true
               fi
           done
           
-          for i in $(ls build-addon/LibreELEC.tv/target/addons/LibreELEC*zip || echo "notfound"); do
+          for i in $(ls build-addon/LibreELEC.tv/target/addons/LE*zip || echo "notfound"); do
               if [ ! "$i" == "notfound" ]; then
                   echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
                   gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" $i --clobber -R ${{ github.repository }} || true

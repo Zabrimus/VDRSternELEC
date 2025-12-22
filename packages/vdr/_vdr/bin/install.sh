@@ -17,7 +17,7 @@ Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-p (url)]
 -T       : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
 -w       : install/update web components (remotetranscode, cefbrowser)
 -v       : install vtuner-ng (change /storage/.config/start_vtuner.sh accordingly, otherwise is will not start)
--c (url) : install/update cef binary lib (located at url or within /storage/.update or at /usr/local/config)
+-c (url) : install/update cefbrowser binary (located at url or in /storage/.update/addon-cefbrowser.zip)
 -p (url) : install/update private configs (located at url or within /storage/.update)
 EOF
   exit 1
@@ -115,26 +115,30 @@ install_triggerhappy() {
 }
 
 install_web() {
-  if [ ! -f "/storage/cef/libcef.so" ]; then
-    echo "libcef.so is missing, install cef first!"
+  if [ ! -f "/storage/browser/service.cefbrowser/bin/cefbrowser" ]; then
+    echo "cefbrowser is missing, install cefbrowser first!"
     echo "   -> install.sh -c [url]"
     exit 1
   fi
 
-  mkdir -p /storage/cefbrowser
-  cp -a /storage/cefbrowser-sample/* /storage/cefbrowser/
+  # copy data directory
+  if [ ! -d /storage/browser/data ]; then
+      mkdir -p /storage/browser/data
+      cp -a /storage/browser/service.cefbrowser/data/database /storage/browser
+
+      # copy possibly existing database files
+      if [ -d /storage/cefbrowser/data/database ]; then
+         cp -a /storage/cefbrowser/data/database/* /storage/browser/database
+      fi
+  fi
 
   # copy system.d files
   mkdir -p /storage/.config/system.d
 
-  . /etc/os-release
-  if [ "$NAME" == "CoreELEC" ]; then
-    cp /usr/local/system.d/coreelec.cefbrowser.service /storage/.config/system.d/cefbrowser.service
-  else
-    cp /usr/local/system.d/libreelec.cefbrowser.service /storage/.config/system.d/cefbrowser.service
-  fi
-
+  # copy system.d units
+  cp /storage/browser/service.cefbrowser/system.d/cefbrowser.service /storage/.config/system.d/cefbrowser.service
   cp /usr/local/system.d/remotetranscode.service /storage/.config/system.d
+
   systemctl daemon-reload
   systemctl enable cefbrowser.service
   systemctl enable remotetranscode.service
@@ -161,42 +165,39 @@ install_vtuner() {
   echo "  Otherwise vtuner-ng will not work as expected."
 }
 
-install_cef() {
+install_cefbrowser() {
   rm -Rf /storage/tmp
   mkdir /storage/tmp
+  mkdir -p /storage/browser
   cd /storage/tmp
 
   # Get zip file
   # 1. try downloading
   if [ -n "$1" ]; then
-    echo "Download cef libs from $1"
-    if wget -q "$1" -O cef.zip; then
+    echo "Download cefbrowser from $1"
+    if wget -q "$1" -O addon-cefbrowser.zip; then
       sync
       echo "$1 saved to /storage/tmp"
     else
       echo "Error downloading $1"
       exit 1
     fi
-  # 2. read from /storage/.update/cef.zip
-  elif [ -e "/storage/.update/cef.zip" ]; then
-    echo "Move /storage/.update/cef.zip"
-    mv "/storage/.update/cef.zip" "/storage/tmp/cef.zip"
-  # 3. read from /usr/local/config/cef.zip
-  elif [ -e "/usr/local/config/cef.zip" ]; then
-    echo "Copy /usr/local/config/cef.zip"
-    cp "/usr/local/config/cef.zip" "/storage/tmp/cef.zip"
+  # 2. read from /storage/.update/addon-cefbrowser.zip
+  elif [ -e "/storage/.update/addon-cefbrowser.zip" ]; then
+    echo "Move /storage/.update/addon-cefbrowser.zip"
+    mv "/storage/.update/addon-cefbrowser.zip" "/storage/tmp/addon-cefbrowser.zip"
   else
-    echo "No cef library file found, exiting"
+    echo "No addon-cefbrowser file found, exiting"
     exit 1
   fi
 
-  # unzip cef.zip
-  if [ -e "/storage/tmp/cef.zip" ]; then
-    cd /
-    echo "Unzip cef.zip"
-    unzip -o "/storage/tmp/cef.zip"
+  # unzip addon-cefbrowser.zip
+  if [ -e "/storage/tmp/addon-cefbrowser.zip" ]; then
+    cd /storage/browser
+    echo "Unzip addon-cefbrowser.zip"
+    unzip -o "/storage/tmp/addon-cefbrowser.zip"
   else
-    echo "No cef zip found, exiting"
+    echo "No addon-cefbrowser zip found, exiting"
     exit 1
   fi
 }
@@ -280,9 +281,9 @@ while getopts b:iTCwvcp: o; do
     (v) install_vtuner;;
     (c) eval url=\${$(( $OPTIND ))}
         if [ -n $url ]; then
-          install_cef "$url"
+          install_cefbrowser "$url"
         else
-          install_cef
+          install_cefbrowser
         fi
         ;;
     (p) eval url=\${$(( $OPTIND -1 ))}

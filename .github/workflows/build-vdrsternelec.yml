@@ -414,9 +414,10 @@ jobs:
           
                       for i in $(find addons -name "*zip"); do
                         if [ -f $i ]; then
+                          NACE=(${i//\// })
                           ADDONNAME=$(echo ${NACE[5]} | sed -e s/service.//)
                           echo "mv $i addons/LE-${NACE[1]}-${NACE[5]}"
-                          cp $i addons/LE-${NACE[1]}-${NACE[3]}-$ADDONNAME || true                        
+                          cp $i addons/LE-${NACE[3]}-$ADDONNAME || true                        
                         fi
                       done
                     fi

@@ -32,8 +32,14 @@ on:
         type: string
 
       remote:
-        description: "Use a remote rummer"
+        description: "Use a remote runner"
         type: boolean
+        required: true
+
+      buildbranch:
+        description: "Build branch"
+        type: string
+        default: "master"
         required: true
 
 jobs:
@@ -187,7 +193,7 @@ jobs:
           
           echo "REVISION=$rev" >> "$GITHUB_ENV"
 
-      - name: Download artifact
+      - name: Download artifact 1
         if: ${{ inputs.remote != true }}
         id: download-artifact-1
         uses: dawidd6/action-download-artifact@v3
@@ -201,13 +207,41 @@ jobs:
           name_is_regexp: false
           path: ${{ env.DISTRO }}/sources
 
-      - name: Download artifacts
+      - name: Download artifacts 2
         if: ${{ inputs.remote != true }}
         id: download-artifact-2
         uses: dawidd6/action-download-artifact@v3
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: precache-sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: ${{ env.ARTIFACT }}-2
+          name_is_regexp: false
+          path: ${{ env.DISTRO }}/sources
+
+      - name: Download artifact 3
+        if: ${{ inputs.remote != true }}
+        id: download-artifact-3
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: cron_precache_sources.yml
+          if_no_artifact_found: ignore
+          check_artifacts: true
+          search_artifacts: true
+          name: ${{ env.ARTIFACT }}-1
+          name_is_regexp: false
+          path: ${{ env.DISTRO }}/sources
+
+      - name: Download artifacts 4
+        if: ${{ inputs.remote != true }}
+        id: download-artifact-4
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: cron_precache_sources.yml
           if_no_artifact_found: ignore
           check_artifacts: true
           search_artifacts: true
@@ -228,16 +262,25 @@ jobs:
       - name: Build
         shell: bash
         run: |
+          # switch branch
+          git checkout ${{ inputs.buildbranch }}
+          
           BUILD_FAILED="false"
 
-          if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
+           if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
               if [ ! "${{ inputs.addons }}" = "" ] && [ ! "${{ inputs.addons }}" = "-" ] && [ ! "${{ inputs.addons }}" = "'-'" ]; then
                  ADDONS="-addon ${{ inputs.addons }}"
               else
                  ADDONS=""
               fi
           else
-              ADDONS=""
+              ADDONLIST=$(echo ${{ inputs.addons }} | sed -e "s/,\?dvb-latest,\?//g")
+          
+              if [ ! "${ADDONLIST}" = "" ] && [ ! "${ADDONLIST}" = "-" ] && [ ! "${ADDONLIST}" = "'-'" ]; then
+                 ADDONS="-addon ${ADDONLIST}"
+              else
+                 ADDONS=""
+              fi
           fi
           
           if [ ! "${{ inputs.extras }}" = "" ] && [ ! "${{ inputs.extras }}" = "-" ] && [ ! "${{ inputs.extras }}" = "'-'" ]; then
@@ -277,7 +320,7 @@ jobs:
           BUILD_DATE="$(date +%m%d)"
           if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
               . CoreELEC/distributions/CoreELEC/version              
-              MYCUSTOM_VERSION="-${OS_VERSION}-VDR-${BUILD_DATE}"
+              MYCUSTOM_VERSION="${OS_VERSION}-VDR-${BUILD_DATE}"
           else
               MYCUSTOM_VERSION="VDR-${BUILD_DATE}"
           fi
@@ -340,8 +383,9 @@ jobs:
                       for i in $(find addons -name "*zip"); do
                         if [ -f $i ]; then
                           NACE=(${i//\// })
-                          echo "mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]}"
-                          mv $i addons/CoreELEC-${NACE[1]}-${NACE[5]} || true
+                          ADDONNAME=$(echo ${NACE[5]} | sed -e s/service.//)
+                          echo "mv $i addons/CE-${NACE[1]}-${NACE[5]}"
+                          cp $i addons/CE-${NACE[1]}-${NACE[3]}-$ADDONNAME || true
                         fi
                       done
                     fi
@@ -371,8 +415,9 @@ jobs:
                       for i in $(find addons -name "*zip"); do
                         if [ -f $i ]; then
                           NACE=(${i//\// })
-                          echo "mv $i addons/LibreELEC-${NACE[1]}-${NACE[5]}"
-                          mv $i addons/LibreELEC-${NACE[1]}-${NACE[5]} || true
+                          ADDONNAME=$(echo ${NACE[5]} | sed -e s/service.//)
+                          echo "mv $i addons/LE-${NACE[1]}-${NACE[5]}"
+                          cp $i addons/LE-${NACE[3]}-$ADDONNAME || true                        
                         fi
                       done
                     fi
@@ -444,8 +489,8 @@ jobs:
           overwrite: true
           if-no-files-found: ignore
           path: |
-            CoreELEC/target/addons/CoreELEC*zip 
-            LibreELEC.tv/target/addons/LibreELEC*zip
+            CoreELEC/target/addons/CE*zip 
+            LibreELEC.tv/target/addons/LE*zip
 
       - name: Save cef files
         uses: actions/upload-artifact@v4

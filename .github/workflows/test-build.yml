@@ -1,4 +1,4 @@
-name: Build VDRSternELEC
+name: Test Build VDRSternELEC
 
 on:
   workflow_call:
@@ -31,7 +31,7 @@ on:
     inputs:
       target:
         description: "build"
-        default: CoreELEC-22-no
+        default: all
         required: true
         type: choice
         options:
@@ -82,15 +82,15 @@ on:
           - LibreELEC-13-aarch64-Rockchip-RK3588
       defaulttarget:
         description: "Default targets (used by target: all)"
-        default: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Allwinner-A64 LibreELEC-12-arm-Allwinner-R40 LibreELEC-12-arm-Allwinner-H3 LibreELEC-12-aarch64-Allwinner-H5 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-arm-Rockchip-RK3288 LibreELEC-12-aarch64-Rockchip-RK3328 LibreELEC-12-arm-RPi-RPi2-3 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5 LibreELEC-13-aarch64-AMLGX LibreELEC-13-aarch64-Allwinner-H6 LibreELEC-13-aarch64-Allwinner-A64 LibreELEC-13-arm-Allwinner-R40 LibreELEC-13-arm-Allwinner-H3 LibreELEC-13-aarch64-Allwinner-H5 LibreELEC-13-aarch64-Rockchip-RK3399 LibreELEC-13-arm-Rockchip-RK3288 LibreELEC-13-aarch64-Rockchip-RK3328 LibreELEC-13-arm-RPi-RPi2-3 LibreELEC-13-aarch64-RPi-RPi4 LibreELEC-13-aarch64-RPi-RPi5 LibreELEC-13-aarch64-Rockchip-RK356x LibreELEC-13-aarch64-Rockchip-RK3576 LibreELEC-13-aarch64-Rockchip-RK3588"
+        default: "CoreELEC-20-ng CoreELEC-21-ng CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-13-aarch64-AMLGX"
         type: string
       addons:
         description: "addons. Use '-' if no addon shall be build"
-        default: dvb-latest
+        default: dvb-latest,cefbrowser
         type: string
       extras:
         description: "extras. Use '-' if no parameter extra be used"
-        default: easyvdr,channellogos,remotetranscode,cefbrowser
+        default: easyvdr,channellogos,remotetranscode
         type: string
       extraparameter:
         description: "extra parameter. Use '-' if no parameter shall be used"
@@ -98,7 +98,7 @@ on:
         type: string
       buildbranch:
         description: "Build branch"
-        default: 'master'
+        default: 'addon'
         type: string
 
 jobs:

@@ -11,7 +11,7 @@ ExecStart=/storage/browser/service.cefbrowser/bin/cefbrowser --zoom=1920 --confi
 Restart=always
 RestartSec=3
 Environment=LD_LIBRARY_PATH="/storage/browser/service.cefbrowser/lib/private/:/storage/browser/service.cefbrowser/lib/"
-Environment=BROWSER_DB_PATH="/storage/browser/data"
+Environment=BROWSER_DB_PATH="/storage/browser/database"
 StartLimitInterval=0
 TimeoutStartSec=30
 TimeoutStopSec=30

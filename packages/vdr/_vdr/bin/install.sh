@@ -122,8 +122,8 @@ install_web() {
   fi
 
   # copy data directory
-  if [ ! -d /storage/browser/data ]; then
-      mkdir -p /storage/browser/data
+  if [ ! -d /storage/browser/database ]; then
+      mkdir -p /storage/browser/database
       cp -a /storage/browser/service.cefbrowser/data/database /storage/browser
 
       # copy possibly existing database files

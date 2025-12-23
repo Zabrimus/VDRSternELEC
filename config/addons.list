@@ -43,3 +43,6 @@ incus:ADDON_INCUS
 
 # Install cefbrowser
 cefbrowser:ADDON_CEFBROWSER
+
+# Install channel logos (MP_Logos)
+channellogos:ADDON_CHANNELLOGOS

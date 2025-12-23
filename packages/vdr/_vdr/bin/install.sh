@@ -19,6 +19,7 @@ Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-p (url)]
 -v       : install vtuner-ng (change /storage/.config/start_vtuner.sh accordingly, otherwise is will not start)
 -c (url) : install/update cefbrowser binary (located at url or in /storage/.update/addon-cefbrowser.zip)
 -p (url) : install/update private configs (located at url or within /storage/.update)
+-l (url) : install/update channel logos (located at url or in /storage/.update/channellogos.zip)
 EOF
   exit 1
 }
@@ -202,6 +203,43 @@ install_cefbrowser() {
   fi
 }
 
+install_channellogos() {
+  rm -Rf /storage/tmp
+  mkdir /storage/tmp
+  mkdir -p /storage/.config
+  cd /storage/tmp
+
+  # Get zip file
+  # 1. try downloading
+  if [ -n "$1" ]; then
+    echo "Download channellogos from $1"
+    if wget -q "$1" -O channellogos.zip; then
+      sync
+      echo "$1 saved to /storage/tmp"
+    else
+      echo "Error downloading $1"
+      exit 1
+    fi
+  # 2. read from /storage/.update/channellogos.zip
+  elif [ -e "/storage/.update/channellogos.zip" ]; then
+    echo "Move /storage/.update/channellogos.zip"
+    mv "/storage/.update/channellogos.zip" "/storage/tmp/channellogos.zip"
+  else
+    echo "No channellogos file found, exiting"
+    exit 1
+  fi
+
+  # unzip channellogos.zip
+  if [ -e "/storage/tmp/channellogos.zip" ]; then
+    cd /storage/.config
+    echo "Unzip channellogos.zip"
+    unzip -o "/storage/tmp/channellogos.zip"
+  else
+    echo "No channellogos zip found, exiting"
+    exit 1
+  fi
+}
+
 install_private() {
   rm -Rf /storage/tmp
   mkdir /storage/tmp
@@ -291,6 +329,13 @@ while getopts b:iTCwvcp: o; do
           install_private "$url"
         else
           install_private
+        fi
+        ;;
+    (l) eval url=\${$(( $OPTIND ))}
+        if [ -n $url ]; then
+          install_channellogos "$url"
+        else
+          install_channellogos
         fi
         ;;
     (*) usage

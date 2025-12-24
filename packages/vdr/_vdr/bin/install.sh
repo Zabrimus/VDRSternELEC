@@ -206,7 +206,6 @@ install_cefbrowser() {
 install_channellogos() {
   rm -Rf /storage/tmp
   mkdir /storage/tmp
-  mkdir -p /storage/.config
   cd /storage/tmp
 
   # Get zip file
@@ -231,7 +230,7 @@ install_channellogos() {
 
   # unzip channellogos.zip
   if [ -e "/storage/tmp/channellogos.zip" ]; then
-    cd /storage/.config
+    cd /storage
     echo "Unzip channellogos.zip"
     unzip -o "/storage/tmp/channellogos.zip"
   else

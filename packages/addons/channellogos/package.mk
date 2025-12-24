@@ -7,10 +7,10 @@ PKG_URL=""
 PKG_DEPENDS_UNPACK+=" _MP_Logos"
 PKG_BUILD_FLAGS="-sysroot"
 PKG_SOURCE_DIR=""
+PKG_DEPENDS_TARGET+=" _symlinks:host"
 
 PKG_REV="1"
 PKG_IS_ADDON="yes"
-# PKG_SECTION="service"
 PKG_ADDON_NAME="channellogos"
 PKG_ADDON_TYPE="xbmc.service"
 
@@ -37,4 +37,19 @@ addon() {
 	# create directories
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/logofiles
   	cp -a $(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logofiles/* ${ADDON_BUILD}/${PKG_ADDON_ID}/logofiles
+
+	INSTALLDIR="$(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logofiles"
+	ADDONDIR="${ADDON_BUILD}/${PKG_ADDON_ID}"
+
+	# convert all absolute links to relative links
+	(
+		cd $(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logosDark
+		$(get_build_dir _symlinks)/symlinks -rc .
+
+		cd $(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logosLight
+		$(get_build_dir _symlinks)/symlinks -rc .
+	)
+
+	cp -a $(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logosDark ${ADDON_BUILD}/${PKG_ADDON_ID}
+	cp -a $(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logosLight ${ADDON_BUILD}/${PKG_ADDON_ID}
 }

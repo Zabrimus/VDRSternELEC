@@ -153,12 +153,12 @@ directfbsamples
 dynamite
 easyvdr
 permashift
-channellogos
 remotetranscode
 tsduck
 
 Available addons:
 cefbrowser
+channellogos
 crazycat
 digital-devices
 dvb-latest
@@ -255,7 +255,7 @@ Thanks to Dr. Seltsam @ vdr-portal.de
 ```/storage/.config/vdropt/enabled_plugins``` contains a list of the plugins to autostart with VDR. Simply edit the file and add other plugins of your choice to the already pre-activated ones. 
 
 ### Channel logos
-```/usr/local/vdrshare/logos(Light|Dark)``` contain the channel logos, if they have been built with ```-e channellogos```. 
+```/storage/channellogos/logos(Light|Dark)``` contain the channel logos. The channellogos can be built with ```-addon channellogps``` 
 
 ### VDR specific configuration
 After basic configuration is done you probably need to adapt VDR's conf files.  

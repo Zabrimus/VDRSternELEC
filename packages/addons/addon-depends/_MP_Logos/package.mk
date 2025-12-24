@@ -23,7 +23,8 @@ make_target() {
 
 # Link "Light" variant
     export LOGO_VARIANT="Light"
-    export LOGODIR="${PKG_BUILD}/logos${LOGO_VARIANT}"
+    # export LOGODIR="${PKG_BUILD}/logos${LOGO_VARIANT}"
+    export LOGODIR="$(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logos${LOGO_VARIANT}"
     mkdir -p ${LOGODIR}
     bash ${PKG_BUILD}/mp_logos.sh -c ${PKG_BUILD}/mp_logos.conf
     mkdir -p ${INSTALL}/usr/local/vdrshare/logos${LOGO_VARIANT}
@@ -31,7 +32,8 @@ make_target() {
 
 # Link "Dark" variant
     export LOGO_VARIANT="Dark"
-    export LOGODIR="${PKG_BUILD}/logos${LOGO_VARIANT}"
+    #export LOGODIR="${PKG_BUILD}/logos${LOGO_VARIANT}"
+    export LOGODIR="$(get_install_dir _mediaportal-de-logos)/usr/local/vdrshare/logos${LOGO_VARIANT}"
     mkdir -p ${LOGODIR}
     bash ${PKG_BUILD}/mp_logos.sh -c ${PKG_BUILD}/mp_logos.conf
     mkdir -p ${INSTALL}/usr/local/vdrshare/logos${LOGO_VARIANT}

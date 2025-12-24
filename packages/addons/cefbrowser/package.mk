@@ -19,9 +19,8 @@ PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed -sysroot +strip"
 
 PKG_REV="1"
-PKG_SECTION="tools"
 PKG_IS_ADDON="yes"
-PKG_SECTION="service"
+PKG_SECTION="addon"
 PKG_ADDON_NAME="cefbrowser"
 PKG_ADDON_TYPE="xbmc.service"
 

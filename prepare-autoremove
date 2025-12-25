@@ -48,6 +48,7 @@ echo "pkg-config" >> tmp_b
 echo "zstd" >> tmp_b
 echo "llvm" >> tmp_b
 echo "glibc" >> tmp_b
+echo "_symlinks" >> tmp_b
 
 # regularly check these bl301
 echo "bl301_221119" >> tmp_b

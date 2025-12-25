@@ -14,6 +14,9 @@ PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="channellogos"
 PKG_ADDON_TYPE="xbmc.service"
 
+# Create a tar.gz file instead of an zip to preserve symbolic links
+PKG_ADDON_TGZ="yes"
+
 unpack() {
   mkdir -p ${PKG_BUILD}
 

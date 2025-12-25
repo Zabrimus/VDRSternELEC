@@ -380,7 +380,7 @@ jobs:
                     if [ -d addons ]; then
                       ls -la addons || true
           
-                      for i in $(find addons -name "*zip"); do
+                      for i in $(find addons -name "*zip" -o -name "*tar.gz"); do
                         if [ -f $i ]; then
                           NACE=(${i//\// })
                           ADDONNAME=$(echo ${NACE[5]} | sed -e s/service.//)
@@ -412,7 +412,7 @@ jobs:
                     if [ -d addons ]; then
                       ls -la addons || true
           
-                      for i in $(find addons -name "*zip"); do
+                      for i in $(find addons -name "*zip" -o -name "*tar.gz"); do
                         if [ -f $i ]; then
                           NACE=(${i//\// })
                           ADDONNAME=$(echo ${NACE[5]} | sed -e s/service.//)
@@ -490,7 +490,9 @@ jobs:
           if-no-files-found: ignore
           path: |
             CoreELEC/target/addons/CE*zip 
+            CoreELEC/target/addons/CE*tar.gz
             LibreELEC.tv/target/addons/LE*zip
+            LibreELEC.tv/target/addons/LE*tar.gz
 
       - name: Save cef files
         uses: actions/upload-artifact@v4

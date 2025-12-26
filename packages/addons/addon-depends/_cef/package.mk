@@ -8,11 +8,10 @@ PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="Chromium Embedded Framework"
 PKG_TOOLCHAIN="manual"
-PKG_BUILD_FLAGS="+speed"
+PKG_BUILD_FLAGS="+speed -sysroot"
 
 makeinstall_target() {
   CEF_DIR="${PKG_BUILD}/../../../../cef"
-  CEF_PREFIX="/storage"
   CEF_URL="https://cef-builds.spotifycdn.com/"
   CEF_FILE_X86="cef_binary_126.2.7%2Bg300bb05%2Bchromium-126.0.6478.115_linux64_minimal.tar.bz2"
   CEF_FILE_ARM64="cef_binary_126.2.7%2Bg300bb05%2Bchromium-126.0.6478.115_linuxarm64_minimal.tar.bz2"
@@ -39,22 +38,13 @@ makeinstall_target() {
   fi
 
 # package cef binaries external
-  if [ ! -e ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip ]; then
-    mkdir -p ${INSTALL}/storage/cef
-    cd ${INSTALL}
-    cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Release/* ${INSTALL}/storage/cef
-    cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Resources/* ${INSTALL}/storage/cef
-    zip -qrum9 ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip storage
-  fi
-
-# package cef binaries into image if wanted
-  if [ ${CEF_BINARIES} ]; then
-    mkdir -p ${INSTALL}/usr/local/config
-    cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip ${INSTALL}/usr/local/config/cef-binaries.zip
-  fi
+#  if [ ! -e ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip ]; then
+#    mkdir -p ${INSTALL}/storage/cef
+#    cd ${INSTALL}
+#    cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Release/* ${INSTALL}/storage/cef
+#    cp -R ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/Resources/* ${INSTALL}/storage/cef
+#    zip -qrum9 ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}.zip storage
+#  fi
 
   echo "${PKG_VERSION}" > ${PKG_BUILD}/VERSION
-
-# coreelec-19 needs this
-  sed -i "s/VERSION 3.21/VERSION 3.19/" ${CEF_DIR}/cef-${PKG_VERSION}-${ARCH}/CMakeLists.txt
 }

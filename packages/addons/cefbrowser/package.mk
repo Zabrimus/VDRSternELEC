@@ -1,0 +1,155 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+PKG_NAME="cefbrowser"
+PKG_VERSION="9c1ca16dc7dcbb2c0a96cb13afac8d1e45c3749f"
+PKG_SHA256="358f89d04a50554616507af47527f2bd24fdf7912200490d1072e7f76aa85936"
+PKG_LICENSE="LPGL"
+PKG_SITE="https://github.com/Zabrimus/cefbrowser"
+PKG_URL="https://github.com/Zabrimus/cefbrowser/archive/${PKG_VERSION}.zip"
+PKG_SOURCE_DIR="cefbrowser-${PKG_VERSION}"
+PKG_DEPENDS_TARGET="toolchain atk libxml2 cups cef-at-spi2-core \
+                    cef-libXcomposite cef-libXdamage cef-libXfixes cef-libXrandr cef-libXi cef-libXft \
+                    cef-libX11 cef-libXext cef-libxcb cef-libXrender \
+                    openssl _cef _thrift _mesa"
+PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
+PKG_DEPENDS_UNPACK="_cef"
+PKG_DEPENDS_CONFIG="_cef"
+PKG_LONGDESC="cefbrowser"
+PKG_TOOLCHAIN="meson"
+PKG_BUILD_FLAGS="+speed -sysroot +strip"
+
+PKG_REV="1"
+PKG_IS_ADDON="yes"
+PKG_SECTION="addon"
+PKG_ADDON_NAME="cefbrowser"
+PKG_ADDON_TYPE="xbmc.service"
+
+# CoreELEC <= 20 (TODO: is this really necessary?)
+#if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -le "20" ]; then
+#   PKG_DEPENDS_TARGET+=" cef-at-spi2-atk"
+#fi
+
+case "${ARCH}" in
+  arm)     DARCH="arm";;
+  aarch64) DARCH="arm64";;
+  x86_64)  DARCH="x86_64";;
+esac
+
+case "${ARCH}" in
+  arm)     DSUBARCH=${TARGET_SUBARCH};;
+  aarch64) DSUBARCH=${TARGET_VARIANT};;
+  x86_64)  DSUBARCH="x86-64";;
+esac
+
+PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} -Dvdrsternelec=true \
+                       --prefix=/usr/local \
+                       --bindir=/usr/local/bin \
+                       --libdir=/usr/local/lib \
+                       --libexecdir=/usr/local/lib \
+                       --sbindir=/usr/local/bin"
+
+pre_configure_target() {
+	CEF_DIR="$(get_build_dir _cef)/../../../../cef"
+	CEF_VERSION_FILE="$(get_build_dir _cef)/VERSION"
+	CEF_VERSION="$(cat ${CEF_VERSION_FILE})"
+
+	export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system
+	rm -rf ${PKG_BUILD}/subprojects/cef
+	ln -s ${CEF_DIR}/cef-${CEF_VERSION}-${ARCH} ${PKG_BUILD}/subprojects/cef
+}
+
+pre_make_target() {
+	export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+	export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
+}
+
+makeinstall_target() {
+	mkdir -p ${INSTALL}/usr/local/lib
+	mkdir -p ${INSTALL}/usr/local/bin
+	mkdir -p ${INSTALL}/usr/local/etc
+	mkdir -p ${INSTALL}/usr/local/data
+
+	cp -Pr ${PKG_BUILD}/.${TARGET_NAME}/Release/* ${INSTALL}/usr/local/lib/
+	cp -Pr ${PKG_BUILD}/.${TARGET_NAME}/cefbrowser ${INSTALL}/usr/local/bin
+    cp -Pr ${PKG_BUILD}/static-content/* ${INSTALL}/usr/local/data
+    cp -P  ${PKG_BUILD}/config/sockets.ini ${INSTALL}/usr/local/etc/
+}
+
+addon() {
+	# create directories
+  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
+  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/dri
+  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/data
+  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/etc
+  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
+
+  	# copy cefbrowser
+  	cp -Pr $(get_install_dir cefbrowser)/usr/local/lib/* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/
+  	cp -Pr $(get_install_dir cefbrowser)/usr/local/bin/cefbrowser ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+	cp -Pr $(get_install_dir cefbrowser)/usr/local/data/* ${ADDON_BUILD}/${PKG_ADDON_ID}/data
+	cp -P  $(get_install_dir cefbrowser)/usr/local/etc/sockets.ini ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/
+  	cp -P  ${PKG_DIR}/_system.d/* ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
+
+  	# copy cef-at-spi2-core
+  	for i in $(find $(get_install_dir cef-at-spi2-core)/usr/lib -name *.so*) ]; do
+		if [ -f $i ]; then
+			cp -P $i ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+		fi
+	done
+
+	# TODO: prüfen, ob das richtig ist
+	# copy cef-at-spi2-atk
+	A=$(get_install_dir cef-at-spi2-atk) || ""
+	if [ "$A" != "" ]; then
+		for i in $(find $(get_install_dir cef-at-spi2-atk)/usr/lib -name *.so*) ]; do
+			if [ -f $i ]; then
+				cp -P $i ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+			fi
+		done
+		rm ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/*.symbols || true
+	fi
+
+  	# copy mesa
+  	cp -Pr $(get_install_dir _mesa)/usr/lib/*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+  	cp -Pr $(get_install_dir _mesa)/usr/\$ORIGIN/dri/*.so ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/dri
+
+  	# copy atk
+  	cp -PL $(get_install_dir atk)/usr/lib/libatk-1.0.so.0 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy cups
+	cp -PL $(get_install_dir cups)/usr/lib/libcups.so.2 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libXft
+	cp -PL $(get_install_dir cef-libXft)/usr/lib/libXft.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libXrandr
+	cp -PL $(get_install_dir cef-libXrandr)/usr/lib/libXrandr.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libXcomposite
+	cp -PL $(get_install_dir cef-libXcomposite)/usr/lib/libXcomposite.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libXcomposite
+	cp -PL $(get_install_dir cef-libXdamage)/usr/lib/libXdamage.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libXfixes
+	cp -PL $(get_install_dir cef-libXfixes)/usr/lib/libXfixes.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libXi
+	cp -PL $(get_install_dir cef-libXi)/usr/lib/libXi.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libX11
+	cp -PL $(get_install_dir cef-libX11)/usr/lib/libX11*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libXext
+	cp -PL $(get_install_dir cef-libXext)/usr/lib/libXext.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libxcb
+	cp -PL $(get_install_dir cef-libxcb)/usr/lib/libxcb*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	# copy libXrender
+	cp -PL $(get_install_dir cef-libXrender)/usr/lib/libXrender.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+
+	rm -f ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/*.symbols || true
+}

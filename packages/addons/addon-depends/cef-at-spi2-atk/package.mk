@@ -9,9 +9,18 @@ PKG_LONGDESC="A GTK+ module that bridges ATK to D-Bus at-spi, built for cef."
 PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain cef-at-spi2-core atk libxml2"
 PKG_DEPENDS_UNPACK+=" at-spi2-atk"
-PKG_BUILD_FLAGS="+speed"
+PKG_BUILD_FLAGS="-sysroot +speed"
 
 unpack() {
   mkdir -p ${PKG_BUILD}
-  tar --strip-components=1 -xf ${SOURCES}/${PKG_NAME:4}/${PKG_NAME:4}-${PKG_VERSION}.tar.xz -C ${PKG_BUILD}
+
+  SRC_PART="${SOURCES}/${PKG_NAME:4}/${PKG_NAME:4}-${PKG_VERSION}.tar"
+
+  if [ -f "${SRC_PART}.xz" ]; then
+	tar --strip-components=1 -xf ${SRC_PART}.xz -C ${PKG_BUILD}
+  elif [ -f "${SRC_PART}.gz" ]; then
+	tar --strip-components=1 -xf ${SRC_PART}.gz -C ${PKG_BUILD}
+  else
+	tar --strip-components=1 -xf ${SRC_PART}.bz2 -C ${PKG_BUILD}
+  fi
 }

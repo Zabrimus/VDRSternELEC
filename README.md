@@ -86,8 +86,9 @@ VDR_INPUTDEVICE=satip
 - VDR_INPUTDEVICE: VDR input device, which is enabled by default, e.g. ```satip``` or ```streamdev-client```
 
 #### Addons
-It's possible to build some KODI addons and pre-install them to the image. All available addons are listed in [addons.list](config/addons.list).  
+It's possible to build some KODI addons. All available addons are listed in [addons.list](config/addons.list).  
 Building the addons with ```build.sh``` can be triggered by adding them with the ```-addon``` option and a comma separated list.
+The built addons can be found in CoreELEC/target/addons or LibreELEC/target/addons and can be installed in Kodi.
 
 *Probably not all addons can be compiled for every LibreELEC/CoreELEC version. Mainly dvb-latest and crazycat are candidates to fail, because of the frequently updated linux kernel.*
 
@@ -152,12 +153,12 @@ directfbsamples
 dynamite
 easyvdr
 permashift
-channellogos
-cefbrowser
 remotetranscode
 tsduck
 
 Available addons:
+cefbrowser
+channellogos
 crazycat
 digital-devices
 dvb-latest
@@ -167,7 +168,7 @@ network-tools
 sundtek-mediatv
 system-tools
 ```
-Example call:  ```./build.sh -config CoreELEC-19 -extra easyvdr```  
+Example call:  ```./build.sh -config CoreELEC-22-no -extra easyvdr```  
 
 If everything worked fine, the desired images can be found in either  ```CoreELEC/target```, ```LibreELEC/target``` or ```releases```.
 
@@ -179,7 +180,7 @@ Write your image file to an SD-Card like you are used to do it with [LibreELEC](
 The first boot will come up with KODI gui. Follow the dialog and choose your language and network settings. It's very helpful to enable ssh service, to be able to access the device from outside. You also want to set your time/timezone in the KODI settings now. This would also be the time, which is used in VDR afterwards.
 
 ## Install KODI addons
-Now it would be a good time to install the KODI addons of your choice. E.g. ```system-tools addon``` (if not pre-installed) can be very helpful, because it makes mc available on the device. In order to be able to get the right language within VDR you should also install the ```locale addon``` (if not pre-installed) and configure the addon with your desired language (e.g. de_DE).
+Now it would be a good time to install the KODI addons of your choice. E.g. ```system-tools addon``` can be very helpful, because it makes mc available on the device. In order to be able to get the right language within VDR you should also install the ```locale addon``` and configure the addon with your desired language (e.g. de_DE).
 
 ## Directory structure
 - ```/usr/local/lib```  
@@ -205,7 +206,7 @@ Usage: /usr/local/bin/install.sh [-i] [-b kodi|vdr] [-T] [-w] [-c (url)] [-p (ur
 -b vdr   : VDR will be started after booting
 -T       : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
 -w       : install/update web components (remotetranscode, cefbrowser)
--c (url) : install/update cef binary lib (located at url or within /storage/.update or at /usr/local/config)
+-c (url) : install/update cefbrowser addon (located at url or within /storage/.update)
 -p (url) : install/update private configs (located at url or within /storage/.update)
 ```
 If you are at the first boot, the minimum you have to do is running the script with the ```-i``` option, which will copy the default configuration to the right place. If you also want, that VDR will start as default, these are the commands of your choice:
@@ -254,7 +255,7 @@ Thanks to Dr. Seltsam @ vdr-portal.de
 ```/storage/.config/vdropt/enabled_plugins``` contains a list of the plugins to autostart with VDR. Simply edit the file and add other plugins of your choice to the already pre-activated ones. 
 
 ### Channel logos
-```/usr/local/vdrshare/logos(Light|Dark)``` contain the channel logos, if they have been built with ```-e channellogos```. 
+```/storage/channellogos/logos(Light|Dark)``` contain the channel logos. The channellogos can be built with ```-addon channellogps``` 
 
 ### VDR specific configuration
 After basic configuration is done you probably need to adapt VDR's conf files.  
@@ -549,13 +550,3 @@ Possibly a reboot is necessary.
 
 #### High CPU usage after connecting to vga console
 This is work in progress. Kodi is using the `mesa softpipe` driver, which is relatively slow.
-
-## Delete
-If you don't want to use these images anymore, you can simply install a new core CoreELEC/LibreELEC image and
-delete the directories
-```
-/storage/.conf/vdropt
-/storage/.conf/vdropt-sample
-/storage/.fonts
-```
-to get rid of all VDR configurations.

@@ -40,3 +40,9 @@ tsduck:ADDON_TSDUCK
 
 # Install incus
 incus:ADDON_INCUS
+
+# Install cefbrowser
+cefbrowser:ADDON_CEFBROWSER
+
+# Install channel logos (MP_Logos)
+channellogos:ADDON_CHANNELLOGOS

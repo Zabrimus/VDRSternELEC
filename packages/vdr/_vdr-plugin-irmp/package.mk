@@ -24,6 +24,10 @@ pre_make_target() {
 post_makeinstall_target() {
   PLUGIN="$(cat ${PKG_BUILD}/vdr-plugin-irmp/Makefile | grep 'PLUGIN = ' | cut -d ' ' -f 3)"
   $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN}
+
+   rm -rf ${INSTALL}/usr/lib/udev/rules.d
+      mkdir -p ${INSTALL}/usr/lib/udev/rules.d
+      cp -PR ${PKG_DIR}/_udev.d/*.rules ${INSTALL}/usr/lib/udev/rules.d
 }
 
 make_target() {

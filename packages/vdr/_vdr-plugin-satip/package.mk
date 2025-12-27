@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-satip"
-PKG_VERSION="1bf21b2f4377e6dcda59470aaf4bde2532210e07"
-PKG_SHA256="a458966084e92c2bb142d1dd3042e7fe61a1fb8f9f11fbbf12bc2adae18ea1ab"
+PKG_VERSION="244027623d898b99bb68719c4a90645f5b9040cf"
+PKG_SHA256="f09724e9c4fbe701951f6ca75187e73090b7a5cff1a66536a0a59318fd6abf5c"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/FireFlyVDR/vdr-plugin-satip"
 PKG_URL="https://github.com/FireFlyVDR/vdr-plugin-satip/archive/${PKG_VERSION}.zip"

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_raft"
-PKG_VERSION="2d8dfe8d91dc800bf5c5f85c8146f51947d3ca96"
-PKG_SHA256="9224917fcd1d5236f7df96d8d1d5dbe8eba2098775f2412dec753c3b1e9b1daa"
+PKG_VERSION="148951f79a1ed529d6f112661a3067494f1a0917"
+PKG_SHA256="1a03b49b0dd213956ec9fd857a4a026df6c083abdc6f8e27b337bb3ef1d37aed"
 PKG_LICENSE="LGPL 3"
 PKG_SITE="https://github.com/cowsql/raft"
 PKG_URL="https://github.com/cowsql/raft/archive/${PKG_VERSION}.zip"

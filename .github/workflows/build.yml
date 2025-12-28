@@ -395,7 +395,7 @@ jobs:
     with:
       config: ${{ matrix.run }}
       releasetag: ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}
-      addons: '-'
+      addons: ${{ inputs.addons }}
       extras: ${{ inputs.extras }}
       extraparameter: ${{ inputs.extraparameter }}
       runner: self-hosted

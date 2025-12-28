@@ -86,11 +86,11 @@ on:
         type: string
       addons:
         description: "addons. Use '-' if no addon shall be build"
-        default: dvb-latest
+        default: dvb-latest,cefbrowser,channellogos
         type: string
       extras:
         description: "extras. Use '-' if no parameter extra be used"
-        default: easyvdr,channellogos,remotetranscode,cefbrowser
+        default: easyvdr,remotetranscode
         type: string
       extraparameter:
         description: "extra parameter. Use '-' if no parameter shall be used"

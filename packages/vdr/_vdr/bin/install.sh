@@ -116,7 +116,7 @@ install_triggerhappy() {
 }
 
 install_web() {
-  if [ ! -f "/storage/browser/service.cefbrowser/bin/cefbrowser" ]; then
+  if [ ! -f "/storage/browser/addon.cefbrowser/bin/cefbrowser" ]; then
     echo "cefbrowser is missing, install cefbrowser first!"
     echo "   -> install.sh -c [url]"
     exit 1
@@ -125,7 +125,7 @@ install_web() {
   # copy data directory
   if [ ! -d /storage/browser/database ]; then
       mkdir -p /storage/browser/database
-      cp -a /storage/browser/service.cefbrowser/data/database /storage/browser
+      cp -a /storage/browser/addon.cefbrowser/data/database /storage/browser
 
       # copy possibly existing database files
       if [ -d /storage/cefbrowser/data/database ]; then
@@ -137,7 +137,7 @@ install_web() {
   mkdir -p /storage/.config/system.d
 
   # copy system.d units
-  cp /storage/browser/service.cefbrowser/system.d/cefbrowser.service /storage/.config/system.d/cefbrowser.service
+  cp /storage/browser/addon.cefbrowser/system.d/cefbrowser.service /storage/.config/system.d/cefbrowser.service
   cp /usr/local/system.d/remotetranscode.service /storage/.config/system.d
 
   systemctl daemon-reload
@@ -222,13 +222,13 @@ install_channellogos() {
   # 2. read from /storage/.update/channellogos.tar.gz
   elif [ -e "/storage/.update/channellogos.tar.gz" ]; then
     echo "Move /storage/.update/channellogos.tar.gz"
-    mv "/storage/.update/channellogos.zip" "/storage/tmp/channellogos.tar.gz"
+    mv "/storage/.update/channellogos.tar.gz" "/storage/tmp/channellogos.tar.gz"
   else
     echo "No channellogos file found, exiting"
     exit 1
   fi
 
-  # unzip channellogos.zip
+  # unzip channellogos.tar.gz
   if [ -e "/storage/tmp/channellogos.tar.gz" ]; then
     cd /storage
     echo "Unzip channellogos.tar.gz"

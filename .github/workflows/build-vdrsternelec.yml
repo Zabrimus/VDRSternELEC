@@ -493,14 +493,3 @@ jobs:
             CoreELEC/target/addons/CE*tar.gz
             LibreELEC.tv/target/addons/LE*zip
             LibreELEC.tv/target/addons/LE*tar.gz
-
-      - name: Save cef files
-        uses: actions/upload-artifact@v4
-        with:
-          name: "build-cef-${{ inputs.config }}"
-          compression-level: 0
-          retention-days: 1
-          overwrite: true
-          if-no-files-found: ignore
-          path: |
-            cef/cef*.zip

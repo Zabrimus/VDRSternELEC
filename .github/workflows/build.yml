@@ -433,13 +433,6 @@ jobs:
           pattern: build-addon-*${{ inputs.target }}*
           merge-multiple: true
 
-      - name: Download cef artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: build-cef
-          pattern: build-cef-*${{ inputs.target }}*
-          merge-multiple: true
-
       - name: Download summary Generic
         if: ${{ inputs.target == 'LibreELEC-Generic' }}
         uses: actions/download-artifact@v4
@@ -498,16 +491,6 @@ jobs:
           fi
 
           echo "-------------------------------"
-          echo "List cef...."
-          echo "-------------------------------"
-
-          if [ -d build-cef ]; then 
-            ls -R build-cef
-          else
-            echo "Directory build-cef does not exists"          
-          fi
-
-          echo "-------------------------------"
           echo "List addons...."
           echo "-------------------------------"
 
@@ -552,19 +535,7 @@ jobs:
           TITLE="${{ inputs.target }}, ${RELEASETYPE}"
 
           gh release create "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" -R ${{ github.repository }} -F release_notes --title "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }} (${TITLE})" --draft
-          
-          echo "-------------------------------"
-          echo "Upload cef..."
-          echo "-------------------------------"
-
-          # upload cef files
-          for i in $(ls build-cef/*.zip || echo "notfound"); do
-              if [ ! "$i" == "notfound" ]; then 
-                  echo "Upload $i in release tag ${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}"
-                  gh release upload "${{ needs.prepare.outputs.CURRENT_RELEASE_TAG }}-${{ inputs.target }}-${RELEASETYPE}" $i --clobber -R ${{ github.repository }} || true
-              fi
-          done
-          
+        
           echo "-------------------------------"
           echo "Upload addons..."
           echo "-------------------------------"

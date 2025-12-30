@@ -308,7 +308,7 @@ if [ "$#" = "0" ]; then
     usage
 fi
 
-while getopts b:iTCwvcp: o; do
+while getopts b:iTCwvclp: o; do
   case $o in
     (i) install;;
     (C) install_copy;;

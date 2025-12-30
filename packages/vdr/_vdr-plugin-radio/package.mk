@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-radio"
-PKG_VERSION="f0c89c2c2285743bcc62ecca473b270359af8775"
-PKG_SHA256="e58c236358d0adfd5f14a844292019bd820f7ddf41ee690410b70916e52acfed"
+PKG_VERSION="cd405d05d42b8a604982c5b85895ba8018f6c228"
+PKG_SHA256="06c5d5f5b55f157d5d83fde19a8f41293caab63c6735aea21a58b604b41edd18"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-radio"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-radio/archive/${PKG_VERSION}.zip"

@@ -404,6 +404,7 @@ if [ ! "${PATCH_ONLY}" = "true" ]; then
                    `find $DISTRO/target -name '*.tar.sha256' 2>/dev/null` \
                    `find $DISTRO/target -name '*.img.gz' 2>/dev/null` \
                    `find $DISTRO/target -name '*.img.gz.sha256' 2>/dev/null` \
+                   `find $DISTRO/target -name '*.tar.gz' 2>/dev/null` \
                    `find $DISTRO/target/addons -name '*.zip' 2>/dev/null`; do
               mv -f $i $RELEASEDIR
           done

@@ -1,0 +1,13 @@
+diff --git a/timers.c b/timers.c
+index f04d57de..589e3130 100644
+--- a/timers.c
++++ b/timers.c
+@@ -786,7 +786,7 @@ eTimerMatch cTimer::Matches(const cEvent *Event, int *Overlap) const
+ 
+ bool cTimer::Expired(void) const
+ {
+-  if (IsSingleEvent() && !Recording() && (!event || event->RunningStatus() == SI::RunningStatusNotRunning)) {
++  if (IsSingleEvent() && !Recording() && (!event || !HasFlags(tfVps) || event->RunningStatus() == SI::RunningStatusNotRunning)) {
+      time_t Now = time(NULL);
+      time_t ExpireTime = StopTimeEvent();
+      if (HasFlags(tfVps)) {

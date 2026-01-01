@@ -1,0 +1,106 @@
+diff --git "a/osditem.org" "b/osditem.c"
+index a526315..d9a5edf 100644
+--- "a/osditem.org"
++++ "b/osditem.c"
+@@ -55,6 +55,14 @@ void myOsdItem::Set()
+     int i;
+     char *buffer = NULL, *strProgress = NULL;
+     const char *m = " ";
++	
++    // time reference for timer matching
++    time_t t;
++    if (event)
++        t = event->StartTime();
++    else
++        t = time(NULL);
++
+ 
+     // look for timers
+ #if APIVERSNUM >= 20301
+@@ -76,10 +84,18 @@ void myOsdItem::Set()
+ 
+     if(event)
+     {
++        const char *title = event->Title();
++        if (!title)
++            title = tr("<no title>");
++
++        int duration = event->Duration();
++        if (duration <= 0)
++            duration = 1;
++
+         if( progressbar == 2 )
+         {
+             // calculate progress bar
+-            float progress = (int)roundf( (float)(time(NULL) - event->StartTime()) / (float) (event->Duration()) * 100.0);
++            float progress = (int)roundf( (float)(time(NULL) - event->StartTime()) / (float) duration * 100.0);
+             if(progress < 0)
+                 progress = 0.;
+             else if(progress > 100)
+@@ -88,15 +104,18 @@ void myOsdItem::Set()
+             asprintf(&strProgress, "%3.0f%%", progress);
+ 
+             if(showchannelnumbers)
+-                asprintf(&buffer,"%s\t%d\t%-10s\t%s\t %s", m, channel->Number(), channel->ShortName(true),
+-                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : strProgress, event->Title());
++                asprintf(&buffer,"%s\t%d\t%-10s\t%s\t %s", m,
++                        channel ? channel->Number() : 0,
++                        channel ? channel->ShortName(true) : tr("<no channel>"),
++                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : strProgress, title);
+             else
+-                asprintf(&buffer,"%s\t%-10s\t%s\t %s", m, channel->ShortName(true),
+-                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : strProgress,event->Title());
++                asprintf(&buffer,"%s\t%-10s\t%s\t %s", m,
++                        channel ? channel->ShortName(true) : tr("<no channel>"),
++                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : strProgress, title);
+         } else if( progressbar == 0 )
+         {
+             // calculate progress bar
+-            float progress = (int)roundf( (float)(time(NULL) - event->StartTime()) / (float) (event->Duration()) * 10.0);
++            float progress = (int)roundf( (float)(time(NULL) - event->StartTime()) / (float) duration * 10.0);
+             if(progress < 0)
+                 progress = 0.;
+             else if(progress > 9)
+@@ -114,15 +133,18 @@ void myOsdItem::Set()
+             ProgressBar += Icons::ProgressEnd();
+ 
+             if(showchannelnumbers)
+-                asprintf(&buffer,"%s\t%d\t%-10s\t%s\t %s", m, channel->Number(), channel->ShortName(true),
+-                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : ProgressBar.c_str(), event->Title());
++                asprintf(&buffer,"%s\t%d\t%-10s\t%s\t %s", m,
++                        channel ? channel->Number() : 0,
++                        channel ? channel->ShortName(true) : tr("<no channel>"),
++                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : ProgressBar.c_str(), title);
+             else
+-                asprintf(&buffer,"%s\t%-10s\t%s\t %s", m, channel->ShortName(true),
+-                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : ProgressBar.c_str(), event->Title());
++                asprintf(&buffer,"%s\t%-10s\t%s\t %s", m,
++                        channel ? channel->ShortName(true) : tr("<no channel>"),
++                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : ProgressBar.c_str(), title);
+         } else {
+             char szProgress[20] = "";
+             char szProgressPart[25] = "";
+-            int progress = (int)roundf( (float)(time(NULL) - event->StartTime()) / (float) (event->Duration()) * 8.0);
++            int progress = (int)roundf( (float)(time(NULL) - event->StartTime()) / (float) duration * 8.0);
+             progress = std::min(8, std::max(0, progress));
+ 
+             for(int i = 0; i < 8; i++) {
+@@ -134,11 +156,14 @@ void myOsdItem::Set()
+             szProgress[progress] = '\0';
+             sprintf(szProgressPart, "%c%-8s%c", '[', szProgress, ']');
+             if(showchannelnumbers)
+-                asprintf(&buffer,"%s\t%d\t%-10s\t%s\t %s", m, channel->Number(), channel->ShortName(true),
+-                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : szProgressPart, event->Title());
++                asprintf(&buffer,"%s\t%d\t%-10s\t%s\t %s", m,
++                        channel ? channel->Number() : 0,
++                        channel ? channel->ShortName(true) : tr("<no channel>"),
++                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : szProgressPart, title);
+             else
+-                asprintf(&buffer,"%s\t%-10s\t%s\t %s", m, channel->ShortName(true),
+-                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : szProgressPart, event->Title());
++                asprintf(&buffer,"%s\t%-10s\t%s\t %s", m,
++                        channel ? channel->ShortName(true) : tr("<no channel>"),
++                        (!(event->RunningStatus()==4)&&next) ? *event->GetTimeString() : szProgressPart, title);
+         }
+     }
+     else

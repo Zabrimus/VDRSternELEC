@@ -19,8 +19,7 @@ jobs:
         shell: bash
         id: get
         run: |
-          #if [ $(date +"%d") -lt 7 ]; then
-          if [ $(date +"%d") -lt 999 ]; then
+          if [ $(date +"%d") -lt 7 ]; then
               echo "type=full" >> "$GITHUB_OUTPUT"
           else
               echo "type=tar" >> "$GITHUB_OUTPUT"

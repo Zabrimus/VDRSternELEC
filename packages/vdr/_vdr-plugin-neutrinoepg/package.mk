@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-neutrinoepg"
-PKG_VERSION="4d784a5cbe469e8f307eb0109fbf58241405e149"
-PKG_SHA256="85a8321d04e008d1563154d8bdf9663a1f7f207e5abecdd45c1e13fb01f06cb0"
+PKG_VERSION="6455b0676ae5a88b0f8a4ae44bbbde22c583140b"
+PKG_SHA256="6db55d3fe9ee9940481cd952ba7d00433d016dba26186636454ede2c94e47a3b"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-neutrinoepg"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-neutrinoepg/archive/${PKG_VERSION}.zip"

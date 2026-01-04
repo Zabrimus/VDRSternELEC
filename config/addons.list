@@ -46,3 +46,6 @@ cefbrowser:ADDON_CEFBROWSER
 
 # Install channel logos (MP_Logos)
 channellogos:ADDON_CHANNELLOGOS
+
+# Install yt-dlp
+yt-dlp:ADDON_YT_DLP

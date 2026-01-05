@@ -1,0 +1,13 @@
+--- a/iptv/ytdlp-2.sh	2025-12-31 14:17:47.886520550 +0100
++++ b/iptv/ytdlp-2.sh	2026-01-05 13:51:49.000000000 +0100
+@@ -32,9 +32,9 @@
+ 
+ # Iptv plugin listens this port
+ PORT=${2}
+ 
+ # find URL to stream (configured in file m3u-list-main.cfg)
+ URL=$(grep "^${PARAMETER}:" ${CFGFILE} | sed -e "s/^${PARAMETER}://")
+ 
+ # use parameter A to select either ffmpeg or netcat
+-/usr/local/bin/yt-dlp_linux -t mp4 --audio-multistreams --hls-use-mpegts ${URL} -o - | nc 127.0.0.1 ${PORT}
++/storage/.kodi/addons/yt-dlp/bin/yt-dlp.sh  -t mp4 --audio-multistreams --hls-use-mpegts ${URL} -o - | /usr/bin/netcat 127.0.0.1 ${PORT}

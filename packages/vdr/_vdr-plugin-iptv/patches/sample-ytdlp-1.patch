@@ -1,0 +1,19 @@
+diff -ru8bBwd a/iptv/ytdlp-1.sh b/iptv/ytdlp-1.sh
+--- a/iptv/ytdlp-1.sh	2025-12-31 13:39:10.361708000 +0100
++++ b/iptv/ytdlp-1.sh	2026-01-05 18:15:35.632606026 +0100
+@@ -31,12 +31,12 @@
+ # Iptv plugin listens this port
+ PORT=${2}
+ 
+ # URL to stream
+ URL="https://daserste-live.ard-mcdn.de/daserste/live/hls/de/master.m3u8"
+ 
+ # use parameter A to select either ffmpeg or netcat
+ if [ "${A}" = 1 ]; then
+-    /usr/local/bin/yt-dlp_linux -t mp4 --audio-multistreams --hls-use-mpegts ${URL} -o - | ffmpeg -i - -codec copy -f mpegts tcp://127.0.0.1:${PORT}
++    /storage/.kodi/addons/yt-dlp/bin/yt-dlp.sh -t mp4 --audio-multistreams --hls-use-mpegts ${URL} -o - | /usr/bin/ffmpeg -i - -codec copy -f mpegts tcp://127.0.0.1:${PORT}
+ else
+-    /usr/local/bin/yt-dlp_linux -t mp4 --audio-multistreams --hls-use-mpegts ${URL} -o - | nc 127.0.0.1 ${PORT}
++    /storage/.kodi/addons/yt-dlp/bin/yt-dlp.sh -t mp4 --audio-multistreams --hls-use-mpegts ${URL} -o - | /usr/bin/netcat 127.0.0.1 ${PORT}
+ fi
+\ Kein Zeilenumbruch am Dateiende.

@@ -86,7 +86,7 @@ on:
         type: string
       addons:
         description: "addons. Use '-' if no addon shall be build"
-        default: dvb-latest,cefbrowser,channellogos
+        default: dvb-latest,cefbrowser,channellogos,yt-dlp
         type: string
       extras:
         description: "extras. Use '-' if no parameter extra be used"

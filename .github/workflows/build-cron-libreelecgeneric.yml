@@ -32,7 +32,7 @@ jobs:
     with:
       target: "LibreELEC-Generic"
       defaulttarget: "LibreELEC-12-x86_64-Generic LibreELEC-12-x86_64-GenericLegacy LibreELEC-13-x86_64-Generic LibreELEC-13-x86_64-GenericLegacy"
-      addons: "dvb-latest,channellogos,cefbrowser"
+      addons: "dvb-latest,channellogos,cefbrowser,yt-dlp"
       extras: "easyvdr,remotetranscode"
       extraparameter: "-releaseonly"
       buildbranch: 'master'
@@ -45,7 +45,7 @@ jobs:
     with:
       target: "LibreELEC-Generic"
       defaulttarget: "LibreELEC-12-x86_64-Generic LibreELEC-12-x86_64-GenericLegacy LibreELEC-13-x86_64-Generic LibreELEC-13-x86_64-GenericLegacy"
-      addons: "dvb-latest,channellogos,cefbrowser"
+      addons: "dvb-latest,channellogos,cefbrowser,yt-dlp"
       extras: "easyvdr,remotetranscode"
       extraparameter: "-"
       buildbranch: 'master'

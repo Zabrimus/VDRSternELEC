@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-cecremote"
-PKG_VERSION="1.5.2"
-PKG_SHA256="14fedb39469496627deea6b16d15620eab6ca1169971a2a1599d3c2fbf7ad096"
+PKG_VERSION="1.6.0"
+PKG_SHA256="8f0e59206d77dbf358a7da14f9a247a8bce78f09bb05839aac22a13465d88c32"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.uli-eckhardt.de/vdr/cec.de.shtml"
 PKG_URL="https://www.uli-eckhardt.de/vdr/download/vdr-cecremote-${PKG_VERSION}.tgz"

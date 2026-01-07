@@ -274,7 +274,7 @@ jobs:
                  ADDONS=""
               fi
           else
-              ADDONLIST=$(echo ${{ inputs.addons }} | sed -e "s/,\?dvb-latest,\?//g")
+              ADDONLIST=$(echo "${{ inputs.addons }}" | sed -e "s/,\?dvb-latest,\?//g")
           
               if [ ! "${ADDONLIST}" = "" ] && [ ! "${ADDONLIST}" = "-" ] && [ ! "${ADDONLIST}" = "'-'" ]; then
                  ADDONS="-addon ${ADDONLIST}"

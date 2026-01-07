@@ -33,7 +33,7 @@ jobs:
       target: "CoreELEC-20"
       defaulttarget: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Allwinner-A64 LibreELEC-12-arm-Allwinner-R40 LibreELEC-12-arm-Allwinner-H3 LibreELEC-12-aarch64-Allwinner-H5 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-arm-Rockchip-RK3288 LibreELEC-12-aarch64-Rockchip-RK3328 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5 LibreELEC-13-aarch64-AMLGX LibreELEC-13-aarch64-Allwinner-H6 LibreELEC-13-aarch64-Allwinner-A64 LibreELEC-13-arm-Allwinner-R40 LibreELEC-13-arm-Allwinner-H3 LibreELEC-13-aarch64-Allwinner-H5 LibreELEC-13-aarch64-Rockchip-RK3399 LibreELEC-13-arm-Rockchip-RK3288 LibreELEC-13-aarch64-Rockchip-RK3328 LibreELEC-13-aarch64-RPi-RPi4 LibreELEC-13-aarch64-RPi-RPi5 LibreELEC-13-aarch64-Rockchip-RK356x LibreELEC-13-aarch64-Rockchip-RK3576 LibreELEC-13-aarch64-Rockchip-RK3588"
       addons: "dvb-latest,channellogos,cefbrowser,yt-dlp"
-      extras: "easyvdrremotetranscode"
+      extras: "easyvdr,remotetranscode"
       extraparameter: "-releaseonly"
       buildbranch: 'master'
     secrets: inherit

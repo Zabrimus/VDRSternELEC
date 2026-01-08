@@ -1,0 +1,31 @@
+diff --git a/packages/lang/llvm/package.mk b/packages/lang/llvm/package.mk
+index be8d4babc2..07319dcad1 100644
+--- a/packages/lang/llvm/package.mk
++++ b/packages/lang/llvm/package.mk
+@@ -111,10 +111,22 @@ post_make_host() {
+ 
+ post_makeinstall_host() {
+   mkdir -p ${TOOLCHAIN}/bin
+-    cp -a bin/{llc,llvm-ar,llvm-as,llvm-config,llvm-cov,llvm-dis} "${TOOLCHAIN}/bin"
+-    cp -a bin/{llvm-link,llvm-nm,llvm-objcopy,llvm-objdump} "${TOOLCHAIN}/bin"
+-    cp -a bin/{llvm-profdata,llvm-readobj,llvm-size,llvm-strip} "${TOOLCHAIN}/bin"
+-    cp -a bin/{llvm-tblgen,opt} "${TOOLCHAIN}/bin"
++    cp -a bin/llc "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-ar "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-as "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-config "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-cov "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-dis "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-link "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-nm "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-objcopy "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-objdump "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-profdata "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-readobj "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-size "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-strip "${TOOLCHAIN}/bin"
++    cp -a bin/llvm-tblgen "${TOOLCHAIN}/bin"
++    cp -a bin/opt "${TOOLCHAIN}/bin"
+ 
+   if listcontains "${GRAPHIC_DRIVERS}" "(iris|panfrost)"; then
+     cp -a bin/llvm-spirv "${TOOLCHAIN}/bin"

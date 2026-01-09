@@ -5,6 +5,10 @@ The images include a full-featured CoreELEC or LibreELEC distribution, where it'
 > **Disclaimer:** Not all images are tested and there is no guarantee at all, that the VDR client on these images is working as expected. Possible reasons are missing or misconfigured VDR output devices and plugins.  
 > Therefore tests and/or pull requests are highly appreciated.
 
+## Releases
+Releases are created and made available on a regular basis.
+An overview can be found at [here](https://zabrimus.github.io/VDRSternELEC/), for example.
+
 ## Directory structure of this repository
 
 :file_folder: **CoreELEC** - CoreELEC's build directory included as git submodule  

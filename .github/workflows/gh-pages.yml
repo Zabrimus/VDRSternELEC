@@ -34,6 +34,8 @@ jobs:
           cp releases.html output
           cp addons.html output
           cp images.html output
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -33,7 +33,7 @@ jobs:
           cd gh-pages
           ./create-pages.sh
           mkdir output
-          cp all.html output
+          cp all.html output/index.html
           cp releases.html output
           cp addons.html output
           cp images.html output

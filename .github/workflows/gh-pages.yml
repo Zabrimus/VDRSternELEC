@@ -26,7 +26,10 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Build page
-        run: |
+        shell: bash
+        run: |       
+          echo "Starte build..."
+          
           cd gh-pages
           ./create-pages.sh
           mkdir output

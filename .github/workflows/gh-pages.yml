@@ -32,11 +32,14 @@ jobs:
           
           cd gh-pages
           ./create-pages.sh
-          mkdir output
+          ./create-update-json.sh
+          mkdir -p output/updates
           cp all.html output/index.html
           cp releases.html output
           cp addons.html output
           cp images.html output
+          cp all-updates.html output
+          cp -r updates/* output/updates
           
           echo "Build beendet..."
           

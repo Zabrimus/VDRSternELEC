@@ -31,8 +31,11 @@ jobs:
           echo "Starte build..."
           
           cd gh-pages
+          mkdir -p updates
+          
           ./create-pages.sh
           ./create-update-json.sh
+          
           mkdir -p output/updates
           cp all.html output/index.html
           cp releases.html output

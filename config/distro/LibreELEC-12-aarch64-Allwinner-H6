@@ -13,3 +13,7 @@ ARCH=aarch64
 # VDR settings
 VDR_OUTPUTDEVICE=softhddevice-drm-gles
 VDR_INPUTDEVICE=streamdev-client
+
+# Updates
+STERN_RELEASE=https://zabrimus.github.io/VDRSternELEC/updates/release.LibreELEC-12.H6.json
+STERN_ADDON=https://zabrimus.github.io/VDRSternELEC/updates/addons.LibreELEC-12-aarch64.json

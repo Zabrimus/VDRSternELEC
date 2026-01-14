@@ -13,3 +13,7 @@ ARCH=x86_64
 # VDR settings
 VDR_OUTPUTDEVICE=softhdevice
 VDR_INPUTDEVICE=satip
+
+# Updates
+STERN_RELEASE=https://zabrimus.github.io/VDRSternELEC/updates/release.GenericLegacy.12.json
+

@@ -277,6 +277,8 @@ set_env() {
   export BUILD_SUFFIX="$BUILD_SUFFIX"
   export VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE"
   export VDR_INPUTDEVICE="$VDR_INPUTDEVICE"
+  export STERN_RELEASE="$STERN_RELEASE"
+  export STERN_ADDON="$STERN_ADDON"
   if [ "$DORELEASE" = "true" ]; then
     echo "   BUILD_PERIODIC=nightly"
     export BUILD_PERIODIC="nightly"

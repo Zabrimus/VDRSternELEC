@@ -61,7 +61,7 @@ post_makeinstall_target() {
   mv ${INSTALL}/usr/local/bin/svdrpsend ${INSTALL}/usr/local/bin/svdrpsend.pl
   cp ${PKG_DIR}/bin/svdrpsend ${INSTALL}/usr/local/bin/svdrpsend
 
-  chmod +x ${INSTALL}/usr/local/bin/*.sh
+  chmod +x ${INSTALL}/usr/local/bin/*
 
   # create config.zip
   mkdir -p ${INSTALL}/usr/local/config

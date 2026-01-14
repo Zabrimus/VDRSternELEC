@@ -55,81 +55,18 @@ EOF
 
 post_makeinstall_target() {
   CONFDIR="/storage/.config/vdropt"
-  LDPRELOADMALI=""
-
-  if [ "${PROJECT}" = "Amlogic-ce" ]; then
-     LDPRELOADMALI="/usr/lib/libMali.so"
-  fi
-
-  SED_SCRIPT="s#XXLDPRELOADMALIXX#${LDPRELOADMALI}#"
-  cat ${PKG_DIR}/bin/start_vdr.sh | sed "${SED_SCRIPT}" > ${INSTALL}/usr/local/bin/start_vdr.sh
-  cat ${PKG_DIR}/bin/start_vdr_easy.sh | sed "${SED_SCRIPT}" > ${INSTALL}/usr/local/bin/start_vdr_easy.sh
-
-  cp ${PKG_DIR}/bin/easyvdrctl.sh ${INSTALL}/usr/local/bin/easyvdrctl.sh
-  cp ${PKG_DIR}/bin/install.sh ${INSTALL}/usr/local/bin/install.sh
-  cp ${PKG_DIR}/bin/switch_kodi_vdr.sh ${INSTALL}/usr/local/bin/switch_kodi_vdr.sh
-  cp ${PKG_DIR}/bin/vdrsternupgrade.sh ${INSTALL}/usr/local/bin/vdrsternupgrade.sh
-  cp ${PKG_DIR}/bin/switch_to_vdr.sh ${INSTALL}/usr/local/bin/switch_to_vdr.sh
-  cp ${PKG_DIR}/bin/autostart.sh ${INSTALL}/usr/local/bin/autostart.sh
-  cp ${PKG_DIR}/bin/switch_vdr_softhdodroid.sh ${INSTALL}/usr/local/bin/switch_vdr_softhdodroid.sh
-  cp ${PKG_DIR}/bin/switch_kodi_vdr.sh ${INSTALL}/usr/local/bin/switch_kodi_vdr.sh
-  cp ${PKG_DIR}/bin/setup_bl301.sh ${INSTALL}/usr/local/bin/setup_bl301.sh
-
-  # Create start parameters depending on the project
-  cat<<EOF >> ${INSTALL}/usr/local/bin/autostart.sh
-  if [ "\${START_PRG}" = "vdr" ]; then
-    systemctl stop kodi
-    if [ "${PROJECT}" = "Amlogic-ce" ]; then
-      echo 4 > /sys/module/amvdec_h264/parameters/dec_control
-    fi
-    systemctl start vdropt
-  fi
-EOF
-
-  # copy system.d folder
-  mkdir -p ${INSTALL}/usr/local/system.d
-  cp ${PKG_DIR}/_system.d/* ${INSTALL}/usr/local/system.d
-
-  # copy sysctl.d folder
-  mkdir -p ${INSTALL}/usr/local/sysctl.d
-  cp ${PKG_DIR}/_sysctl.d/* ${INSTALL}/usr/local/sysctl.d
-
-  chmod +x ${INSTALL}/usr/local/bin/*.sh
+  mkdir -p ${INSTALL}/usr/local/bin
 
   # rename perl svdrpsend to svdrpsend.pl and copy the netcat variant
   mv ${INSTALL}/usr/local/bin/svdrpsend ${INSTALL}/usr/local/bin/svdrpsend.pl
   cp ${PKG_DIR}/bin/svdrpsend ${INSTALL}/usr/local/bin/svdrpsend
 
-  VDR_DIR=$(get_install_dir _vdr)
-
-  # move configuration to another folder to prevent overwriting existing configuration after installation
-  mv ${VDR_DIR}/storage/.config/vdropt ${VDR_DIR}/storage/.config/vdropt-sample
-
-  # copy additional scripts to configuration directory
-  cp ${PKG_DIR}/scripts/* ${VDR_DIR}/storage/.config/vdropt-sample
-
-  mkdir -p ${VDR_DIR}/storage/.config/vdropt-sample/conf.d
-  cp -PR ${PKG_DIR}/conf.d/* ${VDR_DIR}/storage/.config/vdropt-sample/conf.d/
-
-  cat >> ${VDR_DIR}/storage/.config/vdropt-sample/enabled_plugins <<EOF
-${VDR_OUTPUTDEVICE}
-${VDR_INPUTDEVICE}
-EOF
-
-  if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | read; then
-     cp -ar ${INSTALL}/storage/.config/vdropt/* ${INSTALL}/storage/.config/vdropt-sample
-     rm -Rf ${INSTALL}/storage/.config/vdropt
-  fi
-
-  cp ${PKG_DIR}/config/commands.conf ${VDR_DIR}/storage/.config/vdropt-sample/commands.conf
+  chmod +x ${INSTALL}/usr/local/bin/*.sh
 
   # create config.zip
   mkdir -p ${INSTALL}/usr/local/config
   cd ${INSTALL}
   zip -qrum9 ${INSTALL}/usr/local/config/vdr-sample-config.zip storage
-
-  # copy sample XML (PowerMenu for Kodi which includes a Button to switch to VDR)
-  cp ${PKG_DIR}/config/DialogButtonMenu.xml ${INSTALL}/usr/local/config/DialogButtonMenu.xml
 
   rm -f ${PKG_DIR}/patches/vdr-2.*-dynamite.patch
   rm -f ${PKG_DIR}/patches/vdr-plugin-easyvdr.patch

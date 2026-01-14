@@ -9,7 +9,7 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="virtual"
 PKG_LONGDESC="A DVB TV server application."
 
-PKG_DEPENDS_TARGET+=" _vdr"
+PKG_DEPENDS_TARGET+=" _config _vdr"
 
 if [ "${VDR_OUTPUTDEVICE}" = "softhdodroid" ]; then
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid"

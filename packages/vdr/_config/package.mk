@@ -61,4 +61,10 @@ EOF
 
 	# copy sample XML (PowerMenu for Kodi which includes a Button to switch to VDR)
   	cp ${PKG_DIR}/config/DialogButtonMenu.xml ${INSTALL}/usr/local/config/DialogButtonMenu.xml
+
+  	# create release links
+  	mkdir -p ${INSTALL}/etc
+  	rm -f stern_upgrade_links
+	echo "STERN_RELEASE=${STERN_RELEASE}" > ${INSTALL}/etc/stern_upgrade_links
+    echo "STERN_ADDON=${STERN_ADDON}" >> ${INSTALL}/etc/stern_upgrade_links
 }

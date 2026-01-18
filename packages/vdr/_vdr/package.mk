@@ -57,6 +57,26 @@ post_makeinstall_target() {
   CONFDIR="/storage/.config/vdropt"
   mkdir -p ${INSTALL}/usr/local/bin
 
+  VDR_DIR=$(get_install_dir _vdr)
+
+  # move configuration to another folder to prevent overwriting existing configuration after installation
+  mv ${VDR_DIR}/storage/.config/vdropt ${VDR_DIR}/storage/.config/vdropt-sample
+
+  mkdir -p ${VDR_DIR}/storage/.config/vdropt-sample/conf.d
+  cp -PR ${PKG_DIR}/conf.d/* ${VDR_DIR}/storage/.config/vdropt-sample/conf.d/
+
+  cat >> ${VDR_DIR}/storage/.config/vdropt-sample/enabled_plugins <<EOF
+${VDR_OUTPUTDEVICE}
+${VDR_INPUTDEVICE}
+EOF
+
+  if find ${INSTALL}/storage/.config/vdropt -mindepth 1 -maxdepth 1 2>/dev/null | read; then
+     cp -ar ${INSTALL}/storage/.config/vdropt/* ${INSTALL}/storage/.config/vdropt-sample
+     rm -Rf ${INSTALL}/storage/.config/vdropt
+  fi
+
+  cp ${PKG_DIR}/config/commands.conf ${VDR_DIR}/storage/.config/vdropt-sample/commands.conf
+
   # rename perl svdrpsend to svdrpsend.pl and copy the netcat variant
   mv ${INSTALL}/usr/local/bin/svdrpsend ${INSTALL}/usr/local/bin/svdrpsend.pl
   cp ${PKG_DIR}/bin/svdrpsend ${INSTALL}/usr/local/bin/svdrpsend

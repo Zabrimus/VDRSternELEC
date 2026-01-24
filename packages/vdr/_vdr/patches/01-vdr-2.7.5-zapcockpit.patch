@@ -1,6 +1,6 @@
 diff -ru8bBwd a/config.c b/config.c
---- a/config.c	2025-04-12 08:32:04.000000000 +0200
-+++ b/config.c	2025-04-12 16:40:42.912495979 +0200
+--- a/config.c	2026-01-21 21:19:59.000000000 +0100
++++ b/config.c	2026-01-24 10:12:13.896393410 +0100
 @@ -414,16 +414,22 @@
    EPGBugfixLevel = 3;
    EPGLinger = 0;
@@ -18,13 +18,13 @@ diff -ru8bBwd a/config.c b/config.c
 +  ZapcockpitShowAllChannels = 0;
    RcRepeatDelay = 300;
    RcRepeatDelta = 100;
+   DeleteRetention = DEFRETENTIONTIME;
    DefaultPriority = 50;
    DefaultLifetime = MAXLIFETIME;
    RecordKeyHandling = 2;
    PauseKeyHandling = 2;
    PausePriority = 10;
-   PauseLifetime = 1;
-@@ -644,16 +650,22 @@
+@@ -645,16 +651,22 @@
    else if (!strcasecmp(Name, "EPGBugfixLevel"))      EPGBugfixLevel     = atoi(Value);
    else if (!strcasecmp(Name, "EPGLinger"))           EPGLinger          = atoi(Value);
    else if (!strcasecmp(Name, "SVDRPTimeout"))        SVDRPTimeout       = atoi(Value);
@@ -41,13 +41,13 @@ diff -ru8bBwd a/config.c b/config.c
 +  else if (!strcasecmp(Name, "ZapcockpitShowAllChannels")) ZapcockpitShowAllChannels = atoi(Value);
    else if (!strcasecmp(Name, "RcRepeatDelay"))       RcRepeatDelay      = atoi(Value);
    else if (!strcasecmp(Name, "RcRepeatDelta"))       RcRepeatDelta      = atoi(Value);
+   else if (!strcasecmp(Name, "DeleteRetention"))     DeleteRetention    = atoi(Value);
    else if (!strcasecmp(Name, "DefaultPriority"))     DefaultPriority    = atoi(Value);
    else if (!strcasecmp(Name, "DefaultLifetime"))     DefaultLifetime    = atoi(Value);
    else if (!strcasecmp(Name, "RecordKeyHandling"))   RecordKeyHandling  = atoi(Value);
    else if (!strcasecmp(Name, "PauseKeyHandling"))    PauseKeyHandling   = atoi(Value);
    else if (!strcasecmp(Name, "PausePriority"))       PausePriority      = atoi(Value);
-   else if (!strcasecmp(Name, "PauseLifetime"))       PauseLifetime      = atoi(Value);
-@@ -778,16 +790,22 @@
+@@ -780,16 +792,22 @@
    Store("EPGBugfixLevel",     EPGBugfixLevel);
    Store("EPGLinger",          EPGLinger);
    Store("SVDRPTimeout",       SVDRPTimeout);
@@ -64,16 +64,16 @@ diff -ru8bBwd a/config.c b/config.c
 +  Store("ZapcockpitShowAllChannels", ZapcockpitShowAllChannels);
    Store("RcRepeatDelay",      RcRepeatDelay);
    Store("RcRepeatDelta",      RcRepeatDelta);
+   Store("DeleteRetention",    DeleteRetention);
    Store("DefaultPriority",    DefaultPriority);
    Store("DefaultLifetime",    DefaultLifetime);
    Store("RecordKeyHandling",  RecordKeyHandling);
    Store("PauseKeyHandling",   PauseKeyHandling);
    Store("PausePriority",      PausePriority);
-   Store("PauseLifetime",      PauseLifetime);
 diff -ru8bBwd a/config.h b/config.h
---- a/config.h	2025-04-12 08:32:04.000000000 +0200
-+++ b/config.h	2025-04-12 16:40:42.912495979 +0200
-@@ -305,16 +305,22 @@
+--- a/config.h	2026-01-21 21:19:59.000000000 +0100
++++ b/config.h	2026-01-24 10:14:13.170547365 +0100
+@@ -306,16 +306,22 @@
    int EPGBugfixLevel;
    int EPGLinger;
    int SVDRPTimeout;
@@ -90,20 +90,20 @@ diff -ru8bBwd a/config.h b/config.h
 +  int ZapcockpitShowAllChannels;
    int RcRepeatDelay;
    int RcRepeatDelta;
+   int DeleteRetention;
    int DefaultPriority, DefaultLifetime;
    int RecordKeyHandling;
    int PauseKeyHandling;
    int PausePriority, PauseLifetime;
    int UseSubtitle;
-   int UseVps;
 diff -ru8bBwd a/menu.c b/menu.c
---- a/menu.c	2025-04-12 08:32:04.000000000 +0200
-+++ b/menu.c	2025-04-12 16:40:42.912495979 +0200
-@@ -4276,16 +4276,22 @@
+--- a/menu.c	2026-01-21 21:19:59.000000000 +0100
++++ b/menu.c	2026-01-24 10:14:13.166545768 +0100
+@@ -4439,16 +4439,22 @@
       if (GetSVDRPServerNames(&svdrpServerNames)) {
          svdrpServerNames.Sort(true);
          svdrpServerNames.Insert(strdup(""));
-         Add(new cMenuEditStrlItem(tr("Setup.Miscellaneous$SVDRP default host"), data.SVDRPDefaultHost, sizeof(data.SVDRPDefaultHost), &svdrpServerNames));
+         Add(new cMenuEditStrlItem(Indent(2, tr("Setup.Miscellaneous$SVDRP default host")), data.SVDRPDefaultHost, sizeof(data.SVDRPDefaultHost), &svdrpServerNames));
          }
       }
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Zap timeout (s)"),            &data.ZapTimeout));
@@ -116,13 +116,13 @@ diff -ru8bBwd a/menu.c b/menu.c
 +  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: Show \"All Channels\" Item in Group List"), &data.ZapcockpitShowAllChannels));
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Remote control repeat delay (ms)"), &data.RcRepeatDelay, 0));
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Remote control repeat delta (ms)"), &data.RcRepeatDelta, 0));
+   Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Deleted recordings retention (d)"), &data.DeleteRetention, 0));
    Add(new cMenuEditChanItem(tr("Setup.Miscellaneous$Initial channel"),            &data.InitialChannel, tr("Setup.Miscellaneous$as before")));
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Initial volume"),             &data.InitialVolume, -1, 255, tr("Setup.Miscellaneous$as before")));
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Volume steps"),               &data.VolumeSteps, 5, 255));
    Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Volume linearize"),           &data.VolumeLinearize, -20, 20));
    Add(new cMenuEditBoolItem(tr("Setup.Miscellaneous$Channels wrap"),              &data.ChannelsWrap));
-   Add(new cMenuEditStraItem(tr("Setup.Miscellaneous$Show channel names with source"), &data.ShowChannelNamesWithSource, 3, showChannelNamesWithSourceTexts));
-@@ -4759,17 +4765,17 @@
+@@ -4932,17 +4938,17 @@
         DisplayInfo();
         }
    }
@@ -141,7 +141,7 @@ diff -ru8bBwd a/menu.c b/menu.c
    timeout = true;
    lastPresent = lastFollowing = NULL;
    cOsdProvider::OsdSizeChanged(osdState); // just to get the current state
-@@ -4777,16 +4783,17 @@
+@@ -4950,16 +4956,17 @@
    withInfo = Setup.ShowInfoOnChSwitch;
    displayChannel = Skins.Current()->DisplayChannel(withInfo);
    positioner = NULL;
@@ -159,7 +159,7 @@ diff -ru8bBwd a/menu.c b/menu.c
    delete displayChannel;
    currentDisplayChannel = NULL;
    cStatus::MsgOsdClear();
-@@ -5027,16 +5034,809 @@
+@@ -5200,16 +5207,809 @@
         positioner = Positioner;
       }
       displayChannel->Flush();
@@ -970,8 +970,8 @@ diff -ru8bBwd a/menu.c b/menu.c
  
  cDisplayVolume::cDisplayVolume(void)
 diff -ru8bBwd a/menu.h b/menu.h
---- a/menu.h	2025-04-12 08:32:04.000000000 +0200
-+++ b/menu.h	2025-04-12 16:44:25.390061979 +0200
+--- a/menu.h	2026-01-21 21:19:59.000000000 +0100
++++ b/menu.h	2026-01-24 10:09:58.077575333 +0100
 @@ -116,40 +116,112 @@
  public:
    cMenuMain(eOSState State = osUnknown, bool OpenSubMenus = false);
@@ -1094,10 +1094,10 @@ diff -ru8bBwd a/menu.h b/menu.h
    cDisplayVolume(void);
  public:
 diff -ru8bBwd a/po/de_DE.po b/po/de_DE.po
---- a/po/de_DE.po	2025-04-12 08:32:04.000000000 +0200
-+++ b/po/de_DE.po	2025-04-12 16:40:42.916495465 +0200
-@@ -1394,16 +1394,34 @@
- msgstr "SVDRP Standardmaschine"
+--- a/po/de_DE.po	2026-01-21 21:19:59.000000000 +0100
++++ b/po/de_DE.po	2026-01-24 10:09:58.077575333 +0100
+@@ -1449,16 +1449,34 @@
+ msgstr "SVDRP-Standardmaschine"
  
  msgid "Setup.Miscellaneous$Zap timeout (s)"
  msgstr "Mindestzeit für vorherigen Kanal (s)"
@@ -1129,9 +1129,9 @@ diff -ru8bBwd a/po/de_DE.po b/po/de_DE.po
  msgid "Setup.Miscellaneous$Remote control repeat delta (ms)"
  msgstr "Fernbedienung Wiederholintervall (ms)"
  
- msgid "Setup.Miscellaneous$Initial channel"
- msgstr "Kanal beim Einschalten"
-@@ -1466,16 +1484,19 @@
+ msgid "Setup.Miscellaneous$Deleted recordings retention (d)"
+ msgstr "Aufbewahrung gelöschter Aufzeichnungen (d)"
+@@ -1524,16 +1542,19 @@
  msgstr " Bearbeitung abbrechen"
  
  msgid "Stop recording?"
@@ -1153,8 +1153,8 @@ diff -ru8bBwd a/po/de_DE.po b/po/de_DE.po
  msgstr "Keine Untertitel verfügbar!"
 Nur in b/po: de_DE.po.orig.
 diff -ru8bBwd a/skins.c b/skins.c
---- a/skins.c	2025-04-12 08:32:04.000000000 +0200
-+++ b/skins.c	2025-04-12 16:40:42.916495465 +0200
+--- a/skins.c	2026-01-21 21:19:59.000000000 +0100
++++ b/skins.c	2026-01-24 10:09:58.077575333 +0100
 @@ -74,16 +74,23 @@
  {
    if (positioner && Positioner != positioner)
@@ -1180,8 +1180,8 @@ diff -ru8bBwd a/skins.c b/skins.c
  }
  
 diff -ru8bBwd a/skins.h b/skins.h
---- a/skins.h	2025-04-12 08:32:04.000000000 +0200
-+++ b/skins.h	2025-04-12 16:40:42.916495465 +0200
+--- a/skins.h	2026-01-21 21:19:59.000000000 +0100
++++ b/skins.h	2026-01-24 10:09:58.077575333 +0100
 @@ -96,16 +96,44 @@
    /*TODO
    SetButtons
@@ -1228,8 +1228,8 @@ diff -ru8bBwd a/skins.h b/skins.h
    mcScheduleNext,
    mcChannel,
 diff -ru8bBwd a/vdr.c b/vdr.c
---- a/vdr.c	2025-04-12 08:32:04.000000000 +0200
-+++ b/vdr.c	2025-04-12 16:40:42.916495465 +0200
+--- a/vdr.c	2026-01-21 21:19:59.000000000 +0100
++++ b/vdr.c	2026-01-24 10:09:58.077575333 +0100
 @@ -1074,18 +1074,24 @@
            if (ChannelSaveTimeout == 1) {
               // Only one of them was modified, so we reset the state keys to handle them both in the next turn:
@@ -1277,7 +1277,7 @@ diff -ru8bBwd a/vdr.c b/vdr.c
                    Interact->ProcessKey(key);
                    continue;
                    }
-                else
+                else if (!cDevice::PrimaryDevice()->Replaying() || cDevice::PrimaryDevice()->Transferring())
                    cDevice::SwitchChannel(NORMALKEY(key) == kChanUp ? 1 : -1);
 @@ -1500,17 +1511,22 @@
               case kPrev:

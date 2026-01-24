@@ -1,15 +1,7 @@
-This is a "patch" for the Video Disk Recorder (VDR).
+Description: This patch allows plugins to replace the VDR mainmenus "Schedule", "Channels", "Timers" and "Recordings" by a different implementation.
+Author: Frank Schmirler <vdrdev@schmirler.de>
 
 * History
-2025-02-26: Version 1.0.4
-Update für vdr-2.7.4 (Jörg Riechardt)
-
-2013-11-08: Version 1.0.3
-Update für vdr-2.1.2 (Jörg Riechardt)
-
-2012-04-06: Version 1.0.2
-- Update für aktuelle VDR-Entwickler-Versionen (Manuel Reimer)
-
 2010-10-15: Version 1.0.1
 - return a cOsdObject instead of its subclass cOsdMenu (thanks to
   Joe_D@vdrportal)
@@ -79,25 +71,26 @@ think you need to modify the patch, we'd encourage you to contact the
 authors first or at least use a service id which differs in more than
 just the version number.
 
-
-diff -Nrup vdr-2.7.4/config.h vdr-2.7.4-test/config.h
---- vdr-2.7.4/config.h	2025-02-26 10:35:03.000000000 +0100
-+++ vdr-2.7.4-test/config.h	2025-02-26 14:46:28.768820964 +0100
-@@ -35,6 +35,10 @@
- // only when there are changes to the plugin API. This allows compiled
- // plugins to work with newer versions of the core VDR as long as no
- // interfaces have changed. APIVERSNUM begins with "300.." for backwards
-+
-+// The MainMenuHook Patch's version number:
-+#define MAINMENUHOOKSVERSION "1.0.1"
-+#define MAINMENUHOOKSVERSNUM 10001  // Version * 10000 + Major * 100 + Minor
+Index: vdr-stable.latest-77bfbc9/config.h
+===================================================================
+--- vdr-stable.latest-77bfbc9.orig/config.h	2026-01-22 12:58:42.995551742 +0100
++++ vdr-stable.latest-77bfbc9/config.h	2026-01-22 12:58:43.002863106 +0100
+@@ -38,6 +38,10 @@
  // compatibility and can be used in #if preprocessor statements to handle
  // version dependent code.
  
-diff -Nrup vdr-2.7.4/menu.c vdr-2.7.4-test/menu.c
---- vdr-2.7.4/menu.c	2025-02-26 10:35:03.000000000 +0100
-+++ vdr-2.7.4-test/menu.c	2025-02-26 15:20:42.252563574 +0100
-@@ -4493,15 +4493,31 @@ cMenuMain::cMenuMain(eOSState State, boo
++// The MainMenuHook Patch's version number:
++#define MAINMENUHOOKSVERSION "1.0.1"
++#define MAINMENUHOOKSVERSNUM 10001  // Version * 10000 + Major * 100 + Minor
++
+ #define MAXPRIORITY       99
+ #define MINPRIORITY       (-MAXPRIORITY)
+ #define LIVEPRIORITY      0                  // priority used when selecting a device for live viewing
+Index: vdr-stable.latest-77bfbc9/menu.c
+===================================================================
+--- vdr-stable.latest-77bfbc9.orig/menu.c	2026-01-22 12:58:43.021662336 +0100
++++ vdr-stable.latest-77bfbc9/menu.c	2026-01-22 12:58:43.027093147 +0100
+@@ -4675,15 +4675,31 @@
  
    // Initial submenus:
  
@@ -108,7 +101,7 @@ diff -Nrup vdr-2.7.4/menu.c vdr-2.7.4-test/menu.c
 -    case osTimers:     AddSubMenu(new cMenuTimers); break;
 -    case osRecordings: AddSubMenu(new cMenuRecordings(NULL, 0, OpenSubMenus)); break;
 -    case osSetup:      AddSubMenu(new cMenuSetup); break;
--    case osCommands:   AddSubMenu(new cMenuCommands(tr("Commands"), &Commands)); break;
+-    case osCommands:   AddSubMenu(new cMenuCommands(tr("Button$Commands"), &Commands)); break;
 +    case osSchedule:
 +        if (!cPluginManager::CallFirstService("MainMenuHooksPatch-v1.0::osSchedule", &menu))
 +            menu = new cMenuSchedule;
@@ -126,7 +119,7 @@ diff -Nrup vdr-2.7.4/menu.c vdr-2.7.4-test/menu.c
 +            menu = new cMenuRecordings(NULL, 0, OpenSubMenus);
 +        break;
 +    case osSetup:      menu = new cMenuSetup; break;
-+    case osCommands:   menu = new cMenuCommands(tr("Commands"), &Commands); break;
++    case osCommands:   menu = new cMenuCommands(tr("Button$Commands"), &Commands); break;
      default: break;
      }
 +  if (menu)
@@ -135,7 +128,7 @@ diff -Nrup vdr-2.7.4/menu.c vdr-2.7.4-test/menu.c
  }
  
  cOsdObject *cMenuMain::PluginOsdObject(void)
-@@ -4613,13 +4629,34 @@ eOSState cMenuMain::ProcessKey(eKeys Key
+@@ -4820,15 +4836,46 @@
    eOSState state = cOsdMenu::ProcessKey(Key);
    HadSubMenu |= HasSubMenu();
  
@@ -145,8 +138,10 @@ diff -Nrup vdr-2.7.4/menu.c vdr-2.7.4-test/menu.c
 -    case osChannels:   return AddSubMenu(new cMenuChannels);
 -    case osTimers:     return AddSubMenu(new cMenuTimers);
 -    case osRecordings: return AddSubMenu(new cMenuRecordings);
+-    case osRecsOpen:   return AddSubMenu(new cMenuRecordings(NULL, 0, true));
+-    case osRecsDel:    return AddSubMenu(new cMenuRecordings(NULL, 0, true, NULL, true));
 -    case osSetup:      return AddSubMenu(new cMenuSetup);
--    case osCommands:   return AddSubMenu(new cMenuCommands(tr("Commands"), &Commands));
+-    case osCommands:   return AddSubMenu(new cMenuCommands(tr("Button$Commands"), &Commands));
 +    case osSchedule:
 +        if (!cPluginManager::CallFirstService("MainMenuHooksPatch-v1.0::osSchedule", &menu))
 +            menu = new cMenuSchedule;
@@ -171,12 +166,24 @@ diff -Nrup vdr-2.7.4/menu.c vdr-2.7.4-test/menu.c
 +        else
 +            state = osContinue;
 +        break;
++    case osRecsOpen:
++	if (!cPluginManager::CallFirstService("MainMenuHooksPatch-v1.0::osRecsOpen", &menu))
++            menu = new cMenuRecordings(NULL, 0, true);
++	else
++            state = osContinue;
++	break;
++    case osRecsDel:
++	if (!cPluginManager::CallFirstService("MainMenuHooksPatch-v1.0::osRecsDel", &menu))
++            menu = new cMenuRecordings(NULL, 0, true, NULL, true);
++	else
++            state = osContinue;
++	break;
 +    case osSetup:      menu = new cMenuSetup; break;
-+    case osCommands:   menu = new cMenuCommands(tr("Commands"), &Commands); break;
++    case osCommands:   menu = new cMenuCommands(tr("Button$Commands"), &Commands); break;
      case osStopRecord: if (Interface->Confirm(tr("Stop recording?"))) {
                            if (cOsdItem *item = Get(Current())) {
                               cRecordControls::Stop(item->Text() + strlen(tr(STOP_RECORDING)));
-@@ -4670,6 +4707,12 @@ eOSState cMenuMain::ProcessKey(eKeys Key
+@@ -4914,6 +4961,12 @@
                 default:      break;
                 }
      }
@@ -185,7 +192,7 @@ diff -Nrup vdr-2.7.4/menu.c vdr-2.7.4-test/menu.c
 +        return AddSubMenu((cOsdMenu *) menu);
 +     pluginOsdObject = menu;
 +     return osPlugin;
-+     }
++  }
    bool DoDisplay = Update();
    if (Key != kNone) {
       if (I18nCurrentLanguage() != osdLanguage) {

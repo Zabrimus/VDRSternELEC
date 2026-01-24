@@ -4,12 +4,14 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_vdr"
-PKG_VERSION="2.7.7"
-PKG_SHA256="f0d8d30b6a8012f6838eaaf9c337b7352bfac67f1cea6342b9c685e8df88c856"
+PKG_VERSION="2.7.8"
+PKG_SHA256="d0a4192b0d23437e23f3de934184566c12ed94fa16401b5f49ae21bf6a3fb593"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.tvdr.de"
-PKG_URL="http://git.tvdr.de/?p=vdr.git;a=snapshot;h=refs/tags/${PKG_VERSION};sf=tbz2"
-PKG_SOURCE_NAME="${PKG_NAME}-${PKG_VERSION}.tar.bz2"
+PKG_URL="https://github.com/vdr-projects/vdr/archive/refs/tags/${PKG_VERSION}.zip"
+PKG_SOURCE_DIR="vdr-${PKG_VERSION}"
+# PKG_URL="http://git.tvdr.de/?p=vdr.git;a=snapshot;h=refs/tags/${PKG_VERSION};sf=tbz2"
+# PKG_SOURCE_NAME="${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain bzip2 fontconfig freetype libcap libiconv libjpeg-turbo"
 PKG_LONGDESC="A DVB TV server application."
 PKG_BUILD_FLAGS="+speed"

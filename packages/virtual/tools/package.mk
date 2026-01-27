@@ -5,7 +5,7 @@ PKG_VERSION=""
 PKG_LICENSE=""
 PKG_SITE=""
 PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain zstd"
 PKG_SECTION="virtual"
 PKG_LONGDESC="Tools which can be useful"
 

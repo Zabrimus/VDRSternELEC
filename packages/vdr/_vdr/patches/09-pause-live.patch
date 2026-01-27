@@ -1,0 +1,22 @@
+diff -ru8bBwd a/vdr.c b/vdr.c
+--- a/vdr.c	2026-01-21 21:19:59.000000000 +0100
++++ b/vdr.c	2026-01-27 18:16:41.560399413 +0100
+@@ -1357,17 +1357,17 @@
+                   }
+                else
+                   cDisplaySubtitleTracks::Process(key);
+                key = kNone;
+                break;
+           // Pausing live video:
+           case kPlayPause:
+           case kPause:
+-               if (!Control) {
++               if (!cReplayControl::NowReplaying()) {
+                   DELETE_MENU;
+                   if (Setup.PauseKeyHandling) {
+                      if (Setup.PauseKeyHandling > 1 || Interface->Confirm(tr("Pause live video?"))) {
+                         if (!cRecordControls::PauseLiveVideo())
+                            Skins.QueueMessage(mtError, tr("No free DVB device to record!"));
+                         }
+                      }
+                   key = kNone; // nobody else needs to see this key

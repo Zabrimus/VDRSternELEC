@@ -8,6 +8,7 @@ PKG_LONGDESC="libXcomposite for cef"
 PKG_URL=""
 PKG_DEPENDS_UNPACK+=" libXcomposite"
 PKG_BUILD_FLAGS="-sysroot +speed"
+PKG_TOOLCHAIN="configure"
 
 PKG_CONFIGURE_OPTS_TARGET="${PKG_CONFIGURE_OPTS_TARGET} \
                            --disable-static \

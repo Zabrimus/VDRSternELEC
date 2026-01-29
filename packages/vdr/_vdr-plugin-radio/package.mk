@@ -21,7 +21,8 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
-  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/plugins/radio
+  mkdir -p ${INSTALL}/storage/.config/vdropt-sample/plugins/radio/mpegstill
+  cp ${PKG_DIR}/images/black.mpg ${INSTALL}/storage/.config/vdropt-sample/plugins/radio/mpegstill
   cp -r $(get_build_dir _vdr-plugin-radio)/config/scripts ${INSTALL}/storage/.config/vdropt-sample/plugins/radio
   cp -r $(get_build_dir _vdr-plugin-radio)/config/mpegstill ${INSTALL}/storage/.config/vdropt-sample/plugins/radio
 

@@ -383,7 +383,9 @@ set_env
 if [ ! "${PATCH_ONLY}" = "true" ]; then
     OLD_DISTRO=$DISTRO
     unset DISTRO
-    ../prepare-autoremove
+    if [ "${AUTOREMOVE}" = "yes" ]; then
+      ../prepare-autoremove
+    fi
     DISTRO=$OLD_DISTRO
     unset OLD_DISTRO
 

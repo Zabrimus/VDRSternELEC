@@ -1,0 +1,39 @@
+Index: vdr-plugin-femon-20240910.4+git20251229-252-7beed46/osd.c
+===================================================================
+--- vdr-plugin-femon-20240910.4+git20251229-252-7beed46.orig/osd.c	2025-12-29 16:45:20.000000000 +0100
++++ vdr-plugin-femon-20240910.4+git20251229-252-7beed46/osd.c	2026-01-29 09:18:49.511283299 +0100
+@@ -791,7 +791,6 @@
+ {
+   debug1("%s (%d)", __PRETTY_FUNCTION__, directionP);
+ 
+-/*
+   int device = cDevice::ActualDevice()->DeviceNumber();
+   int direction = sgn(directionP);
+ 
+@@ -840,7 +839,8 @@
+             if (!NumUsableSlots)
+                InternalCamNeeded = true; // no CAM is able to decrypt this channel
+             }
+-         for (int j = 0; j < NumCamSlots || !NumUsableSlots; ++j) {
++         for (int j = 0; j < NumCamSlots || (!NumUsableSlots && j == 0); ++j) {
++	     // !NumUsableSlots -> no CAM necessary, so just one loop over the devices
+              if (NumUsableSlots && SlotPriority[j] > MAXPRIORITY)
+                 continue; // there is no CAM available in this slot
+              bool HasInternalCam = d->HasInternalCam();
+@@ -857,8 +857,6 @@
+                 ValidDevice = true;
+                 break;
+                 }
+-             if (!NumUsableSlots)
+-                break; // no CAM necessary, so just one loop over the devices
+              }
+          // Do the actual switch if valid device found
+          if (d && ValidDevice) {
+@@ -883,7 +881,6 @@
+             }
+          }
+      }
+-*/
+    return false;
+ }
+ 

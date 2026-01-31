@@ -1,0 +1,77 @@
+--- MANUAL	2026/01/21 21:19:59	5.18
++++ MANUAL	2026/01/31 15:12:01
+@@ -328,8 +328,10 @@
+ 
+   If a recording has been deleted, it can be restored within the retention
+   period defined in "Setup/Miscellaneous/Deleted recordings retention".
+-  To enter the list of deleted recordings press the "Red" key in the "Setup"
+-  menu and navigate to the recording you want to restore. Press the "Green"
++  If any such recordings exist, you can select "Deleted recordings" from the
++  main menu to enter the list of deleted recordings and navigate to the
++  recording you want to restore (by default the most recently deleted
++  recording will be selected automatically). Press the "Green"
+   key to restore the recording. The "Yellow" key will permanently delete
+   the selected recording by physically removing it from the disk (this
+   operation can not be undone!).
+--- menu.c	2026/01/24 15:58:31	5.39
++++ menu.c	2026/01/31 15:05:40
+@@ -4597,7 +4597,6 @@
+   if (cPluginManager::HasPlugins())
+   Add(new cOsdItem(hk(tr("Plugins")),       osUser9));
+   Add(new cOsdItem(hk(tr("Restart")),       osUser10));
+-  SetHelp(tr("Button$Deleted recordings"));
+ }
+ 
+ eOSState cMenuSetup::Restart(void)
+@@ -4625,13 +4624,7 @@
+     case osUser8: return AddSubMenu(new cMenuSetupMisc);
+     case osUser9: return AddSubMenu(new cMenuSetupPlugins);
+     case osUser10: return Restart();
+-    default:
+-      switch (Key) {
+-        case kRed: if (!HasSubMenu())
+-                      return osRecsDel;
+-                   break;
+-        default:   break;
+-        }
++    default: ;
+     }
+   if (I18nCurrentLanguage() != osdLanguage) {
+      Set();
+@@ -4669,6 +4662,7 @@
+ {
+   SetMenuCategory(mcMain);
+   replaying = false;
++  deletedRecordingsItem = NULL;
+   stopReplayItem = NULL;
+   cancelEditingItem = NULL;
+   stopRecordingItem = NULL;
+@@ -4756,6 +4750,18 @@
+      result = true;
+      }
+ 
++  // Deleted recordings:
++  {
++    LOCK_DELETEDRECORDINGS_READ;
++    bool HasDeletedRecordings = DeletedRecordings->Count();
++    if (HasDeletedRecordings && !deletedRecordingsItem)
++       Add(deletedRecordingsItem = new cOsdItem(hk(tr("Deleted recordings")), osRecsDel));
++    else if (deletedRecordingsItem && !HasDeletedRecordings) {
++       Del(deletedRecordingsItem->Index());
++       deletedRecordingsItem = NULL;
++       }
++  }
++
+   // Editing control:
+   bool EditingActive = RecordingsHandler.Active();
+   if (EditingActive && !cancelEditingItem) {
+--- menu.h	2026/01/24 15:58:31	5.9
++++ menu.h	2026/01/31 14:47:52
+@@ -106,6 +106,7 @@
+ class cMenuMain : public cOsdMenu {
+ private:
+   bool replaying;
++  cOsdItem *deletedRecordingsItem;
+   cOsdItem *stopReplayItem;
+   cOsdItem *cancelEditingItem;
+   cOsdItem *stopRecordingItem;

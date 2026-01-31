@@ -1,12 +1,6 @@
-diff -ru8bBwd a/vdr.c b/vdr.c
---- a/vdr.c	2026-01-21 21:19:59.000000000 +0100
-+++ b/vdr.c	2026-01-27 18:16:41.560399413 +0100
-@@ -1357,17 +1357,17 @@
-                   }
-                else
-                   cDisplaySubtitleTracks::Process(key);
-                key = kNone;
-                break;
+--- a/vdr.c       2026/01/21 21:19:59     5.23
++++ b/vdr.c       2026/01/29 19:40:45
+@@ -1362,7 +1362,7 @@
            // Pausing live video:
            case kPlayPause:
            case kPause:
@@ -15,8 +9,12 @@ diff -ru8bBwd a/vdr.c b/vdr.c
                    DELETE_MENU;
                    if (Setup.PauseKeyHandling) {
                       if (Setup.PauseKeyHandling > 1 || Interface->Confirm(tr("Pause live video?"))) {
-                         if (!cRecordControls::PauseLiveVideo())
-                            Skins.QueueMessage(mtError, tr("No free DVB device to record!"));
-                         }
-                      }
-                   key = kNone; // nobody else needs to see this key
+@@ -1375,7 +1375,7 @@
+                break;
+           // Instant recording:
+           case kRecord:
+-               if (!Control) {
++               if (!cReplayControl::NowReplaying()) {
+                   if (Setup.RecordKeyHandling) {
+                      if (Setup.RecordKeyHandling > 1 || Interface->Confirm(tr("Start recording?"))) {
+                         if (cRecordControls::Start())

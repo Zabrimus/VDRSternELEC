@@ -1,5 +1,5 @@
 --- MANUAL	2026/01/21 21:19:59	5.18
-+++ MANUAL	2026/01/31 19:51:24
++++ MANUAL	2026/02/01 10:25:47
 @@ -328,8 +328,10 @@
  
    If a recording has been deleted, it can be restored within the retention
@@ -14,7 +14,7 @@
    the selected recording by physically removing it from the disk (this
    operation can not be undone!).
 --- menu.c	2026/01/24 15:58:31	5.39
-+++ menu.c	2026/01/31 19:51:24
++++ menu.c	2026/02/01 10:25:47
 @@ -4597,7 +4597,6 @@
    if (cPluginManager::HasPlugins())
    Add(new cOsdItem(hk(tr("Plugins")),       osUser9));
@@ -55,7 +55,7 @@
 +    LOCK_DELETEDRECORDINGS_READ;
 +    bool HasDeletedRecordings = DeletedRecordings->Count();
 +    if (HasDeletedRecordings && !deletedRecordingsItem)
-+       Add(deletedRecordingsItem = new cOsdItem(hk(tr("Deleted recordings")), osRecsDel));
++       Add(deletedRecordingsItem = new cOsdItem(tr("Deleted recordings"), osRecsDel));
 +    else if (deletedRecordingsItem && !HasDeletedRecordings) {
 +       Del(deletedRecordingsItem->Index());
 +       deletedRecordingsItem = NULL;
@@ -67,7 +67,7 @@
    {
      cMutexLock ControlMutexLock;
 --- menu.h	2026/01/24 15:58:31	5.9
-+++ menu.h	2026/01/31 19:51:24
++++ menu.h	2026/02/01 10:25:47
 @@ -106,6 +106,7 @@
  class cMenuMain : public cOsdMenu {
  private:

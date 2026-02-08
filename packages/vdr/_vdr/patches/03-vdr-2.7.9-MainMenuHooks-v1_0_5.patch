@@ -1,11 +1,22 @@
-Description: This patch allows plugins to replace the VDR mainmenus "Schedule", "Channels", "Timers" and "Recordings" by a different implementation.
-Author: Frank Schmirler <vdrdev@schmirler.de>
+This is a "patch" for the Video Disk Recorder (VDR).
 
 * History
+2026-02-07: Version 1.0.5
+Update for VDR 2.7.9 (Stefan Hofmann)
+
+2025-02-26: Version 1.0.4
+Update for VDR 2.7.4 (Jörg Riechardt)
+
+2013-11-08: Version 1.0.3
+Update for VDR 2.1.2 (Jörg Riechardt)
+
+2012-04-06: Version 1.0.2
+- Update for recent VDR developer versions (Manuel Reimer)
+
 2010-10-15: Version 1.0.1
 - return a cOsdObject instead of its subclass cOsdMenu (thanks to
   Joe_D@vdrportal)
-- version number defines in config.h now follow the ususal conventions:
+- version number defines in 'config.h' now follow the usual conventions:
   MAINMENUHOOKSVERSNUM is now a number, the newly added define
   MAINMENUHOOKSVERSION is a string (suggested by gnapheus@vdrportal)
 - patch is now based on VDR 1.6.0
@@ -21,7 +32,7 @@ Frank Schmirler  <vdrdev at schmirler dot de>
 Christian Wieninger  <cwieninger at gmx dot de>
 
 * Description:
-This patch allows plugins to replace the VDR mainmenus "Schedule",
+This patch allows plugins to replace the VDR main menus "Schedule",
 "Channels", "Timers" and "Recordings" by a different implementation.
 
 The patch is based on a suggestion of Christian Wieninger back in 2006
@@ -50,20 +61,21 @@ bool cMyPlugin::Service(const char *Id, void *Data)
   return false;
 }
 
-Since patch version 1.0.1 the service call may return a cOsdObject
-instead of a cOsdMenu. Use "#ifdef MAINMENUHOOKSVERSION" to detect
-version 1.0.1.
+Since patch version 1.0.1, the service call may return a cOsdObject
+instead of a 'cOsdMenu'. Use '#ifdef MAINMENUHOOKSVERSION' to detect
+version 1.0.1 or later.
 
 A plugin can replace more than one menu at a time. Simply replace the
 call to MainMenuAction() in the sample above by appropriate code.
 
 Note that a plugin *should* offer a setup option which allows the user
 to enable or disable the replacement. "Disabled" would be a reasonable
-default setting. By testing for define MAINMENUHOOKSVERSNUM, a plugin
-can leave the setup option out at compiletime.
+default setting. By testing for a specific 'MAINMENUHOOKSVERSNUM', like
+'#if MAINMENUHOOKSVERSION >= 10001', plugin can decide at compile time 
+which features and setup options to provide.
 
 In case there is an internal problem when trying to open the replacement
-menu, it is safe to return true even though Data is NULL. However an
+menu, it is safe to return 'true' even though 'Data' is NULL. However an
 OSD message should indicate the problem to the user.
 
 Feel free to ship this patch along with your plugin. However if you
@@ -71,26 +83,37 @@ think you need to modify the patch, we'd encourage you to contact the
 authors first or at least use a service id which differs in more than
 just the version number.
 
-Index: vdr-stable.latest-77bfbc9/config.h
-===================================================================
---- vdr-stable.latest-77bfbc9.orig/config.h	2026-01-22 12:58:42.995551742 +0100
-+++ vdr-stable.latest-77bfbc9/config.h	2026-01-22 12:58:43.002863106 +0100
-@@ -38,6 +38,10 @@
+
+From ece4be820999aba9c20a1dd820af2cd1f2886e65 Mon Sep 17 00:00:00 2001
+From: Stefan Hofmann <stefan.hofmann@t-online.de>
+Date: Sun, 16 Mar 2025 17:16:28 +0100
+Subject: [PATCH] Added hooks for replacing selected main-menu entries
+
+---
+ config.h |  4 ++++
+ menu.c   | 71 +++++++++++++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 61 insertions(+), 14 deletions(-)
+
+diff --git a/config.h b/config.h
+index 96fd5dd7..fddcdc21 100644
+--- a/config.h
++++ b/config.h
+@@ -35,6 +35,10 @@
+ // only when there are changes to the plugin API. This allows compiled
+ // plugins to work with newer versions of the core VDR as long as no
+ // interfaces have changed. APIVERSNUM begins with "300.." for backwards
++
++// The MainMenuHook Patch's version number:
++#define MAINMENUHOOKSVERSION "1.0.5"
++#define MAINMENUHOOKSVERSNUM  10005  // Version * 10000 + Major * 100 + Minor
  // compatibility and can be used in #if preprocessor statements to handle
  // version dependent code.
  
-+// The MainMenuHook Patch's version number:
-+#define MAINMENUHOOKSVERSION "1.0.1"
-+#define MAINMENUHOOKSVERSNUM 10001  // Version * 10000 + Major * 100 + Minor
-+
- #define MAXPRIORITY       99
- #define MINPRIORITY       (-MAXPRIORITY)
- #define LIVEPRIORITY      0                  // priority used when selecting a device for live viewing
-Index: vdr-stable.latest-77bfbc9/menu.c
-===================================================================
---- vdr-stable.latest-77bfbc9.orig/menu.c	2026-01-22 12:58:43.021662336 +0100
-+++ vdr-stable.latest-77bfbc9/menu.c	2026-01-22 12:58:43.027093147 +0100
-@@ -4675,15 +4675,31 @@
+diff --git a/menu.c b/menu.c
+index 8798a3f1..57555d3e 100644
+--- a/menu.c
++++ b/menu.c
+@@ -4671,15 +4671,31 @@ cMenuMain::cMenuMain(eOSState State, bool OpenSubMenus)
  
    // Initial submenus:
  
@@ -128,7 +151,7 @@ Index: vdr-stable.latest-77bfbc9/menu.c
  }
  
  cOsdObject *cMenuMain::PluginOsdObject(void)
-@@ -4820,15 +4836,46 @@
+@@ -4808,15 +4824,36 @@ eOSState cMenuMain::ProcessKey(eKeys Key)
    eOSState state = cOsdMenu::ProcessKey(Key);
    HadSubMenu |= HasSubMenu();
  
@@ -166,24 +189,14 @@ Index: vdr-stable.latest-77bfbc9/menu.c
 +        else
 +            state = osContinue;
 +        break;
-+    case osRecsOpen:
-+	if (!cPluginManager::CallFirstService("MainMenuHooksPatch-v1.0::osRecsOpen", &menu))
-+            menu = new cMenuRecordings(NULL, 0, true);
-+	else
-+            state = osContinue;
-+	break;
-+    case osRecsDel:
-+	if (!cPluginManager::CallFirstService("MainMenuHooksPatch-v1.0::osRecsDel", &menu))
-+            menu = new cMenuRecordings(NULL, 0, true, NULL, true);
-+	else
-+            state = osContinue;
-+	break;
++    case osRecsOpen:   menu = new cMenuRecordings(NULL, 0, true); break;
++    case osRecsDel:    menu = new cMenuRecordings(NULL, 0, true, NULL, true); break;
 +    case osSetup:      menu = new cMenuSetup; break;
 +    case osCommands:   menu = new cMenuCommands(tr("Button$Commands"), &Commands); break;
      case osStopRecord: if (Interface->Confirm(tr("Stop recording?"))) {
                            if (cOsdItem *item = Get(Current())) {
                               cRecordControls::Stop(item->Text() + strlen(tr(STOP_RECORDING)));
-@@ -4914,6 +4961,12 @@
+@@ -4867,6 +4904,12 @@ eOSState cMenuMain::ProcessKey(eKeys Key)
                 default:      break;
                 }
      }
@@ -192,7 +205,10 @@ Index: vdr-stable.latest-77bfbc9/menu.c
 +        return AddSubMenu((cOsdMenu *) menu);
 +     pluginOsdObject = menu;
 +     return osPlugin;
-+  }
++     }
    bool DoDisplay = Update();
    if (Key != kNone) {
       if (I18nCurrentLanguage() != osdLanguage) {
+-- 
+2.43.0
+

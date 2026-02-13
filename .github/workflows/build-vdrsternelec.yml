@@ -81,10 +81,10 @@ jobs:
           sudo apt-get install -y cpp-13 g++-13 gcc-13 || true
 
           #if [[ "${{ inputs.config }}" == CoreELEC-20* ]] || [[ "${{ inputs.config }}" == CoreELEC-21* ]] ; then
-              sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 \
-                  --slave /usr/bin/cpp cpp /usr/bin/cpp-12 \
-                  --slave /usr/bin/g++ g++ /usr/bin/g++-12 \
-                  --slave /usr/bin/gcov gcov /usr/bin/gcov-12
+              sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
+              sudo update-alternatives --install /usr/bin/cpp cpp /usr/bin/cpp-12 100
+              sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
+              sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-12 100
           
               sudo update-alternatives --config gcc              
           #else

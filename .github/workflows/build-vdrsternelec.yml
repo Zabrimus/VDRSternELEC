@@ -79,6 +79,7 @@ jobs:
           
           sudo apt-get install -y cpp-12 g++-12 gcc-12 || true
           sudo apt-get install -y cpp-13 g++-13 gcc-13 || true
+          sudo apt-get install -y cpp-14 g++-14 gcc-14 || true
 
           if [[ "${{ inputs.config }}" == CoreELEC-20* ]] || [[ "${{ inputs.config }}" == CoreELEC-21* ]] || [[ "${{ inputs.config }}" == LibreELEC-12* ]] ; then
               sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
@@ -88,10 +89,10 @@ jobs:
           
               sudo update-alternatives --config gcc
           elif [[ "${{ inputs.config }}" == CoreELEC-22* ]] || [[ "${{ inputs.config }}" == LibreELEC-13* ]] ; then
-              sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
-              sudo update-alternatives --install /usr/bin/cpp cpp /usr/bin/cpp-13 100
-              sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
-              sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-13 100
+              sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100 \
+                    --slave /usr/bin/cpp cpp /usr/bin/cpp-14 \
+                    --slave /usr/bin/g++ g++ /usr/bin/g++-14 \
+                    --slave /usr/bin/gcov gcov /usr/bin/gcov-14
           
               sudo update-alternatives --config gcc
           fi

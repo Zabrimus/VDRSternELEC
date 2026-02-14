@@ -76,19 +76,15 @@ jobs:
              python3 python3-build python3-installer python3-setuptools python3-wheel python-is-python3 \
              rdfind rsync sed libjson-parse-perl tar unzip upx-ucl wget \
              xfonts-utils xsltproc xz-utils zip zstd parallel             
-          
-          
-          # ssudo apt-get install -y cpp-13 g++-13 gcc-13 || true
-          
 
-          if [[ "${{ inputs.config }}" == CoreELEC-20* ]] || [[ "${{ inputs.config }}" == CoreELEC-21* ]] || [[ "${{ inputs.config }}" == LibreELEC-12* ]] ; then
+          if [[ "${{ inputs.config }}" == CoreELEC-20* ]] || [[ "${{ inputs.config }}" == CoreELEC-21* ]] || [[ "${{ inputs.config }}" == LibreELEC-12* ]] ; then          
               sudo apt-get install -y cpp-12 g++-12 gcc-12 || true
-              #sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
-              #sudo update-alternatives --install /usr/bin/cpp cpp /usr/bin/cpp-12 100
-              #sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
-              #sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-12 100
-              #
-              #sudo update-alternatives --config gcc
+          
+              sudo rm /usr/bin/gcc /usr/bin/cpp /usr/bin/g++ /usr/bin/gcov
+              sudo ln -s /usr/bin/gcc-12 /usr/bin/gcc
+              sudo ln -s /usr/bin/cpp-12 /usr/bin/cpp
+              sudo ln -s /usr/bin/g++-12 /usr/bin/g++
+              sudo ln -s /usr/bin/gcov-12 /usr/bin/gcov          
           elif [[ "${{ inputs.config }}" == CoreELEC-22* ]] || [[ "${{ inputs.config }}" == LibreELEC-13* ]] ; then
               sudo apt-get install -y cpp-14 g++-14 gcc-14 || true
           
@@ -96,14 +92,7 @@ jobs:
               sudo ln -s /usr/bin/gcc-14 /usr/bin/gcc
               sudo ln -s /usr/bin/cpp-14 /usr/bin/cpp
               sudo ln -s /usr/bin/g++-14 /usr/bin/g++
-              sudo ln -s /usr/bin/gcov-14 /usr/bin/gcov
-          
-              #sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100 \
-              #      --slave /usr/bin/g++ g++ /usr/bin/g++-14 \
-              #      --slave /usr/bin/gcov gcov /usr/bin/gcov-14
-              #
-              #sudo update-alternatives --install /usr/bin/cpp cpp /usr/bin/cpp-14 100
-              #sudo update-alternatives --config gcc
+              sudo ln -s /usr/bin/gcov-14 /usr/bin/gcov                    
           fi
   
           if [ "$(uname -m)" = "aarch64" ]; then

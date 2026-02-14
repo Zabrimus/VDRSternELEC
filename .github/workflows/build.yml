@@ -246,13 +246,13 @@ jobs:
           elif [[ "${{ inputs.target }}" == "LibreELEC-13" ]]; then
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == LibreELEC-13* ]]; then
-                      BUILDX8624="$BUILDX8624 $i"
+                      # BUILDX8624="$BUILDX8624 $i"
           
-                      #if [[ "$i" == *x86_64* ]]; then
-                      #    BUILDX8624="$BUILDX8624 $i"
-                      #else
-                      #    BUILDARM22="$BUILDARM22 $i"
-                      #fi
+                      if [[ "$i" == *x86_64* ]]; then
+                          BUILDX8624="$BUILDX8624 $i"
+                      else
+                          BUILDARM24="$BUILDARM24 $i"
+                      fi
                   fi
               done
           elif [[ "${{ inputs.target }}" == "LibreELEC-Generic" ]]; then

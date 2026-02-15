@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-vnsiserver"
-PKG_VERSION="263b48d7067f2f611d3cafd7419c9594393cddcd"
-PKG_SHA256="55ced2e379b87b63c54e465c4e791524ddeea7682d8d0b6f7f5a4be2f9146c5f"
+PKG_VERSION="a24ed7b4d6538b6cf728e1dca60ecbb96d7510fa"
+PKG_SHA256="3d5e9cb2537673fb745d2fcb6f03d327f835d98fae34de67381060bfb8497f68"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-vnsiserver"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-vnsiserver/archive/${PKG_VERSION}.zip"

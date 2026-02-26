@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_irmplircd"
-PKG_VERSION="70fef522424c1f1b0aaeb34699196479c27c9ce0"
-PKG_SHA256="a1418321fc057c6105e11021c931f39534ede97497aaaf6a007af8fd4b2153de"
+PKG_VERSION="fe096b3f35ca753b88decc83b648ee85392f84fc"
+PKG_SHA256="5e640dd529d7ae9d1ed514b3ca145827b78b166c16672f265b6ef1a54d5722b5"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/realglotzi/irmplircd"
 PKG_URL="https://github.com/realglotzi/irmplircd/archive/${PKG_VERSION}.zip"

@@ -3,8 +3,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_DirectFB2-term"
-PKG_VERSION="d9ee577e39553c1237111429a441b28b0848d874"
-PKG_SHA256="1b3596a9aefc4dae8c49e71936989efda00eebb117b8dc7ed78356cc7ea7aff3"
+PKG_VERSION="9b6948cb8da326ba9404faae2545e7054c75bd5e"
+PKG_SHA256="4bfe6df6027de0a6d722334c5efe773affbe56b014f7831d696a5fc276745eff"
 PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/directfb2/DFBTerm"
 PKG_URL="https://github.com/directfb2/DFBTerm/archive/${PKG_VERSION}.zip"

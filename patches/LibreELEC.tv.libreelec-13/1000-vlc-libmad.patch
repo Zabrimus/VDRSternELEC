@@ -1,16 +1,44 @@
 diff --git a/packages/addons/addon-depends/libmad/package.mk b/packages/addons/addon-depends/libmad/package.mk
-index 7d8c8d6456..51684a4603 100644
+index 1576efa35a..815362fe31 100644
 --- a/packages/addons/addon-depends/libmad/package.mk
 +++ b/packages/addons/addon-depends/libmad/package.mk
-@@ -10,9 +10,10 @@ PKG_URL="${SOURCEFORGE_SRC}/mad/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+@@ -11,7 +11,7 @@ PKG_URL="https://codeberg.org/tenacityteam/libmad/archive/${PKG_VERSION}.tar.gz"
  PKG_DEPENDS_TARGET="toolchain"
  PKG_LONGDESC="A high-quality MPEG audio decoder."
- PKG_TOOLCHAIN="autotools"
-+PKG_BUILD_FLAGS="+pic"
  
- # package specific configure options
--PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared"
-+PKG_CONFIGURE_OPTS_TARGET="--enable-static --enable-shared"
+-PKG_CMAKE_OPTS_TARGET="-DBUILD_SHARED_LIBS=OFF"
++PKG_CMAKE_OPTS_TARGET="-DBUILD_SHARED_LIBS=ON"
  if [ "${TARGET_ARCH}" = "x86_64" ]; then
-   PKG_CONFIGURE_OPTS_TARGET+=" --enable-accuracy --enable-fpm=64bit"
+   PKG_CMAKE_OPTS_TARGET+=" -DOPTIMIZE=ACCURACY"
  fi
+diff --git a/packages/addons/addon-depends/libmad/patches/libmad-0001-do-not-install-shared-library.patch b/packages/addons/addon-depends/libmad/patches/libmad-0001-do-not-install-shared-library.patch
+deleted file mode 100644
+index f963703aaa..0000000000
+--- a/packages/addons/addon-depends/libmad/patches/libmad-0001-do-not-install-shared-library.patch
++++ /dev/null
+@@ -1,25 +0,0 @@
+-From 0f4cc6665add4b9b6b505f5fe1dafd78a68717d5 Mon Sep 17 00:00:00 2001
+-From: Rudi Heitbaum <rudi@heitbaum.com>
+-Date: Fri, 6 Mar 2026 09:04:24 +0000
+-Subject: [PATCH] do not install shared library
+-
+----
+- CMakeLists.txt | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/CMakeLists.txt b/CMakeLists.txt
+-index 12c42f4..2f9a43a 100644
+---- a/CMakeLists.txt
+-+++ b/CMakeLists.txt
+-@@ -166,7 +166,7 @@ endif()
+- include(CMakePackageConfigHelpers)
+- 
+- # Library files
+--install(TARGETS mad mad-static
+-+install(TARGETS mad-static
+-   EXPORT madTargets
+-   ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+-   LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+--- 
+-2.51.0
+-

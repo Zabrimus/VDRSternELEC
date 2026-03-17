@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-dbus2vdr"
-PKG_VERSION="119b4e8f02b39d37af6d41365208cc44e8cd986d"
-PKG_SHA256="f34197b71f402d19effa2847fce3872dad1aff0aa321aa129e40f86f659b7ba2"
+PKG_VERSION="34ddf66ea5c075bf5e126c19c9288456e0fd357f"
+PKG_SHA256="235854b0a6cabff16c244d6b8ff646ba1a0d23191e868ba3313a2fc7c0e5a0a9"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/flensrocker/vdr-plugin-dbus2vdr"
 PKG_URL="https://github.com/flensrocker/vdr-plugin-dbus2vdr/archive/${PKG_VERSION}.zip"

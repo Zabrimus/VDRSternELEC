@@ -1,0 +1,13 @@
+diff --git a/packages/addons/addon-depends/ttyd-depends/libwebsockets/package.mk b/packages/addons/addon-depends/ttyd-depends/libwebsockets/package.mk
+index 6bf6d874f4..30f9643564 100644
+--- a/packages/addons/addon-depends/ttyd-depends/libwebsockets/package.mk
++++ b/packages/addons/addon-depends/ttyd-depends/libwebsockets/package.mk
+@@ -3,7 +3,7 @@
+ 
+ PKG_NAME="libwebsockets"
+ PKG_VERSION="4.5.4"
+-PKG_SHA256="f2aa31a0be16d45470360b868f3b5b114990da038ba5e49569f0732c58b2d9fc"
++PKG_SHA256="a6488774ff8d9f3d6d6f0eadb4a5e8f8fe69cdd690d776ba8bd80a9b8cfb3992"
+ PKG_LICENSE="MIT"
+ PKG_SITE="https://libwebsockets.org"
+ PKG_URL="https://github.com/warmcat/libwebsockets/archive/v${PKG_VERSION}.tar.gz"

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-streamdev"
-PKG_VERSION="ce23354212e35305ab22523d21e43a9c85691cb6"
-PKG_SHA256="06c5ed25220374ff73fd9b0a5a9cc4cd9be0adfc568d8fd9d3ad2b88be9a0e81"
+PKG_VERSION="7f13fdb9775d0b8623faa27a89d7163ec646d847"
+PKG_SHA256="d1cd6a37a1cc3ab3ba0eb7bd63e036a1df125d9f3f147bc593c4c825ddbe57b3"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-streamdev"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-streamdev/archive/${PKG_VERSION}.tar.gz"

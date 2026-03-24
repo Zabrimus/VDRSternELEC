@@ -23,8 +23,8 @@ pre_make_target() {
 }
 
 make_target() {
-	DESTDIR="${INSTALL}" make libskindesignerapi install-subprojects
-	DESTDIR="${INSTALL}" make
+	SKINDESIGNER_SCRIPTDIR="/storage/.config/vdropt/plugins/skindesigner/scripts/" DESTDIR="${INSTALL}" make libskindesignerapi install-subprojects
+	SKINDESIGNER_SCRIPTDIR="/storage/.config/vdropt/plugins/skindesigner/scripts/" DESTDIR="${INSTALL}" make
 }
 
 post_makeinstall_target() {

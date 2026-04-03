@@ -18,3 +18,8 @@ fi
 if [ "${DISTRO}" = "LibreELEC" ] && ([ "${DEVICE}" = "RPi4" ] || [ "${DEVICE}" = "RPi5" ]); then;
 	PKG_DEPENDS_TARGET+=" _drm-vc4-grabber"
 fi
+
+# Entware support
+if [ "${DISTRO}" = "LibreELEC" ]; then
+  PKG_DEPENDS_TARGET+=" _entware"
+fi

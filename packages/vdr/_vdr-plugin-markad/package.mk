@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-markad"
-PKG_VERSION="866256bd0be95099d8d4c0c3ac01e388ae72f28e"
-PKG_SHA256="1b61b1f05f923b53c1358265d4e1bdd9be0ecd2f5fb68be301001b569315c9fb"
+PKG_VERSION="66049d74a7ea4012f588dd5bee949a570660a721"
+PKG_SHA256="3ccf20a20a22577004e491b533b749d661a678091c77efeb1fe7e00c42477af8"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kfb77/vdr-plugin-markad"
 PKG_URL="https://github.com/kfb77/vdr-plugin-markad/archive/${PKG_VERSION}.zip"

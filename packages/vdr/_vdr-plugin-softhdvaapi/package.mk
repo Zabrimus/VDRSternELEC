@@ -7,7 +7,7 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/jojo61/vdr-plugin-softhdcuvid"
 PKG_URL="https://github.com/jojo61/vdr-plugin-softhdcuvid/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="vdr-plugin-softhdcuvid-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain _vdr libplacebo vdr-helper libXi libXrandr libXrender libXext libXxf86vm ffmpeg"
+PKG_DEPENDS_TARGET="toolchain _vdr vdr-helper libXi libXrandr libXrender libXext libXxf86vm ffmpeg _freeglut"
 PKG_DEPENDS_CONFIG="_vdr libplacebo"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
 PKG_DEPENDS_UNPACK="vdr-helper"
@@ -39,7 +39,7 @@ pre_make_target() {
   if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" -ge "13" ]; then
   	export LIBPLACEBO_GL=0
   else
-  	export LIBPLACEBO_GL=1
+  	export LIBPLACEBO_GL=0
   fi
 }
 

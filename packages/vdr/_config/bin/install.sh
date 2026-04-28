@@ -298,6 +298,9 @@ boot() {
           sed -i -e "/^START_PRG.*$/d" /storage/.profile
       fi
       echo "START_PRG=vdr" >> /storage/.profile
+
+      systemctl daemon-reload
+      systemctl enable setup_bl301.sh
   else
       echo "Unknown Boot parameter"
       exit 1

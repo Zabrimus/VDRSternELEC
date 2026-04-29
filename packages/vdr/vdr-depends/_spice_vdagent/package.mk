@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_spice_vdagent"
-PKG_VERSION="f0dc2b098d7a5cb6bd317e0682851b3d9cbc2836"
-PKG_SHA256="a3116a1fc3201edbc097bc12410893906ba82bfe6898135beab91fdcd573f0ed"
+PKG_VERSION=""
+PKG_SHA256="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 PKG_LICENSE="GPL3"
 PKG_SITE="https://gitlab.freedesktop.org/spice/linux/vd_agent.git"
 PKG_URL="https://gitlab.freedesktop.org/spice/linux/vd_agent/-/archive/${PKG_VERSION}/vd_agent-${PKG_VERSION}.tar.gz"

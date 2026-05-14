@@ -67,4 +67,12 @@ EOF
   	rm -f stern_upgrade_links
 	echo "STERN_RELEASE=${STERN_RELEASE}" > ${INSTALL}/etc/stern_upgrade_links
     echo "STERN_ADDON=${STERN_ADDON}" >> ${INSTALL}/etc/stern_upgrade_links
+
+    # copy scripts
+    mkdir -p ${INSTALL}/storage/.config/vdropt-sample
+    cp ${PKG_DIR}/scripts/* ${INSTALL}/storage/.config/vdropt-sample
+
+    mkdir -p ${INSTALL}/usr/local/config
+    cd ${INSTALL}
+    zip -qrum9 ${INSTALL}/usr/local/config/common-sample-config.zip storage
 }

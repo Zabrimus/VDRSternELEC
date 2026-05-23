@@ -14,6 +14,15 @@ PKG_LONGDESC="Virtualized DVB driver"
 PKG_TOOLCHAIN="make"
 PKG_BUILD_FLAGS="+speed"
 
+if [ "${DEVICE}" == "Amlogic-ng" ]; then
+    # downgrade vtuner-ng for CE20/21-ng due to compile problems caused by older linux kernel version
+    # currently to fix can be found
+    PKG_VERSION="e184e5f96a26870dd7b53203619e36fab6efdf50"
+    PKG_SHA256="92be9f8695098982250a2bb71c125419070a28ff3fb34674737d3954b8fe0135"
+    PKG_URL="https://github.com/joed74/vtuner-ng/archive/${PKG_VERSION}.zip"
+    PKG_SOURCE_DIR="vtuner-ng-${PKG_VERSION}"
+fi
+
 post_unpack() {
     # sanity check. It's possible that the former build was interrupted.
     rm -f ${PKG_DIR}/patches/vtuner-ng-4.9.patch

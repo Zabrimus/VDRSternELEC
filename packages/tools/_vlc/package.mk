@@ -27,6 +27,7 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-lua \
                            --disable-xvideo \
                            --disable-sdl-image \
                            --disable-vdpau \
+                           --disable-gst-decode \
                            --disable-nfs"
 
 

@@ -29,6 +29,12 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-lua \
                            --disable-vdpau \
                            --disable-nfs"
 
+
+post_unpack() {
+    # rm outdated patch if it still exists
+    rm -f ${PKG_DIR}/patches/vlc-3.0.21-ffmpeg8-1.patch
+}
+
 pre_configure_target() {
   export LDSHARED="${CC} -shared"
 

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-skinlcarsng"
-PKG_VERSION="f41741f236c68a469f4c88ddd56e6e292a7797aa"
-PKG_SHA256="28135547556cee5c3e0de312d9eaac5d6edee6ea1df896def9bc69ca48e65132"
+PKG_VERSION="91bd6cb43aa02c1383bf211d8f7362982da94c11"
+PKG_SHA256="ac8149f7f3cca257d645aed9b8131e045afaf945eaf331f911a57e49d0f259ce"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/kamel5/skinlcarsng.git"
 PKG_URL="https://gitlab.com/kamel5/skinlcarsng/-/archive/${PKG_VERSION}/skinlcarsng-${PKG_VERSION}.tar.gz"

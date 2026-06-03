@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_vlc"
-PKG_VERSION="10aa0e6e1bba557409c9173c89dd3a9c199fccd4"
-PKG_SHA256="8f1c780a3b05d27b2edae073a9ce72167afad7e17eba198f8f6bc668a19c33fa"
+PKG_VERSION="79128878ddb2c280bbb6c89c76a46b31a80ade1c"
+PKG_SHA256="f6d93944a1d12213d31ee6c027b8a85c95b1f6f81f69d61dbf54d3076752db44"
 PKG_LICENSE=""
 PKG_SITE="https://www.videolan.org/vlc/"
 PKG_URL="https://code.videolan.org/videolan/vlc/-/archive/${PKG_VERSION}/vlc-${PKG_VERSION}.tar.gz"
@@ -28,18 +28,6 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-lua \
                            --disable-sdl-image \
                            --disable-vdpau \
                            --disable-nfs"
-
-post_unpack() {
-    rm -f ${PKG_DIR}/patches/vlc-3.0.21-ffmpeg8-1.patch
-
-    if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" -ge "13" ]; then
-   		cp ${PKG_DIR}/le13ce22/vlc-3.0.21-ffmpeg8-1.patch ${PKG_DIR}/patches/vlc-3.0.21-ffmpeg8-1.patch
-    fi
-
-    if [ "${DISTRO}" = "CoreELEC" ] && [ "${OS_VERSION:0:2}" -ge "22" ]; then
-   		cp ${PKG_DIR}/le13ce22/vlc-3.0.21-ffmpeg8-1.patch ${PKG_DIR}/patches/vlc-3.0.21-ffmpeg8-1.patch
-    fi
-}
 
 pre_configure_target() {
   export LDSHARED="${CC} -shared"

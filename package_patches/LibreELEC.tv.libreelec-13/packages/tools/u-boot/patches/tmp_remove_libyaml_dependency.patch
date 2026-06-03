@@ -1,0 +1,30 @@
+diff -ru8bBwd a/scripts/dtc/Makefile b/scripts/dtc/Makefile
+--- a/scripts/dtc/Makefile	2026-04-06 19:59:18.000000000 +0200
++++ b/scripts/dtc/Makefile	2026-06-02 18:38:43.208186700 +0200
+@@ -11,26 +11,17 @@
+ # The upstream project builds libfdt as a separate library.  We are choosing to
+ # instead directly link the libfdt object files into fdtoverlay.
+ libfdt-objs	:= fdt.o fdt_ro.o fdt_wip.o fdt_sw.o fdt_rw.o fdt_strerror.o fdt_empty_tree.o fdt_addresses.o fdt_overlay.o
+ libfdt		= $(addprefix libfdt/,$(libfdt-objs))
+ fdtoverlay-objs	:= $(libfdt) fdtoverlay.o util.o
+ 
+ # Source files need to get at the userspace version of libfdt_env.h to compile
+ HOST_EXTRACFLAGS := -I$(srctree)/$(src)/libfdt
+-
+-ifeq ($(wildcard $(PKG_CONFIG_SYSROOT_DIR)/usr/include/yaml.h),)
+ HOST_EXTRACFLAGS += -DNO_YAML
+-else
+-dtc-objs	+= yamltree.o
+-# To include <yaml.h> installed in a non-default path
+-HOSTCFLAGS_yamltree.o := $(shell pkg-config --cflags yaml-0.1)
+-# To link libyaml installed in a non-default path
+-HOSTLDLIBS_dtc	:= $(shell pkg-config --libs yaml-0.1)
+-endif
+ 
+ # Generated files need one more search path to include headers in source tree
+ HOSTCFLAGS_dtc-lexer.lex.o := -I$(src)
+ HOSTCFLAGS_dtc-parser.tab.o := -I$(src)
+ 
+ # dependencies on generated files need to be listed explicitly
+ $(obj)/dtc-lexer.lex.o: $(obj)/dtc-parser.tab.h
+ 

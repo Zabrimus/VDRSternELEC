@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-live"
-PKG_VERSION="cd2a7b150f3a2a658d7f581bcce05784b79b9010"
-PKG_SHA256="55ebb1c3c2403040e86d1be38fc3e6f0c67300deb8ed7c097d99b523db90b50f"
+PKG_VERSION="15d74758282eb1b818c48c531111362f53cb112d"
+PKG_SHA256="ffa549e090a18baf1a187df40e7448d66e6d211e878a90f365e2b895e1e350c5"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/MarkusEh/vdr-plugin-live"
 PKG_URL="https://github.com/MarkusEh/vdr-plugin-live/archive/${PKG_VERSION}.zip"

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-restfulapi"
-PKG_VERSION="1ef1b6437c2e7a2bb8b23d5994e566920d0e0557"
-PKG_SHA256="978e1621df7eab2944201ae1cae54b09c208a1e025b9a1977743119d78fcef49"
+PKG_VERSION="996884ed17c2aa52c044b1a432ad5fccb64ba796"
+PKG_SHA256="5b1f0448c3a3ab2af9736b4772002106a8f9ab3afcace337e86f42d3d1679d3b"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/yavdr/vdr-plugin-restfulapi"
 PKG_URL="https://github.com/yavdr/vdr-plugin-restfulapi/archive/${PKG_VERSION}.zip"

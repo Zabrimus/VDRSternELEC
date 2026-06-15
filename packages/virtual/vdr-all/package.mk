@@ -36,6 +36,10 @@ if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && [ "${DEVICE}" = "
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
 fi
 
+if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" = "13" ] && [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && [ "${DEVICE}" = "Generic" ]; then
+    PKG_DEPENDS_TARGET+=" _vdr-plugin-vaapivideo"
+fi
+
 PKG_DEPENDS_TARGET+=" _vdr-plugin-satip"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-ddci2"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-dummydevice"

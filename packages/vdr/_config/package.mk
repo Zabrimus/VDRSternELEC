@@ -42,6 +42,11 @@ makeinstall_target() {
 	cat<<EOF >> ${INSTALL}/usr/local/bin/autostart.sh
     if [ "\${START_PRG}" = "vdr" ]; then
     	systemctl stop kodi
+
+    	# make sure there is no wrong left-over file (which can happen when manually restarting the box while kodi runs)
+		rm -f /storage/.cache/switch_kodi_vdr
+		touch /storage/.cache/switch_kodi_vdr
+
         if [ "${PROJECT}" = "Amlogic-ce" ]; then
           echo 4 > /sys/module/amvdec_h264/parameters/dec_control
         fi

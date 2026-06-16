@@ -21,6 +21,7 @@ pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib -L${SYSROOT_PREFIX}/usr/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
   export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
+  export GIT_DESCRIBE="-$(echo ${PKG_VERSION:0:7})"
 }
 
 post_makeinstall_target() {

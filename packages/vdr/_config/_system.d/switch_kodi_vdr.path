@@ -1,8 +1,9 @@
 [Unit]
-Wants=switch_kodi_vdr.service
+Description=Service welcher auf Dateiänderung reagiert
 
 [Path]
 PathChanged=/storage/.cache/switch_kodi_vdr
+Unit=switch_kodi_vdr.service
 
 [Install]
 WantedBy=multi-user.target

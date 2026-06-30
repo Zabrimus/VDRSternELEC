@@ -72,17 +72,8 @@ install() {
      fi
   done
 
-  # create autostart.sh if it does not exists
-  if [ ! -f /storage/.config/autostart.sh ]; then
-cat > /storage/.config/autostart.sh<< EOF
-#!/bin/sh
-/usr/local/bin/autostart.sh
-EOF
-
-  chmod +x /storage/.config/autostart.sh
-  else
-      echo "/storage/.config/autostart.sh already exists."
-      echo "Please insert '/storage/.opt/vdr/bin/autostart.sh' manually into this file (without quotes)."
+  if [ -f /storage/.config/autostart.sh ]; then
+      sed -i -e 's#/storage/.opt/vdr/bin/autostart.sh##' /storage/.config/autostart.sh
   fi
 
   # copy default skin and add VDR menu entry in the power menu

@@ -50,6 +50,11 @@ upgrade() {
   if [ -d /storage/.config/vdropt/plugins/live ]; then
     cp -a /storage/.config/vdropt-sample/plugins/live/* /storage/.config/vdropt/plugins/live/
   fi
+
+  # change /storage/.config/autostart.sh if it exists
+  if [ -f /storage/.config/autostart.sh ]; then
+    sed -i -e 's#/usr/local/bin/autostart.sh##' /storage/.config/autostart.sh
+  fi
 }
 
 # read existing version, if it exists

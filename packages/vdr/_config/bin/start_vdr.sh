@@ -32,8 +32,10 @@ for line in $file; do
   fi
 done
 
+
 # kill splash image (CoreELEC)
 killall splash-image || true
+/storage/.config/vdropt/ClearOSD.sh || true
 
 # needed for locale / OSD language
 . /storage/.profile

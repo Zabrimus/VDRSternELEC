@@ -5,6 +5,7 @@ After=network-online.target graphical.target
 
 [Service]
 ExecStart=/usr/local/bin/start_vdr.sh
+ExecStopPost=-/usr/local/bin/ClearOSD.sh
 Restart=always
 RestartSec=2
 StartLimitInterval=0

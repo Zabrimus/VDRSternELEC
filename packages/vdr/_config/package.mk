@@ -33,26 +33,11 @@ makeinstall_target() {
     cp ${PKG_DIR}/bin/switch_kodi_vdr.sh ${INSTALL}/usr/local/bin/switch_kodi_vdr.sh
     cp ${PKG_DIR}/bin/vdrsternupgrade.sh ${INSTALL}/usr/local/bin/vdrsternupgrade.sh
     cp ${PKG_DIR}/bin/switch_to_vdr.sh ${INSTALL}/usr/local/bin/switch_to_vdr.sh
-    cp ${PKG_DIR}/bin/autostart.sh ${INSTALL}/usr/local/bin/autostart.sh
     cp ${PKG_DIR}/bin/switch_vdr_softhdodroid.sh ${INSTALL}/usr/local/bin/switch_vdr_softhdodroid.sh
     cp ${PKG_DIR}/bin/switch_kodi_vdr.sh ${INSTALL}/usr/local/bin/switch_kodi_vdr.sh
     cp ${PKG_DIR}/bin/setup_bl301.sh ${INSTALL}/usr/local/bin/setup_bl301.sh
-
-    # Create start parameters depending on the project
-	cat<<EOF >> ${INSTALL}/usr/local/bin/autostart.sh
-    if [ "\${START_PRG}" = "vdr" ]; then
-    	systemctl stop kodi
-
-    	# make sure there is no wrong left-over file (which can happen when manually restarting the box while kodi runs)
-		rm -f /storage/.cache/switch_kodi_vdr
-		touch /storage/.cache/switch_kodi_vdr
-
-        if [ "${PROJECT}" = "Amlogic-ce" ]; then
-          echo 4 > /sys/module/amvdec_h264/parameters/dec_control
-        fi
-        systemctl start vdropt
-      fi
-EOF
+    cp ${PKG_DIR}/bin/ClearOSD.sh ${INSTALL}/usr/local/bin/ClearOSD.sh
+    cp ${PKG_DIR}/bin/VDRCoreELEC.sh ${INSTALL}/usr/local/bin/VDRCoreELEC.sh
 
 	# copy system.d folder
     mkdir -p ${INSTALL}/usr/local/system.d
@@ -63,6 +48,12 @@ EOF
     cp ${PKG_DIR}/_sysctl.d/* ${INSTALL}/usr/local/sysctl.d
 
     chmod +x ${INSTALL}/usr/local/bin/*.sh
+
+    # copy and enable services
+    mkdir -p ${INSTALL}/usr/lib/systemd/system
+    cp ${PKG_DIR}/system.d/VDRCoreELEC.service ${INSTALL}/usr/lib/systemd/system
+
+    enable_service VDRCoreELEC.service
 
 	# copy sample XML (PowerMenu for Kodi which includes a Button to switch to VDR)
   	cp ${PKG_DIR}/config/DialogButtonMenu.xml ${INSTALL}/usr/local/config/DialogButtonMenu.xml

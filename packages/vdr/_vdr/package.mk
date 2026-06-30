@@ -82,6 +82,7 @@ EOF
   # rename perl svdrpsend to svdrpsend.pl and copy the netcat variant
   mv ${INSTALL}/usr/local/bin/svdrpsend ${INSTALL}/usr/local/bin/svdrpsend.pl
   cp ${PKG_DIR}/bin/svdrpsend ${INSTALL}/usr/local/bin/svdrpsend
+  cp ${PKG_DIR}/bin/pes2ts ${INSTALL}/usr/local/bin/pes2ts
 
   chmod +x ${INSTALL}/usr/local/bin/*
 

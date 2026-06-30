@@ -108,6 +108,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-extrecmenung"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-pvrinput"
 #PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-usbkbd"
 
 # disabled because repository is not available
 #PKG_DEPENDS_TARGET+=" _vdr-plugin-vompserver"

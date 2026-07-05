@@ -15,7 +15,7 @@ if [ "${START_PRG}" = "vdr" ]; then
    #check if Kodi is already running (should never be the case after reboot)
    if pgrep "kodi.bin" > /dev/null ; then
       systemctl stop kodi
-      /storage/.config/vdropt/ClearOSD.sh || true
+      /usr/local/bin/ClearOSD.sh || true
    fi
    if [ ! -z ${SWITCH_VDR_SCRIPT} ] && pgrep "vdr" > /dev/null ; then
       eval ${SWITCH_VDR_SCRIPT} attach
@@ -27,7 +27,7 @@ elif [ "${START_PRG}" = "kodi" ]; then
    if pgrep "vdr" > /dev/null ; then
       if [ ! -z ${SWITCH_VDR_SCRIPT} ]; then
          eval ${SWITCH_VDR_SCRIPT} detach
-         /storage/.config/vdropt/ClearOSD.sh || true
+         /usr/local/bin/ClearOSD.sh || true
       else
          systemctl stop vdropt
       fi

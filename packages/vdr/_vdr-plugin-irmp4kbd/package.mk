@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-irmp4kbd"
-PKG_VERSION="f274c721edbd1002694a9e9c2aa6664cebc7c3e2"
-PKG_SHA256="6f584684cf7852b5186cda4c5c74829b5c78f76f49ac013c057452aa6e1d0be4"
+PKG_VERSION="d70a7bebf266aea15bf284d63f7ee951b8732457"
+PKG_SHA256="0baf613f4eaeea5195bb997ea4fb4d8a44c6589407a9f2079b933a2436d9041a"
 PKG_LICENSE="GPL 2"
 PKG_SITE="https://github.com/j1rie/IRMP_PICO"
 PKG_URL="https://github.com/j1rie/IRMP_PICO/archive/${PKG_VERSION}.zip"

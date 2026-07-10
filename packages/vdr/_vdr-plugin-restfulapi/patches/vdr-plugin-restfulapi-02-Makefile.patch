@@ -1,6 +1,6 @@
 diff -ru8bBwd a/Makefile b/Makefile
---- a/Makefile	2026-06-09 19:34:38.000000000 +0200
-+++ b/Makefile	2026-06-10 11:01:37.918817399 +0200
+--- a/Makefile	2026-07-04 00:14:08.000000000 +0200
++++ b/Makefile	2026-07-10 18:58:29.383955663 +0200
 @@ -33,16 +33,21 @@
  PLGCONFDIR = $(CONFDIR)/plugins/$(PLUGIN)
  
@@ -15,7 +15,7 @@ diff -ru8bBwd a/Makefile b/Makefile
 +            -DEPG_IMAGE_DIR='"/storage/.cache/vdr/epgimages"' \
 +            -DCHANNEL_LOGO_DIR='"/storage/.cache/vdr/channel-logos"'
 +
- OBJS = $(PLUGIN).o serverthread.o tools.o info.o searchtimers.o channels.o events.o recordings.o remote.o timers.o changestate.o changestatetracker.o scraper2vdr.o statusmonitor.o osd.o jsonparser.o epgsearch.o wirbelscan.o webapp.o femon.o
+ OBJS = $(PLUGIN).o serverthread.o tools.o info.o searchtimers.o channels.o events.o recordings.o remote.o timers.o changestate.o eventsstreamthread.o changestatetracker.o scraper2vdr.o statusmonitor.o osd.o jsonparser.o epgsearch.o wirbelscan.o webapp.o femon.o
  CFGS = API.html
  
  all: $(SOFILE) i18n

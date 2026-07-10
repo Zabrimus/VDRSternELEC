@@ -2,7 +2,7 @@
 
 PKG_NAME="_vdr-plugin-satip"
 PKG_VERSION="adb19d2543675563c31da5633aa28cbdcbbd2b20"
-PKG_SHA256="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+PKG_SHA256="998add3d9a3142d65114f03c601cf2a451232994d0f245a170842868d8d8b8a7"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/FireFlyVDR/vdr-plugin-satip"
 PKG_URL="https://github.com/FireFlyVDR/vdr-plugin-satip/archive/${PKG_VERSION}.zip"

@@ -2,7 +2,7 @@
 
 PKG_NAME="_vdr-plugin-live"
 PKG_VERSION="635cb0dfba47ff5b2d8ef2a3b5d940d51fe21893"
-PKG_SHA256="8e6520138c1210403a3e15afcef2f12d6a7ca3d4c0b131b5f02c0b230497dd98"
+PKG_SHA256="7c97f196d4819f71f7c1ee2211c5029ecfd9e2b0e006d7f05796e2f65f3129d6"
 PKG_LICENSE="GPL"
 PKG_SITE="https://codeberg.org/MarkusE/vdr-plugin-live"
 PKG_URL="https://codeberg.org/MarkusE/vdr-plugin-live/archive/${PKG_VERSION}.tar.gz"

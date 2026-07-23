@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-vaapivideo"
-PKG_VERSION="a2beac4c44a2c3d7d77d5affa8b5e34e3b082321"
-PKG_SHA256="62d8548094e580553d23ad18a1109c2a616efaed8d664ad13d9f457d53f593c0"
+PKG_VERSION="d72fe3ddcd379e07b58c2cc2bd6443f5cba3a3ca"
+PKG_SHA256="6a331d8a2d36697835e17165c1431a244457c7d8303618a54d76ed00ac690314"
 PKG_LICENSE="AGPLv3"
 PKG_SITE="https://github.com/dnehring7/vdr-plugin-vaapivideo"
 PKG_URL="https://github.com/dnehring7/vdr-plugin-vaapivideo/archive/${PKG_VERSION}.zip"

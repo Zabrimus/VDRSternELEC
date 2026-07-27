@@ -46,7 +46,8 @@ PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} -Dvdrsternelec=true
                        --bindir=/usr/local/bin \
                        --libdir=/usr/local/lib \
                        --libexecdir=/usr/local/lib \
-                       --sbindir=/usr/local/bin"
+                       --sbindir=/usr/local/bin \
+                       --wrap-mode=default"
 
 pre_configure_target() {
 	CEF_DIR="$(get_build_dir _cef)/../../../../cef"

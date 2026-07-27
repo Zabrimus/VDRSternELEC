@@ -1,0 +1,21 @@
+diff -ru8bBwd a/imagecache.h b/imagecache.h
+--- a/imagecache.h	2026-07-23 14:42:20.000000000 +0200
++++ b/imagecache.h	2026-07-28 05:37:07.594000000 +0200
+@@ -9,16 +9,17 @@
+ 
+ #include <vdr/osd.h>
+ #include <vdr/skins.h>
+ 
+ #include <cstring>
+ #include <memory>  // For std::unique_ptr
+ #include <unordered_map>
+ #include <vector>  // For std::vector
++#include <string_view>
+ 
+ static constexpr std::size_t kMaxImageCache {1024};  // Image cache including two times 'kLogoPreCache'
+ static constexpr std::size_t kMaxIconCache {512};    // Icon cache (Skin icons)
+ static constexpr std::size_t kLogoPreCache {192};    // First x channel logos
+ //! Note: 'kLogoPreCache' is used twice! One for 'displaychannel' and one for 'menu'
+ //! You must double the value for the real amount of pre cached logos
+ 
+ struct ImageData {

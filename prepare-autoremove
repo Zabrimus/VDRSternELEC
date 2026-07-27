@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
+
+. config/options ""
+
+rm -f dont_delete_packages tmp_a tmp_b
+touch dont_delete_packages
+
+# projects, packages, ../packages
+
+touch tmp_a
+while IFS= read -r -d '' pkg; do
+    if [ -f $pkg ] && [ $(grep -c PKG_NEED_UNPACK $pkg) = 0 ] && [ $(grep -c PKG_DEPENDS_UNPACK $pkg) = 0 ]; then
+        continue
+    fi
+
+    echo $pkg >> tmp_a
+done <   <(find packages projects ../packages -name 'package.mk' -print0)
+
+for i in $(sed '/^[[:space:]]*$/d' tmp_a | sort -u); do
+    if [ -f $i ]; then
+        . $i || continue
+
+        for j in ${PKG_NEED_UNPACK}; do
+            echo "$(basename $j)" >> tmp_b
+        done
+
+        for j in ${PKG_DEPENDS_UNPACK}; do
+            echo "$(basename $j)" >> tmp_b
+        done
+    fi
+done
+
+# add fix packages
+echo "autoconf" >> tmp_b
+echo "automake" >> tmp_b
+echo "ccache" >> tmp_b
+echo "cmake" >> tmp_b
+echo "gettext" >> tmp_b
+echo "intltool" >> tmp_b
+echo "libtool" >> tmp_b
+echo "m4" >> tmp_b
+echo "make" >> tmp_b
+echo "openssl" >> tmp_b
+echo "pkg-config" >> tmp_b
+echo "zstd" >> tmp_b
+echo "llvm" >> tmp_b
+echo "glibc" >> tmp_b
+echo "_symlinks" >> tmp_b
+
+# regularly check these bl301
+echo "bl301_221119" >> tmp_b
+echo "bl301_xxxxxx" >> tmp_b
+echo "bl301_091020" >> tmp_b
+
+for i in $(sed '/^[[:space:]]*$/d' tmp_b | sort -u); do
+    echo "$(get_build_dir $i)" >> dont_delete_packages
+done
+
+sed -i '/^[[:space:]]*$/d' dont_delete_packages
+
+rm -f tmp_a tmp_b

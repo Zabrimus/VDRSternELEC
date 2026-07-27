@@ -1,0 +1,12 @@
+diff --git a/packages/x11/lib/libXinerama/package.mk b/packages/x11/lib/libXinerama/package.mk
+index af6a5cbf01..4ad0406349 100644
+--- a/packages/x11/lib/libXinerama/package.mk
++++ b/packages/x11/lib/libXinerama/package.mk
+@@ -10,6 +10,7 @@ PKG_SITE="https://www.X.org"
+ PKG_URL="https://xorg.freedesktop.org/archive/individual/lib/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+ PKG_DEPENDS_TARGET="toolchain util-macros libXext"
+ PKG_LONGDESC="libXinerama is the Xinerama library."
++PKG_BUILD_FLAGS="+pic"
+ 
+ PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared --enable-malloc0returnsnull"
+ 

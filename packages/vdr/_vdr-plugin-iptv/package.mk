@@ -1,23 +1,35 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-iptv"
-PKG_VERSION="f7369c9578c1437c7a19cf11e21424844f42a341"
-PKG_SHA256="9045ec034182d19535ab3478152ef6a7fd2640478c78d697d2f2c93f11482316"
+PKG_VERSION="8a1f9900eae7d85dab17942ea58a669fbe05796b"
+PKG_SHA256="01fbb7afe978d40652b769cdd413b4fce917d1508334ec469540f1ee86a68b60"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.saunalahti.fi/~rahrenbe/vdr/iptv/"
-PKG_URL="https://github.com/rofafor/vdr-plugin-iptv/archive/${PKG_VERSION}.tar.gz"
+PKG_ORIGINAL_SITE="http://www.saunalahti.fi/~rahrenbe/vdr/iptv/"
+PKG_SITE="https://github.com/Zabrimus/vdr-plugin-iptv/"
+PKG_URL="https://github.com/Zabrimus/vdr-plugin-iptv/archive/${PKG_VERSION}.zip"
 PKG_DEPENDS_TARGET="toolchain _vdr curl vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
+PKG_DEPENDS_UNPACK="vdr-helper"
+PKG_SOURCE_DIR="vdr-plugin-iptv-${PKG_VERSION}"
 PKG_LONGDESC="vdr-iptv is an IPTV plugin for the Video Disk Recorder (VDR)"
 PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
+}
+
+pre_makeinstall_target() {
+	mkdir -p $(get_build_dir _vdr-plugin-iptv)/iptv
+	cp $(get_pkg_directory _vdr-plugin-iptv)/iptv/* $(get_build_dir _vdr-plugin-iptv)/iptv
 }
 
 post_makeinstall_target() {
+  mkdir -p $(get_install_dir _vdr-plugin-iptv)/storage/.config/vdropt/plugins/iptv/vlcinput
+  mkdir -p $(get_install_dir _vdr-plugin-iptv)/storage/.config/vdropt/plugins/iptv/m3u-conf
+
   PLUGIN="$(cat ${PKG_BUILD}/Makefile | grep 'PLUGIN = ' | cut -d ' ' -f 3)"
   $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN}
 }

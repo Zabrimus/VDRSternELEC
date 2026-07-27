@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vtuner-ng"
-PKG_VERSION="35a614a11813161e4637b0c5c85957e800bb60e4"
-PKG_SHA256="70b155741bece379a64b1e1f007f9c60c3add2fe4fdcb76d138aea07f2834c19"
+PKG_VERSION="f821ec4343f8a33d06c7d35115f86f7d054f9965"
+PKG_SHA256="95fc845975c7d9b03ab380cfae17067d2a040a33671af2c42dba43aef067c1af"
 PKG_LICENSE=""
 PKG_SITE="https://github.com/joed74/vtuner-ng"
 PKG_URL="https://github.com/joed74/vtuner-ng/archive/${PKG_VERSION}.zip"
@@ -14,25 +14,22 @@ PKG_LONGDESC="Virtualized DVB driver"
 PKG_TOOLCHAIN="make"
 PKG_BUILD_FLAGS="+speed"
 
+if [ "${DEVICE}" == "Amlogic-ng" ]; then
+    # downgrade vtuner-ng for CE20/21-ng due to compile problems caused by older linux kernel version
+    # currently to fix can be found
+    PKG_VERSION="e184e5f96a26870dd7b53203619e36fab6efdf50"
+    PKG_SHA256="92be9f8695098982250a2bb71c125419070a28ff3fb34674737d3954b8fe0135"
+    PKG_URL="https://github.com/joed74/vtuner-ng/archive/${PKG_VERSION}.zip"
+    PKG_SOURCE_DIR="vtuner-ng-${PKG_VERSION}"
+fi
+
 post_unpack() {
-    # sanity check. It's possible that the former build was interrupted and the optional patch file has not yet be renamed
-    if [ -e ${PKG_DIR}/patches/vtuner-ng-4.9.patch ]; then
-    	rm -f ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional
-    	mv ${PKG_DIR}/patches/vtuner-ng-4.9.patch ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional
-    fi
+    # sanity check. It's possible that the former build was interrupted.
+    rm -f ${PKG_DIR}/patches/vtuner-ng-4.9.patch
 
     if [ "${DEVICE}" == "Amlogic-ng" ]; then
-        mv ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional ${PKG_DIR}/patches/vtuner-ng-4.9.patch
+        cp ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional ${PKG_DIR}/patches/vtuner-ng-4.9.patch
     fi
-
-	if [ -e ${PKG_DIR}/patches/vtuner-ne-5.4.patch ]; then
-		rm -f ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional
-    	mv ${PKG_DIR}/patches/vtuner-ne-5.4.patch ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional
-	fi
-
-    if [ "${DEVICE}" == "Amlogic-ne" ]; then
-    	mv ${PKG_DIR}/patches/vtuner-ne-5.4.patch.optional ${PKG_DIR}/patches/vtuner-ne-5.4.patch
-	fi
 }
 
 make_target() {
@@ -62,7 +59,5 @@ makeinstall_target() {
 }
 
 post_makeinstall_target() {
-	if [ "${DEVICE}" == "Amlogic-ng" ]; then
-		mv ${PKG_DIR}/patches/vtuner-ng-4.9.patch ${PKG_DIR}/patches/vtuner-ng-4.9.patch.optional
-	fi
+    rm -f ${PKG_DIR}/patches/vtuner-ng-4.9.patch
 }

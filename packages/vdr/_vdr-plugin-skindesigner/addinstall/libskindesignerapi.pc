@@ -1,0 +1,8 @@
+includedir=/usr/local/include/vdr
+libdir=/usr/local/lib/vdr
+
+Name: libskindesignerapi
+Description: skindesigner API Library
+Version: 0.1.2
+Cflags: -I/usr/local/include/vdr
+Libs: -L/usr/local/lib/vdr -lskindesignerapi

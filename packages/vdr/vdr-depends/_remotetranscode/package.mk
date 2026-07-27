@@ -1,16 +1,20 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_remotetranscode"
-PKG_VERSION="a3c903f6688afc434ca2f66ddd7fe5a13a831580"
-PKG_SHA256="f9df7a42fbdf3af036d475739011e8911824a2500036825c3d921046f2177354"
+PKG_VERSION="73323e166c8cddceb50d6ffff6535782c3f0d72d"
+PKG_SHA256="d27c6589e30fb7cc5bf05869f5d2b63eeb0e6a23ad88b9e96b523b285f8468e9"
 PKG_LICENSE="unknown"
 PKG_SITE="https://github.com/Zabrimus/remotetranscode"
 PKG_URL="https://github.com/Zabrimus/remotetranscode/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="remotetranscode-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain ffmpeg"
+PKG_DEPENDS_TARGET="toolchain ffmpeg _thrift"
 PKG_LONGDESC="remotetranscode"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed"
+
+if [ "${OS_MAJOR}" = "20" ]; then
+	PKG_DEPENDS_TARGET+=" _inputstream.adaptive"
+fi
 
 RT_PREFIX="/usr/local"
 
@@ -38,7 +42,12 @@ post_makeinstall_target() {
 
   # copy systemd services
   mkdir -p ${INSTALL}/usr/local/system.d
-  cp ${PKG_DIR}/_system.d/* ${INSTALL}/usr/local/system.d
+
+  if [ "${OS_MAJOR}" = "20" ]; then
+  	cp ${PKG_DIR}/_system.d/remotetranscode.service.CE20 ${INSTALL}/usr/local/system.d/remotetranscode.service
+  else
+  	cp ${PKG_DIR}/_system.d/remotetranscode.service ${INSTALL}/usr/local/system.d/remotetranscode.service
+  fi
 
   # zip everything
   mkdir -p ${INSTALL}/usr/local/config

@@ -1,8 +1,0 @@
-[Unit]
-Wants=switch_kodi_vdr.service
-
-[Path]
-PathChanged=/storage/.cache/switch_kodi_vdr
-
-[Install]
-WantedBy=multi-user.target

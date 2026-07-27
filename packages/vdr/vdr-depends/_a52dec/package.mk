@@ -27,7 +27,7 @@ PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr/local \
 
 pre_configure_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
-  ./bootstrap
+  cd $(get_build_dir _a52dec) && ./bootstrap
 }
 
 make_target() {

@@ -1,0 +1,125 @@
+diff --git a/Makefile b/Makefile
+index 4fd478b..1dddc14 100644
+--- a/Makefile
++++ b/Makefile
+@@ -77,7 +77,7 @@ LIBS += -lpugixml
+ 
+ OBJS = cecremote.o cecremoteplugin.o configmenu.o configfileparser.o \
+        cecosd.o stillpicplayer.o ceccontrol.o keymaps.o statusmonitor.o \
+-       cmd.o opcodemap.o handleactions.o rtcwakeup.o
++       cmd.o opcodemap.o handleactions.o rtcwakeup.o ceclog.o
+ 
+ ### The main target:
+ 
+diff --git a/ceclog.cc b/ceclog.cc
+new file mode 100644
+index 0000000..5969c88
+--- /dev/null
++++ b/ceclog.cc
+@@ -0,0 +1,41 @@
++/*
++ * CECRemote PlugIn for VDR
++ *
++ * Copyright (C) 2014, 2015 Ulrich Eckhardt <uli-vdr@uli-eckhardt.de>
++ *
++ * This code is distributed under the terms and conditions of the
++ * GNU GENERAL PUBLIC LICENSE. See the file COPYING for details.
++ *
++ * This class implements logging functions
++ *
++ */
++
++#include <vdr/plugin.h>
++#include "ceclog.h"
++
++namespace cecplugin {
++
++int cecplugin_loglevel = SysLogLevel;
++
++void ceclogmsg (int severity, const char *format, ...)
++{
++    if (cecplugin_loglevel > severity) {
++        char fmt[MAXSYSLOGBUF];
++
++        int facility_priority = LOG_ERR;
++        if (severity == 1) {
++            facility_priority = LOG_WARNING;
++        }
++        else if (severity == 2) {
++            facility_priority = LOG_DEBUG;
++        }
++
++        snprintf(fmt, sizeof(fmt)-1, "[cecremote] %s", format);
++        va_list ap;
++        va_start(ap, format);
++        vsyslog(facility_priority ,fmt, ap);
++        va_end(ap);
++    }
++}
++
++}
+diff --git a/ceclog.h b/ceclog.h
+index 7b3113f..a539d73 100755
+--- a/ceclog.h
++++ b/ceclog.h
+@@ -16,27 +16,9 @@
+ namespace cecplugin {
+ 
+ #define MAXSYSLOGBUF 1024
++extern int cecplugin_loglevel;
+ 
+-static void ceclogmsg (int severity, const char *format, ...)
+-{
+-    if (SysLogLevel > severity) {
+-        char fmt[MAXSYSLOGBUF];
+-
+-        int facility_priority = LOG_ERR;
+-        if (severity == 1) {
+-            facility_priority = LOG_WARNING;
+-        }
+-        else if (severity == 2) {
+-            facility_priority = LOG_DEBUG;
+-        }
+-
+-        snprintf(fmt, sizeof(fmt)-1, "[cecremote] %s", format);
+-        va_list ap;
+-        va_start(ap, format);
+-        vsyslog(facility_priority ,fmt, ap);
+-        va_end(ap);
+-    }
+-}
++void ceclogmsg (int severity, const char *format, ...);
+ 
+ #define Esyslog(a...) ceclogmsg(0, a)
+ #define Isyslog(a...) ceclogmsg(1, a)
+diff --git a/cecremoteplugin.cc b/cecremoteplugin.cc
+index 6826dc3..b0a2db7 100755
+--- a/cecremoteplugin.cc
++++ b/cecremoteplugin.cc
+@@ -26,7 +26,6 @@ namespace cecplugin {
+ static const char *VERSION        = "1.6.0";
+ static const char *DESCRIPTION    = "Send/Receive CEC commands";
+ static const char *MAINMENUENTRY  = "CECremote";
+-
+ using namespace std;
+ 
+ cPluginCecremote::~cPluginCecremote()
+@@ -75,7 +74,7 @@ bool cPluginCecremote::ProcessArgs(int argc, char *argv[])
+     };
+     int c, option_index = 0;
+ 
+-    while ((c = getopt_long(argc, argv, "c:x:",
++    while ((c = getopt_long(argc, argv, "c:x:l:",
+             long_options, &option_index)) != -1) {
+         switch (c) {
+         case 'c':
+@@ -84,6 +83,9 @@ bool cPluginCecremote::ProcessArgs(int argc, char *argv[])
+         case 'x':
+             mCfgFile.assign(optarg);
+             break;
++		case 'l':
++			cecplugin_loglevel = atoi(optarg);
++			break;
+         default:
+             Esyslog("CECRemotePlugin unknown option %c", c);
+             return false;

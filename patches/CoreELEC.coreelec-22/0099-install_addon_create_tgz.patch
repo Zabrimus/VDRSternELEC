@@ -1,0 +1,24 @@
+diff --git a/scripts/install_addon b/scripts/install_addon
+index c49e11df02..753bb5582a 100755
+--- a/scripts/install_addon
++++ b/scripts/install_addon
+@@ -44,11 +44,17 @@ fi
+ 
+ cd ${ADDON_BUILD}
+ build_msg "CLR_INFO" "*** compressing addon ${PKG_ADDON_ID} ... ***"
+-${TOOLCHAIN}/bin/7za a -mx9 -bsp0 -bso0 -tzip ${PKG_ADDON_ID}-${ADDONVER}.zip ${PKG_ADDON_ID}
++if [ "${PKG_ADDON_TGZ}" = "yes" ]; then
++  tar -cS ${PKG_ADDON_ID}  | gzip --best > ${PKG_ADDON_ID}-${ADDONVER}.tar.gz
++  ADDON_SUFFIX="tar.gz"
++else
++  ${TOOLCHAIN}/bin/7za a -mx9 -bsp0 -bso0 -tzip ${PKG_ADDON_ID}-${ADDONVER}.zip ${PKG_ADDON_ID}
++  ADDON_SUFFIX="zip"
++fi
+ cd - &>/dev/null
+ 
+ mkdir -p ${ADDON_INSTALL_DIR}
+-cp ${ADDON_BUILD}/${PKG_ADDON_ID}-${ADDONVER}.zip ${ADDON_INSTALL_DIR}
++cp ${ADDON_BUILD}/${PKG_ADDON_ID}-${ADDONVER}.${ADDON_SUFFIX} ${ADDON_INSTALL_DIR}
+ if [ -f ${ADDON_BUILD}/${PKG_ADDON_ID}/changelog.txt ]; then
+   cp ${ADDON_BUILD}/${PKG_ADDON_ID}/changelog.txt ${ADDON_INSTALL_DIR}/changelog-${ADDONVER}.txt
+ fi

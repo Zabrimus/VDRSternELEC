@@ -1,0 +1,60 @@
+name: precache sources
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "targets to cache"
+        default: all
+        required: true
+        type: choice
+        options:
+          - all
+          - CoreELEC-20
+          - CoreELEC-21
+          - CoreELEC-22
+          - LibreELEC-12
+          - LibreELEC-13
+
+jobs:
+  coreelec-20:
+    name: CoreELEC-20
+    if:  ( github.event.inputs.target == 'CoreELEC-20' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: CoreELEC-20
+    secrets: inherit
+
+  coreelec-21:
+    name: CoreELEC-21
+    if:  ( github.event.inputs.target == 'CoreELEC-21' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: CoreELEC-21
+    secrets: inherit
+
+  coreelec-22:
+    name: CoreELEC-22
+    if:  ( github.event.inputs.target == 'CoreELEC-22' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: CoreELEC-22
+    secrets: inherit
+
+  libreelec-12:
+    name: LibreELEC-12
+    if:  ( github.event.inputs.target == 'LibreELEC-12' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: LibreELEC-12
+    secrets: inherit
+
+  libreelec-13:
+    name: LibreELEC-13
+    if:  ( github.event.inputs.target == 'LibreELEC-13' || github.event.inputs.target == 'all' || github.event.inputs.target == '' )
+    uses: ./.github/workflows/download-sources.yml
+    with:
+      config: LibreELEC-13
+    secrets: inherit
+

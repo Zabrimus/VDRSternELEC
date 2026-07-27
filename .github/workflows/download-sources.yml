@@ -1,0 +1,106 @@
+name: download sources
+
+on:
+  workflow_call:
+    inputs:
+      config:
+        description: "CoreELEC or LibreELEC.tv"
+        default: CoreELEC-21
+        required: true
+        type: string
+
+jobs:
+  update:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download sources
+        id: download
+        run: |
+          sudo apt update
+          sudo apt -y install parallel
+          sudo apt clean
+          
+          git submodule update --init -- CoreELEC
+          git submodule update --init -- LibreELEC.tv
+          
+          if [[ "${{ inputs.config }}" == "CoreELEC-20" ]]; then
+              echo "CACHE_NAME=cache-coreelec-20-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=CoreELEC/sources" >> "$GITHUB_OUTPUT"
+          
+              ( cd CoreELEC && git checkout coreelec-20 )
+              ./build.sh -config CoreELEC-20-ng -patchonly
+          fi
+
+          if [[ "${{ inputs.config }}" == "CoreELEC-21" ]]; then
+              echo "CACHE_NAME=cache-coreelec-21-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=CoreELEC/sources" >> "$GITHUB_OUTPUT"
+          
+              ( cd CoreELEC && git checkout coreelec-21 )
+              ./build.sh -config CoreELEC-21-ng -patchonly
+          fi
+
+          if [[ "${{ inputs.config }}" == "CoreELEC-22" ]]; then
+              echo "CACHE_NAME=cache-coreelec-22-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=CoreELEC/sources" >> "$GITHUB_OUTPUT"
+          
+              ( cd CoreELEC && git checkout coreelec-22 )
+              ./build.sh -config CoreELEC-22-no -patchonly
+          fi
+
+          if [[ "${{ inputs.config }}" == "LibreELEC-12" ]]; then
+              echo "CACHE_NAME=cache-libreelec-12-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"
+          
+              ( cd LibreELEC.tv && git checkout libreelec-12.0 )
+              ./build.sh -config LibreELEC-12-aarch64-AMLGX -patchonly          
+          fi
+
+          if [[ "${{ inputs.config }}" == "LibreELEC-13" ]]; then
+              echo "CACHE_NAME=cache-libreelec-13-sources" >> "$GITHUB_OUTPUT"
+              echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"
+          
+              ( cd LibreELEC.tv && git checkout master )
+              ./build.sh -config LibreELEC-13-aarch64-AMLGX -patchonly
+          fi
+          
+          # use download-tool from CoreELEC, because it's much faster for our purposes
+          cp CoreELEC/tools/download-tool LibreELEC.tv/tools/download-tool
+
+          for i in $(ls config/distro/${{ inputs.config }}*); do
+              mproject=$(grep "^PROJECT" "${i}" | awk -F= '{ print $2 }')
+              mdevice=$(grep "^DEVICE" "${i}" | awk -F= '{ print $2 }')
+              march=$(grep "^ARCH" "${i}" | awk -F= '{ print $2 }')
+  
+              if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
+                (cd CoreELEC && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+              else
+                (cd LibreELEC.tv && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+              fi
+          done
+
+      # [a-h0-9_]*
+      # [i-z]*
+      - name: upload sources
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.download.outputs.CACHE_NAME }}-1
+          path: ${{ steps.download.outputs.CACHE_PATH }}/[a-h0-9_]*
+          compression-level: 0
+          retention-days: 61
+          overwrite: true
+          if-no-files-found: ignore
+
+      - name: upload sources2
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.download.outputs.CACHE_NAME }}-2
+          path: ${{ steps.download.outputs.CACHE_PATH }}/[i-z]*
+          compression-level: 0
+          retention-days: 61
+          overwrite: true
+          if-no-files-found: ignore

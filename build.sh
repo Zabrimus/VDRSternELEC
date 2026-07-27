@@ -33,6 +33,7 @@ Options:
 -release <server>  : Create release for update, accessible at <server>
 -releaseonly       : Build only the release tar and not all images
 -cef               : Include cef binaries into release, otherwise deploy it as an external package
+-cebootlabel       : Change CoreELEC bootlabel to value of "-config"
 -verbose           : Enable verbose outputs while building LE/CE packages
 -help              : Show this help
 EOF
@@ -120,18 +121,26 @@ apply_patches() {
     # Apply patches and sed scripts in ./patches
     for i in `find ../patches -maxdepth 1 -name '*.patch' 2>/dev/null` \
              `find ../patches/${DISTRO} -maxdepth 1 -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/${PATCHDIR} -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.patch' 2>/dev/null`; do
+             `find ../patches/${DISTRO}/projects/${PROJECT} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.patch' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.patch' 2>/dev/null`; do
         echo "Apply patch $i"
         patch -p1 < $i
     done
 
     for i in `find ../patches -maxdepth 1 -name '*.sh' 2>/dev/null` \
              `find ../patches/${DISTRO} -maxdepth 1 -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/patches -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/${PATCHDIR} -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variant/${VARIANT}/patches -name '*.sh' 2>/dev/null`; do
+             `find ../patches/${DISTRO}/projects/${PROJECT} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.sh' 2>/dev/null` \
+             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.sh' 2>/dev/null`; do
         echo "Apply script $i"
         bash $i
     done
@@ -141,17 +150,27 @@ apply_patches() {
 
     # Copy package patches to LE/CE directory structure
     cd $ROOTDIR
-    for i in `find package_patches/${DISTRO} -type f 2>/dev/null`; do
-        if [ ! -d $(echo $i | sed -e s/^"package_patches\/"// -e s/$(basename $i)$//) ]; then
-            mkdir -p $(echo $i | sed -e s/^"package_patches\/"// -e s/$(basename $i)$//)
-            echo "Create directory $(echo $i | sed -e s/^"package_patches\/"// -e s/$(basename $i)$//)"
+    for i in $(find package_patches/${DISTRO} -type f 2>/dev/null) \
+             $(find package_patches/${DISTRO}.${PATCHDIR} -type f 2>/dev/null); do
+
+        PDIR=${i//$DISTRO.$PATCHDIR/$DISTRO}
+        if [ ! -d $(echo $PDIR | sed -e s/^"package_patches\/"// -e s/$(basename $PDIR)$//) ]; then
+            mkdir -p $(echo $PDIR | sed -e s/^"package_patches\/"// -e s/$(basename $PDIR)$//)
+            echo "Create directory $(echo $PDIR | sed -e s/^"package_patches\/"// -e s/$(basename $PDIR)$//)"
         fi
-        if cp -r $i $(echo $i | sed -e s/^"package_patches\/"//); then
-            echo "Copy $(basename $i) to $(echo $i | sed -e s/^"package_patches\/"//)"
+        if cp -r $i $(echo $PDIR | sed -e s/^"package_patches\/"//); then
+            echo "Copy $(basename $i) to $(echo $PDIR | sed -e s/^"package_patches\/"//)"
         else
-            echo "ERROR copying $(basename $i) to $(echo $i | sed -e s/^"package_patches\/"//)"
+            echo "ERROR copying $(basename $i) to $(echo $PDIR | sed -e s/^"package_patches\/"//)"
         fi
     done
+
+    if [ "$DISTRO" = "CoreELEC" ] && [ "$CEBOOTLABEL" = "true" ]; then
+        for i in $(find CoreELEC/projects/Amlogic-ce/devices -name "*_boot.ini"); do
+            echo "sed -i -e \"s/setenv bootlabel \"CoreELEC\"/setenv bootlabel \"$CONFIG\"/\" \"$i\""
+            sed -i -e "s/setenv bootlabel \"CoreELEC\"/setenv bootlabel \"$CONFIG\"/" $i
+        done
+    fi
 }
 
 prepare_sources() {
@@ -183,6 +202,10 @@ build_addons() {
     TMP=$(echo $i | cut -d "=" -f 1)
     if [ $(grep $TMP$ ../config/addons.list) ]; then
 
+      # save DISTRO before starting the build (name clash, LE/CE uses also DISTRO, but the problem exists currently only with Github Workflows)
+      OLD_DISTRO=$DISTRO
+      unset DISTRO
+
       echo "Start building addon ${!TMP} ..."
 
       PROJECT="$PROJECT" \
@@ -196,6 +219,9 @@ build_addons() {
         ARCH="$ARCH" \
         BUILD_SUFFIX="$BUILD_SUFFIX" \
         scripts/install_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
+
+      DISTRO=$OLD_DISTRO
+      unset OLD_DISTRO
     fi
   done
 }
@@ -212,11 +238,18 @@ build() {
     fi
     echo "${RELEASE_STRING}"
 
+    # save DISTRO before starting the build (name clash, LE/CE uses also DISTRO, but the problem exists currently only with Github Workflows)
+    OLD_DISTRO=$DISTRO
+    unset DISTRO
+
     if [ "$RELEASE_ONLY" = "true" ]; then
         make release
     else
         make image
     fi
+
+    DISTRO=$OLD_DISTRO
+    unset OLD_DISTRO
   fi
 }
 
@@ -244,6 +277,8 @@ set_env() {
   export BUILD_SUFFIX="$BUILD_SUFFIX"
   export VDR_OUTPUTDEVICE="$VDR_OUTPUTDEVICE"
   export VDR_INPUTDEVICE="$VDR_INPUTDEVICE"
+  export STERN_RELEASE="$STERN_RELEASE"
+  export STERN_ADDON="$STERN_ADDON"
   if [ "$DORELEASE" = "true" ]; then
     echo "   BUILD_PERIODIC=nightly"
     export BUILD_PERIODIC="nightly"
@@ -306,6 +341,7 @@ while [[ "$#" -gt 0 ]]; do
         -release) shift; RELEASE_SERVER=$1; DORELEASE=true ;;
         -releaseonly) RELEASE_ONLY=true ;;
         -cef) CEF_BINARIES=true ;;
+        -cebootlabel) CEBOOTLABEL=true ;;
         -verbose) VERBOSEBUILD=true ;;
         -help) usage ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
@@ -345,6 +381,14 @@ prepare_sources
 set_env
 
 if [ ! "${PATCH_ONLY}" = "true" ]; then
+    OLD_DISTRO=$DISTRO
+    unset DISTRO
+    if [ "${AUTOREMOVE}" = "yes" ]; then
+      ../prepare-autoremove
+    fi
+    DISTRO=$OLD_DISTRO
+    unset OLD_DISTRO
+
     build_addons
 
     if [ ! "${ADDON_ONLY}" = "true" ]; then

@@ -1,0 +1,13 @@
+diff --git a/packages/audio/flac/package.mk b/packages/audio/flac/package.mk
+index 6f5e7d0c07..316284208f 100644
+--- a/packages/audio/flac/package.mk
++++ b/packages/audio/flac/package.mk
+@@ -16,7 +16,7 @@ PKG_BUILD_FLAGS="+pic"
+ 
+ # package specific configure options
+ PKG_CONFIGURE_OPTS_TARGET="--enable-static \
+-                           --disable-shared \
++                           --enable-shared \
+                            --disable-rpath \
+                            --disable-altivec \
+                            --disable-doxygen-docs \

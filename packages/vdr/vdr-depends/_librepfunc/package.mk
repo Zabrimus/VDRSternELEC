@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_librepfunc"
-PKG_VERSION="1.9.0"
-PKG_SHA256="2eb8a4d9c54e8383d96865448a5090875c0168830964f39014b0287a4e2657d0"
+PKG_VERSION="1.11.2"
+PKG_SHA256="b4c7f1c81a5c799a892c458e0d3ef61b7c23c7ed5e41933b7da4b5e29bca8dc6"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/wirbel-at-vdr-portal/librepfunc"
 PKG_URL="https://github.com/wirbel-at-vdr-portal/librepfunc/archive/${PKG_VERSION}.zip"

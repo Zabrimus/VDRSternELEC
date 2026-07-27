@@ -1,0 +1,44 @@
+name: Update Packages
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  update:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout CoreELEC/LibreELEC
+        run: |            
+          git submodule update --init -- CoreELEC
+          git submodule update --init -- LibreELEC.tv
+
+      - name: Update packages
+        run: |
+          ./update.sh -p > commit.body.full
+          ./update.sh -s _cefbrowser >> commit.body.full
+          ./update.sh -s _remotetranscode >> commit.body.full
+          ./update.sh -s _vtuner-ng >> commit.body.full
+          cat commit.body.full | grep -v "no update available" | grep -v -i "skipped" | grep -v "Try update" | grep -v "checking" > commit.body
+          
+          CM=`cat commit.body.full | grep "replacing PKG_VERSION and PKG_SHA256" | awk '{ print $7; }' | xargs`        
+          echo "MESSAGE=${CM}" >> "$GITHUB_ENV"
+          
+          rm commit.body.full
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: Update packages ${{ env.MESSAGE }}
+          branch: bot-update-packages
+          delete-branch: true
+          title: '[Bot] Update packages'
+          body-path: commit.body
+          labels: |
+            automated pull request
+          draft: false

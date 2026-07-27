@@ -1,25 +1,52 @@
 diff --git a/meson.build b/meson.build
-index c7af562..8ac2339 100644
+index 9da2047..6fdbf26 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -4,6 +4,7 @@ project('remotetranscode', 'cpp', 'c',
-   meson_version: '>=0.56.2')
+@@ -14,22 +14,7 @@ cpp = meson.get_compiler('cpp')
+ openssl_dep = dependency('openssl')
  
- add_global_arguments(language : 'cpp')
-+install_prefix = get_option('prefix')
- 
- cmake = import('cmake')
- cpp = meson.get_compiler('cpp')
-@@ -29,10 +30,10 @@ mini_dep = mini_proj.get_variable('mini_dep')
- 
- 
- exe = executable('remotrans', 'main.cpp', 'logger.cpp', 'ffmpeghandler.cpp', 'browserclient.cpp', 'transcodeconfig.cpp', 'vdrclient.cpp',
--                 install : false,
-+                 install : true,
-                  dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep])
+ # thrift
+-thrift_opts = cmake.subproject_options()
+-thrift_opts.add_cmake_defines({'WITH_AS3': 'OFF',
+-                               'WITH_QT5': 'OFF',
+-                               'BUILD_JAVA': 'OFF',
+-                               'BUILD_JAVASCRIPT': 'OFF',
+-                               'BUILD_PYTHON': 'OFF',
+-                               'BUILD_TESTING': 'OFF',
+-                               'WITH_C_GLIB': 'OFF',
+-                               'WITH_OPENSSL': 'OFF',
+-                               'BUILD_SHARED_LIBS': 'OFF',
+-                               'BUILD_COMPILER': 'OFF',
+-                               'CMAKE_INSTALL_PREFIX': '.',
+-                               'CMAKE_POSITION_INDEPENDENT_CODE': 'ON' })
+-
+-thrift_proj = cmake.subproject('thrift', options: thrift_opts)
+-thrift_dep = thrift_proj.get_variable('thrift_dep')
++thrift_dep = dependency('thrift')
  
  #
- # install static content
+ # spdlog
+@@ -71,22 +56,19 @@ remotrans = executable('remotrans', 'main.cpp', 'logger.cpp', 'streamhandler.cpp
+                         include_directories : incdir,
+                         cpp_args : trans_compile_args,
+                         install : true,
+-                        install_dir : meson.current_build_dir() + '/Release',
+                         dependencies: [mini_dep, spdlog_dep, tiny_process_library_dep, openssl_dep, thrift_dep])
+ 
+ r_dash2ts = executable('r_dash2ts', 'r_dash2ts.cpp', 'logger.cpp',
+                        cpp_args : trans_compile_args,
+                        install : true,
+-                       install_dir : meson.current_build_dir() + '/Release',
+                        dependencies: [spdlog_dep, dash2ts_dep])
+ 
+ r_dash2tsd = executable('r_dash2ts_debug', 'r_dash2ts_debug.cpp', 'logger.cpp',
+                        cpp_args : trans_compile_args,
+                        install : true,
+-                       install_dir : meson.current_build_dir() + '/Release',
+                        dependencies: [spdlog_dep, dash2ts_dep])
+ 
  #
--install_subdir('static-content/movie', install_dir : meson.current_build_dir())
+ # install
+ #
+-install_subdir('static-content/movie', install_dir : meson.current_build_dir() + '/Release')
 +install_subdir('static-content/movie', install_dir : '')

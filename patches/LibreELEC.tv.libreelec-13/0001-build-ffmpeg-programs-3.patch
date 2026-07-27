@@ -1,0 +1,20 @@
+From 4080828fb7cd1fee5ffa75a17fbfe7b8278fbd2f Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Wed, 26 Jul 2023 11:05:54 +0200
+Subject: [PATCH] build ffmpeg programs
+
+---
+
+diff --git a/packages/audio/libvorbis/package.mk b/packages/audio/libvorbis/package.mk
+index 2b72481931..72d6a15f67 100644
+--- a/packages/audio/libvorbis/package.mk
++++ b/packages/audio/libvorbis/package.mk
+@@ -14,7 +14,7 @@ PKG_TOOLCHAIN="autotools"
+ PKG_BUILD_FLAGS="+pic"
+
+ PKG_CONFIGURE_OPTS_TARGET="--enable-static \
+-                           --disable-shared \
++                           --enable-shared \
+                            --with-ogg=${SYSROOT_PREFIX}/usr \
+                            --disable-docs \
+                            --disable-examples \

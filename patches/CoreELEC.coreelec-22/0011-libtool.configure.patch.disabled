@@ -1,0 +1,13 @@
+diff --git a/packages/devel/libtool/package.mk b/packages/devel/libtool/package.mk
+index 47d6d4a09d..b5f6463d62 100644
+--- a/packages/devel/libtool/package.mk
++++ b/packages/devel/libtool/package.mk
+@@ -11,7 +11,7 @@ PKG_URL="https://ftpmirror.gnu.org/libtool/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+ PKG_DEPENDS_HOST="ccache:host autoconf:host automake:host intltool:host"
+ PKG_DEPENDS_TARGET="toolchain"
+ PKG_LONGDESC="A generic library support script."
+-PKG_TOOLCHAIN="autotools"
++PKG_TOOLCHAIN="configure"
+ 
+ PKG_CONFIGURE_OPTS_HOST="--enable-static --disable-shared"
+ 

@@ -1,21 +1,23 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-streamdev"
-PKG_VERSION="da74779591827ad7e10493b0eade65a11c525171"
-PKG_SHA256="1479c64016714dfe360934359c6d22c133f30d56cd6b8792e0c861bfd5aaec23"
+PKG_VERSION="366a0ce9a8defb50f048983b4ff6c4da22fb19d0"
+PKG_SHA256="24041ad3cb8e83de1c27938984dafd9462359121041f13437c7bf67892c1a498"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-streamdev"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-streamdev/archive/${PKG_VERSION}.tar.gz"
 PKG_BRANCH="master"
 PKG_DEPENDS_TARGET="toolchain _vdr openssl vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
+PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_LONGDESC="This PlugIn is a VDR implementation of Video Transfer and a basic HTTP Streaming Protocol."
 PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 }
 
 post_makeinstall_target() {

@@ -1,0 +1,14 @@
+diff --git a/packages/lang/llvm/package.mk b/packages/lang/llvm/package.mk
+index f3ec40271d..2a36c16e6d 100644
+--- a/packages/lang/llvm/package.mk
++++ b/packages/lang/llvm/package.mk
+@@ -95,7 +96,8 @@ pre_configure_host() {
+                        -DLLVM_NATIVE_BUILD=${PKG_BUILD}/.${HOST_NAME}/native \
+                        -DLLVM_ENABLE_PROJECTS='clang' \
+                        -DCLANG_LINK_CLANG_DYLIB=ON \
+-                       -DLLVM_TARGETS_TO_BUILD=${LLVM_BUILD_TARGETS}"
++                       -DLLVM_TARGETS_TO_BUILD=${LLVM_BUILD_TARGETS} \
++                       -DCMAKE_ASM_COMPILER=${CC}"
+ }
+ 
+ post_make_host() {

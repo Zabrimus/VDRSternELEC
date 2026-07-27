@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_libxmlplusplus"
-PKG_VERSION="5.0.1"
-PKG_SHA256="15c38307a964fa6199f4da6683a599eb7e63cc89198545b36349b87cf9aa0098"
+PKG_VERSION="5.2.0"
+PKG_SHA256="e41b8eae55210511585ae638615f00db7f982c0edea94699865f582daf03b44f"
 PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/libxmlplusplus/libxmlplusplus"
 PKG_URL="https://github.com/libxmlplusplus/libxmlplusplus/releases/download/${PKG_VERSION}/libxml++-${PKG_VERSION}.tar.xz"

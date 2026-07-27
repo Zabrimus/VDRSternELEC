@@ -1,0 +1,82 @@
+diff -ru8bBwd a/codec.c b/codec.c
+--- a/codec.c	2025-11-24 16:55:41.000000000 +0100
++++ b/codec.c	2025-11-28 15:53:54.897145188 +0100
+@@ -366,17 +366,17 @@
+ 	}
+ 	pthread_mutex_unlock(&CodecLockMutex);
+ 
+ 	if (decoder->Frame->flags == AV_FRAME_FLAG_CORRUPT)
+ 		fprintf(stderr, "CodecVideoReceiveFrame: AV_FRAME_FLAG_CORRUPT\n");
+ 
+ 	if (!ret) {
+ 		if (no_deint) {
+-			decoder->Frame->flags &= ~AV_FRAME_FLAG_INTERLACED;
++			decoder->Frame->interlaced_frame = 0;
+ #ifdef STILL_DEBUG
+ 			fprintf(stderr, "CodecVideoReceiveFrame: interlaced_frame = 0\n");
+ #endif
+ 		}
+ 		VideoRenderFrame(decoder->Render, decoder->VideoCtx, decoder->Frame);
+ 	} else {
+ 		av_frame_free(&decoder->Frame);
+ #ifdef DEBUG
+diff -ru8bBwd a/video_drm.c b/video_drm.c
+--- a/video_drm.c	2025-11-24 16:55:41.000000000 +0100
++++ b/video_drm.c	2025-11-28 15:54:33.083517389 +0100
+@@ -1335,17 +1335,17 @@
+ 		while (!atomic_read(&render->FramesDeintFilled) && !render->Closing) {
+ 			usleep(10000);
+ 		}
+ getinframe:
+ 		if (atomic_read(&render->FramesDeintFilled)) {
+ 			frame = render->FramesDeintRb[render->FramesDeintRead];
+ 			render->FramesDeintRead = (render->FramesDeintRead + 1) % VIDEO_SURFACES_MAX;
+ 			atomic_dec(&render->FramesDeintFilled);
+-			if (frame->flags & AV_FRAME_FLAG_INTERLACED) {
++			if (frame->interlaced_frame) {
+ 				render->Filter_Frames += 2;
+ 			} else {
+ 				render->Filter_Frames++;
+ 			}
+ 		}
+ 		if (render->Closing) {
+ 			if (frame) {
+ 				av_frame_free(&frame);
+@@ -1432,17 +1432,17 @@
+ 	const char *filter_descr = NULL;
+ 	const AVFilter *buffersrc  = avfilter_get_by_name("buffer");
+ 	const AVFilter *buffersink = avfilter_get_by_name("buffersink");
+ 	AVFilterInOut *outputs = avfilter_inout_alloc();
+ 	AVFilterInOut *inputs  = avfilter_inout_alloc();
+ 	render->filter_graph = avfilter_graph_alloc();
+ 	render->Filter_Bug = 0;
+ 
+-	if (frame->flags & AV_FRAME_FLAG_INTERLACED) {
++	if (frame->interlaced_frame) {
+ 		if (frame->format == AV_PIX_FMT_DRM_PRIME)
+ 			filter_descr = "deinterlace_v4l2m2m";
+ 		else if (frame->format == AV_PIX_FMT_YUV420P) {
+ 			filter_descr = "bwdif=1:-1:0";
+ 			render->Filter_Bug = 1;
+ 		}
+ 	} else if (frame->format == AV_PIX_FMT_YUV420P)
+ 		filter_descr = "scale";
+@@ -1548,17 +1548,17 @@
+ 		fprintf(stderr, "VideoRenderFrame: error_flag or FRAME_FLAG_CORRUPT\n");
+ 	}
+ fillframe:
+ 	if (render->Closing) {
+ 		av_frame_free(&frame);
+ 		return;
+ 	}
+ 
+-	if (frame->format == AV_PIX_FMT_YUV420P || (frame->flags & AV_FRAME_FLAG_INTERLACED &&
++	if (frame->format == AV_PIX_FMT_YUV420P || (frame->interlaced_frame &&
+ 		frame->format == AV_PIX_FMT_DRM_PRIME && !render->NoHwDeint)) {
+ 
+ 		if (!FilterThread) {
+ 			if (VideoFilterInit(render, video_ctx, frame)) {
+ 				av_frame_free(&frame);
+ 				return;
+ 			} else {
+ 				pthread_create(&FilterThread, NULL, FilterHandlerThread, render);

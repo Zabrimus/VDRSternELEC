@@ -13,3 +13,7 @@ ARCH=arm
 # VDR settings
 VDR_OUTPUTDEVICE=softhdodroid
 VDR_INPUTDEVICE=satip
+
+# Updates
+STERN_RELEASE=https://zabrimus.github.io/VDRSternELEC/updates/release.CoreELEC-20-ng.json
+STERN_ADDON=https://zabrimus.github.io/VDRSternELEC/updates/addons.CoreELEC-20-ng.json

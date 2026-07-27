@@ -1,0 +1,34 @@
+#/bin/sh
+
+SVDRP=/usr/local/bin/svdrpsend
+TMP=/storage/.config/vdropt/tmp
+
+COUNT="$($SVDRP LSTT |grep ^250 |cut -c 7- |egrep "^[1][1]|^ [1][1]|^[9]|^ [9]" |wc -l)"
+
+echo "Es laufen noch $COUNT Aufnahmen"
+  $SVDRP MESG "Pruefen auf laufende Aufnahmen"
+sleep 2
+
+if [ $COUNT -gt 0 ] ; then
+  $SVDRP MESG "Stop erst nach der Aufnahme"
+  echo "RTC" >/$TMP/rtcwakeup
+  exit
+fi
+
+# ret = 1 means do not stop
+/storage/.config/vdropt/wakeupacpi stop
+RET=$?
+
+#echo "Return >$RET<"
+
+if [ "$RET" == "1" ]; then
+  $SVDRP MESG "Stop erst nach der Aufnahme"
+  echo "RTC" >/$TMP/rtcwakeup
+  exit
+fi
+
+# stop now
+shutdown -h now
+
+#sudo systemctl suspend
+

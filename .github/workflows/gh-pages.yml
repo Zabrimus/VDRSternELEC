@@ -1,0 +1,68 @@
+name: Deploy release pages with GitHub Pages
+
+on:
+  release:
+    types: [published]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build page
+        shell: bash
+        run: |       
+          echo "Starte build..."
+          
+          cd gh-pages
+          mkdir -p updates
+          
+          ./create-pages.sh
+          ./create-update-json.sh
+          
+          mkdir -p output/updates
+          cp all.html output/index.html
+          cp releases.html output
+          cp addons.html output
+          cp images.html output
+          cp all-updates.html output
+          cp -r updates/* output/updates
+          
+          echo "Build beendet..."
+          
+          pwd
+          ls -la 
+          ls -la output
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: gh-pages/output
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

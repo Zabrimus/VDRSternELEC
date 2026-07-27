@@ -1,17 +1,12 @@
-From e4abf7f1ef42c9dd6644a6d8200f10f11085502c Mon Sep 17 00:00:00 2001
-From: Andreas Baierl <ichgeh@imkreisrum.de>
-Date: Mon, 8 May 2023 10:37:24 +0200
-Subject: [PATCH] Makefile
-
----
- Makefile | 144 +++++++++++++++++++++----------------------------------
- 1 file changed, 55 insertions(+), 89 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index f6f4a6d..6f75ccc 100644
---- a/Makefile
-+++ b/Makefile
-@@ -23,7 +23,7 @@
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2025-01-03 07:39:58.000000000 +0100
++++ b/Makefile	2025-10-02 00:03:47.932779242 +0200
+@@ -18,54 +18,57 @@
+ # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ # Or, point your browser to http://www.gnu.org/copyleft/gpl.html
+ 
+ # You can change the compile options here or create a Make.config
+ # in the VDR directory an set them there.
  
  ### uncomment one of these lines, if you don't want one of the plugins
  #WITHOUT_MP3=1
@@ -20,7 +15,14 @@ index f6f4a6d..6f75ccc 100644
  
  ### uncomment the following line, if you don't have libsndfile installed
  #WITHOUT_LIBSNDFILE=1
-@@ -38,7 +38,7 @@
+ 
+ ### uncomment the following line, if you don't have libvorbisfile installed
+ #WITHOUT_LIBVORBISFILE=1
+ 
+ ### uncomment the following line, if you want OSS sound output
+ #WITH_OSS_OUTPUT=1
+ 
+ ### uncomment the following line, if you want to include debug symbols
  #DBG=1
  
  ### The C++ compiler and options:
@@ -29,7 +31,12 @@ index f6f4a6d..6f75ccc 100644
  CXXFLAGS ?= -O2 -fPIC -Wall -Woverloaded-virtual
  
  ###############################################
-@@ -51,16 +51,19 @@ CXXFLAGS ?= -O2 -fPIC -Wall -Woverloaded-virtual
+ ###############################################
+ #
+ # no user configurable options below this point
+ #
+ ###############################################
+ ###############################################
  
  ### The directory environment:
  
@@ -39,7 +46,7 @@ index f6f4a6d..6f75ccc 100644
 +# Use package data if installed...otherwise assume we're under the VDR source directory:
 +PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
 +LIBDIR = $(call PKGCFG,libdir)
-+LIBDIR = $(call PKGCFG,locdir)
++LOCDIR = $(call PKGCFG,locdir)
 +#
 +TMPDIR ?= /tmp
 +VDRDIR ?= ../../..
@@ -53,7 +60,37 @@ index f6f4a6d..6f75ccc 100644
  
  ### Allow user defined options to overwrite defaults:
  
-@@ -96,6 +99,8 @@ endif
+ -include $(VDRDIR)/Make.config
+ -include Make.config
+ 
+ ### The version number of this plugin:
+ 
+@@ -75,32 +78,34 @@
+                      echo -n "-"; (hg identify 2>/dev/null || echo -n "Unknown") | sed -e 's/ .*//'; \
+                    elif test -r $(HGARCHIVE); then \
+                      echo -n "-"; grep "^node" $(HGARCHIVE) | awk '{ printf "%.12s",$$2 }'; \
+                    fi)
+ VERSION := $(RELEASE)$(RELSTR)
+ 
+ ### The version number of VDR (taken from VDR's "config.h"):
+ 
+-VDRVERSION := $(shell sed -ne '/define VDRVERSION/ s/^.*"\(.*\)".*$$/\1/p' $(VDRDIR)/include/vdr/config.h)
+-APIVERSION := $(shell sed -ne '/define APIVERSION/ s/^.*"\(.*\)".*$$/\1/p' $(VDRDIR)/include/vdr/config.h)
++VDRVERSION := $(shell sed -ne '/define VDRVERSION/ s/^.*"\(.*\)".*$$/\1/p' $(VDRDIR)/../../include/vdr/config.h)
++APIVERSION := $(shell sed -ne '/define APIVERSION/ s/^.*"\(.*\)".*$$/\1/p' $(VDRDIR)/../../include/vdr/config.h)
+ ifeq ($(strip $(APIVERSION)),)
+    APIVERSION = $(VDRVERSION)
+ endif
+-VDRVERSNUM := $(shell sed -ne '/define VDRVERSNUM/ s/^.[a-zA-Z ]*\([0-9]*\) .*$$/\1/p' $(VDRDIR)/include/vdr/config.h)
+-APIVERSNUM := $(shell sed -ne '/define APIVERSNUM/ s/^.[a-zA-Z ]*\([0-9]*\) .*$$/\1/p' $(VDRDIR)/include/vdr/config.h)
++VDRVERSNUM := $(shell sed -ne '/define VDRVERSNUM/ s/^.[a-zA-Z ]*\([0-9]*\) .*$$/\1/p' $(VDRDIR)/../../include/vdr/config.h)
++APIVERSNUM := $(shell sed -ne '/define APIVERSNUM/ s/^.[a-zA-Z ]*\([0-9]*\) .*$$/\1/p' $(VDRDIR)/../../include/vdr/config.h)
+ ifeq ($(strip $(APIVERSNUM)),)
+    APIVERSNUM = $(VDRVERSNUM)
+ endif
+ 
+ ### The name of the distribution archive:
+ 
  ARCHIVE = $(PLUGIN)-$(RELEASE)
  PACKAGE = vdr-$(ARCHIVE)
  
@@ -62,7 +99,17 @@ index f6f4a6d..6f75ccc 100644
  ### Includes and Defines (add further entries here):
  
  INCLUDES += -I$(VDRDIR)/include
-@@ -126,123 +131,84 @@ ifdef BROKEN_PCM
+ DEFINES  += -D_GNU_SOURCE -DAPIVERSNUM=$(APIVERSNUM)
+ 
+ ### The object files (add further files here):
+ 
+ COM_OBJS = data.o menu.o version.o
+@@ -121,128 +126,89 @@
+ endif
+ ifdef WITH_OSS_OUTPUT
+   DEFINES += -DWITH_OSS
+ endif
+ ifdef BROKEN_PCM
    DEFINES += -DBROKEN_PCM
  endif
  
@@ -75,13 +122,11 @@ index f6f4a6d..6f75ccc 100644
  endif
  
 -ifneq ($(shell if test $(APIVERSNUM) -ge 010703; then echo "*"; fi),)
--  DEFINES += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
+   DEFINES += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
 -endif
-+DEFINES += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
  
 -### Internationalization (I18N):
-+### The main target:
- 
+-
 -PODIR     = po
 -I18Npot   = $(PODIR)/mp3-mplayer.pot
 -I18Npots  := $(notdir $(foreach file, $(wildcard $(PODIR)/*.po), $(basename $(file))))
@@ -95,16 +140,17 @@ index f6f4a6d..6f75ccc 100644
 -LOCALEDIR = $(VDRDIR)/locale
 -I18Nmsgs  := $(addprefix $(LOCALEDIR)/,$(addsuffix /LC_MESSAGES/$(I18Nmo),$(I18Npots)))
 -I18Nmsgs2 := $(addprefix $(LOCALEDIR)/,$(addsuffix /LC_MESSAGES/$(I18Nmo2),$(I18Npots)))
-+all: $(SOFILE) i18n
++### The main target:
  
 -HASLOCALE = $(shell grep -l 'I18N_DEFAULT_LOCALE' $(VDRDIR)/include/vdr/i18n.h)
 -ifeq ($(strip $(HASLOCALE)),)
 -  COM_OBJS += i18n.o
 -endif
-+### Implicit rules:
++all: $(SOFILE) i18n
  
 -### Targets:
--
++### Implicit rules:
+ 
 -ifndef WITHOUT_MP3
 -  ALL += libvdr-$(PLUGIN).so
 -  ifneq ($(strip $(HASLOCALE)),)
@@ -230,6 +276,3 @@ index f6f4a6d..6f75ccc 100644
 +	@-rm -f $(OBJS) $(DEPFILE) *.so *.tgz core* *~
  
  FORCE:
--- 
-2.30.2
-

@@ -7,15 +7,17 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://www.gen2vdr.de/wirbel/easyvdr/index2.html"
 PKG_URL="https://www.gen2vdr.de/wirbel/easyvdr/vdr-easyvdr-${PKG_VERSION}.tgz"
 PKG_SOURCE_DIR="easyvdr-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain _vdr Python3 vdr-helper"
+PKG_DEPENDS_TARGET="toolchain _vdr Python3 vdr-helper _mariadb-connector-c"
 PKG_DEPENDS_CONFIG="_vdr"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr Python3 _mariadb-connector-c vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
+PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_LONGDESC="This plugin is used to retrieve EPG data into the VDR. The EPG data was loaded from a mariadb database."
 PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 }
 
 post_makeinstall_target() {

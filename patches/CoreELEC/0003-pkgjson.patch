@@ -1,0 +1,13 @@
+diff --git a/scripts/pkgjson b/scripts/pkgjson
+index a9137a3b2f..edc22c699b 100755
+--- a/scripts/pkgjson
++++ b/scripts/pkgjson
+@@ -30,6 +30,8 @@ json_worker() {
+       hierarchy="project"
+     elif [[ "${pkgpath}" =~ ^${ROOT}/projects/${PROJECT}/devices/${DEVICE}/* ]]; then
+       hierarchy="device"
++    else
++      hierarchy="global"
+     fi
+ 
+     cat <<EOF

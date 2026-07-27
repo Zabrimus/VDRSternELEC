@@ -1,15 +1,16 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-skinelchihd"
-PKG_VERSION="50457573545fe5b1e9f937b756791f34492565e7"
-PKG_SHA256="72aa9a3215c80dc5d31bfffad99f33555459ef720e47673492be57a8f1228b00"
+PKG_VERSION="d5a2bc9fd587d6ec878f3c2093bfb55c58a9cc07"
+PKG_SHA256="8a68e4d9a7baf8a3636a66eefd2a12bd4b73d8d75408fc3a121b666a57ffaf47"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/FireFlyVDR/vdr-plugin-skinelchihd"
 PKG_URL="https://github.com/FireFlyVDR/vdr-plugin-skinelchihd/archive/${PKG_VERSION}.zip"
 PKG_SOURCE_DIR="vdr-plugin-skinelchihd-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _graphicsmagick vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr _graphicsmagick"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
+PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_LONGDESC="This plugin parses the Extended EPG data which is send by providers on their portal channels."
 PKG_MAKE_OPTS_TARGET="IMAGELIB=graphicsmagick"
 PKG_BUILD_FLAGS="+speed"
@@ -17,6 +18,7 @@ PKG_BUILD_FLAGS="+speed"
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 }
 
 post_makeinstall_target() {

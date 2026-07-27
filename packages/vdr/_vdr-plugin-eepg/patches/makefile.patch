@@ -1,0 +1,22 @@
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2024-12-19 15:56:27.000000000 +0100
++++ b/Makefile	2025-09-03 05:58:44.009986054 +0200
+@@ -39,17 +39,17 @@
+                      echo -n "-git-"; (git rev-parse --short HEAD 2>/dev/null || echo -n "Unknown") | sed -e 's/ .*//'; \
+                    fi)
+ VERSION := $(RELEASE)$(SUBREL)
+ #VERSION = $(shell grep 'static const char \*VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+ 
+ ### The directory environment:
+ 
+ # Use package data if installed...otherwise assume we're under the VDR source directory:
+-PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell PKG_CONFIG_PATH="$$PKG_CONFIG_PATH:../../.." pkg-config --variable=$(1) vdr))
++PKGCFG = $(if $(VDRDIR),$(shell pkg-config --variable=$(1) $(VDRDIR)/vdr.pc),$(shell pkg-config --variable=$(1) vdr || pkg-config --variable=$(1) ../../../vdr.pc))
+ LIBDIR = $(call PKGCFG,libdir)
+ LOCDIR = $(call PKGCFG,locdir)
+ PLGCFG = $(call PKGCFG,plgcfg)
+ #
+ TMPDIR ?= /tmp
+ 
+ ### The compiler options:
+ 

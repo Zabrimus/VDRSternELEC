@@ -1,0 +1,102 @@
+diff -ru8bBw a/board/hardkernel/odroidn2/firmware/scp_task/pwr_ctrl.c b/board/hardkernel/odroidn2/firmware/scp_task/pwr_ctrl.c
+--- a/board/hardkernel/odroidn2/firmware/scp_task/pwr_ctrl.c	2024-02-12 10:57:57.000000000 +0100
++++ b/board/hardkernel/odroidn2/firmware/scp_task/pwr_ctrl.c	2024-06-14 20:51:58.605682812 +0200
+@@ -180,24 +180,57 @@
+ 		gpio->gpio_out_ao = -1;
+ 		gpio->irq = IRQ_GPIO1_NUM;
+ 		gpio->trig_type = GPIO_IRQ_FALLING_EDGE;
+ 		p->gpio_info_count = ++i;
+ 	}
+ }
+ extern void __switch_idle_task(void);
+ 
++#undef P_ISA_TIMER_MUX
++#undef P_ISA_TIMERA
++#undef AO_DEBUG_REG2
++#define P_ISA_TIMER_MUX                            (volatile unsigned int *)((0x3c50  << 2) + 0xffd00000)
++#define P_ISA_TIMERA                               (volatile unsigned int *)((0x3c51  << 2) + 0xffd00000)
++#define AO_DEBUG_REG2                              (0xff800000 + (0x02a << 2))
++
++void wakeup_timer_setup(void)
++{
++	/* 1ms resolution*/
++	unsigned value;
++	value = readl(P_ISA_TIMER_MUX);
++	value |= ((0x3<<0) | (0x1<<12) | (0x1<<16));
++	writel(value, P_ISA_TIMER_MUX);
++	/*1000ms generate an interrupt*/
++	writel(1000, P_ISA_TIMERA);
++}
++
++void wakeup_timer_clear(void)
++{
++	unsigned value;
++	value = readl(P_ISA_TIMER_MUX);
++	value &= ~((0x1<<12) | (0x1<<16));
++	writel(value, P_ISA_TIMER_MUX);
++}
++
+ static unsigned int detect_key(unsigned int suspend_from)
+ {
+ 	int exit_reason = 0;
++    unsigned int time_out = readl(AO_DEBUG_REG2);
+ 	unsigned *irq = (unsigned *)WAKEUP_SRC_IRQ_ADDR_BASE;
+ #ifdef CONFIG_GPIO_WAKEUP
+ 	unsigned int is_gpiokey = 0;
+ #endif
+ 
++    /* setup wakeup resources*/
++    /*auto suspend: timerA 1s resolution*/
++    if (time_out != 0) {
++        wakeup_timer_setup();
++    }
++
+ 	backup_remote_register();
+ 	init_remote();
+ #ifdef CONFIG_CEC_WAKEUP
+ 		if (hdmi_cec_func_config & 0x1) {
+ 			remote_cec_hw_reset();
+ 			cec_node_init();
+ 		}
+ #endif
+@@ -214,23 +247,36 @@
+ 			if (readl(AO_CECB_INTR_STAT) & CECB_IRQ_RX_EOM) {
+ 				if (cec_power_on_check())
+ 					exit_reason = CEC_WAKEUP;
+ 			}
+ 		}
+ 		#endif
+ 		if (irq[IRQ_AO_IR_DEC] == IRQ_AO_IR_DEC_NUM) {
+ 			irq[IRQ_AO_IR_DEC] = 0xFFFFFFFF;
+-			if (remote_detect_key())
++            if (remote_detect_key()) {
++                dbg_prints("CoreELEC IR IRQ\n");
+ 				exit_reason = REMOTE_WAKEUP;
+ 		}
++        }
+ 
+-		if (irq[IRQ_VRTC] == IRQ_VRTC_NUM) {
+-			irq[IRQ_VRTC] = 0xFFFFFFFF;
+-			exit_reason = RTC_WAKEUP;
++		// if (irq[IRQ_VRTC] == IRQ_VRTC_NUM) {
++		// 	irq[IRQ_VRTC] = 0xFFFFFFFF;
++		// 	exit_reason = RTC_WAKEUP;
++		// }
++
++        if (irq[IRQ_TIMERA] == IRQ_TIMERA_NUM) {
++            irq[IRQ_TIMERA] = 0xFFFFFFFF;
++            if (time_out != 0)
++                time_out -= 1;
++            if (time_out == 0) {
++                wakeup_timer_clear();
++                dbg_prints("CoreELEC IRQ Softtimer\n");
++                exit_reason = AUTO_WAKEUP;
++            }
+ 		}
+ 
+ 		if (enable_wol && (irq[IRQ_GPIO1] == IRQ_GPIO1_NUM)) {
+ 			irq[IRQ_GPIO1] = 0xFFFFFFFF;
+ 			if (!(readl(PREG_PAD_GPIO4_I) & (0x01 << 14))
+ 					&& (readl(PREG_PAD_GPIO4_EN_N) & (0x01 << 14)))
+ 				exit_reason = ETH_PHY_GPIO;
+ 		}

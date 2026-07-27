@@ -9,22 +9,35 @@ PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="virtual"
 PKG_LONGDESC="A DVB TV server application."
 
-PKG_DEPENDS_TARGET+=" _vdr"
+PKG_DEPENDS_TARGET+=" _config _vdr"
 
 if [ "${VDR_OUTPUTDEVICE}" = "softhdodroid" ]; then
-   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid _vdr-plugin-softhdodroid-gxl"
+   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid"
 elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ] || [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm-gles" ]; then
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm _vdr-plugin-softhddevice-drm-gles"
 fi
 
-if [ "${ARCH}" = "x86_64" ]; then
+if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && ([ "${DEVICE}" = "x11" ] || [ "${DEVICE}" = "Generic-legacy" ]); then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdcuvid"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdvaapi"
-	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice"
+
+	# compile problems with LE 13
+	if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" = "12" ]; then
+		PKG_DEPENDS_TARGET+=" _vdr-plugin-xineliboutput"
+	fi
+fi
+
+if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && [ "${DEVICE}" = "Generic" ]; then
+	# Fixme: Dependency problem
+	# PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
+
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
-	PKG_DEPENDS_TARGET+=" _vdr-plugin-xineliboutput"
+fi
+
+if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" = "13" ] && [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && [ "${DEVICE}" = "Generic" ]; then
+    PKG_DEPENDS_TARGET+=" _vdr-plugin-vaapivideo"
 fi
 
 PKG_DEPENDS_TARGET+=" _vdr-plugin-satip"
@@ -40,11 +53,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-restfulapi"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-robotv"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-streamdev"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-vnsiserver"
-if [ "${DISTRO}" = "CoreELEC" ]; then
-  PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscan-ce"
-else
-  PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscan"
-fi
+PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscan"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-wirbelscancontrol"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-osdteletext"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-zaphistory"
@@ -97,11 +106,30 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-duplicates"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-nordlichtsepg"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-extrecmenung"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-pvrinput"
-PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
+#PKG_DEPENDS_TARGET+=" _vdr-plugin-cdplayer"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
-PKG_DEPENDS_TARGET+=" _vdr-plugin-vompserver"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-usbkbd"
+
+# disabled because repository is not available
+#PKG_DEPENDS_TARGET+=" _vdr-plugin-vompserver"
+
 PKG_DEPENDS_TARGET+=" _vdr-plugin-web"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-webapp"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-epgborder"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-xmltv4vdr"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-webbridge"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-statusleds"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-cinebars"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-eventpub"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-irmp"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-statusleds2irmp"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-irmp4kbd"
+
+PKG_DEPENDS_TARGET+=" _vdr-plugin-neutrinoepg"
+
+PKG_DEPENDS_TARGET+=" dash2ts"
+PKG_DEPENDS_TARGET+=" _preloader"
+
 
 if [ "${EXTRA_EASYVDR}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-easyvdr"
@@ -131,10 +159,6 @@ fi
 
 if [ "${EXTRA_CHANNELLOGOS}" = "y" ]; then
 	PKG_DEPENDS_TARGET+=" _MP_Logos"
-fi
-
-if [ "${EXTRA_CEFBROWSER}" = "y" ]; then
-	PKG_DEPENDS_TARGET+=" _cefbrowser"
 fi
 
 if [ "${EXTRA_REMOTETRANSCODE}" = "y" ]; then

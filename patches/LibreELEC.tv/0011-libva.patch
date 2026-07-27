@@ -1,0 +1,13 @@
+diff --git a/packages/multimedia/libva/package.mk b/packages/multimedia/libva/package.mk
+index 6497f8fc87..6bd3266685 100644
+--- a/packages/multimedia/libva/package.mk
++++ b/packages/multimedia/libva/package.mk
+@@ -13,7 +13,7 @@ PKG_LONGDESC="Libva is an implementation for VA-API (VIdeo Acceleration API)."
+ 
+ if [ "${DISPLAYSERVER}" = "x11" ]; then
+   PKG_DEPENDS_TARGET="toolchain libX11 libXext libXfixes libdrm"
+-  DISPLAYSERVER_LIBVA="-Dwith_x11=yes -Dwith_glx=no -Dwith_wayland=no"
++  DISPLAYSERVER_LIBVA="-Dwith_x11=yes -Dwith_glx=yes -Dwith_wayland=no"
+ elif [ "${DISPLAYSERVER}" = "wl" ]; then
+   DISPLAYSERVER_LIBVA="-Dwith_x11=no -Dwith_glx=no -Dwith_wayland=yes"
+   PKG_DEPENDS_TARGET="toolchain libdrm wayland"

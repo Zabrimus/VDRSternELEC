@@ -1,0 +1,13 @@
+diff --git a/packages/addons/addon-depends/system-tools-depends/depends/libmtp/package.mk b/packages/addons/addon-depends/system-tools-depends/depends/libmtp/package.mk
+index 806c1d07ff..7caa76b6eb 100644
+--- a/packages/addons/addon-depends/system-tools-depends/depends/libmtp/package.mk
++++ b/packages/addons/addon-depends/system-tools-depends/depends/libmtp/package.mk
+@@ -12,7 +12,7 @@ PKG_LONGDESC="An Initiator implementation of the Media Transfer Protocol (MTP)."
+ PKG_TOOLCHAIN="autotools"
+ 
+ PKG_CONFIGURE_OPTS_TARGET="ac_cv_func_malloc_0_nonnull=yes \
+-                           --disable-shared \
++                           --enable-shared \
+                            --enable-static \
+                            --disable-mtpz"
+ 

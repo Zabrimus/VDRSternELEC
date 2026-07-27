@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-skinlcarsng"
-PKG_VERSION="0846d5b18bc15e8ebe8ba68b6897bfe66a562b54"
-PKG_SHA256="af58ac72dbe7ffc9f446c0335caa3a487f7a1ed95d4ddd47de4ccc422cee1144"
+PKG_VERSION="91bd6cb43aa02c1383bf211d8f7362982da94c11"
+PKG_SHA256="ac8149f7f3cca257d645aed9b8131e045afaf945eaf331f911a57e49d0f259ce"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/kamel5/skinlcarsng.git"
 PKG_URL="https://gitlab.com/kamel5/skinlcarsng/-/archive/${PKG_VERSION}/skinlcarsng-${PKG_VERSION}.tar.gz"
@@ -10,13 +10,15 @@ PKG_BRANCH="master"
 PKG_SOURCE_DIR="skinlcarsng-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr vdr-helper _graphicsmagick"
 PKG_DEPENDS_CONFIG="_vdr _graphicsmagick"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
+PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_LONGDESC="TODO"
 PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 }
 
 post_makeinstall_target() {

@@ -1,0 +1,26 @@
+diff --git a/picturereader.c b/picturereader.c
+index 59353b7..af2892d 100644
+--- a/picturereader.c
++++ b/picturereader.c
+@@ -238,7 +238,7 @@ std::string PictureReader::getPictName(TVMediaRequest & req)
+         Schedule = tSchedules->GetSchedule(channel);
+       }
+       const cEvent *event = NULL;
+-      if (Schedule) event=Schedule->GetEvent(req.primary_id);
++      if (Schedule) event=Schedule->GetEventById(req.primary_id);
+       ScraperGetPosterThumb getter;
+       getter.event = event;
+       getter.recording = NULL;
+diff --git a/vompclientrrproc.c b/vompclientrrproc.c
+index 940374b..ad98685 100644
+--- a/vompclientrrproc.c
++++ b/vompclientrrproc.c
+@@ -2497,7 +2497,7 @@ int VompClientRRProc::processGetEventScraperEventType()
+   {
+      const cSchedule *Schedule = tSchedules->GetSchedule(channel->GetChannelID());
+      if (Schedule) {
+-        event = Schedule->GetEvent(eventid);
++        event = Schedule->GetEventById(eventid);
+     }
+   }
+     

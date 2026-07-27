@@ -1,0 +1,28 @@
+diff -ru8bBwd a/suspendoutput.c b/suspendoutput.c
+--- a/suspendoutput.c	2016-12-31 21:26:54.000000000 +0100
++++ b/suspendoutput.c	2024-10-12 19:34:59.306568969 +0200
+@@ -315,18 +315,22 @@
+ {
+   TRACE("suspendoutput: CheckInactivityTimer");
+ 
+   if(m_bReplaying &&
+      m_bSuspendWhenPaused &&
+      (!cDummyPlayerControl::IsOpen()) ) {
+     bool Play, Forward;
+     int Speed;
+-    if(cControl::Control() &&
+-       cControl::Control()->GetReplayMode(Play, Forward, Speed) &&
++
++    cMutexLock ControlMutexLock;
++    cControl *control = cControl::Control(ControlMutexLock);
++
++    if(control &&
++       control->GetReplayMode(Play, Forward, Speed) &&
+        Play)
+       Activity();
+   }
+ 
+   m_Lock.Lock();
+   m_iSecondsSinceLastAction += 60;
+   if(m_iInactivityTimerTimeout &&
+      m_iSecondsSinceLastAction >= m_iInactivityTimerTimeout &&

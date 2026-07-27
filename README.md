@@ -5,6 +5,10 @@ The images include a full-featured CoreELEC or LibreELEC distribution, where it'
 > **Disclaimer:** Not all images are tested and there is no guarantee at all, that the VDR client on these images is working as expected. Possible reasons are missing or misconfigured VDR output devices and plugins.  
 > Therefore tests and/or pull requests are highly appreciated.
 
+## Releases
+Releases are created and made available on a regular basis.
+An overview can be found at [here](https://zabrimus.github.io/VDRSternELEC/), for example.
+
 ## Directory structure of this repository
 
 :file_folder: **CoreELEC** - CoreELEC's build directory included as git submodule  
@@ -38,7 +42,7 @@ The eaysiest way is to use a prebuilt image. These images are periodically avail
 The following description is based on Debian or Ubuntu as the host system.*
 ### Install all dependencies
 ```
-apt-get install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless
+apt-get install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless curl cpio
 ```
 ### Checkout VDR*ELEC
 ```
@@ -67,6 +71,7 @@ ARCH=arm
 VDR_OUTPUTDEVICE=softhdodroid
 VDR_INPUTDEVICE=satip
 ```
+
 **Environment variables:**
 - DISTRO: can be either ```CoreELEC``` or ```LibreELEC```
 - SHA: The commit/branch/tag from CoreELEC/LibreELEC to use (see [config/versions](config/versions))
@@ -85,8 +90,9 @@ VDR_INPUTDEVICE=satip
 - VDR_INPUTDEVICE: VDR input device, which is enabled by default, e.g. ```satip``` or ```streamdev-client```
 
 #### Addons
-It's possible to build some KODI addons and pre-install them to the image. All available addons are listed in [addons.list](config/addons.list).  
+It's possible to build some KODI addons. All available addons are listed in [addons.list](config/addons.list).  
 Building the addons with ```build.sh``` can be triggered by adding them with the ```-addon``` option and a comma separated list.
+The built addons can be found in CoreELEC/target/addons or LibreELEC/target/addons and can be installed in Kodi.
 
 *Probably not all addons can be compiled for every LibreELEC/CoreELEC version. Mainly dvb-latest and crazycat are candidates to fail, because of the frequently updated linux kernel.*
 
@@ -128,23 +134,22 @@ CoreELEC-20-ne
 CoreELEC-20-ng
 CoreELEC-21-ne
 CoreELEC-21-ng
-LibreELEC-10.0-aarch64-AMLGX
+CoreELEC-22-no
 LibreELEC-10.0-arm-AMLGX
 LibreELEC-10.0-x86_64
 LibreELEC-11-arm-AMLGX
-LibreELEC-master-aarch64
-LibreELEC-master-arm-Allwinner-A64
-LibreELEC-master-arm-Allwinner-H3
-LibreELEC-master-arm-Allwinner-H5
-LibreELEC-master-arm-Allwinner-H6
-LibreELEC-master-arm-Allwinner-R40
-LibreELEC-master-arm-AMLGX
-LibreELEC-master-arm-Rockchip-RK3288
-LibreELEC-master-arm-Rockchip-RK3328
-LibreELEC-master-arm-Rockchip-RK3399
-LibreELEC-master-arm-RPi-RPi4
-LibreELEC-master-x86_64-x11
-LibreELEC-master-x86_64-x11-qemu
+LibreELEC-{12,13}-aarch64-Allwinner-A64
+LibreELEC-{12,13}-arm-Allwinner-H3
+LibreELEC-{12,13}-aarch64-Allwinner-H5
+LibreELEC-{12,13}-aarch64-Allwinner-H6
+LibreELEC-{12,13}-arm-Allwinner-R40
+LibreELEC-{12,13}-aarch64-AMLGX
+LibreELEC-{12,13}-arm-Rockchip-RK3288
+LibreELEC-{12,13}-aarch64-Rockchip-RK3328
+LibreELEC-{12,13}-aarch64-Rockchip-RK3399
+LibreELEC-{12,13}-aarch64-RPi-RPi4
+LibreELEC-{12,13}-x86_64-x11
+LibreELEC-{12,13}-x86_64-x11-qemu
 
 Available extras:
 directfb
@@ -152,11 +157,12 @@ directfbsamples
 dynamite
 easyvdr
 permashift
-channellogos
-cefbrowser
 remotetranscode
+tsduck
 
 Available addons:
+cefbrowser
+channellogos
 crazycat
 digital-devices
 dvb-latest
@@ -166,7 +172,7 @@ network-tools
 sundtek-mediatv
 system-tools
 ```
-Example call:  ```./build.sh -config CoreELEC-19 -extra easyvdr```  
+Example call:  ```./build.sh -config CoreELEC-22-no -extra easyvdr```  
 
 If everything worked fine, the desired images can be found in either  ```CoreELEC/target```, ```LibreELEC/target``` or ```releases```.
 
@@ -178,7 +184,7 @@ Write your image file to an SD-Card like you are used to do it with [LibreELEC](
 The first boot will come up with KODI gui. Follow the dialog and choose your language and network settings. It's very helpful to enable ssh service, to be able to access the device from outside. You also want to set your time/timezone in the KODI settings now. This would also be the time, which is used in VDR afterwards.
 
 ## Install KODI addons
-Now it would be a good time to install the KODI addons of your choice. E.g. ```system-tools addon``` (if not pre-installed) can be very helpful, because it makes mc available on the device. In order to be able to get the right language within VDR you should also install the ```locale addon``` (if not pre-installed) and configure the addon with your desired language (e.g. de_DE).
+Now it would be a good time to install the KODI addons of your choice. E.g. ```system-tools addon``` can be very helpful, because it makes mc available on the device. In order to be able to get the right language within VDR you should also install the ```locale addon``` and configure the addon with your desired language (e.g. de_DE).
 
 ## Directory structure
 - ```/usr/local/lib```  
@@ -204,7 +210,7 @@ Usage: /usr/local/bin/install.sh [-i] [-b kodi|vdr] [-T] [-w] [-c (url)] [-p (ur
 -b vdr   : VDR will be started after booting
 -T       : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
 -w       : install/update web components (remotetranscode, cefbrowser)
--c (url) : install/update cef binary lib (located at url or within /storage/.update or at /usr/local/config)
+-c (url) : install/update cefbrowser addon (located at url or within /storage/.update)
 -p (url) : install/update private configs (located at url or within /storage/.update)
 ```
 If you are at the first boot, the minimum you have to do is running the script with the ```-i``` option, which will copy the default configuration to the right place. If you also want, that VDR will start as default, these are the commands of your choice:
@@ -253,7 +259,7 @@ Thanks to Dr. Seltsam @ vdr-portal.de
 ```/storage/.config/vdropt/enabled_plugins``` contains a list of the plugins to autostart with VDR. Simply edit the file and add other plugins of your choice to the already pre-activated ones. 
 
 ### Channel logos
-```/usr/local/vdrshare/logos(Light|Dark)``` contain the channel logos, if they have been built with ```-e channellogos```. 
+```/storage/channellogos/logos(Light|Dark)``` contain the channel logos. The channellogos can be built with ```-addon channellogps``` 
 
 ### VDR specific configuration
 After basic configuration is done you probably need to adapt VDR's conf files.  
@@ -269,7 +275,7 @@ systemctl enable setup_bl301.service
 systemctl start setup_bl301.service 
 ```
 
-# Reboot
+## Reboot
 Once configuration is completed, your device should start into VDR after a reboot.
 
 # Updating
@@ -280,6 +286,124 @@ Example for getting your image onto the device with scp:
 scp target/CoreELEC-Amlogic-ng.arm-*.tar root@<ip address>:/storage/.update
 reboot
 ```
+
+# Developer Section
+
+## Adding patches and modifying sources
+
+You can modify your build by adding patches which can modify the upstream LE/CE or
+the VDRSternELEC packages.
+
+> Remember to NOT modify the LibreELEC or CoreELEC subdirectory itself, because changes in there
+> will be swept out during the next build. When starting the build process, these directories will be
+> reset to the sha from [config/versions](https://github.com/Zabrimus/VDRSternELEC/config/versions).
+> Whenever you want to modify some package, you need to do this in the following 3 directories.
+> As long as you don't clear the build directory, only packages that have been modified will be built again.
+> LE/CE should know, if something has been modified or if a new or modified patch was placed somewhere.
+
+Besides [config/versions](https://github.com/Zabrimus/VDRSternELEC/config/versions), where you
+can change the upstream sha of LE/CE for your needs, you can add patches or bash scripts, to be
+applied or executed:
++ **somescript.sh** - scripts, which will be executed on the submodule directory (mainly simple sed-oneliners)  
++ **somepatch.patch** - patches, which will be applied on the submodule directory  
+
+You have to place such scripts and patches at the right place in the directory structure, to let
+the build logic decide, on which LE/CE-version and PROJECT/DEVICE they should be applied and executed.  
+There are 3 directories, which are relevant and the logic is like this:
+
+-> :file_folder: **patches**  
+Scripts and patches in the **patches** directory are intended to modify the original upstream files of LE/CE.
+They will be applied at first.
+
+:file_folder: **patches** (will be executed/ applied to every build)  
+|__ **somescript.sh**  
+|__ **somepatch.patch**  
+|__ :file_folder: **CoreELEC** (will be executed/ applied to every CoreELEC build)  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+|__ :file_folder: **coreelec-(version)** (will be executed/ applied to the CoreELEC-version build)  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+|__ :file_folder: **LibreELEC** (will be executed/ applied to every LibreELEC build)  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
+|&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+|__ :file_folder: **libreelec-(version)** (will be executed/ applied to the LibreELEC-version build)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
+
+You can add a subdirectory to the above directories in the following logic:  
+:file_folder: **../project/YOUR_PROJECT/** (will only be executed/ applied to all devices in YOUR_PROJECT)  
+:file_folder: **../project/YOUR_PROJECT/devices/YOUR_DEVICE/** (will be executed/ applied to YOUR_DEVICE in YOUR_PROJECT)  
+:file_folder: **../project/YOUR_PROJECT/devices/YOUR_DEVICE/variant/YOUR_VARIANT/** (will be executed/ applied to YOUR_VARIANT of YOUR_DEVICE in YOUR_PROJECT)  
+
+---
+
+-> :file_folder: **package_patches**  
+Patches in the **package_patches** directory are intended to be copied to the upstream LE/CE version as is.
+You can build a new patch from the package source (probably the already patched LE/CE source) and this patch will be applied
+as if it would have been part of the original LE/CE.
+
+:file_folder: **package_patches**  
+|__ :file_folder: **CoreELEC** (will be applied to every CoreELEC build)  
+|__ :file_folder: **CoreELEC.coreelec-version** (will be applied to the CoreELEC-version build)  
+|__ :file_folder: **LibreELEC** (will be executed/ applied to every LibreELEC build)  
+|__ :file_folder: **LibreELEC.libreelec-version** (will be applied to the LibreELEC-version build)  
+
+The structure within the directories follows the LE/CE logic, e.g. a patch for the package ```kodi``` has to be placed in
+```packages/mediacenter/kodi/patches``` like it's done in LE/CE. Platform-specific patches should be placed in the ```projects/PLATFORM/patches```
+subdirectories. Device-specific patches should be placed in the ```projects/PLATFORM/devices/DEVICE/patches``` subdirectories.
+
+It's a bit tricky to find the right place because at first you need to understand the LE/CE directory structure, but it's doable.
+
+---
+
+-> :file_folder: **packages**  
+This is the heart of VDRSternELEC. The packages directory contains all packages that are added to upstream LE/CE. This directory is
+handled during the build process as if it is part of the upstream ```packages``` directory.
+For a new package you need at least a package.mk file. See VDRSternELEC and LE/CE sources to see how this works.
+You also have the possibility to modify and add patches and files to the existing packages.
+
+## VDR*ELEC as a developing platform
+
+There is a special package [vdr-helper](packages/virtual/vdr-helper) with the [zip_config.sh](packages/virtual/vdr-helper/zip_config.sh) bash script.
+This script is used to package the VDR-Plugin libraries and is executed in nearly every plugin creation ([example](packages/vdr/_vdr-plugin-web/package.mk)) at the end.
+You can add a ```"true"``` as a fourth parameter like ```$(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN} "true"```.  
+In this case, the build process creates a new directory ```/storage/.config/vdrlibs/save``` in the image where the binary will be copied to.  
+Next, a ```/storage/.config/vdrlibs/bin``` directory is created, where a symlink to the binary in ```save``` is created. At last, the ```/usr/local/lib/vdr/libvdr.*.so.5``` is created
+as a symlink to ```bin```.  
+With this setup, you can simply place your new binary somewhere in ```/storage``` and let the symlink in ```/storage/.config/vdrlibs/bin``` point to the new file.
+
+If you have a build host, where you can mount directories from, you can get it more comfortable. Simply create a new directory, e.g. ```/storage/.config/vdrlibs/server```
+and use a nfs systemd service to mount your VDR*ELEC or build directory in.
+Let your ```bin```-symlink point to the binary within the mounted build directory and now you simply need to restart VDR to see the effect of a new build on a host machine.
+
+You can do this for many packages by adding the linking logic shown in the [zip_config.sh](packages/virtual/vdr-helper/zip_config.sh) script to your ```package.mk```.
+You probably have to check, what files are needed to be linked at all. You will find them in the ```install_pkg``` directory in LE/CE build directory.
+
+[zip_config.sh](packages/virtual/vdr-helper/zip_config.sh) only works for VDR plugins out of the box. All other packages need manual changes.
+
+## Github Build
+In directory ```.github/workflows``` exists several workflows which can be used to build an own image with own configuration.
+* **[precache sources](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/precache-sources.yml)** which downloads all necessary sources for a distribution and caches them in Github as artifact.
+* **[Update CoreELEC/LibreELEC](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/update_ce_le.yml)** checks if an update of CoreELEC or LibreELEC exists and creates a pull request to update ```config/versions```.
+* **[Update Packages](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/update_packages.yml)** checks if package updates exists and create a pull request to update the packages.
+* **[Build VDRSternELEC](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/build.yml)** Main workflow to build releases, images and addons. After the build a new release will be created and all build artifacts are uploaded to the release.
+
+If you clone the repository, you can start your own build and create own releases. The configuration of the build can be widely configured.
+The configuration matches the commandline parameters of [build.sh](https://github.com/Zabrimus/VDRSternELEC#building-the-image).
+If you often want to create an own release with specific parameters it is possibly easier to create a new workflow and configure the desired parameters.
+A sample workflow [demo_build_template.yml](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/demo_build_template.yml) exists.
+
+:exclamation: If you want to delete a parameter then use '-' as parameter. Otherwise the workflows falls back to the default parameter.
+
+There exists several other cron workflows, which cannot be used outside the repository Zabrimus/VDRSternELEC. Except in a forked repository the condition is removed or changed.
+* **[Cron Build VDRSternELEC](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/cron_build.yml)** calls periodically the workflow **Build VDRSternELEC**
+* **[Cron Precache Sources](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/cron_precache_sources.yml)** calls periodically the workflow **precache sources**
+* **[Cron Update CE/LE](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/cron_update_ce_le.yml)** calls periodically the workflow **Update CoreELEC/LibreELEC**
+* **[Cron Update Packages](https://github.com/Zabrimus/VDRSternELEC/blob/master/.github/workflows/cron_update_packages.yml)** calls periodically the workflow **Update Packages**
+
+
+
 # Several notes and additional hints (to be updated)
 ## vdr-plugin-web / HbbTV
 To be able to use this plugin several manual tasks are necessary.
@@ -371,7 +495,7 @@ VDR_LD_PRELOAD=/path/to/lib1.so:/path/to/lib2.so
 It is possible to start a local virtual machine in [incus](https://linuxcontainers.org/incus/) for LibreELEC/x86_64.
 At first you need to build the image and `extras` Parameter if desired.
 ```
-./build.sh -config LibreELEC-master-x86_64-x11-qemu
+./build.sh -config LibreELEC-12-x86_64-x11-qemu
 ```
 After the build an `ova` Image is available in folder LibreELEC.tv/target/. This image needs to be converted to a `qcow2` image.
 
@@ -430,13 +554,3 @@ Possibly a reboot is necessary.
 
 #### High CPU usage after connecting to vga console
 This is work in progress. Kodi is using the `mesa softpipe` driver, which is relatively slow.
-
-## Delete
-If you don't want to use these images anymore, you can simply install a new core CoreELEC/LibreELEC image and
-delete the directories
-```
-/storage/.conf/vdropt
-/storage/.conf/vdropt-sample
-/storage/.fonts
-```
-to get rid of all VDR configurations.

@@ -1,0 +1,13 @@
+diff --git a/projects/Generic/devices/x11/options b/projects/Generic/devices/x11/options
+index a67058d514..4fa8921e30 100644
+--- a/projects/Generic/devices/x11/options
++++ b/projects/Generic/devices/x11/options
+@@ -6,7 +6,7 @@
+     OPENGL="mesa"
+ 
+   # OpenGL ES implementation to use (no / mesa)
+-    OPENGLES="no"
++    OPENGLES="mesa"
+ 
+   # Vulkan implementation to use (vulkan-loader / no)
+     VULKAN="no"

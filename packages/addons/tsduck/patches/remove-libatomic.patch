@@ -1,0 +1,80 @@
+diff -ru8bBw a/Makefile.inc b/Makefile.inc
+--- a/Makefile.inc	2024-03-17 22:59:13.000000000 +0100
++++ b/Makefile.inc	2024-05-17 20:52:41.473868353 +0200
+@@ -749,17 +749,17 @@
+     CXXFLAGS_INCLUDES += -DTS_NO_ARM_AES_INSTRUCTIONS
+ endif
+ 
+ # These variables are used when building the TSDuck library, not in the
+ # applications. Note, however, that LIBTSDUCK_LDLIBS is still necessary
+ # when linking applications against the TSDuck static library.
+ 
+ LIBTSDUCK_CXXFLAGS_INCLUDES +=
+-LIBTSDUCK_LDLIBS += $(LDLIBS_PCSC) $(if $(FREEBSD),-lprocstat) $(if $(OPENBSD)$(NETBSD)$(DRAGONFLYBSD),-lkvm) $(if $(LINUX),-latomic) -lcrypto
++LIBTSDUCK_LDLIBS += $(LDLIBS_PCSC) $(if $(FREEBSD),-lprocstat) $(if $(OPENBSD)$(NETBSD)$(DRAGONFLYBSD),-lkvm) -lcrypto
+ 
+ ifneq ($(NODTAPI),)
+     LIBTSDUCK_CXXFLAGS_INCLUDES += -DTS_NO_DTAPI=1
+ endif
+ 
+ ifneq ($(NOHIDES),)
+     LIBTSDUCK_CXXFLAGS_INCLUDES += -DTS_NO_HIDES=1
+ endif
+diff -ru8bBw a/scripts/qtcreator/tsduck.pri b/scripts/qtcreator/tsduck.pri
+--- a/scripts/qtcreator/tsduck.pri	2024-03-17 22:59:13.000000000 +0100
++++ b/scripts/qtcreator/tsduck.pri	2024-05-17 20:52:49.740982115 +0200
+@@ -60,17 +60,17 @@
+     QMAKE_CXXFLAGS_WARN_ON += -Wundef -Wcast-align -Wstrict-null-sentinel -Wformat-security \
+         -Wswitch-default -Wuninitialized -Wno-unused-parameter -Wfloat-equal -Wpointer-arith \
+         -Wsign-promo -Woverloaded-virtual -Wctor-dtor-privacy -Wnon-virtual-dtor \
+         -Woverloaded-virtual -Wzero-as-null-pointer-constant
+     greaterThan(GCC_MAJOR, 4): QMAKE_CXXFLAGS_WARN_ON += -Wpedantic -Weffc++ -Wshadow
+ }
+ linux {
+     QMAKE_CXXFLAGS += -I/usr/include/PCSC
+-    LIBS += -lpcsclite -lrt -latomic -ldl
++    LIBS += -lpcsclite -lrt -ldl
+ }
+ mac {
+     # LLVM options. Some of them depend on the compiler version.
+     LLVM_VERSION = $$system($$QMAKE_CXX " -dumpversion")
+     LLVM_FIELDS = $$split(LLVM_VERSION, ".")
+     LLVM_MAJOR = $$member(LLVM_FIELDS, 0)
+     QMAKE_CXXFLAGS_WARN_ON += -Weverything -Wno-c++98-compat-pedantic
+     greaterThan(LLVM_MAJOR, 11): QMAKE_CXXFLAGS_WARN_ON += -Wno-poison-system-directories
+diff -ru8bBw a/src/libtsduck/config/tsduck.pc b/src/libtsduck/config/tsduck.pc
+--- a/src/libtsduck/config/tsduck.pc	2024-03-17 22:59:13.000000000 +0100
++++ b/src/libtsduck/config/tsduck.pc	2024-05-17 20:53:12.495786099 +0200
+@@ -3,10 +3,10 @@
+ 
+ Name: TSDuck
+ Description: MPEG Transport Stream Toolkit
+ URL: https://tsduck.io/
+ Version: {{VERSION}}
+ Requires: libpcsclite
+ Requires.private: libcurl, srt, librist, libedit, libusb-1.0
+ Libs: -L${libdir} -ltsduck
+-Libs.private: -lprocstat -lkvm -lpthread -lrt -latomic -ldl -lm -lstdc++
++Libs.private: -lprocstat -lkvm -lpthread -lrt -ldl -lm -lstdc++
+ Cflags: -I${prefix}/include/tsduck {{STDCPP}}
+diff -ru8bBw a/src/utils/tsconfig b/src/utils/tsconfig
+--- a/src/utils/tsconfig	2024-03-17 22:59:13.000000000 +0100
++++ b/src/utils/tsconfig	2024-05-17 20:53:21.223212989 +0200
+@@ -141,17 +141,16 @@
+ }
+ 
+ cmd_staticlibs() {
+     local srt=
+     local rist=
+     local other=
+     $(no_srt) || srt=$(ls /usr/lib/libsrt.a /usr/local/lib/libsrt.a /opt/homebrew/lib/libsrt.a 2>/dev/null | head -1)
+     $(no_rist) || rist=$(ls /usr/lib/librist.a /usr/local/lib/librist.a /opt/homebrew/lib/librist.a 2>/dev/null | head -1)
+-    [[ $SYSTEM == Linux ]] && other="$other -latomic"
+     [[ $SYSTEM == FreeBSD ]] && other="$other -lprocstat"
+     [[ $SYSTEM == OpenBSD || $SYSTEM == NetBSD ]] && other="$other -lkvm"
+     echo "$(cmd_lib)/libtsduck.a $srt $rist $(curl-config --static-libs 2>/dev/null) -ledit $other $(libs_common)"
+ }
+ 
+ version_major() {
+     sed -e '/#define *TS_VERSION_MAJOR/!d' -e 's/ *$//' -e 's/.* //' $(cmd_include)/tsVersion.h 2>/dev/null
+ }

@@ -1,16 +1,17 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-softhddevice"
-PKG_VERSION="d20954e64772eed5f3921990f3643408a1aada5d"
-PKG_SHA256="aa0b1f4f6b5c25ddf43cd958c9d1ce58f2ca0f5e0bac85c9d5bcdd3886ba9983"
+PKG_VERSION="5d0e0abe1b47cf3280f764d7c7a8fed00fe1dd17"
+PKG_SHA256="7c9d9605cd3e20be7a64c29d7085995eb03d2c6d1c1a18ca2665ab780b25b3fb"
 PKG_LICENSE="AGPLv3"
 PKG_SITE="https://github.com/ua0lnj/vdr-plugin-softhddevice"
 PKG_URL="https://github.com/ua0lnj/vdr-plugin-softhddevice/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="latest"
 PKG_SOURCE_DIR="vdr-plugin-softhddevice-${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain _vdr libglvnd nvidia glm alsa freetype ffmpeg libdrm mesa libva _xcb-util-wm libxcb glu libXi libXxf86vm vdr-helper"
-PKG_DEPENDS_CONFIG="_vdr"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr vdr-helper)"
+PKG_DEPENDS_TARGET="toolchain _vdr libglvnd nvidia glm alsa freetype ffmpeg libdrm mesa libva _xcb-util-wm libxcb glu libXi libXrandr libXrender libXext libXxf86vm vdr-helper"
+PKG_DEPENDS_CONFIG="_vdr libva"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
+PKG_DEPENDS_UNPACK="vdr-helper libva"
 PKG_LONGDESC="A software and GPU emulated UHD output device plugin for VDR."
 PKG_MAKE_OPTS_TARGET="CUVID=$(cat $(get_build_dir ffmpeg)/config.h | grep CUVID | cut -d ' ' -f 3)"
 PKG_MAKEINSTALL_OPTS_TARGET="CUVID=$(cat $(get_build_dir ffmpeg)/config.h | grep CUVID | cut -d ' ' -f 3)"
@@ -19,6 +20,7 @@ PKG_BUILD_FLAGS="+speed"
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 }
 
 post_makeinstall_target() {

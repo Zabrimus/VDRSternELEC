@@ -2,12 +2,12 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_python-evdev"
-PKG_VERSION="2dd6ce6364bb67eedb209f6aa0bace0c18a3a40a"
-PKG_SHA256="b802f9e25c6c218facd54780c4b3d6436fb769d51e3aa286df63a382a4c799ab"
+PKG_VERSION="a47b5b5a6f79bde6823095d1105501856338aed7"
+PKG_SHA256="8f1c9b0e64765d2ef086f93baa27c87934a4966ce0326b4c537b5a52c5e3f221"
 PKG_LICENSE=""
 PKG_SITE="https://github.com/gvalkov/python-evdev/"
 PKG_URL="https://github.com/gvalkov/python-evdev/archive/${PKG_VERSION}.zip"
-PKG_DEPENDS_TARGET="toolchain libevdev Python3 distutilscross:host"
+PKG_DEPENDS_TARGET="toolchain libevdev Python3 _distutilscross:host"
 PKG_SOURCE_DIR="python-evdev-${PKG_VERSION}"
 PKG_LONGDESC="Python bindings for the Linux input subsystem"
 PKG_TOOLCHAIN="manual"
@@ -20,14 +20,10 @@ pre_configure_target() {
 make_target() {
   python setup.py \
          build \
-         build_ecodes --evdev-headers ${SYSROOT_PREFIX}/usr/include/linux/input.h:${SYSROOT_PREFIX}/usr/include/linux/input-event-codes.h \
+         build_ecodes --evdev-headers ${SYSROOT_PREFIX}/usr/include/linux/input.h:${SYSROOT_PREFIX}/usr/include/linux/input-event-codes.h:${SYSROOT_PREFIX}/usr/include/linux/uinput.h \
          build_ext --include-dirs ${SYSROOT_PREFIX}/
 }
 
 makeinstall_target() {
   python setup.py install --root=$INSTALL/usr --home=""
-}
-
-post_makeinstall_target() {
-  find ${INSTALL}/usr/lib -name "*py" -exec rm -rf "{}" ";"
 }

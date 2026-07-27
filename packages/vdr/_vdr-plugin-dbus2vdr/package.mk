@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-dbus2vdr"
-PKG_VERSION="119b4e8f02b39d37af6d41365208cc44e8cd986d"
-PKG_SHA256="f34197b71f402d19effa2847fce3872dad1aff0aa321aa129e40f86f659b7ba2"
+PKG_VERSION="34ddf66ea5c075bf5e126c19c9288456e0fd357f"
+PKG_SHA256="235854b0a6cabff16c244d6b8ff646ba1a0d23191e868ba3313a2fc7c0e5a0a9"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/flensrocker/vdr-plugin-dbus2vdr"
 PKG_URL="https://github.com/flensrocker/vdr-plugin-dbus2vdr/archive/${PKG_VERSION}.zip"
@@ -10,14 +10,16 @@ PKG_BRANCH="master"
 PKG_SOURCE_DIR="vdr-plugin-dbus2vdr-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain _vdr _libpngpp dbus glib libjpeg-turbo vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr _libpngpp"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr _libpngpp vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper) $(get_pkg_directory _libpngpp)"
+PKG_DEPENDS_UNPACK="vdr-helper _libpngpp"
 PKG_LONGDESC="This plugin will expose some methods via DBus to control the vdr."
 PKG_BUILD_FLAGS="+speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
-  export CPLUS_INCLUDE_PATH=$(get_build_dir _libpngpp)
+  export CPLUS_INCLUDE_PATH=$(get_install_dir _libpngpp)/usr/local/include
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 }
 
 post_makeinstall_target() {

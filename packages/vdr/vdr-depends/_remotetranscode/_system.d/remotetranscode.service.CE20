@@ -1,0 +1,18 @@
+[Unit]
+Description=remotetranscode
+Requires=network-online.target
+After=network-online.target
+StartLimitIntervalSec=400
+StartLimitBurst=5
+
+[Service]
+ExecStart=/usr/local/bin/remotrans -c /storage/.config/vdropt/sockets.ini -m /usr/local/movie -a -k /usr/lib/kodi
+Restart=always
+RestartSec=30
+StartLimitInterval=0
+TimeoutStartSec=30
+TimeoutStopSec=30
+LimitNOFILE=16384
+
+[Install]
+WantedBy=multi-user.target

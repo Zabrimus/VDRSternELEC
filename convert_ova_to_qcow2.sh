@@ -18,7 +18,7 @@ rm $FILENAME.ovf
 rm $FILENAME.vmdk
 
 # build (add extras if desired):
-# ./build.sh -config LibreELEC-master-x86_64-x11-qemu
+# ./build.sh -config LibreELEC-12-x86_64-x11-qemu
 
 # content of metadata.yaml:
 # -------------------------

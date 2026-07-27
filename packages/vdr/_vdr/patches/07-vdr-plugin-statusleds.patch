@@ -1,0 +1,15 @@
+--- a/vdr.c.a	2020-08-06 21:10:29.297129795 +0200
++++ b/vdr.c	2020-08-06 21:15:12.943092492 +0200
+@@ -138,10 +138,10 @@ static bool DropCaps(void)
+      }
+   cap_t caps;
+   if (cap_flag_value == CAP_SET)
+-     caps = cap_from_text("= cap_sys_nice,cap_sys_time,cap_net_raw=ep");
++     caps = cap_from_text("= cap_sys_nice,cap_sys_time,cap_net_raw=ep,cap_sys_tty_config=ep");
+   else {
+      fprintf(stdout,"vdr: OS does not support cap_sys_time\n");
+-     caps = cap_from_text("= cap_sys_nice,cap_net_raw=ep");
++     caps = cap_from_text("= cap_sys_nice,cap_net_raw=ep,cap_sys_tty_config=ep");
+      }
+   if (!caps) {
+      fprintf(stderr, "vdr: cap_from_text failed: %s\n", strerror(errno));

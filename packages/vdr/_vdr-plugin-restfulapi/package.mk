@@ -1,21 +1,17 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-restfulapi"
-PKG_VERSION="87c1504b23aa9c7fa1ccf66e6a2fe4a786bdff55"
-PKG_SHA256="9b2bc5daf6b45784e670e66105f87808cf218003c14fe379404e7db0494cfd6f"
+PKG_VERSION="54c9124ca31d859f8af1704316cab65d1e398533"
+PKG_SHA256="f269f5bc0a3b7fd5def2fcfdcc30c254bde6b01225f9d856003af4a666a8a7c3"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/yavdr/vdr-plugin-restfulapi"
 PKG_URL="https://github.com/yavdr/vdr-plugin-restfulapi/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
-if [ "${DISTRO}" = "CoreELEC" ]; then
-  WIRBELSCAN="_vdr-plugin-wirbelscan-ce"
-else
-  WIRBELSCAN="_vdr-plugin-wirbelscan"
-fi
-PKG_DEPENDS_TARGET="toolchain _vdr cxxtools vdr-helper ${WIRBELSCAN}"
+PKG_DEPENDS_TARGET="toolchain _vdr cxxtools vdr-helper _vdr-plugin-wirbelscan"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_SOURCE_DIR="vdr-plugin-restfulapi-${PKG_VERSION}"
-PKG_NEED_UNPACK="$(get_pkg_directory _vdr ${WIRBELSCAN} vdr-helper)"
+PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper) $(get_pkg_directory _vdr-plugin-wirbelscan)"
+PKG_DEPENDS_UNPACK="vdr-helper _vdr-plugin-wirbelscan"
 PKG_LONGDESC="Allows to access many internals of the VDR via a restful API."
 PKG_MAKE_OPTS_TARGET="USE_LIBMAGICKPLUSPLUS=0"
 PKG_BUILD_FLAGS="+speed"
@@ -23,12 +19,12 @@ PKG_BUILD_FLAGS="+speed"
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
+  export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
 
-  if [ "${DISTRO}" = "CoreELEC" ]; then
-    cp $(get_build_dir _vdr-plugin-wirbelscan-ce)/wirbelscan_services.h ${PKG_BUILD}/wirbelscan/
-  else
-    cp $(get_build_dir _vdr-plugin-wirbelscan)/wirbelscan_services.h ${PKG_BUILD}/wirbelscan/
-  fi
+  cp $(get_build_dir _vdr-plugin-wirbelscan)/wirbelscan_services.h ${PKG_BUILD}/wirbelscan/
+
+  # remove unwanted binaries
+  rm -f $(get_build_dir _vdr-plugin-restfulapi)/changestatetracker.o
 }
 
 post_makeinstall_target() {

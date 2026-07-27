@@ -1,0 +1,10 @@
+[Unit]
+Description=Preparing VDRCoreELEC
+Before=kodi.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/VDRCoreELEC.sh
+
+[Install]
+WantedBy=multi-user.target

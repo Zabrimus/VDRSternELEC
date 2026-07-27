@@ -1,0 +1,81 @@
+name: Update CoreELEC/LibreELEC
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  update_ce_le:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout CoreELEC/LibreELEC
+        run: |
+          git submodule update --init -- CoreELEC
+          git submodule update --init -- LibreELEC.tv
+
+      - name: Update CoreELEC/LibreELEC
+        run: |
+          # Get current version
+          ce20_old=$(cat config/versions | grep "COREELEC20=" | awk -F"=" '{ print $2 }')
+          ce21_old=$(cat config/versions | grep "COREELEC21=" | awk -F"=" '{ print $2 }')
+          ce22_old=$(cat config/versions | grep "COREELEC22=" | awk -F"=" '{ print $2 }')
+          le12_old=$(cat config/versions | grep "LIBREELEC12=" | awk -F"=" '{ print $2 }')
+          le13_old=$(cat config/versions | grep "LIBREELEC13=" | awk -F"=" '{ print $2 }')
+          
+          # Get latest version
+          ce20=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-20 | awk '{ print substr($1, 0, 7) }')
+          ce21=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-21 | awk '{ print substr($1, 0, 7) }')
+          ce22=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-22 | awk '{ print substr($1, 0, 7) }')
+          le12=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git libreelec-12.0 | awk '{ print substr($1, 0, 7) }')
+          le13=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git master | awk '{ print substr($1, 0, 7) }')
+        
+          echo "Update CoreELEC/LibreELEC to version:" > commit.body
+          if [ ! "${ce20_old}" = "${ce20}" ]; then 
+              echo "  CoreELEC 20 from [${ce20_old}](https://github.com/CoreELEC/CoreELEC/tree/${ce20_old}) to [${ce20}](https://github.com/CoreELEC/CoreELEC/tree/${ce20})" >> commit.body
+          fi
+          
+          if [ ! "${ce21_old}" = "${ce21}" ]; then 
+              echo "  CoreELEC 21 from [${ce21_old}](https://github.com/CoreELEC/CoreELEC/tree/${ce21_old}) to [${ce21}](https://github.com/CoreELEC/CoreELEC/tree/${ce21})" >> commit.body                    
+          fi
+
+          if [ ! "${ce22_old}" = "${ce22}" ]; then 
+              echo "  CoreELEC 22 from [${ce22_old}](https://github.com/CoreELEC/CoreELEC/tree/${ce22_old}) to [${ce22}](https://github.com/CoreELEC/CoreELEC/tree/${ce22})" >> commit.body                    
+          fi
+
+          if [ ! "${le12_old}" = "${le12}" ]; then
+              echo "  LibreELEC.tv 12 from [${le12_old}](https://github.com/LibreELEC/LibreELEC.tv/tree/${le12_old}) to [${le12}](https://github.com/LibreELEC/LibreELEC.tv/tree/${le12})" >> commit.body
+          fi
+
+          if [ ! "${le13_old}" = "${le13}" ]; then
+              echo "  LibreELEC.tv 13 from [${le13_old}](https://github.com/LibreELEC/LibreELEC.tv/tree/${le13_old}) to [${le13}](https://github.com/LibreELEC/LibreELEC.tv/tree/${le13})" >> commit.body
+          fi
+      
+          # update version
+          cat config/versions | sed -e "s/^COREELEC20=.*$/COREELEC20=${ce20}/" \
+                              | sed -e "s/^COREELEC21=.*$/COREELEC21=${ce21}/" \
+                              | sed -e "s/^COREELEC22=.*$/COREELEC22=${ce22}/" \
+                              | sed -e "s/^LIBREELEC12=.*$/LIBREELEC12=${le12}/" \
+                              | sed -e "s/^LIBREELEC13=.*$/LIBREELEC13=${le13}/" > config/versions.new
+          
+          rm config/versions
+          mv config/versions.new config/versions
+
+          ./build.sh -config CoreELEC-22-no -patchonly
+          ./build.sh -config LibreELEC-13-aarch64-AMLGX -patchonly
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: Update CoreELEC/LibreELEC.tv
+          branch: bot-update-ce-le
+          delete-branch: true
+          title: '[Bot] Update ce/le'
+          body-path: commit.body
+          labels: |
+            automated pull request
+          draft: false

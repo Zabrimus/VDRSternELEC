@@ -1,0 +1,15 @@
+diff --git a/packages/linux/package.mk b/packages/linux/package.mk
+index e2c20e2a16..5d6f9f5cf6 100644
+--- a/packages/linux/package.mk
++++ b/packages/linux/package.mk
+@@ -14,6 +14,10 @@ PKG_STAMP="${KERNEL_TARGET} ${KERNEL_MAKE_EXTRACMD}"
+ 
+ PKG_PATCH_DIRS="${LINUX}"
+ 
++# disabled due to compile problems with kernel 7
++# is this tool really needed?
++PKG_BUILD_PERF="no"
++
+ case "${LINUX}" in
+   amlogic)
+     PKG_VERSION="3fd2ca34a3e7d1f52e7deaa27016379935ae0845" # 7.0.5

@@ -2,10 +2,11 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_rust"
-PKG_VERSION="1.73.0"
+PKG_VERSION="1.92.0"
 PKG_LICENSE="MIT"
 PKG_SITE="https://www.rust-lang.org"
 PKG_DEPENDS_TARGET="toolchain _rustup.rs"
+PKG_DEPENDS_UNPACK="_rustup.rs"
 PKG_LONGDESC="A systems programming language that prevents segfaults, and guarantees thread safety."
 PKG_TOOLCHAIN="manual"
 PKG_BUILD_FLAGS="+speed"
@@ -14,6 +15,7 @@ make_target() {
   export CARGO_HOME="${PKG_BUILD}/cargo"
   export RUSTUP_HOME="${CARGO_HOME}"
   export PATH="${CARGO_HOME}/bin:${PATH}"
+
   case "${TARGET_ARCH}" in
     aarch64)
       RUST_TARGET_TRIPLE="aarch64-unknown-linux-gnu"
@@ -25,6 +27,7 @@ make_target() {
       RUST_TARGET_TRIPLE="x86_64-unknown-linux-gnu"
       ;;
   esac
+
   "$(get_build_dir _rustup.rs)/rustup-init.sh" \
     --default-toolchain none \
     --no-modify-path \
@@ -61,4 +64,6 @@ export PKG_CONFIG_PATH="${PKG_CONFIG_LIBDIR}"
 export RUSTUP_HOME="${CARGO_HOME}"
 unset CFLAGS
 EOF
+
+	# cargo/bin/cargo install cargo-c --target=${RUST_TARGET_TRIPLE}
 }

@@ -1,0 +1,9 @@
+[Unit]
+Description=Transfer IR code to bl301 blob
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/setup_bl301.sh
+
+[Install]
+WantedBy=default.target

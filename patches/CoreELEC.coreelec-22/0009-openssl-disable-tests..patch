@@ -1,0 +1,15 @@
+diff --git a/packages/security/openssl/package.mk b/packages/security/openssl/package.mk
+index 2b72f37756..9d1af116a6 100644
+--- a/packages/security/openssl/package.mk
++++ b/packages/security/openssl/package.mk
+@@ -27,7 +27,9 @@ PKG_CONFIGURE_OPTS_SHARED="--libdir=lib \
+                            no-weak-ssl-ciphers \
+                            no-zlib \
+                            no-zlib-dynamic \
+-                           no-static-engine"
++                           no-static-engine \
++                           no-docs \
++                           no-tests"
+ 
+ PKG_CONFIGURE_OPTS_HOST="--prefix=${TOOLCHAIN} \
+                          --openssldir=${TOOLCHAIN}/etc/ssl"

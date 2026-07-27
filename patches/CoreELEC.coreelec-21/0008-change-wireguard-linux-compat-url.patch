@@ -1,0 +1,17 @@
+diff --git a/packages/network/wireguard-linux-compat/package.mk b/packages/network/wireguard-linux-compat/package.mk
+index e99caa4417..43cece62d3 100644
+--- a/packages/network/wireguard-linux-compat/package.mk
++++ b/packages/network/wireguard-linux-compat/package.mk
+@@ -4,10 +4,10 @@
+ 
+ PKG_NAME="wireguard-linux-compat"
+ PKG_VERSION="1.0.20220627"
+-PKG_SHA256="362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0"
++PKG_SHA256="7bd8ea9407804faad721a66affab1c9e5f190151420b807a8259bd24db9836d0"
+ PKG_LICENSE="GPLv2"
+ PKG_SITE="https://www.wireguard.com"
+-PKG_URL="https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$PKG_VERSION.tar.xz"
++PKG_URL="https://github.com/WireGuard/wireguard-linux-compat/archive/refs/tags/v${PKG_VERSION}.tar.gz"
+ PKG_DEPENDS_TARGET="toolchain linux libmnl"
+ PKG_NEED_UNPACK="$LINUX_DEPENDS"
+ PKG_LONGDESC="WireGuard VPN kernel module"

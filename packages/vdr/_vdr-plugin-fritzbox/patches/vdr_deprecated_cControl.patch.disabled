@@ -1,0 +1,43 @@
+diff -ru8bBwd a/fritzeventhandler.cpp b/fritzeventhandler.cpp
+--- a/fritzeventhandler.cpp	2021-08-20 09:03:38.000000000 +0200
++++ b/fritzeventhandler.cpp	2024-10-12 19:40:39.504408142 +0200
+@@ -141,17 +141,18 @@
+ 		fritz::FonbookEntry::eType remoteType, std::string localParty,
+ 		std::string medium, std::string mediumName) {
+ 
+ 	if (!CareForCall(outgoing))
+ 		return;
+ 
+ 	bool currPlay, currForw;
+ 	int currSpeed;
+-	cControl *control = cControl::Control();
++    cMutexLock ControlMutexLock;
++    cControl *control = cControl::Control(ControlMutexLock);
+ 	if (control) {
+ 		control->GetReplayMode(currPlay, currForw, currSpeed);
+ 	}
+ 
+ 	// check for muting
+ 	if (fritzboxConfig.muteOnCall && !fritzboxConfig.muteAfterConnect && !cDevice::PrimaryDevice()->IsMute()) {
+ 		INF((outgoing ? "outgoing": "incoming") << " call, muting.");
+ 		DoMute();
+@@ -239,17 +240,18 @@
+ 	if (connections.find(connId) == connections.end())
+ 		return;
+ 	bool outgoing = connections[connId].callInfo->isOutgoing;
+ 	if (!CareForCall(outgoing))
+ 		return;
+ 
+ 	bool currPlay, currForw;
+ 	int currSpeed;
+-	cControl *control = cControl::Control();
++    cMutexLock ControlMutexLock;
++    cControl *control = cControl::Control(ControlMutexLock);
+ 	if (control) {
+ 		control->GetReplayMode(currPlay, currForw, currSpeed);
+ 	}
+ 
+ 	// stop call notification
+ 	mutex.Lock();
+ 	sConnection &connection = connections[connId];
+ 	connection.state = sConnection::IDLE;

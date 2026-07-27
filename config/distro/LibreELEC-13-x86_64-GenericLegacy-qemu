@@ -1,0 +1,15 @@
+DISTRO=LibreELEC.tv
+SHA=${LIBREELEC13}
+PATCHDIR=libreelec-13
+
+# Use project variant
+VARIANT=qemu
+
+# Build settings
+PROJECT=Generic
+DEVICE=Generic-legacy
+ARCH=x86_64
+
+# VDR settings
+VDR_OUTPUTDEVICE=softhddevice
+VDR_INPUTDEVICE=satip

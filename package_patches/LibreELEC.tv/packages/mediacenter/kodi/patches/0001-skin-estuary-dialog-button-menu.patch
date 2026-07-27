@@ -1,0 +1,21 @@
+diff -ru8bBw a/addons/skin.estuary/xml/DialogButtonMenu.xml b/addons/skin.estuary/xml/DialogButtonMenu.xml
+--- a/addons/skin.estuary/xml/DialogButtonMenu.xml	2024-05-14 14:59:07.000000000 +0200
++++ b/addons/skin.estuary/xml/DialogButtonMenu.xml	2024-05-16 09:34:08.125432780 +0200
+@@ -80,13 +80,17 @@
+ 						<onclick>InhibitIdleShutdown(true)</onclick>
+ 						<visible>System.HasShutdown +!System.IdleShutdownInhibited</visible>
+ 					</item>
+ 					<item>
+ 						<label>$LOCALIZE[13018]</label>
+ 						<onclick>InhibitIdleShutdown(false)</onclick>
+ 						<visible>System.HasShutdown + System.IdleShutdownInhibited</visible>
+ 					</item>
++					<item>
++						<label>VDR</label>
++						<onclick>System.Exec("/usr/local/bin/switch_to_vdr.sh")</onclick>
++					</item>
+ 				</content>
+ 			</control>
+ 		</control>
+ 	</controls>
+ </window>

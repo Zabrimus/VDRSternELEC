@@ -1,0 +1,13 @@
+--- a/iptv/dash2ts.sh	2026-01-05 17:34:15.289589000 +0100
++++ b/iptv/dash2ts.sh	2026-01-05 17:24:22.000000000 +0100
+@@ -29,9 +29,9 @@
+ PARAMETER=${1}
+ 
+ # Iptv plugin listens this port
+ PORT=${2}
+ 
+ # URL to stream
+ URL="http://dash.akamaized.net/dash264/TestCases/3b/fraunhofer/aac-lc_stereo_with_video/ElephantsDream/elephants_dream_480p_aaclc_stereo_sidx.mpd"
+ 
+-/usr/local/bin/dash2ts -k /usr/lib/x86_64-linux-gnu/kodi -p ${PORT} -u ${URL}
++/usr/local/bin/dash2ts -p ${PORT} -u ${URL}

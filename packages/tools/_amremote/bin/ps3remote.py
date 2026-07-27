@@ -122,9 +122,20 @@ def parse_args():
         help="drop to GROUP")
     return parser.parse_args()
 
+def get_or_create_eventloop():
+    try:
+        return asyncio.get_event_loop()
+    except RuntimeError as ex:
+        if "There is no current event loop in thread" in str(ex):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            return asyncio.get_event_loop()
+        else:
+          raise ex
+    
 def main():
     options = parse_args()
-    loop = asyncio.get_event_loop()
+    loop = get_or_create_eventloop()
     event_translator = EventTranslator(loop, options)
     drop_privileges(options.user, options.group)
     try:

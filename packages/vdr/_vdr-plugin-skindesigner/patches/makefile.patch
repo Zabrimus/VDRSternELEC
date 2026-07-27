@@ -1,0 +1,33 @@
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2024-11-11 14:12:38.000000000 +0100
++++ b/Makefile	2025-09-03 05:44:21.387825193 +0200
+@@ -109,27 +109,25 @@
+        coreengine/viewlist.o \
+        coreengine/viewdetail.o \
+        coreengine/listelements.o \
+        coreengine/area.o \
+        coreengine/xmlparser.o
+ 
+ ### The main target:
+ 
+-all: subprojects $(SOFILE) i18n
++all: libskindesignerapi $(SOFILE) i18n
+ 
+ ### subprojects:
+ 
+-.PHONY: libskindesignerapi subprojects
++.PHONY: libskindesignerapi
+ 
+ libskindesignerapi:
+ 	$(MAKE) -C libskindesignerapi
+ 
+-subprojects: libskindesignerapi
+-
+ install-subprojects:
+ 	$(MAKE) -C libskindesignerapi install
+ 
+ clean-subprojects:
+ 	$(MAKE) -C libskindesignerapi clean
+ 
+ ### get version of subprojects in specific targets when subprojects have been built
+ 

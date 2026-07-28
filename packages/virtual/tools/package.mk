@@ -18,9 +18,10 @@ if [ ! "${ARCH}" = "arm" ]; then
 	PKG_DEPENDS_TARGET+=" _vtuner-ng"
 fi
 
-
-# not yet enabled
-# PKG_DEPENDS_TARGET+=" _eventlircd"
+# reintegrate eventlircd for LibreELEC
+if [ ! "${DISPLAYSERVER}" = "x11" ] && [ "${DISTRO}" = "LibreELEC" ]; then
+	PKG_DEPENDS_TARGET+=" _eventlircd"
+fi
 
 if [ "${DISTRO}" = "CoreELEC" ]; then
 	PKG_DEPENDS_TARGET+=" _amremote _python-evdev"

@@ -22,7 +22,8 @@ PKG_MESON_OPTS_TARGET="--prefix=${RT_PREFIX} \
                        --bindir=${RT_PREFIX}/bin \
                        --libdir=${RT_PREFIX}/lib \
                        --libexecdir=${RT_PREFIX}/lib \
-                       --sbindir=${RT_PREFIX}/bin"
+                       --sbindir=${RT_PREFIX}/bin \
+                       --wrap-mode=default"
 
 pre_configure_target() {
    export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system

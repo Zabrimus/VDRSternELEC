@@ -9,7 +9,15 @@ PKG_DEPENDS_TARGET="toolchain zstd"
 PKG_SECTION="virtual"
 PKG_LONGDESC="Tools which can be useful"
 
-PKG_DEPENDS_TARGET+=" _triggerhappy _irmplircd _vtuner-ng _vlc _netcat _irmpconfig"
+PKG_DEPENDS_TARGET+=" _triggerhappy _irmplircd _vlc _netcat _irmpconfig"
+
+# disabled for 32-Bit architecture, due to compile problems with kernel printk calls
+# cc1: all warnings being treated as errors
+# see https://lkml.org/lkml/2026/7/21/2497
+if [ ! "${ARCH}" = "arm" ]; then
+	PKG_DEPENDS_TARGET+=" _vtuner-ng"
+fi
+
 
 # not yet enabled
 # PKG_DEPENDS_TARGET+=" _eventlircd"

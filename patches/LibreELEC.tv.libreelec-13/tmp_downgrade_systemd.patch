@@ -1,0 +1,274 @@
+diff --git a/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb b/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb
+index e3c9634817..38541ea675 100644
+--- a/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb
++++ b/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb
+@@ -1,12 +1,27 @@
++# ali express g60s pro plus remote
++evdev:input:b0003v1915p1001e0201*
++ KEYBOARD_KEY_c0041=enter
++
++# alfawise z1 remote
++evdev:input:b0005v2B54p1603e*
++ KEYBOARD_KEY_c0041=enter
++
+ # auvipal g9f remote
+ evdev:input:b0005v045Ep0041*
++ KEYBOARD_KEY_c0041=enter
+  KEYBOARD_KEY_70071=l
+  KEYBOARD_KEY_70070=g
+  KEYBOARD_KEY_7006f=x
+  KEYBOARD_KEY_7006e=i
+ 
++# bt250 remote
++evdev:input:b0005v1D5ApC080e0000*
++ KEYBOARD_KEY_c0041=enter
++
+ # buzztv bt-300/bt-400 smart remote
+ evdev:input:b0005v0957p1001*
++ KEYBOARD_KEY_c0041=enter
++ KEYBOARD_KEY_c0040=c
+  KEYBOARD_KEY_70040=z
+  KEYBOARD_KEY_70041=esc
+  KEYBOARD_KEY_70042=t
+@@ -15,9 +30,38 @@ evdev:input:b0005v0957p1001*
+  KEYBOARD_KEY_70045=volumeup
+  KEYBOARD_KEY_70069=volumedown
+ 
+-# Gmyle / Hama Vista Remote Control
+-evdev:input:b0003v05A4p9881*
+- KEYBOARD_KEY_90002=info # "i" and "right mouse" buttons, originally BTN_RIGHT
++# foxtel remote
++evdev:input:b0005v06E7p8144*
++ KEYBOARD_KEY_c0041=enter
++
++# google tv remote
++evdev:name:*Chromecast Remote*:*
++ KEYBOARD_KEY_c0041=enter
++
++# g7bts remote
++evdev:input:b0005v045Ep0041e0300*
++ KEYBOARD_KEY_c0041=enter
++
++# g20bts remote
++evdev:input:b0005v2B54p1600e0000*
++ KEYBOARD_KEY_c0041=enter
++
++# justboom smart remote
++evdev:input:b0003v2252p0120*
++ KEYBOARD_KEY_c0041=enter
++ KEYBOARD_KEY_c0040=c
++
++# nvidia shield remotes
++evdev:input:b0005v0955p7213*
++ KEYBOARD_KEY_c0041=enter
++
++evdev:input:b0005v0955p7217*
++ KEYBOARD_KEY_c0041=enter
++
++# o2.cz khamsin bluetooth remote
++evdev:input:b0005v0217p0000e0110*
++ KEYBOARD_KEY_c0041=enter
++ KEYBOARD_KEY_c0040=c
+ 
+ # all osmc remotes
+ evdev:input:b0003v2252p17*
+@@ -54,6 +98,34 @@ evdev:input:b0003v2252p1037*
+  KEYBOARD_KEY_c0060=kpleftparen
+  KEYBOARD_KEY_10084=kprightparen
+ 
++# ugoos ur01-ble remote
++evdev:input:b0005v005Dp0001*
++ KEYBOARD_KEY_c0041=enter
++
++# UR02 remote
++evdev:input:b0005v0508p1980*
++ KEYBOARD_KEY_c0041=enter
++
++# wechip g20 remote
++evdev:input:b0003v4842p0001*
++ KEYBOARD_KEY_c0041=enter
++
++# xiaomi remote
++evdev:input:b0005v2717p32B9e4A4C*
++ KEYBOARD_KEY_c0041=enter
++
++# xiaomi remote 
++evdev:input:b0005v2717p32B9e4A53* 
++ KEYBOARD_KEY_c0041=enter
++
++# yyykq remote
++evdev:input:b0005v0416p0300*
++ KEYBOARD_KEY_c0041=enter
++
++# zidoo v10 remote
++evdev:input:b0005v2B54p1600*
++ KEYBOARD_KEY_c0041=enter
++
+ # zidoo v12 remote
+ evdev:input:b0005v5A44p5A44*
+  KEYBOARD_KEY_7001e=one #1
+@@ -71,6 +143,7 @@ evdev:input:b0005v5A44p5A44*
+  KEYBOARD_KEY_70045=m #square key with lines
+  KEYBOARD_KEY_7009a=o #tv out
+  KEYBOARD_KEY_700b7=power #tv out green
++ KEYBOARD_KEY_c0041=enter
+  KEYBOARD_KEY_c006d=c #zoom
+  KEYBOARD_KEY_c00bc=repeat
+  KEYBOARD_KEY_c01bd=i #info
+@@ -79,3 +152,6 @@ evdev:input:b0005v5A44p5A44*
+  KEYBOARD_KEY_c00e9=period #vol-up
+  KEYBOARD_KEY_c00ea=comma #vol-down
+ 
++# ZTERCR21 remote
++evdev:input:b0005v0508p0110*
++ KEYBOARD_KEY_c0041=enter
+diff --git a/packages/sysutils/systemd/package.mk b/packages/sysutils/systemd/package.mk
+index 3e8a3ba6b2..f82a673848 100644
+--- a/packages/sysutils/systemd/package.mk
++++ b/packages/sysutils/systemd/package.mk
+@@ -3,8 +3,8 @@
+ # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+ 
+ PKG_NAME="systemd"
+-PKG_VERSION="261.1"
+-PKG_SHA256="f9b9da1103d1714703503d1746971ccbeeae945663ef3ede3b7348169b5df064"
++PKG_VERSION="260.2"
++PKG_SHA256="71a9ed11cf773478b0d7a16cd96e39ca3c3939ab37ed9a8ee814c31ea9b4f2b5"
+ PKG_LICENSE="LGPL-2.1-or-later"
+ PKG_SITE="http://www.freedesktop.org/wiki/Software/systemd"
+ PKG_URL="https://github.com/systemd/systemd/archive/v${PKG_VERSION}.tar.gz"
+diff --git a/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch b/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch
+index ed54be4921..b6cf607453 100644
+--- a/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch
++++ b/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch
+@@ -5,10 +5,10 @@ Subject: [PATCH] move /etc/systemd/system to /storage/.config/system.d
+ 
+ ---
+ diff --git a/meson.build b/meson.build
+-index e9c64b098e..e810e6c3a7 100644
++index dbbddb68e2..4592cd1094 100644
+ --- a/meson.build
+ +++ b/meson.build
+-@@ -298,7 +298,7 @@ conf.set_quoted('SYSTEMD_USERWORK_PATH',                      libexecdir / 'syst
++@@ -291,7 +291,7 @@ conf.set_quoted('SYSTEMD_USERWORK_PATH',
+  conf.set_quoted('SYSTEMD_MOUNTWORK_PATH',                     libexecdir / 'systemd-mountwork')
+  conf.set_quoted('SYSTEMD_NSRESOURCEWORK_PATH',                libexecdir / 'systemd-nsresourcework')
+  conf.set_quoted('SYSTEMD_VERITYSETUP_PATH',                   libexecdir / 'systemd-veritysetup')
+@@ -17,6 +17,3 @@ index e9c64b098e..e810e6c3a7 100644
+  conf.set_quoted('SYSTEM_DATA_UNIT_DIR',                       systemunitdir)
+  conf.set_quoted('SYSTEM_ENV_GENERATOR_DIR',                   systemenvgeneratordir)
+  conf.set_quoted('SYSTEM_GENERATOR_DIR',                       systemgeneratordir)
+--- 
+-2.53.0
+-
+diff --git a/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch b/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch
+index 764327da20..ff14dbd877 100644
+--- a/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch
++++ b/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch
+@@ -10,7 +10,7 @@ Subject: [PATCH] move hwdb.bin to /run
+  3 files changed, 3 insertions(+), 3 deletions(-)
+ 
+ diff --git a/src/libsystemd/sd-hwdb/hwdb-internal.h b/src/libsystemd/sd-hwdb/hwdb-internal.h
+-index 72b2f777c8..2d8e2fbb16 100644
++index 5302679a62..4afdd6e306 100644
+ --- a/src/libsystemd/sd-hwdb/hwdb-internal.h
+ +++ b/src/libsystemd/sd-hwdb/hwdb-internal.h
+ @@ -83,6 +83,6 @@ struct trie_value_entry2_f {
+@@ -22,10 +22,10 @@ index 72b2f777c8..2d8e2fbb16 100644
+          "/usr/lib/systemd/hwdb/hwdb.bin\0"      \
+          UDEVLIBEXECDIR "/hwdb.bin\0"
+ diff --git a/src/shared/hwdb-util.c b/src/shared/hwdb-util.c
+-index b42681a289..96102c6475 100644
++index 12621b7f89..552b1dc008 100644
+ --- a/src/shared/hwdb-util.c
+ +++ b/src/shared/hwdb-util.c
+-@@ -587,7 +587,7 @@ int hwdb_update(const char *root, const char *hwdb_bin_dir, bool strict, bool co
++@@ -585,7 +585,7 @@ int hwdb_update(const char *root, const
+           * source. If true, then hwdb.bin will be created without the information. systemd-hwdb command
+           * should set the argument false, and 'udevadm hwdb' command should set it true. */
+  
+@@ -38,7 +38,7 @@ diff --git a/units/systemd-hwdb-update.service.in b/units/systemd-hwdb-update.se
+ index 4ba36d1fc6..4848ae9661 100644
+ --- a/units/systemd-hwdb-update.service.in
+ +++ b/units/systemd-hwdb-update.service.in
+-@@ -13,7 +13,7 @@ Documentation=man:hwdb(7) man:systemd-hwdb(8)
++@@ -13,7 +13,7 @@ Documentation=man:hwdb(7) man:systemd-hw
+  
+  ConditionNeedsUpdate=/etc
+  ConditionPathExists=|!{{UDEVLIBEXECDIR}}/hwdb.bin
+@@ -48,5 +48,5 @@ index 4ba36d1fc6..4848ae9661 100644
+  
+  DefaultDependencies=no
+ -- 
+-2.53.0
++2.34.1
+ 
+diff --git a/packages/sysutils/systemd/patches/0200-persist-persistent-timer-stamps.patch b/packages/sysutils/systemd/patches/0200-persist-persistent-timer-stamps.patch
+index c916469902..99875d78ca 100644
+--- a/packages/sysutils/systemd/patches/0200-persist-persistent-timer-stamps.patch
++++ b/packages/sysutils/systemd/patches/0200-persist-persistent-timer-stamps.patch
+@@ -8,10 +8,10 @@ Subject: [PATCH] timers: use a persistent filesystem for persistent timers
+  1 file changed, 2 insertions(+), 2 deletions(-)
+ 
+ diff --git a/src/core/timer.c b/src/core/timer.c
+-index 510d8e1..41f41dd 100644
++index 03935ee..bfd5c02 100644
+ --- a/src/core/timer.c
+ +++ b/src/core/timer.c
+-@@ -139,11 +139,11 @@ static int timer_setup_persistent(Timer *t) {
++@@ -139,11 +139,11 @@ static int timer_setup_persistent(Timer
+  
+          if (MANAGER_IS_SYSTEM(UNIT(t)->manager)) {
+  
+@@ -26,5 +26,5 @@ index 510d8e1..41f41dd 100644
+                  const char *e;
+  
+ -- 
+-2.53.0
++2.14.1
+ 
+diff --git a/packages/sysutils/systemd/profile.d/90-systemd.conf b/packages/sysutils/systemd/profile.d/90-systemd.conf
+index 6cf1e4ec0e..51962119f4 100644
+--- a/packages/sysutils/systemd/profile.d/90-systemd.conf
++++ b/packages/sysutils/systemd/profile.d/90-systemd.conf
+@@ -1,4 +1,4 @@
+-# SPDX-License-Identifier: GPL-2.0-only
++# SPDX-License-Identifier: GPL-2.0
+ # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
+ 
+ export SYSTEMD_COLORS=0
+diff --git a/packages/sysutils/systemd/scripts/environment-setup b/packages/sysutils/systemd/scripts/environment-setup
+index bf7adfd551..eb78e067ed 100755
+--- a/packages/sysutils/systemd/scripts/environment-setup
++++ b/packages/sysutils/systemd/scripts/environment-setup
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# SPDX-License-Identifier: GPL-2.0-only
++# SPDX-License-Identifier: GPL-2.0
+ # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
+ 
+ # read config files
+diff --git a/packages/sysutils/systemd/scripts/usercache-setup b/packages/sysutils/systemd/scripts/usercache-setup
+index 8e8c43ca4e..9a0e7c9786 100755
+--- a/packages/sysutils/systemd/scripts/usercache-setup
++++ b/packages/sysutils/systemd/scripts/usercache-setup
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-# SPDX-License-Identifier: GPL-2.0-only
++# SPDX-License-Identifier: GPL-2.0
+ # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
+ 
+ # Fix bug in older versions creating file /storage/.cache/services
+diff --git a/packages/sysutils/systemd/scripts/userconfig-setup b/packages/sysutils/systemd/scripts/userconfig-setup
+index bec76d8120..d07e257432 100755
+--- a/packages/sysutils/systemd/scripts/userconfig-setup
++++ b/packages/sysutils/systemd/scripts/userconfig-setup
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-# SPDX-License-Identifier: GPL-2.0-only
++# SPDX-License-Identifier: GPL-2.0
+ # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
+ 
+ # Remove those sample files that we manage

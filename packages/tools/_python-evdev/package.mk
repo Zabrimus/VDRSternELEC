@@ -2,11 +2,11 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="_python-evdev"
-PKG_VERSION="a47b5b5a6f79bde6823095d1105501856338aed7"
-PKG_SHA256="8f1c9b0e64765d2ef086f93baa27c87934a4966ce0326b4c537b5a52c5e3f221"
+PKG_VERSION="1.6.1"
+PKG_SHA256="6b412da2d3b206feff86bb3b6456b8dde8e2b0b9ce23dfd4e556ced125c6ac4f"
 PKG_LICENSE=""
 PKG_SITE="https://github.com/gvalkov/python-evdev/"
-PKG_URL="https://github.com/gvalkov/python-evdev/archive/${PKG_VERSION}.zip"
+PKG_URL="https://github.com/gvalkov/python-evdev/archive/refs/tags/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libevdev Python3 _distutilscross:host"
 PKG_SOURCE_DIR="python-evdev-${PKG_VERSION}"
 PKG_LONGDESC="Python bindings for the Linux input subsystem"

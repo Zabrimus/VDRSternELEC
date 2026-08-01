@@ -20,7 +20,7 @@ fi
 
 # reintegrate eventlircd for LibreELEC
 if [ ! "${DISPLAYSERVER}" = "x11" ] && [ "${DISTRO}" = "LibreELEC" ]; then
-	PKG_DEPENDS_TARGET+=" _eventlircd"
+	PKG_DEPENDS_TARGET+=" eventlircd"
 fi
 
 if [ "${DISTRO}" = "CoreELEC" ]; then

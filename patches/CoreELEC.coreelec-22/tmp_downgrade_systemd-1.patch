@@ -1,183 +1,33 @@
 diff --git a/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb b/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb
-index 08b20f28a7..38541ea675 100644
+index 08b20f28a7..e24459376c 100644
 --- a/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb
 +++ b/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb
-@@ -1,21 +1,27 @@
--# amazon fire tv remote
--evdev:input:b0005v0171p04??*
-- KEYBOARD_KEY_c0221=s
-- KEYBOARD_KEY_c008d=e
-- KEYBOARD_KEY_c0033=v
-- KEYBOARD_KEY_c0002=n
-- KEYBOARD_KEY_c009c=pageup
-- KEYBOARD_KEY_c009d=pagedown
-- 
-+# ali express g60s pro plus remote
-+evdev:input:b0003v1915p1001e0201*
-+ KEYBOARD_KEY_c0041=enter
-+
-+# alfawise z1 remote
-+evdev:input:b0005v2B54p1603e*
-+ KEYBOARD_KEY_c0041=enter
-+
- # auvipal g9f remote
- evdev:input:b0005v045Ep0041*
-+ KEYBOARD_KEY_c0041=enter
-  KEYBOARD_KEY_70071=l
-  KEYBOARD_KEY_70070=g
-  KEYBOARD_KEY_7006f=x
-  KEYBOARD_KEY_7006e=i
- 
-+# bt250 remote
-+evdev:input:b0005v1D5ApC080e0000*
-+ KEYBOARD_KEY_c0041=enter
-+
- # buzztv bt-300/bt-400 smart remote
- evdev:input:b0005v0957p1001*
-+ KEYBOARD_KEY_c0041=enter
-+ KEYBOARD_KEY_c0040=c
-  KEYBOARD_KEY_70040=z
-  KEYBOARD_KEY_70041=esc
-  KEYBOARD_KEY_70042=t
-@@ -24,30 +30,38 @@ evdev:input:b0005v0957p1001*
-  KEYBOARD_KEY_70045=volumeup
-  KEYBOARD_KEY_70069=volumedown
- 
--# homatics b21
--evdev:input:b0005v0957p0006*
--# homatics b21 variant (sold with dongle g 4k)
--evdev:input:b0005v0957p0019*
--# dune b25
--evdev:input:b0005v0957p000A*
-- KEYBOARD_KEY_c009c=up
-- KEYBOARD_KEY_c009d=down
-- KEYBOARD_KEY_c0030=s
-- KEYBOARD_KEY_c008d=e
-- KEYBOARD_KEY_c0221=o
-- KEYBOARD_KEY_c0077=a
-- KEYBOARD_KEY_c0078=l
-- KEYBOARD_KEY_c0079=n
-- KEYBOARD_KEY_c007a=q
-- KEYBOARD_KEY_c0096=v
-- KEYBOARD_KEY_c01bb=z
-+# foxtel remote
-+evdev:input:b0005v06E7p8144*
-+ KEYBOARD_KEY_c0041=enter
-+
-+# google tv remote
-+evdev:name:*Chromecast Remote*:*
-+ KEYBOARD_KEY_c0041=enter
-+
-+# g7bts remote
-+evdev:input:b0005v045Ep0041e0300*
-+ KEYBOARD_KEY_c0041=enter
-+
-+# g20bts remote
-+evdev:input:b0005v2B54p1600e0000*
-+ KEYBOARD_KEY_c0041=enter
-+
-+# justboom smart remote
-+evdev:input:b0003v2252p0120*
-+ KEYBOARD_KEY_c0041=enter
-+ KEYBOARD_KEY_c0040=c
-+
-+# nvidia shield remotes
-+evdev:input:b0005v0955p7213*
-+ KEYBOARD_KEY_c0041=enter
+@@ -44,10 +44,6 @@ evdev:input:b0005v0957p000A*
  
  evdev:input:b0005v0955p7217*
-- KEYBOARD_KEY_c01b8=o
+  KEYBOARD_KEY_c01b8=o
 - 
 -# Gmyle / Hama Vista Remote Control
 -evdev:input:b0003v05A4p9881*
 - KEYBOARD_KEY_90002=info # "i" and "right mouse" buttons, originally BTN_RIGHT
-+ KEYBOARD_KEY_c0041=enter
-+
-+# o2.cz khamsin bluetooth remote
-+evdev:input:b0005v0217p0000e0110*
-+ KEYBOARD_KEY_c0041=enter
-+ KEYBOARD_KEY_c0040=c
  
  # all osmc remotes
  evdev:input:b0003v2252p17*
-@@ -84,13 +98,33 @@ evdev:input:b0003v2252p1037*
-  KEYBOARD_KEY_c0060=kpleftparen
-  KEYBOARD_KEY_10084=kprightparen
- 
-+# ugoos ur01-ble remote
-+evdev:input:b0005v005Dp0001*
-+ KEYBOARD_KEY_c0041=enter
-+
-+# UR02 remote
-+evdev:input:b0005v0508p1980*
-+ KEYBOARD_KEY_c0041=enter
-+
-+# wechip g20 remote
-+evdev:input:b0003v4842p0001*
-+ KEYBOARD_KEY_c0041=enter
-+
-+# xiaomi remote
-+evdev:input:b0005v2717p32B9e4A4C*
-+ KEYBOARD_KEY_c0041=enter
-+
-+# xiaomi remote 
-+evdev:input:b0005v2717p32B9e4A53* 
-+ KEYBOARD_KEY_c0041=enter
-+
-+# yyykq remote
-+evdev:input:b0005v0416p0300*
-+ KEYBOARD_KEY_c0041=enter
-+
- # zidoo v10 remote
--# BT-pair mode = long press "menu" + "|<<"
- evdev:input:b0005v2B54p1600*
-- KEYBOARD_KEY_7003a=l
-- KEYBOARD_KEY_c01b7=a
-- KEYBOARD_KEY_c01bd=i
-- KEYBOARD_KEY_70045=o
-+ KEYBOARD_KEY_c0041=enter
- 
- # zidoo v12 remote
- evdev:input:b0005v5A44p5A44*
-@@ -109,9 +143,15 @@ evdev:input:b0005v5A44p5A44*
-  KEYBOARD_KEY_70045=m #square key with lines
-  KEYBOARD_KEY_7009a=o #tv out
-  KEYBOARD_KEY_700b7=power #tv out green
-+ KEYBOARD_KEY_c0041=enter
-+ KEYBOARD_KEY_c006d=c #zoom
-  KEYBOARD_KEY_c00bc=repeat
-  KEYBOARD_KEY_c01bd=i #info
-  KEYBOARD_KEY_c01b7=leftquote #audio
-  KEYBOARD_KEY_c00e2=volume_mute
-  KEYBOARD_KEY_c00e9=period #vol-up
-  KEYBOARD_KEY_c00ea=comma #vol-down
-+
-+# ZTERCR21 remote
-+evdev:input:b0005v0508p0110*
-+ KEYBOARD_KEY_c0041=enter
 diff --git a/packages/sysutils/systemd/package.mk b/packages/sysutils/systemd/package.mk
-index bd0b5f1144..f82a673848 100644
+index 6b09fecb9a..eeb9b6a86f 100644
 --- a/packages/sysutils/systemd/package.mk
 +++ b/packages/sysutils/systemd/package.mk
 @@ -3,8 +3,8 @@
  # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
  
  PKG_NAME="systemd"
--PKG_VERSION="261.1"
--PKG_SHA256="f9b9da1103d1714703503d1746971ccbeeae945663ef3ede3b7348169b5df064"
+-PKG_VERSION="261.2"
+-PKG_SHA256="ed1059ff964f5df35b6056434cc17cc83f86dc913f10489948a0b19b6081c5ec"
 +PKG_VERSION="260.2"
 +PKG_SHA256="71a9ed11cf773478b0d7a16cd96e39ca3c3939ab37ed9a8ee814c31ea9b4f2b5"
  PKG_LICENSE="LGPL-2.1-or-later"
  PKG_SITE="http://www.freedesktop.org/wiki/Software/systemd"
  PKG_URL="https://github.com/systemd/systemd/archive/v${PKG_VERSION}.tar.gz"
-@@ -320,7 +320,6 @@ post_install() {
-   enable_service systemd-timesyncd.service
-   enable_service systemd-timesyncd-setup.service
-   enable_service systemd-userdbd.socket
--  enable_service debug-shell.service
-   if [ "${LOCAL_LOGIN}" = "yes" ]; then
-     enable_service getty@tty0.service
-   fi
 diff --git a/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch b/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch
 index ed54be4921..b6cf607453 100644
 --- a/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch
@@ -203,7 +53,7 @@ index ed54be4921..b6cf607453 100644
 -2.53.0
 -
 diff --git a/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch b/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch
-index 764327da20..ff14dbd877 100644
+index f4128b7683..ff14dbd877 100644
 --- a/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch
 +++ b/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch
 @@ -10,7 +10,7 @@ Subject: [PATCH] move hwdb.bin to /run
@@ -215,18 +65,27 @@ index 764327da20..ff14dbd877 100644
  --- a/src/libsystemd/sd-hwdb/hwdb-internal.h
  +++ b/src/libsystemd/sd-hwdb/hwdb-internal.h
  @@ -83,6 +83,6 @@ struct trie_value_entry2_f {
-@@ -22,10 +22,10 @@ index 72b2f777c8..2d8e2fbb16 100644
+@@ -22,15 +22,15 @@ index 72b2f777c8..2d8e2fbb16 100644
           "/usr/lib/systemd/hwdb/hwdb.bin\0"      \
           UDEVLIBEXECDIR "/hwdb.bin\0"
  diff --git a/src/shared/hwdb-util.c b/src/shared/hwdb-util.c
--index b42681a289..96102c6475 100644
+-index f6415694e1..6a37caeb39 100644
 +index 12621b7f89..552b1dc008 100644
  --- a/src/shared/hwdb-util.c
  +++ b/src/shared/hwdb-util.c
--@@ -587,7 +587,7 @@ int hwdb_update(const char *root, const char *hwdb_bin_dir, bool strict, bool co
+-@@ -599,7 +599,7 @@ int hwdb_update(const char *root, const char *hwdb_bin_dir, bool strict, bool co
+-                 path_simplify(root_abs);
+-         }
 +@@ -585,7 +585,7 @@ int hwdb_update(const char *root, const
-           * source. If true, then hwdb.bin will be created without the information. systemd-hwdb command
-           * should set the argument false, and 'udevadm hwdb' command should set it true. */
++          * source. If true, then hwdb.bin will be created without the information. systemd-hwdb command
++          * should set the argument false, and 'udevadm hwdb' command should set it true. */
+  
+--        hwdb_bin = path_join(root_abs, hwdb_bin_dir ?: "/etc/udev", "hwdb.bin");
+-+        hwdb_bin = path_join(root_abs, hwdb_bin_dir ?: "/run", "hwdb.bin");
++-        hwdb_bin = path_join(root, hwdb_bin_dir ?: "/etc/udev", "hwdb.bin");
+++        hwdb_bin = path_join(root, hwdb_bin_dir ?: "/run", "hwdb.bin");
+          if (!hwdb_bin)
+                  return -ENOMEM;
   
 @@ -38,7 +38,7 @@ diff --git a/units/systemd-hwdb-update.service.in b/units/systemd-hwdb-update.se
  index 4ba36d1fc6..4848ae9661 100644
@@ -268,175 +127,93 @@ index c916469902..99875d78ca 100644
 -2.53.0
 +2.14.1
  
-diff --git a/packages/sysutils/systemd/patches/0500-Add-working-directory-storage-for-debug-shell.patch b/packages/sysutils/systemd/patches/0500-Add-working-directory-storage-for-debug-shell.patch
-deleted file mode 100644
-index 2d2359b9ed..0000000000
+diff --git a/packages/sysutils/systemd/patches/0500-Add-working-directory-storage-for-debug-shell.patch b/packages/sysutils/systemd/patches/systemd-0500-Add-working-directory-storage-for-debug-shell.patch
+similarity index 66%
+rename from packages/sysutils/systemd/patches/0500-Add-working-directory-storage-for-debug-shell.patch
+rename to packages/sysutils/systemd/patches/systemd-0500-Add-working-directory-storage-for-debug-shell.patch
+index 2d2359b9ed..e64752d74e 100644
 --- a/packages/sysutils/systemd/patches/0500-Add-working-directory-storage-for-debug-shell.patch
-+++ /dev/null
-@@ -1,24 +0,0 @@
++++ b/packages/sysutils/systemd/patches/systemd-0500-Add-working-directory-storage-for-debug-shell.patch
+@@ -1,6 +1,6 @@
 -From 742a2115adad4d840461dbaabac8a66c040160b0 Mon Sep 17 00:00:00 2001
--From: Portisch <hugo.portisch@yahoo.de>
++From c38a2fc53e5ebb3fc4637a168408591003aad0fb Mon Sep 17 00:00:00 2001
+ From: Portisch <hugo.portisch@yahoo.de>
 -Date: Sat, 20 Jun 2026 14:14:34 +0200
--Subject: [PATCH] Add working directory '/storage' for debug-shell
--
-----
-- units/debug-shell.service.in | 1 +
-- 1 file changed, 1 insertion(+)
--
--diff --git a/units/debug-shell.service.in b/units/debug-shell.service.in
++Date: Mon, 30 Sep 2019 12:20:00 +0200
+ Subject: [PATCH] Add working directory '/storage' for debug-shell
+ 
+ ---
+@@ -8,17 +8,16 @@ Subject: [PATCH] Add working directory '/storage' for debug-shell
+  1 file changed, 1 insertion(+)
+ 
+ diff --git a/units/debug-shell.service.in b/units/debug-shell.service.in
 -index c42c793..260ed9b 100644
----- a/units/debug-shell.service.in
--+++ b/units/debug-shell.service.in
++index 9f3868e106..d5f93f18a6 100644
+ --- a/units/debug-shell.service.in
+ +++ b/units/debug-shell.service.in
 -@@ -16,6 +16,7 @@ ConditionPathExists={{DEBUGTTY}}
 - After=systemd-vconsole-setup.service
 - 
-- [Service]
--+WorkingDirectory=/storage
-- Environment=ENV=/etc/profile
-- ExecStart=/bin/sh -c 'echo -en "\033[?25h"; exec /bin/sh'
-- Restart=always
++@@ -16,6 +16,7 @@ IgnoreOnIsolate=yes
++ ConditionPathExists=@DEBUGTTY@
++
+  [Service]
+ +WorkingDirectory=/storage
+  Environment=ENV=/etc/profile
+  ExecStart=/bin/sh -c 'echo -en "\033[?25h"; exec /bin/sh'
+  Restart=always
 --- 
 -2.53.0.dirty
 -
-diff --git a/packages/sysutils/systemd/patches/0501-Start-debug-service-after-locale-to-ensure-file-syst.patch b/packages/sysutils/systemd/patches/0501-Start-debug-service-after-locale-to-ensure-file-syst.patch
-deleted file mode 100644
-index 8f5f550481..0000000000
---- a/packages/sysutils/systemd/patches/0501-Start-debug-service-after-locale-to-ensure-file-syst.patch
-+++ /dev/null
-@@ -1,25 +0,0 @@
--From 74ffc6f540d6bf0046df984f9eea9e5c08486767 Mon Sep 17 00:00:00 2001
--From: Portisch <hugo.portisch@yahoo.de>
--Date: Sat, 5 Nov 2022 18:52:02 +0100
--Subject: [PATCH] Start debug service after locale to ensure file system is
-- ready
--
-----
-- units/debug-shell.service.in | 1 +
-- 1 file changed, 1 insertion(+)
--
--diff --git a/units/debug-shell.service.in b/units/debug-shell.service.in
--index bc3a23f..a1bc7e5 100644
----- a/units/debug-shell.service.in
--+++ b/units/debug-shell.service.in
--@@ -14,6 +14,7 @@ Documentation=man:systemd-debug-generator(8)
-- IgnoreOnIsolate=yes
-- ConditionPathExists={{DEBUGTTY}}
-- After=systemd-vconsole-setup.service
--+After=locale.service
-- 
-- [Service]
-- WorkingDirectory=/storage
---- 
--2.38.1
--
-diff --git a/packages/sysutils/systemd/patches/0502-Debug-shell-show-motd.patch b/packages/sysutils/systemd/patches/0502-Debug-shell-show-motd.patch
-deleted file mode 100644
-index 5c3e368a03..0000000000
---- a/packages/sysutils/systemd/patches/0502-Debug-shell-show-motd.patch
-+++ /dev/null
-@@ -1,25 +0,0 @@
--From 8be4c5b9169511a8c3a0ef81f5512238c7944a5c Mon Sep 17 00:00:00 2001
--From: Peter <peter.vicman@gmail.com>
--Date: Tue, 16 Jul 2024 06:16:09 +0200
--Subject: [PATCH] Debug shell show motd
--
-----
-- units/debug-shell.service.in | 2 +-
-- 1 file changed, 1 insertion(+), 1 deletion(-)
--
--diff --git a/units/debug-shell.service.in b/units/debug-shell.service.in
--index 47ce3ad..260ed9b 100644
----- a/units/debug-shell.service.in
--+++ b/units/debug-shell.service.in
--@@ -19,7 +19,7 @@ After=locale.service
-- [Service]
-- WorkingDirectory=/storage
-- Environment=ENV=/etc/profile
---ExecStart=/bin/sh -c 'echo -en "\033[?25h"; exec /bin/sh'
--+ExecStart=/bin/sh -c 'echo -en "\033[?25h"; cat /etc/motd ; exec /bin/sh'
-- Restart=always
-- RestartSec=0
-- StandardInput=tty
---- 
--2.41.0.dirty
--
-diff --git a/packages/sysutils/systemd/patches/0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch b/packages/sysutils/systemd/patches/0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
-deleted file mode 100644
-index a1e51aaa13..0000000000
++--
++2.17.1
+diff --git a/packages/sysutils/systemd/patches/0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch b/packages/sysutils/systemd/patches/systemd-0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
+similarity index 82%
+rename from packages/sysutils/systemd/patches/0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
+rename to packages/sysutils/systemd/patches/systemd-0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
+index a1e51aaa13..a92331ce56 100644
 --- a/packages/sysutils/systemd/patches/0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
-+++ /dev/null
-@@ -1,29 +0,0 @@
--From d375cfbcc61b7709696041bc5ed960cd2f9fbf03 Mon Sep 17 00:00:00 2001
--From: Portisch <hugo.portisch@yahoo.de>
--Date: Tue, 23 Dec 2025 14:39:47 +0100
--Subject: [PATCH] Revert "terminal-util: during terminal reset clear from
-- beginning of line to end of screen"
--
--This reverts commit 4efd46c44bc599a71da1ff24149291ef10df61ff.
-----
-- src/basic/terminal-util.c | 4 +---
-- 1 file changed, 1 insertion(+), 3 deletions(-)
--
--diff --git a/src/basic/terminal-util.c b/src/basic/terminal-util.c
--index 9abef38aad..e2911e235d 100644
----- a/src/basic/terminal-util.c
--+++ b/src/basic/terminal-util.c
++++ b/packages/sysutils/systemd/patches/systemd-0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
+@@ -13,8 +13,9 @@ diff --git a/src/basic/terminal-util.c b/src/basic/terminal-util.c
+ index 9abef38aad..e2911e235d 100644
+ --- a/src/basic/terminal-util.c
+ +++ b/src/basic/terminal-util.c
 -@@ -984,9 +984,7 @@ int terminal_reset_ansi_seq(int fd) {
 -                             "\033[!p"              /* soft terminal reset */
--                             ANSI_OSC "104" ANSI_ST /* reset color palette via OSC 104 */
--                             ANSI_NORMAL            /* reset colors */
---                            "\033[?7h"             /* enable line-wrapping */
---                            "\033[1G"              /* place cursor at beginning of current line */
---                            "\033[0J",             /* erase till end of screen */
--+                            "\033[?7h",            /* enable line-wrapping */
--                             SIZE_MAX,
++@@ -970,9 +970,7 @@ int terminal_reset_ansi_seq(int fd) {
++         k = loop_write_full(fd,
++                             "\033[!p"      /* soft terminal reset */
+                              ANSI_OSC "104" ANSI_ST /* reset color palette via OSC 104 */
+                              ANSI_NORMAL            /* reset colors */
+ -                            "\033[?7h"             /* enable line-wrapping */
+@@ -22,8 +23,8 @@ index 9abef38aad..e2911e235d 100644
+ -                            "\033[0J",             /* erase till end of screen */
+ +                            "\033[?7h",            /* enable line-wrapping */
+                              SIZE_MAX,
 -                             CONSOLE_ANSI_SEQUENCE_TIMEOUT_USEC);
 -         if (r < 0)
---- 
--2.34.1
--
-diff --git a/packages/sysutils/systemd/profile.d/90-systemd.conf b/packages/sysutils/systemd/profile.d/90-systemd.conf
-index 6cf1e4ec0e..51962119f4 100644
---- a/packages/sysutils/systemd/profile.d/90-systemd.conf
-+++ b/packages/sysutils/systemd/profile.d/90-systemd.conf
-@@ -1,4 +1,4 @@
--# SPDX-License-Identifier: GPL-2.0-only
-+# SPDX-License-Identifier: GPL-2.0
- # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
++                             100 * USEC_PER_MSEC);
++         if (k < 0)
+ -- 
+ 2.34.1
  
- export SYSTEMD_COLORS=0
-diff --git a/packages/sysutils/systemd/scripts/environment-setup b/packages/sysutils/systemd/scripts/environment-setup
-index bf7adfd551..eb78e067ed 100755
---- a/packages/sysutils/systemd/scripts/environment-setup
-+++ b/packages/sysutils/systemd/scripts/environment-setup
-@@ -1,5 +1,5 @@
- #!/bin/sh
--# SPDX-License-Identifier: GPL-2.0-only
-+# SPDX-License-Identifier: GPL-2.0
- # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
- 
- # read config files
-diff --git a/packages/sysutils/systemd/scripts/usercache-setup b/packages/sysutils/systemd/scripts/usercache-setup
-index 8e8c43ca4e..9a0e7c9786 100755
---- a/packages/sysutils/systemd/scripts/usercache-setup
-+++ b/packages/sysutils/systemd/scripts/usercache-setup
-@@ -1,6 +1,6 @@
- #!/bin/sh
- 
--# SPDX-License-Identifier: GPL-2.0-only
-+# SPDX-License-Identifier: GPL-2.0
- # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
- 
- # Fix bug in older versions creating file /storage/.cache/services
-diff --git a/packages/sysutils/systemd/scripts/userconfig-setup b/packages/sysutils/systemd/scripts/userconfig-setup
-index bec76d8120..d07e257432 100755
---- a/packages/sysutils/systemd/scripts/userconfig-setup
-+++ b/packages/sysutils/systemd/scripts/userconfig-setup
-@@ -1,6 +1,6 @@
- #!/bin/sh
- 
--# SPDX-License-Identifier: GPL-2.0-only
-+# SPDX-License-Identifier: GPL-2.0
- # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
- 
- # Remove those sample files that we manage
+diff --git a/packages/sysutils/systemd/patches/0501-Start-debug-service-after-locale-to-ensure-file-syst.patch b/packages/sysutils/systemd/patches/systemd-501-Start-debug-service-after-locale-to-ensure-file-syst.patch
+similarity index 91%
+rename from packages/sysutils/systemd/patches/0501-Start-debug-service-after-locale-to-ensure-file-syst.patch
+rename to packages/sysutils/systemd/patches/systemd-501-Start-debug-service-after-locale-to-ensure-file-syst.patch
+index 8f5f550481..1dc3b02fb5 100644
+--- a/packages/sysutils/systemd/patches/0501-Start-debug-service-after-locale-to-ensure-file-syst.patch
++++ b/packages/sysutils/systemd/patches/systemd-501-Start-debug-service-after-locale-to-ensure-file-syst.patch
+@@ -12,7 +12,7 @@ diff --git a/units/debug-shell.service.in b/units/debug-shell.service.in
+ index bc3a23f..a1bc7e5 100644
+ --- a/units/debug-shell.service.in
+ +++ b/units/debug-shell.service.in
+-@@ -14,6 +14,7 @@ Documentation=man:systemd-debug-generator(8)
++@@ -13,6 +13,7 @@ Documentation=man:systemd-debug-generator(8)
+  IgnoreOnIsolate=yes
+  ConditionPathExists={{DEBUGTTY}}
+  After=systemd-vconsole-setup.service
+diff --git a/packages/sysutils/systemd/patches/0502-Debug-shell-show-motd.patch b/packages/sysutils/systemd/patches/systemd-502-Debug-shell-show-motd.patch
+similarity index 100%
+rename from packages/sysutils/systemd/patches/0502-Debug-shell-show-motd.patch
+rename to packages/sysutils/systemd/patches/systemd-502-Debug-shell-show-motd.patch

@@ -10,7 +10,7 @@ PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="http://www.tntnet.org/cxxtools.html"
 PKG_URL="http://ftp.rz.tu-braunschweig.de/pub/mirror/ubuntu-packages/pool/universe/c/cxxtools/cxxtools_${PKG_VERSION}.0.orig.tar.gz"
 PKG_DEPENDS_HOST="toolchain:host openssl:host"
-PKG_DEPENDS_TARGET="toolchain cxxtools:host openssl"
+PKG_DEPENDS_TARGET="toolchain _cxxtools30:host openssl"
 PKG_LONGDESC="Cxxtools is a collection of general-purpose C++ classes."
 PKG_BUILD_FLAGS="+pic"
 

@@ -1,0 +1,210 @@
+diff --git a/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb b/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb
+index 08b20f28a7..e24459376c 100644
+--- a/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb
++++ b/packages/sysutils/systemd/hwdb.d/70-local-keyboard.hwdb
+@@ -44,10 +44,6 @@ evdev:input:b0005v0957p000A*
+ 
+ evdev:input:b0005v0955p7217*
+  KEYBOARD_KEY_c01b8=o
+- 
+-# Gmyle / Hama Vista Remote Control
+-evdev:input:b0003v05A4p9881*
+- KEYBOARD_KEY_90002=info # "i" and "right mouse" buttons, originally BTN_RIGHT
+ 
+ # all osmc remotes
+ evdev:input:b0003v2252p17*
+diff --git a/packages/sysutils/systemd/package.mk b/packages/sysutils/systemd/package.mk
+index bd0b5f1144..eeb9b6a86f 100644
+--- a/packages/sysutils/systemd/package.mk
++++ b/packages/sysutils/systemd/package.mk
+@@ -3,8 +3,8 @@
+ # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+ 
+ PKG_NAME="systemd"
+-PKG_VERSION="261.1"
+-PKG_SHA256="f9b9da1103d1714703503d1746971ccbeeae945663ef3ede3b7348169b5df064"
++PKG_VERSION="260.2"
++PKG_SHA256="71a9ed11cf773478b0d7a16cd96e39ca3c3939ab37ed9a8ee814c31ea9b4f2b5"
+ PKG_LICENSE="LGPL-2.1-or-later"
+ PKG_SITE="http://www.freedesktop.org/wiki/Software/systemd"
+ PKG_URL="https://github.com/systemd/systemd/archive/v${PKG_VERSION}.tar.gz"
+diff --git a/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch b/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch
+index ed54be4921..b6cf607453 100644
+--- a/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch
++++ b/packages/sysutils/systemd/patches/0001-move-etc-systemd-system-to-storage-.config-system.d.patch
+@@ -5,10 +5,10 @@ Subject: [PATCH] move /etc/systemd/system to /storage/.config/system.d
+ 
+ ---
+ diff --git a/meson.build b/meson.build
+-index e9c64b098e..e810e6c3a7 100644
++index dbbddb68e2..4592cd1094 100644
+ --- a/meson.build
+ +++ b/meson.build
+-@@ -298,7 +298,7 @@ conf.set_quoted('SYSTEMD_USERWORK_PATH',                      libexecdir / 'syst
++@@ -291,7 +291,7 @@ conf.set_quoted('SYSTEMD_USERWORK_PATH',
+  conf.set_quoted('SYSTEMD_MOUNTWORK_PATH',                     libexecdir / 'systemd-mountwork')
+  conf.set_quoted('SYSTEMD_NSRESOURCEWORK_PATH',                libexecdir / 'systemd-nsresourcework')
+  conf.set_quoted('SYSTEMD_VERITYSETUP_PATH',                   libexecdir / 'systemd-veritysetup')
+@@ -17,6 +17,3 @@ index e9c64b098e..e810e6c3a7 100644
+  conf.set_quoted('SYSTEM_DATA_UNIT_DIR',                       systemunitdir)
+  conf.set_quoted('SYSTEM_ENV_GENERATOR_DIR',                   systemenvgeneratordir)
+  conf.set_quoted('SYSTEM_GENERATOR_DIR',                       systemgeneratordir)
+--- 
+-2.53.0
+-
+diff --git a/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch b/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch
+index 764327da20..ff14dbd877 100644
+--- a/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch
++++ b/packages/sysutils/systemd/patches/0002-move-hwdb.bin-to-run.patch
+@@ -10,7 +10,7 @@ Subject: [PATCH] move hwdb.bin to /run
+  3 files changed, 3 insertions(+), 3 deletions(-)
+ 
+ diff --git a/src/libsystemd/sd-hwdb/hwdb-internal.h b/src/libsystemd/sd-hwdb/hwdb-internal.h
+-index 72b2f777c8..2d8e2fbb16 100644
++index 5302679a62..4afdd6e306 100644
+ --- a/src/libsystemd/sd-hwdb/hwdb-internal.h
+ +++ b/src/libsystemd/sd-hwdb/hwdb-internal.h
+ @@ -83,6 +83,6 @@ struct trie_value_entry2_f {
+@@ -22,10 +22,10 @@ index 72b2f777c8..2d8e2fbb16 100644
+          "/usr/lib/systemd/hwdb/hwdb.bin\0"      \
+          UDEVLIBEXECDIR "/hwdb.bin\0"
+ diff --git a/src/shared/hwdb-util.c b/src/shared/hwdb-util.c
+-index b42681a289..96102c6475 100644
++index 12621b7f89..552b1dc008 100644
+ --- a/src/shared/hwdb-util.c
+ +++ b/src/shared/hwdb-util.c
+-@@ -587,7 +587,7 @@ int hwdb_update(const char *root, const char *hwdb_bin_dir, bool strict, bool co
++@@ -585,7 +585,7 @@ int hwdb_update(const char *root, const
+           * source. If true, then hwdb.bin will be created without the information. systemd-hwdb command
+           * should set the argument false, and 'udevadm hwdb' command should set it true. */
+  
+@@ -38,7 +38,7 @@ diff --git a/units/systemd-hwdb-update.service.in b/units/systemd-hwdb-update.se
+ index 4ba36d1fc6..4848ae9661 100644
+ --- a/units/systemd-hwdb-update.service.in
+ +++ b/units/systemd-hwdb-update.service.in
+-@@ -13,7 +13,7 @@ Documentation=man:hwdb(7) man:systemd-hwdb(8)
++@@ -13,7 +13,7 @@ Documentation=man:hwdb(7) man:systemd-hw
+  
+  ConditionNeedsUpdate=/etc
+  ConditionPathExists=|!{{UDEVLIBEXECDIR}}/hwdb.bin
+@@ -48,5 +48,5 @@ index 4ba36d1fc6..4848ae9661 100644
+  
+  DefaultDependencies=no
+ -- 
+-2.53.0
++2.34.1
+ 
+diff --git a/packages/sysutils/systemd/patches/0200-persist-persistent-timer-stamps.patch b/packages/sysutils/systemd/patches/0200-persist-persistent-timer-stamps.patch
+index c916469902..99875d78ca 100644
+--- a/packages/sysutils/systemd/patches/0200-persist-persistent-timer-stamps.patch
++++ b/packages/sysutils/systemd/patches/0200-persist-persistent-timer-stamps.patch
+@@ -8,10 +8,10 @@ Subject: [PATCH] timers: use a persistent filesystem for persistent timers
+  1 file changed, 2 insertions(+), 2 deletions(-)
+ 
+ diff --git a/src/core/timer.c b/src/core/timer.c
+-index 510d8e1..41f41dd 100644
++index 03935ee..bfd5c02 100644
+ --- a/src/core/timer.c
+ +++ b/src/core/timer.c
+-@@ -139,11 +139,11 @@ static int timer_setup_persistent(Timer *t) {
++@@ -139,11 +139,11 @@ static int timer_setup_persistent(Timer
+  
+          if (MANAGER_IS_SYSTEM(UNIT(t)->manager)) {
+  
+@@ -26,5 +26,5 @@ index 510d8e1..41f41dd 100644
+                  const char *e;
+  
+ -- 
+-2.53.0
++2.14.1
+ 
+diff --git a/packages/sysutils/systemd/patches/0500-Add-working-directory-storage-for-debug-shell.patch b/packages/sysutils/systemd/patches/systemd-0500-Add-working-directory-storage-for-debug-shell.patch
+similarity index 66%
+rename from packages/sysutils/systemd/patches/0500-Add-working-directory-storage-for-debug-shell.patch
+rename to packages/sysutils/systemd/patches/systemd-0500-Add-working-directory-storage-for-debug-shell.patch
+index 2d2359b9ed..e64752d74e 100644
+--- a/packages/sysutils/systemd/patches/0500-Add-working-directory-storage-for-debug-shell.patch
++++ b/packages/sysutils/systemd/patches/systemd-0500-Add-working-directory-storage-for-debug-shell.patch
+@@ -1,6 +1,6 @@
+-From 742a2115adad4d840461dbaabac8a66c040160b0 Mon Sep 17 00:00:00 2001
++From c38a2fc53e5ebb3fc4637a168408591003aad0fb Mon Sep 17 00:00:00 2001
+ From: Portisch <hugo.portisch@yahoo.de>
+-Date: Sat, 20 Jun 2026 14:14:34 +0200
++Date: Mon, 30 Sep 2019 12:20:00 +0200
+ Subject: [PATCH] Add working directory '/storage' for debug-shell
+ 
+ ---
+@@ -8,17 +8,16 @@ Subject: [PATCH] Add working directory '/storage' for debug-shell
+  1 file changed, 1 insertion(+)
+ 
+ diff --git a/units/debug-shell.service.in b/units/debug-shell.service.in
+-index c42c793..260ed9b 100644
++index 9f3868e106..d5f93f18a6 100644
+ --- a/units/debug-shell.service.in
+ +++ b/units/debug-shell.service.in
+-@@ -16,6 +16,7 @@ ConditionPathExists={{DEBUGTTY}}
+- After=systemd-vconsole-setup.service
+- 
++@@ -16,6 +16,7 @@ IgnoreOnIsolate=yes
++ ConditionPathExists=@DEBUGTTY@
++
+  [Service]
+ +WorkingDirectory=/storage
+  Environment=ENV=/etc/profile
+  ExecStart=/bin/sh -c 'echo -en "\033[?25h"; exec /bin/sh'
+  Restart=always
+--- 
+-2.53.0.dirty
+-
++--
++2.17.1
+diff --git a/packages/sysutils/systemd/patches/0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch b/packages/sysutils/systemd/patches/systemd-0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
+similarity index 82%
+rename from packages/sysutils/systemd/patches/0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
+rename to packages/sysutils/systemd/patches/systemd-0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
+index a1e51aaa13..a92331ce56 100644
+--- a/packages/sysutils/systemd/patches/0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
++++ b/packages/sysutils/systemd/patches/systemd-0900-Revert-terminal-util-during-terminal-reset-clear-fro.patch
+@@ -13,8 +13,9 @@ diff --git a/src/basic/terminal-util.c b/src/basic/terminal-util.c
+ index 9abef38aad..e2911e235d 100644
+ --- a/src/basic/terminal-util.c
+ +++ b/src/basic/terminal-util.c
+-@@ -984,9 +984,7 @@ int terminal_reset_ansi_seq(int fd) {
+-                             "\033[!p"              /* soft terminal reset */
++@@ -970,9 +970,7 @@ int terminal_reset_ansi_seq(int fd) {
++         k = loop_write_full(fd,
++                             "\033[!p"      /* soft terminal reset */
+                              ANSI_OSC "104" ANSI_ST /* reset color palette via OSC 104 */
+                              ANSI_NORMAL            /* reset colors */
+ -                            "\033[?7h"             /* enable line-wrapping */
+@@ -22,8 +23,8 @@ index 9abef38aad..e2911e235d 100644
+ -                            "\033[0J",             /* erase till end of screen */
+ +                            "\033[?7h",            /* enable line-wrapping */
+                              SIZE_MAX,
+-                             CONSOLE_ANSI_SEQUENCE_TIMEOUT_USEC);
+-         if (r < 0)
++                             100 * USEC_PER_MSEC);
++         if (k < 0)
+ -- 
+ 2.34.1
+ 
+diff --git a/packages/sysutils/systemd/patches/0501-Start-debug-service-after-locale-to-ensure-file-syst.patch b/packages/sysutils/systemd/patches/systemd-501-Start-debug-service-after-locale-to-ensure-file-syst.patch
+similarity index 91%
+rename from packages/sysutils/systemd/patches/0501-Start-debug-service-after-locale-to-ensure-file-syst.patch
+rename to packages/sysutils/systemd/patches/systemd-501-Start-debug-service-after-locale-to-ensure-file-syst.patch
+index 8f5f550481..1dc3b02fb5 100644
+--- a/packages/sysutils/systemd/patches/0501-Start-debug-service-after-locale-to-ensure-file-syst.patch
++++ b/packages/sysutils/systemd/patches/systemd-501-Start-debug-service-after-locale-to-ensure-file-syst.patch
+@@ -12,7 +12,7 @@ diff --git a/units/debug-shell.service.in b/units/debug-shell.service.in
+ index bc3a23f..a1bc7e5 100644
+ --- a/units/debug-shell.service.in
+ +++ b/units/debug-shell.service.in
+-@@ -14,6 +14,7 @@ Documentation=man:systemd-debug-generator(8)
++@@ -13,6 +13,7 @@ Documentation=man:systemd-debug-generator(8)
+  IgnoreOnIsolate=yes
+  ConditionPathExists={{DEBUGTTY}}
+  After=systemd-vconsole-setup.service
+diff --git a/packages/sysutils/systemd/patches/0502-Debug-shell-show-motd.patch b/packages/sysutils/systemd/patches/systemd-502-Debug-shell-show-motd.patch
+similarity index 100%
+rename from packages/sysutils/systemd/patches/0502-Debug-shell-show-motd.patch
+rename to packages/sysutils/systemd/patches/systemd-502-Debug-shell-show-motd.patch

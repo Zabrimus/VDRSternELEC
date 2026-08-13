@@ -5,7 +5,12 @@
 #
 
 # Read .profile
-. /storage/.profile
+if [ -e /storage/.profile ]; then
+  . /storage/.profile
+else
+  # set default
+  START_PRG=kodi
+fi
 
 # Start either Kodi or VDR on request
 if [ -e /storage/.cache/switch_kodi_vdr ]; then

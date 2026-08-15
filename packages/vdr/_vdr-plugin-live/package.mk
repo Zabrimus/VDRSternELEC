@@ -6,13 +6,19 @@ PKG_SHA256="7c97f196d4819f71f7c1ee2211c5029ecfd9e2b0e006d7f05796e2f65f3129d6"
 PKG_LICENSE="GPL"
 PKG_SITE="https://codeberg.org/MarkusE/vdr-plugin-live"
 PKG_URL="https://codeberg.org/MarkusE/vdr-plugin-live/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain _vdr _tntnet30 pcre2 libiconv _cxxtools30 vdr-helper"
+PKG_DEPENDS_TARGET="toolchain _vdr pcre2 libiconv vdr-helper"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
 PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_SOURCE_DIR="vdr-plugin-live"
 PKG_LONGDESC="Allows a comfortable operation of VDR and some of its plugins trough a web interface."
 PKG_BUILD_FLAGS="+pic -parallel +speed"
+
+if [ "$(get_pkg_version cxxtools)" = "3.0" ]; then
+	PKG_DEPENDS_TARGET=" tntnet cxxtools"
+else
+	PKG_DEPENDS_TARGET=" _tntnet30 _cxxtools30"
+fi
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"

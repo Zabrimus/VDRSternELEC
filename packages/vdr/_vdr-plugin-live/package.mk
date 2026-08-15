@@ -15,15 +15,15 @@ PKG_LONGDESC="Allows a comfortable operation of VDR and some of its plugins trou
 PKG_BUILD_FLAGS="+pic -parallel +speed"
 
 if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" -le "12" ]; then
-	PKG_DEPENDS_TARGET=" cxxtools"
+	PKG_DEPENDS_TARGET=" tntnet cxxtools"
 else
-	PKG_DEPENDS_TARGET=" _cxxtools30"
+	PKG_DEPENDS_TARGET=" _tntnet30 _cxxtools30"
 fi
 
 if [ "${DISTRO}" = "CoreELEC" ] && [ "${OS_VERSION:0:2}" -le "21" ]; then
-	PKG_DEPENDS_TARGET=" cxxtools"
+	PKG_DEPENDS_TARGET=" tntnet cxxtools"
 elses
-	PKG_DEPENDS_TARGET=" _cxxtools30"
+	PKG_DEPENDS_TARGET=" _tntnet30 _cxxtools30"
 fi
 
 pre_make_target() {

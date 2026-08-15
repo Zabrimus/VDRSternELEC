@@ -16,15 +16,9 @@ PKG_LONGDESC="Allows to access many internals of the VDR via a restful API."
 PKG_MAKE_OPTS_TARGET="USE_LIBMAGICKPLUSPLUS=0"
 PKG_BUILD_FLAGS="+speed"
 
-if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" -le "12" ]; then
+if [ "$(get_pkg_version cxxtools)" = "3.0" ]; then
 	PKG_DEPENDS_TARGET=" cxxtools"
 else
-	PKG_DEPENDS_TARGET=" _cxxtools30"
-fi
-
-if [ "${DISTRO}" = "CoreELEC" ] && [ "${OS_VERSION:0:2}" -le "21" ]; then
-	PKG_DEPENDS_TARGET=" cxxtools"
-elses
 	PKG_DEPENDS_TARGET=" _cxxtools30"
 fi
 

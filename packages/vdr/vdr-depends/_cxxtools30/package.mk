@@ -16,6 +16,11 @@ PKG_BUILD_FLAGS="+pic"
 PKG_CONFIGURE_OPTS_HOST="--disable-demos --disable-unittest"
 PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared --disable-demos --disable-unittest"
 
+pre_configure_host() {
+	cd ${PKG_BUILD}
+	autoreconf -f -i
+}
+
 pre_configure_target() {
 	cd ${PKG_BUILD}
 	autoreconf -f -i

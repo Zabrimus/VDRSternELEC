@@ -3,7 +3,7 @@
 COREELEC20=29c066e
 COREELEC21=214df67
 #COREELEC22=2fe20f0   # 20.6 mit einem Downgrade von opengl-meson
-COREELEC22=cdb41f6  # 08.08 Aktuell mit einem Downgrade von opengl-meson
+COREELEC22=cdb41f6    # 08.08
 LIBREELEC12=d3bd05e
 LIBREELEC13=4ec82a6
 RELEASESHA=29efcf6

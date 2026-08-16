@@ -24,7 +24,6 @@ rm -f /storage/.cache/switch_kodi_vdr
 # monitor file changes
 systemctl start switch_kodi_vdr.path
 
-
 # check if we got started by timer
 if [ -f /storage/.config/vdropt/wakeupacpi ]; then
    /storage/.config/vdropt/wakeupacpi start

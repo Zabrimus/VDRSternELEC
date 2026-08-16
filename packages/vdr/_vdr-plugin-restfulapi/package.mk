@@ -7,7 +7,7 @@ PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/yavdr/vdr-plugin-restfulapi"
 PKG_URL="https://github.com/yavdr/vdr-plugin-restfulapi/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="master"
-PKG_DEPENDS_TARGET="toolchain _vdr cxxtools vdr-helper _vdr-plugin-wirbelscan"
+PKG_DEPENDS_TARGET="toolchain _vdr vdr-helper _vdr-plugin-wirbelscan"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_SOURCE_DIR="vdr-plugin-restfulapi-${PKG_VERSION}"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper) $(get_pkg_directory _vdr-plugin-wirbelscan)"
@@ -15,6 +15,12 @@ PKG_DEPENDS_UNPACK="vdr-helper _vdr-plugin-wirbelscan"
 PKG_LONGDESC="Allows to access many internals of the VDR via a restful API."
 PKG_MAKE_OPTS_TARGET="USE_LIBMAGICKPLUSPLUS=0"
 PKG_BUILD_FLAGS="+speed"
+
+if [ "$(get_pkg_version cxxtools)" = "3.0" ]; then
+	PKG_DEPENDS_TARGET=" cxxtools"
+else
+	PKG_DEPENDS_TARGET=" _cxxtools30"
+fi
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib"

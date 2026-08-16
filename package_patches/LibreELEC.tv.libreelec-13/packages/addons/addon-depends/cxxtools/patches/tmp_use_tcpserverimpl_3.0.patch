@@ -1,0 +1,223 @@
+--- cxxtools-65afe49b24d444dab4f7d2b427ccf7ad956aa9da/src/tcpserverimpl.cpp	2026-06-23 12:45:52.000000000 +0200
++++ cxxtools-3.0/src/tcpserverimpl.cpp	2020-04-11 23:27:22.000000000 +0200
+@@ -21,29 +21,28 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * Lesser General Public License for more details.
+  * 
+  * You should have received a copy of the GNU Lesser General Public
+  * License along with this library; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ 
++#include <cxxtools/net/addrinfo.h>
+ #include "tcpserverimpl.h"
+ #include "tcpsocketimpl.h"
+ #include "addrinfoimpl.h"
+ #include "error.h"
+-#include <cxxtools/net/addrinfo.h>
+ #include <cxxtools/net/tcpserver.h>
+ #include <cxxtools/net/tcpsocket.h>
+ #include <cxxtools/net/net.h>
+ #include <cxxtools/systemerror.h>
+ #include <cxxtools/log.h>
+ #include <cxxtools/ioerror.h>
+ #include <cxxtools/resetter.h>
+-#include <cxxtools/fileinfo.h>
+ #include <cerrno>
+ #include <cassert>
+ #include <cstring>
+ #include <sys/poll.h>
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include <limits>
+ #include "error.h"
+@@ -72,29 +71,19 @@
+ TcpServerImpl::TcpServerImpl(TcpServer& server)
+ : _server(server),
+   _pendingAccept(noPendingAccept),
+   _pfd(0)
+ #ifdef HAVE_TCP_DEFER_ACCEPT
+   , _deferAccept(false)
+ #endif
+ {
+-#ifdef HAVE_PIPE2
+-    if (::pipe2(_wakePipe, O_CLOEXEC|O_NONBLOCK))
+-        throwSystemError("pipe2");
+-#else
+-    if (::pipe(_wakePipe))
++    int ret = ::pipe(_wakePipe);
++    if (ret == 1)
+         throwSystemError("pipe");
+-
+-    if (::fcntl(_wakePipe[0], O_CLOEXEC|O_NONBLOCK))
+-        throwSystemError("fcntl(wakePipe)");
+-    if (::fcntl(_wakePipe[1], O_CLOEXEC|O_NONBLOCK))
+-        throwSystemError("fcntl(wakePipe)");
+-#endif
+-
+     log_debug("wake pipe read fd=" << _wakePipe[0] << " write fd=" << _wakePipe[1]);
+ }
+ 
+ TcpServerImpl::~TcpServerImpl()
+ {
+     ::close(_wakePipe[0]);
+     ::close(_wakePipe[1]);
+ }
+@@ -113,23 +102,16 @@
+ {
+     for (Listeners::const_iterator it = _listeners.begin();
+         it != _listeners.end(); ++it)
+     {
+         if (it->_fd >= 0)
+         {
+             log_debug("close socket " << it->_fd);
+             ::close(it->_fd);
+-
+-            if (it->_port == 0)
+-            {
+-                auto sockaddr = (struct sockaddr_un*)&it->_servaddr;
+-                log_debug("unlink \"" << sockaddr->sun_path << '"');
+-                ::unlink(sockaddr->sun_path);
+-            }
+         }
+     }
+ 
+     _listeners.clear();
+ 
+     _pfd = 0;
+ #ifdef HAVE_TCP_DEFER_ACCEPT
+     _deferAccept = false;
+@@ -153,21 +135,17 @@
+     // them all out
+     try
+     {
+         for (AddrInfoImpl::const_iterator it = ai.impl()->begin(); it != ai.impl()->end(); ++it)
+         {
+             int fd;
+             try
+             {
+-#ifdef SOCK_CLOEXEC
+-                fd = create(it->ai_family, inherit ? SOCK_STREAM : (SOCK_STREAM|SOCK_CLOEXEC), 0);
+-#else
+                 fd = create(it->ai_family, SOCK_STREAM, 0);
+-#endif
+             }
+             catch (const SystemError& e)
+             {
+                 // if we have at least one listener created succesfully then we
+                 // can ignore that entry
+                 if (_listeners.size() > 0)
+                 {
+                     log_debug("failed to create socket for ip <" << formatIp(*reinterpret_cast<const Sockaddr*>(it->ai_addr)) << ">; have already " << _listeners.size() << " listeners");
+@@ -187,43 +165,26 @@
+                 // We have no listeners yet but the next entry might be successful
+                 // so we just skip that entry.
+                 log_debug("failed to create socket for ip <" << formatIp(*reinterpret_cast<const Sockaddr*>(it->ai_addr)) << '>');
+                 continue;
+             }
+ 
+             _listeners.push_back(Listener());
+             _listeners.back()._fd = fd;
+-            _listeners.back()._port = port;
+ 
+             if (flags & TcpServer::REUSEADDR)
+             {
+-                if (port == 0)
+-                {
+-                    // UNIX domain socket
+-                    // check file type
+-                    FileInfo fileInfo(ipaddr);
+-                    if (fileInfo.type() == FileInfo::Socket)
+-                    {
+-                        log_debug("remove existing unix domain socket \"" << ipaddr << '"');
+-                        fileInfo.remove();
+-                    }
+-                    else if (fileInfo.type() != FileInfo::Invalid)
+-                        throw AccessFailed(ipaddr);
+-                }
+-                else
+-                {
+                     log_debug("setsockopt SO_REUSEADDR");
+                     if (::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
+                     {
+                         log_debug("could not set socket option SO_REUSEADDR " << fd << ": " << getErrnoString());
+                         throwSystemError("setsockopt");
+                     }
+                 }
+-            }
+ 
+ #ifdef HAVE_IPV6
+             if (it->ai_family == AF_INET6)
+             {
+               if (::setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on)) < 0)
+               {
+                   log_debug("could not set socket option IPV6_V6ONLY " << fd << ": " << getErrnoString());
+                   throwSystemError("setsockopt");
+@@ -243,27 +204,25 @@
+ 
+             log_debug("listen");
+             if ( ::listen(fd, backlog) < 0 )
+                 throwSystemError("listen");
+ 
+             // save our information
+             std::memmove(&_listeners.back()._servaddr, it->ai_addr, it->ai_addrlen);
+ 
+-#ifndef SOCK_CLOEXEC
+             if (!inherit)
+             {
+                 int flags = ::fcntl(fd, F_GETFD);
+                 flags |= FD_CLOEXEC ;
+                 fn = "fcntl";
+                 int ret = ::fcntl(fd, F_SETFD, flags);
+                 if (ret == -1)
+                     throwSystemError("fcntl(FD_CLOEXEC)");
+             }
+-#endif
+         }
+ 
+ #ifdef HAVE_TCP_DEFER_ACCEPT
+         deferAccept(flags & TcpServer::DEFER_ACCEPT);
+ #endif
+ 
+     }
+     catch (const std::exception& e)
+@@ -298,18 +257,17 @@
+     int deferSecs = sw ? 30 : 0;
+ 
+     log_debug("set TCP_DEFER_ACCEPT to " << deferSecs);
+ 
+     for (Listeners::const_iterator it = _listeners.begin();
+         it != _listeners.end(); ++it)
+     {
+         if (::setsockopt(it->_fd, SOL_TCP, TCP_DEFER_ACCEPT,
+-            &deferSecs, sizeof(deferSecs)) < 0
+-            && errno != EOPNOTSUPP)
++            &deferSecs, sizeof(deferSecs)) < 0)
+         {
+             throwSystemError("setsockopt(TCP_DEFER_ACCEPT)");
+         }
+     }
+ }
+ #endif
+ 
+ bool TcpServerImpl::wait(Timespan timeout)
+@@ -387,18 +345,17 @@
+     _pfd = pfd;
+ 
+     return pollSize;
+ }
+ 
+ 
+ bool TcpServerImpl::checkPollEvent()
+ {
+-    if (_pfd == 0)
+-        return false;
++    assert(_pfd != 0);
+ 
+     bool ret = false;
+     Resetter<int> resetter(_pendingAccept, noPendingAccept);
+     for (Listeners::size_type n = 0; n < _listeners.size(); ++n)
+     {
+         if (_pfd[n].revents & POLLIN)
+         {
+             _pendingAccept = n;

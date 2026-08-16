@@ -1,0 +1,12 @@
+diff --git a/packages/addons/addon-depends/rsyslog-depends/libyaml/package.mk b/packages/addons/addon-depends/rsyslog-depends/libyaml/package.mk
+index 1f9e928ac8..f787752303 100644
+--- a/packages/addons/addon-depends/rsyslog-depends/libyaml/package.mk
++++ b/packages/addons/addon-depends/rsyslog-depends/libyaml/package.mk
+@@ -8,6 +8,7 @@ PKG_LICENSE="MIT"
+ PKG_SITE="http://pyyaml.org/wiki/LibYAML"
+ PKG_URL="http://pyyaml.org/download/libyaml/yaml-${PKG_VERSION}.tar.gz"
+ PKG_DEPENDS_TARGET="toolchain"
++PKG_DEPENDS_HOST="toolchain"
+ PKG_LONGDESC="LibYAML is a YAML parser and emitter library"
+ PKG_BUILD_FLAGS="-sysroot -cfg-libs"
+ PKG_TOOLCHAIN="configure"

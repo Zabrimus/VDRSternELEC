@@ -49,12 +49,6 @@ makeinstall_target() {
 
     chmod +x ${INSTALL}/usr/local/bin/*.sh
 
-    # copy and enable services
-    mkdir -p ${INSTALL}/usr/lib/systemd/system
-    cp ${PKG_DIR}/system.d/VDRCoreELEC.service ${INSTALL}/usr/lib/systemd/system
-
-    enable_service VDRCoreELEC.service
-
 	# copy sample XML (PowerMenu for Kodi which includes a Button to switch to VDR)
   	cp ${PKG_DIR}/config/DialogButtonMenu.xml ${INSTALL}/usr/local/config/DialogButtonMenu.xml
 

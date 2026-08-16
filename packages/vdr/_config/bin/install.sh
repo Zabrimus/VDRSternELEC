@@ -59,10 +59,16 @@ install() {
 
   # disable some services. This is important and shall not be changed!
   # use a whitelist
-  systemctl disable switch_kodi_vdr.path
   systemctl disable switch_kodi_vdr.service
   systemctl disable vdropt.service
   systemctl disable vdropt.target
+
+  # enable some services
+  systemctl enable switch_kodi_vdr.path
+  systemctl start switch_kodi_vdr.path
+
+  systemctl enable VDRCoreELEC.service
+  systemctl start VDRCoreELEC.service
 
   # copy sysctl.d files
   for i in `ls /usr/local/sysctl.d/*`; do

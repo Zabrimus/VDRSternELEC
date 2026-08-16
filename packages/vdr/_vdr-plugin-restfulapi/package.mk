@@ -17,9 +17,9 @@ PKG_MAKE_OPTS_TARGET="USE_LIBMAGICKPLUSPLUS=0"
 PKG_BUILD_FLAGS="+speed"
 
 if [ "$(get_pkg_version cxxtools)" = "3.0" ]; then
-	PKG_DEPENDS_TARGET=" tntnet cxxtools"
+	PKG_DEPENDS_TARGET=" cxxtools"
 else
-	PKG_DEPENDS_TARGET=" _tntnet30 _cxxtools30"
+	PKG_DEPENDS_TARGET=" _cxxtools30"
 fi
 
 pre_make_target() {

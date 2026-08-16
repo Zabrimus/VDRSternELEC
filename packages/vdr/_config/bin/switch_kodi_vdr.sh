@@ -5,26 +5,32 @@
 #
 
 # Read .profile
-. /storage/.profile
+if [ -e /storage/.profile ]; then
+  . /storage/.profile
+else
+  # set default
+  START_PRG=kodi
+fi
 
 # Start either Kodi or VDR on request
-. /storage/.cache/switch_kodi_vdr
-
+if [ -e /storage/.cache/switch_kodi_vdr ]; then
+  . /storage/.cache/switch_kodi_vdr
+fi
 
 if [ "${START_PRG}" = "vdr" ]; then
    #check if Kodi is already running (should never be the case after reboot)
-   if pgrep "kodi.bin" > /dev/null ; then
+   if /usr/bin/pgrep "kodi.bin" > /dev/null ; then
       systemctl stop kodi
       /usr/local/bin/ClearOSD.sh || true
    fi
-   if [ ! -z ${SWITCH_VDR_SCRIPT} ] && pgrep "vdr" > /dev/null ; then
+   if [ ! -z ${SWITCH_VDR_SCRIPT} ] && /usr/bin/pgrep "vdr" > /dev/null ; then
       eval ${SWITCH_VDR_SCRIPT} attach
    else
       systemctl start vdropt
    fi
 elif [ "${START_PRG}" = "kodi" ]; then
    #check if vdr is running
-   if pgrep "vdr" > /dev/null ; then
+   if /usr/bin/pgrep "vdr" > /dev/null ; then
       if [ ! -z ${SWITCH_VDR_SCRIPT} ]; then
          eval ${SWITCH_VDR_SCRIPT} detach
          /usr/local/bin/ClearOSD.sh || true

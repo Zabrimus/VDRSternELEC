@@ -1,0 +1,49 @@
+From f580121b566a378aef150456e4c66e22c7d92857 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Mon, 17 Aug 2026 11:03:44 +0200
+Subject: [PATCH] fix cxxtools4 fcntl flags
+
+---
+ src/tcpserverimpl.cpp | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/src/tcpserverimpl.cpp b/src/tcpserverimpl.cpp
+index 39816e9d..f0bce80f 100644
+--- a/src/tcpserverimpl.cpp
++++ b/src/tcpserverimpl.cpp
+@@ -69,6 +69,19 @@ namespace net
+ 
+ static const int noPendingAccept = -1;
+ 
++#ifndef HAVE_PIPE2
++static void setWakePipeFlags(int fd)
++{
++    int flags = ::fcntl(fd, F_GETFL);
++    if (flags == -1 || (::fcntl(fd, F_SETFL, flags | O_NONBLOCK)) == -1)
++        throwSystemError("fcntl(F_SETFL wakePipe)");
++
++    flags = ::fcntl(fd, F_GETFD);
++    if (flags == -1 || (::fcntl(fd, F_SETFD, flags | FD_CLOEXEC)) == -1)
++        throwSystemError("fcntl(F_SETFD wakePipe)");
++}
++#endif
++
+ TcpServerImpl::TcpServerImpl(TcpServer& server)
+ : _server(server),
+   _pendingAccept(noPendingAccept),
+@@ -84,10 +97,8 @@ TcpServerImpl::TcpServerImpl(TcpServer& server)
+     if (::pipe(_wakePipe))
+         throwSystemError("pipe");
+ 
+-    if (::fcntl(_wakePipe[0], O_CLOEXEC|O_NONBLOCK))
+-        throwSystemError("fcntl(wakePipe)");
+-    if (::fcntl(_wakePipe[1], O_CLOEXEC|O_NONBLOCK))
+-        throwSystemError("fcntl(wakePipe)");
++    setWakePipeFlags(_wakePipe[0]);
++    setWakePipeFlags(_wakePipe[1]);
+ #endif
+ 
+     log_debug("wake pipe read fd=" << _wakePipe[0] << " write fd=" << _wakePipe[1]);
+-- 
+2.47.3
+

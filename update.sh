@@ -115,7 +115,7 @@ update() {
         continue
     fi
 
-    if [[ $PKG_SITE =~ github ]] || [[ $PKG_SITE =~ gitlab ]]; then
+    if [[ $PKG_SITE =~ github ]] || [[ $PKG_SITE =~ gitlab ]] || [[ $PKG_SITE =~ codeberg ]]; then
       COUNT_BRANCHES=$(git ls-remote -h $PKG_SITE | wc -l)
 
       PKG_BRANCH_DEFAULT=`git ls-remote --symref "$PKG_SITE" HEAD | sed -nE 's|^ref: refs/heads/(\S+)\s+HEAD|\1|p'`

@@ -1,0 +1,50 @@
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2026-08-16 16:57:47.000000000 +0200
++++ b/Makefile	2026-08-17 11:19:42.213000000 +0200
+@@ -70,46 +70,34 @@
+ APIVERSION := $(call PKGCFG,apiversion)
+ 
+ ### Allow user defined options to overwrite defaults:
+ -include $(PLGCFG)
+ 
+ include global.mk
+ 
+ ### Determine tntnet and cxxtools versions:
+-TNTNET-CONFIG := $(shell which tntnet-config 2>/dev/null)
+-ifeq ($(TNTNET-CONFIG),)
+ 	TNTNET_VERSION := $(shell $(PKG_CONFIG) --modversion tntnet)
+ 	CXXFLAGS  += $(shell $(PKG_CONFIG) --cflags tntnet)
+ 	LIBS      += $(shell $(PKG_CONFIG) --libs tntnet)
+-else
+-	TNTNET_VERSION := $(shell tntnet-config --version)
+-	CXXFLAGS  += $(shell tntnet-config --cxxflags)
+-	LIBS      += $(shell tntnet-config --libs)
+-endif
+ 
+ TNTVERSION := $(shell echo $(TNTNET_VERSION) | sed -e's/\.//g' | sed -e's/pre.*//g' | awk '/^..$$/ { print $$1."000"} /^...$$/ { print $$1."00"} /^....$$/ { print $$1."0" } /^.....$$/ { print $$1 }')
+ # $(info $$TNTVERSION is [${TNTVERSION}])
+ 
+ ### Additional options to silence TNTNET warnings
+ TNTNET_LEGACY := $(shell if [ `echo $(TNTNET_VERSION) | cut -d. -f1` -lt 3 ]; then echo true; else echo false; fi)
+ ifeq ($(TNTNET_LEGACY),true)
+   TNTFLAGS := -Wno-unused-variable
+ else
+   TNTFLAGS :=
+ endif
+ 
+ 
+ 
+-CXXTOOL-CONFIG := $(shell which cxxtools-config 2>/dev/null)
+-ifeq ($(CXXTOOL-CONFIG),)
+ 	CXXTOOLS_VERSION := $(shell $(PKG_CONFIG) --modversion cxxtools)
+-else
+-	CXXTOOLS_VERSION := $(shell cxxtools-config --version)
+-endif
+ 
+ CXXTOOLVER := $(shell echo $(CXXTOOLS_VERSION) | sed -e's/\.//g' | sed -e's/pre.*//g' | awk '/^..$$/ { print $$1."000"} /^...$$/ { print $$1."00"} /^....$$/ { print $$1."0" } /^.....$$/ { print $$1 }')
+ 
+ # Project specific compiler flags
+ 
+ # For rough image scaling
+ LIBS += -ljpeg
+ 

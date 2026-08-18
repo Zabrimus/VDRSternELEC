@@ -1,0 +1,370 @@
+diff --git a/packages/addons/addon-depends/cxxtools/package.mk b/packages/addons/addon-depends/cxxtools/package.mk
+index ea32ae116f..e871858783 100644
+--- a/packages/addons/addon-depends/cxxtools/package.mk
++++ b/packages/addons/addon-depends/cxxtools/package.mk
+@@ -3,27 +3,19 @@
+ # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
+ 
+ PKG_NAME="cxxtools"
+-PKG_VERSION="3.0"
+-PKG_SHA256="07b18037fb0983f6292f5c8d53e2369e9e7a9711df2c9ad50838aacbc8c62f7c"
++PKG_VERSION="ebe7e0fe30488b10ed19922522412a8a20fa0c93"
++PKG_SHA256="de7216e8d15144a5c399cfed58c43557558d73a457c4517e90f3973865ed0eab"
+ PKG_LICENSE="LGPL-2.1-or-later"
+-PKG_SITE="http://www.tntnet.org/cxxtools.html"
+-PKG_URL="http://www.tntnet.org/download/${PKG_NAME}-${PKG_VERSION}.tar.gz"
++PKG_SITE="https://github.com/maekitalo/cxxtools"
++PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
+ PKG_DEPENDS_HOST="toolchain:host openssl:host"
+ PKG_DEPENDS_TARGET="toolchain cxxtools:host openssl"
+-PKG_LONGDESC="Cxxtools is a collection of general-purpose C++ classes."
++PKG_LONGDESC="Cxxtools is a collection of general-purpose C++ components."
+ PKG_BUILD_FLAGS="+pic"
+ 
+-PKG_CONFIGURE_OPTS_HOST="--disable-demos --disable-unittest"
+-PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared --disable-demos --disable-unittest"
+-
+-post_makeinstall_host() {
+-  rm -rf ${TOOLCHAIN}/bin/cxxtools-config
+-}
++PKG_CMAKE_OPTS_HOST="-DBUILD_SHARED_LIBS=ON -DBUILD_DEMOS=OFF -DBUILD_TESTS=OFF"
++PKG_CMAKE_OPTS_TARGET="-DBUILD_SHARED_LIBS=OFF -DBUILD_DEMOS=OFF -DBUILD_TESTS=OFF"
+ 
+ post_makeinstall_target() {
+-  cp ${PKG_NAME}-config ${TOOLCHAIN}/bin
+-  sed -e "s:\(['= ]\)/usr:\\1${PKG_ORIG_SYSROOT_PREFIX}/usr:g" -i ${TOOLCHAIN}/bin/${PKG_NAME}-config
+-  chmod +x ${TOOLCHAIN}/bin/${PKG_NAME}-config
+-
+   rm -rf ${INSTALL}/usr/bin
+ }
+diff --git a/packages/addons/addon-depends/cxxtools/patches/0001-add-Char-unsigned-int-comparison-operator.patch b/packages/addons/addon-depends/cxxtools/patches/0001-add-Char-unsigned-int-comparison-operator.patch
+deleted file mode 100644
+index 3c3ffcac14..0000000000
+--- a/packages/addons/addon-depends/cxxtools/patches/0001-add-Char-unsigned-int-comparison-operator.patch
++++ /dev/null
+@@ -1,25 +0,0 @@
+-From 4779a5086456daadf9678f8d39466760672df0a4 Mon Sep 17 00:00:00 2001
+-From: Stefan Saraev <stefan@saraev.ca>
+-Date: Sun, 06 Oct 2013 14:40:02 +0300
+-Subject: [PATCH] add Char unsigned int comparison operator
+-
+-diff --git a/include/cxxtools/char.h b/include/cxxtools/char.h
+-index 1e63731..c152346 100644
+---- a/include/cxxtools/char.h
+-+++ b/include/cxxtools/char.h
+-@@ -130,6 +130,12 @@ namespace cxxtools
+-             friend bool operator==(char a, const Char& b)
+-             { return static_cast<value_type>(a) == b.value(); }
+- 
+-+            //! @brief Returns $true$ if the a and b are the same character; $false$ otherwise.
+-+            //! @return $true$ if the a and b are the same character; $false$ otherwise.
+-+            friend bool operator==(const Char& a, unsigned int b)
+-+            { return a.value() == b; }
+-+
+-+
+-             //! @brief Returns $true$ if the a and b are not the same character; $false$ otherwise.
+-             //! @return $true$ if the a and b are not the same character; $false$ otherwise.
+-             friend bool operator!=(const Char& a, const Char& b)
+--- 
+-2.53.0
+-
+diff --git a/packages/addons/addon-depends/cxxtools/patches/0002-include-cstdio-in-hdstream.patch b/packages/addons/addon-depends/cxxtools/patches/0002-include-cstdio-in-hdstream.patch
+deleted file mode 100644
+index 8f46411385..0000000000
+--- a/packages/addons/addon-depends/cxxtools/patches/0002-include-cstdio-in-hdstream.patch
++++ /dev/null
+@@ -1,20 +0,0 @@
+-From 4779a5086456daadf9678f8d39466760672df0a4 Mon Sep 17 00:00:00 2001
+-From: Stefan Saraev <stefan@saraev.ca>
+-Date: Sun, 06 Oct 2013 14:40:02 +0300
+-Subject: [PATCH] include cstdio in hdstream
+-
+-diff --git a/src/hdstream.cpp b/src/hdstream.cpp
+-index a5754e6..b2d8b3f 100644
+---- a/src/hdstream.cpp
+-+++ b/src/hdstream.cpp
+-@@ -30,6 +30,7 @@
+- #include <ios>
+- #include <iomanip>
+- #include <cctype>
+-+#include <cstdio>
+- 
+- namespace cxxtools
+- {
+--- 
+-2.53.0
+-
+diff --git a/packages/addons/addon-depends/cxxtools/patches/0003-2.2.1-make-cxxtools-char-a-trivial-class-by-defining-.patch b/packages/addons/addon-depends/cxxtools/patches/0003-2.2.1-make-cxxtools-char-a-trivial-class-by-defining-.patch
+deleted file mode 100644
+index 2b5fefbb6d..0000000000
+--- a/packages/addons/addon-depends/cxxtools/patches/0003-2.2.1-make-cxxtools-char-a-trivial-class-by-defining-.patch
++++ /dev/null
+@@ -1,28 +0,0 @@
+-From b773c01fc13d2ae67abc0839888e383be23562fd Mon Sep 17 00:00:00 2001
+-From: =?UTF-8?q?Tommi=20M=C3=A4kitalo?= <tommi@tntnet.org>
+-Date: Sun, 24 Jan 2021 17:20:24 +0100
+-Subject: [PATCH] make cxxtools::Char a trivial class by definining the default
+- constructor as default
+-
+----
+- include/cxxtools/char.h | 4 +---
+- 1 file changed, 1 insertion(+), 3 deletions(-)
+-
+-diff --git a/include/cxxtools/char.h b/include/cxxtools/char.h
+-index c152346b..e9edbfd1 100644
+---- a/include/cxxtools/char.h
+-+++ b/include/cxxtools/char.h
+-@@ -68,9 +68,7 @@ namespace cxxtools
+-             typedef int32_t value_type;
+- 
+-             //! Constructs a character with a value of 0.
+--            Char()
+--            : _value(0)
+--            {}
+-+            Char() = default;
+- 
+-             //! Constructs a character using the given value as base for the character value.
+-             Char(value_type ch)
+--- 
+-2.53.0
+-
+diff --git a/packages/addons/addon-depends/cxxtools/patches/0004-include-ctime-in-timer.patch b/packages/addons/addon-depends/cxxtools/patches/0004-include-ctime-in-timer.patch
+deleted file mode 100644
+index 4a5e4312e1..0000000000
+--- a/packages/addons/addon-depends/cxxtools/patches/0004-include-ctime-in-timer.patch
++++ /dev/null
+@@ -1,23 +0,0 @@
+-From ee19e2675554c02733fd9af20617724a2cf038dc Mon Sep 17 00:00:00 2001
+-From: Rudi Heitbaum <rudi@heitbaum.com>
+-Date: Tue, 12 Jul 2022 13:56:23 +0000
+-Subject: [PATCH] include ctime in timer
+-
+-https://bugs.gentoo.org/851837
+-
+----
+-diff --git a/src/timer.cpp b/src/timer.cpp
+-index f0a98b3..0a66a93 100644
+---- a/src/timer.cpp
+-+++ b/src/timer.cpp
+-@@ -27,6 +27,7 @@
+- #include "cxxtools/clock.h"
+- #include "cxxtools/selector.h"
+- #include "cxxtools/datetime.h"
+-+#include <ctime>
+- #include <stdexcept>
+- 
+- namespace cxxtools
+--- 
+-2.53.0
+-
+diff --git a/packages/addons/addon-depends/cxxtools/patches/0005-fix-openssl-linking-for-lld.patch b/packages/addons/addon-depends/cxxtools/patches/0005-fix-openssl-linking-for-lld.patch
+deleted file mode 100644
+index 4831b9ea9e..0000000000
+--- a/packages/addons/addon-depends/cxxtools/patches/0005-fix-openssl-linking-for-lld.patch
++++ /dev/null
+@@ -1,21 +0,0 @@
+-From ee19e2675554c02733fd9af20617724a2cf038dc Mon Sep 17 00:00:00 2001
+-From: Rudi Heitbaum <rudi@heitbaum.com>
+-Date: Tue, 12 Jul 2022 13:56:23 +0000
+-Subject: [PATCH] fix openssl linking for lld
+-
+-diff --git a/src/Makefile.am b/src/Makefile.am
+-index 62e3b64..43a57be 100644
+---- a/src/Makefile.am
+-+++ b/src/Makefile.am
+-@@ -173,7 +173,7 @@ libcxxtools_la_LIBADD = $(LIBICONV)
+- libcxxtools_la_LDFLAGS = -version-info @sonumber@ @SHARED_LIB_FLAG@
+- 
+- if MAKE_OPENSSL
+--libcxxtools_la_LDFLAGS += -lssl
+-+libcxxtools_la_LIBADD += -lssl -lcrypto
+- libcxxtools_la_SOURCES += \
+- 	sslcertificateimpl.cpp
+- endif
+--- 
+-2.53.0
+-
+diff --git a/packages/addons/addon-depends/cxxtools/patches/0006-fix-cross-compile-include-path.patch b/packages/addons/addon-depends/cxxtools/patches/0006-fix-cross-compile-include-path.patch
+deleted file mode 100644
+index 720af935dd..0000000000
+--- a/packages/addons/addon-depends/cxxtools/patches/0006-fix-cross-compile-include-path.patch
++++ /dev/null
+@@ -1,47 +0,0 @@
+-From 0ef33bc05599d324689a7c0d664e24e1cfdc40b2 Mon Sep 17 00:00:00 2001
+-From: Stephan Raue <stephan@openelec.tv>
+-Date: Fri, 03 Jan 2014 20:40:03 +0100
+-Subject: [PATCH] fix cross compile include path
+-
+-diff --git a/configure.ac b/configure.ac
+-index fc78f1c..60fa5bb 100644
+---- a/configure.ac
+-+++ b/configure.ac
+-@@ -113,8 +113,8 @@ CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+- CXXFLAGS="$CXXFLAGS $PTHREAD_CXXFLAGS"
+- LIBS="$LIBS $PTHREAD_LIBS"
+- 
+--CXXTOOLS_CXXFLAGS='-I${includedir}'
+--CXXTOOLS_LDFLAGS='-L${libdir} -lcxxtools'
+-+CXXTOOLS_CXXFLAGS=''
+-+CXXTOOLS_LDFLAGS='-lcxxtools'
+- 
+- AC_SUBST(CXXTOOLS_CXXFLAGS)
+- AC_SUBST(CXXTOOLS_LDFLAGS)
+-diff --git a/configure b/configure
+-index cdbecd0..0c07392 100755
+---- a/configure
+-+++ b/configure
+-@@ -2634,7 +2634,7 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
+- ac_compiler_gnu=$ac_cv_c_compiler_gnu
+- 
+- 
+--am__api_version='1.16'
+-+am__api_version='1.18'
+- 
+- ac_aux_dir=
+- for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
+-@@ -18511,8 +18511,8 @@ CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+- CXXFLAGS="$CXXFLAGS $PTHREAD_CXXFLAGS"
+- LIBS="$LIBS $PTHREAD_LIBS"
+- 
+--CXXTOOLS_CXXFLAGS='-I${includedir}'
+--CXXTOOLS_LDFLAGS='-L${libdir} -lcxxtools'
+-+CXXTOOLS_CXXFLAGS=''
+-+CXXTOOLS_LDFLAGS='-lcxxtools'
+- 
+- 
+- 
+--- 
+-2.53.0
+-
+diff --git a/packages/addons/addon-depends/cxxtools/patches/0007-3.0-Fix-for-C--20.patch b/packages/addons/addon-depends/cxxtools/patches/0007-3.0-Fix-for-C--20.patch
+deleted file mode 100644
+index f0694c800d..0000000000
+--- a/packages/addons/addon-depends/cxxtools/patches/0007-3.0-Fix-for-C--20.patch
++++ /dev/null
+@@ -1,46 +0,0 @@
+-From 354ddfecd33067d8aac339437defdcf0b8c32b68 Mon Sep 17 00:00:00 2001
+-From: =?UTF-8?q?Tommi=20M=C3=A4kitalo?= <tommi@tntnet.org>
+-Date: Tue, 25 Apr 2023 13:44:17 +0200
+-Subject: [PATCH] Fix for C++20
+-
+-some typedefs are removed from std::allocator
+----
+- include/cxxtools/string.h | 8 ++++----
+- src/charmapcodec.cpp      | 2 +-
+- 2 files changed, 5 insertions(+), 5 deletions(-)
+-
+-diff --git a/include/cxxtools/string.h b/include/cxxtools/string.h
+-index ddf7e573..ce90992b 100644
+---- a/include/cxxtools/string.h
+-+++ b/include/cxxtools/string.h
+-@@ -51,10 +51,10 @@ class basic_string< cxxtools::Char > {
+-         typedef char_traits< cxxtools::Char > traits_type;
+-         typedef std::allocator<cxxtools::Char> allocator_type;
+-         typedef allocator_type::difference_type difference_type;
+--        typedef allocator_type::reference reference;
+--        typedef allocator_type::const_reference const_reference;
+--        typedef allocator_type::pointer pointer;
+--        typedef allocator_type::const_pointer const_pointer;
+-+        typedef value_type& reference;
+-+        typedef const value_type& const_reference;
+-+        typedef value_type* pointer;
+-+        typedef const value_type* const_pointer;
+-         typedef value_type* iterator;
+-         typedef const value_type* const_iterator;
+- 
+-diff --git a/src/charmapcodec.cpp b/src/charmapcodec.cpp
+-index 5eb08136..2e01b2a9 100644
+---- a/src/charmapcodec.cpp
+-+++ b/src/charmapcodec.cpp
+-@@ -82,7 +82,7 @@ CharMapCodec::result CharMapCodec::do_out(MBState& /*s*/, const Char* fromBegin,
+-     while (fromNext < fromEnd && toNext < toEnd)
+-     {
+-         *toNext = toChar(_charMap, *fromNext);
+--        log_debug(fromNext->value() << " => " << static_cast<unsigned>(static_cast<unsigned char>(*toNext)));
+-+        log_debug(static_cast<unsigned>(fromNext->value()) << " => " << static_cast<unsigned>(static_cast<unsigned char>(*toNext)));
+-         ++fromNext;
+-         ++toNext;
+-     }
+--- 
+-2.53.0
+-
+diff --git a/packages/addons/addon-depends/cxxtools/patches/0039-Change-parameter-type-of-str-function-to-const.patch b/packages/addons/addon-depends/cxxtools/patches/0039-Change-parameter-type-of-str-function-to-const.patch
+deleted file mode 100644
+index 1e35ae7fb4..0000000000
+--- a/packages/addons/addon-depends/cxxtools/patches/0039-Change-parameter-type-of-str-function-to-const.patch
++++ /dev/null
+@@ -1,49 +0,0 @@
+-From cd6b39d828b1ddd66fbad26fcd1cda783d2b045b Mon Sep 17 00:00:00 2001
+-From: Rudi Heitbaum <rudi@heitbaum.com>
+-Date: Sat, 21 Mar 2026 14:35:50 +1100
+-Subject: [PATCH] Change parameter type of str function to const
+-
+-Allows build with OpenSSL4
+-
+-../../include/cxxtools/char.h: In function 'bool cxxtools::operator==(const Char&, unsigned int)':
+-../../include/cxxtools/char.h:134:32: warning: comparison of integer expressions of different signedness: 'cxxtools::Char::value_type' {aka 'int'} and 'unsigned int' [-Wsign-compare]
+-  134 |             { return a.value() == b; }
+-      |                      ~~~~~~~~~~^~~~
+-../../src/sslcertificateimpl.cpp: In member function 'cxxtools::String cxxtools::SslCertificateImpl::getSubject() const':
+-../../src/sslcertificateimpl.cpp:169:37: error: invalid conversion from 'const X509_NAME*' {aka 'const X509_name_st*'} to 'X509_NAME*' {aka 'X509_name_st*'} [-fpermissive]
+-  169 |     return str(X509_get_subject_name(_cert));
+-      |                ~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+-      |                                     |
+-      |                                     const X509_NAME* {aka const X509_name_st*}
+-../../src/sslcertificateimpl.cpp:40:30: note: initializing argument 1 of 'cxxtools::String cxxtools::str(X509_NAME*)'
+-   40 | static String str(X509_NAME* a)
+-      |                   ~~~~~~~~~~~^
+-../../src/sslcertificateimpl.cpp: In member function 'cxxtools::String cxxtools::SslCertificateImpl::getIssuer() const':
+-../../src/sslcertificateimpl.cpp:174:36: error: invalid conversion from 'const X509_NAME*' {aka 'const X509_name_st*'} to 'X509_NAME*' {aka 'X509_name_st*'} [-fpermissive]
+-  174 |     return str(X509_get_issuer_name(_cert));
+-      |                ~~~~~~~~~~~~~~~~~~~~^~~~~~~
+-      |                                    |
+-      |                                    const X509_NAME* {aka const X509_name_st*}
+-../../src/sslcertificateimpl.cpp:40:30: note: initializing argument 1 of 'cxxtools::String cxxtools::str(X509_NAME*)'
+-   40 | static String str(X509_NAME* a)
+-      |                   ~~~~~~~~~~~^
+----
+- src/sslcertificateimpl.cpp | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/src/sslcertificateimpl.cpp b/src/sslcertificateimpl.cpp
+-index bd079fe9..de9a403a 100644
+---- a/src/sslcertificateimpl.cpp
+-+++ b/src/sslcertificateimpl.cpp
+-@@ -37,7 +37,7 @@
+- 
+- namespace cxxtools
+- {
+--static String str(X509_NAME* a)
+-+static String str(const X509_NAME* a)
+- {
+-     class MemBIO
+-     {
+--- 
+-2.53.0
+-
+diff --git a/packages/addons/addon-depends/tntnet/package.mk b/packages/addons/addon-depends/tntnet/package.mk
+index e050c5b667..241a7179c3 100644
+--- a/packages/addons/addon-depends/tntnet/package.mk
++++ b/packages/addons/addon-depends/tntnet/package.mk
+@@ -3,14 +3,15 @@
+ # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
+ 
+ PKG_NAME="tntnet"
+-PKG_VERSION="3.0"
+-PKG_SHA256="718e5519b0a403f7f766358bf66a85c008119c48189d1c2b7651fd0af9018e27"
++PKG_VERSION="694079d9bcd3b869e5342c85dacfe72f737a60f8"
++PKG_SHA256="0d6435ae756bbbb89d129f038880be89e8c0349de36b0ce00809554ead86a93a"
+ PKG_LICENSE="LGPL-2.1-or-later"
+-PKG_SITE="http://www.tntnet.org/"
+-PKG_URL="http://www.tntnet.org/download/${PKG_NAME}-${PKG_VERSION}.tar.gz"
++PKG_SITE="https://github.com/maekitalo/tntnet"
++PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
+ PKG_DEPENDS_HOST="cxxtools:host zlib:host"
+ PKG_DEPENDS_TARGET="toolchain tntnet:host libtool cxxtools zlib"
+ PKG_LONGDESC="A web application server for C++."
++PKG_TOOLCHAIN="autotools"
+ 
+ PKG_CONFIGURE_OPTS_HOST="--disable-unittest \
+                          --disable-server \

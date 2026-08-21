@@ -4,5 +4,5 @@ COREELEC20=29c066e
 COREELEC21=214df67
 COREELEC22=25d0f3b       # 16.06: kodi: bump package to 70517e63
 LIBREELEC12=d3bd05e
-LIBREELEC13=8e34315      # 16.08: Merge pull request #11684 from heitbaum/pkg2
+LIBREELEC13=b8bdd70      # 21.08: Merge pull request #11699 from chewitt/amlogic-upstream
 RELEASESHA=29efcf6

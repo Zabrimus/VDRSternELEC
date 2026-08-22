@@ -1,0 +1,28 @@
+diff --git a/packages/multimedia/ffmpeg/package.mk b/packages/multimedia/ffmpeg/package.mk
+index 6626100802..a8e8806059 100644
+--- a/packages/multimedia/ffmpeg/package.mk
++++ b/packages/multimedia/ffmpeg/package.mk
+@@ -57,6 +57,10 @@ post_unpack() {
+   else
+     echo "${PKG_VERSION}" >${PKG_BUILD}/RELEASE
+   fi
++
++  cd ${PKG_BUILD}
++  echo "RELEASE:"
++  cat RELEASE
+ }
+ 
+ # Dependencies
+@@ -122,6 +126,12 @@ fi
+ pre_configure_target() {
+   cd ${PKG_BUILD}
+   rm -rf .${TARGET_NAME}
++
++  echo "Version1:"
++  /usr/bin/bash -x ./ffbuild/version.sh
++
++  echo "Version1:"
++  /bin/dash -x ./ffbuild/version.sh
+ }
+ 
+ if [ "${FFMPEG_TESTING}" = "yes" ]; then

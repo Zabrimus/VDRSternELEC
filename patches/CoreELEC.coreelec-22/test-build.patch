@@ -21,7 +21,7 @@ index 6626100802..a8e8806059 100644
 +  echo "Version1:"
 +  /usr/bin/bash -x ./ffbuild/version.sh
 +
-+  echo "Version1:"
++  echo "Version2:"
 +  /bin/dash -x ./ffbuild/version.sh
  }
  

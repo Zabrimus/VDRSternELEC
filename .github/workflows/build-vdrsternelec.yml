@@ -326,7 +326,7 @@ jobs:
           ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package libtool:host
 
           # build FFmepg (fail fast)
-          ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package ffmepg
+          ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package ffmpeg
 
           # build all                    
           if ! AUTOREMOVE="yes" CUSTOM_VERSION="${MYCUSTOM_VERSION}" ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then

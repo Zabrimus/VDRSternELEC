@@ -1,19 +1,21 @@
 diff --git a/packages/multimedia/ffmpeg/package.mk b/packages/multimedia/ffmpeg/package.mk
-index 6626100802..cbf735e328 100644
+index 6626100802..dd03ff84bc 100644
 --- a/packages/multimedia/ffmpeg/package.mk
 +++ b/packages/multimedia/ffmpeg/package.mk
-@@ -237,6 +258,17 @@ configure_target() {
+@@ -237,6 +258,19 @@ configure_target() {
                ${PKG_FFMPEG_TESTING}
  }
  
 +make_target() {
++	echo "==> pwd:"
++	pwd
 +	echo "==> Make ffversion.h"
-+    make libavutil/ffversion.h
++    make libavutil/ffversion.h || true
 +    echo "==> cat vor dem Build"
-+    cat libavutil/ffversion.h
++    cat libavutil/ffversion.h || true
 +	make V=1 -j || true
 +	echo "==> cat nach dem Build"
-+	cat libavutil/ffversion.h
++	cat libavutil/ffversion.h || true
 +	exit 1
 +}
 +

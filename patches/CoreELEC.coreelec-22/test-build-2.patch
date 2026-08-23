@@ -1,18 +1,22 @@
 diff --git a/packages/multimedia/ffmpeg/package.mk b/packages/multimedia/ffmpeg/package.mk
-index 6626100802..318d7fc047 100644
+index 6626100802..cbf735e328 100644
 --- a/packages/multimedia/ffmpeg/package.mk
 +++ b/packages/multimedia/ffmpeg/package.mk
-@@ -235,6 +256,13 @@ configure_target() {
-               ${PKG_FFMPEG_FPU} \
-               --disable-symver \
+@@ -237,6 +258,17 @@ configure_target() {
                ${PKG_FFMPEG_TESTING}
-+
-+   # create version file
-+	make libavutil/ffversion.h
-+}
-+
-+make_target() {
-+	make V=1 -j
  }
  
++make_target() {
++	echo "==> Make ffversion.h"
++    make libavutil/ffversion.h
++    echo "==> cat vor dem Build"
++    cat libavutil/ffversion.h
++	make V=1 -j || true
++	echo "==> cat nach dem Build"
++	cat libavutil/ffversion.h
++	exit 1
++}
++
  post_makeinstall_target() {
+   rm -rf ${INSTALL}/usr/share/ffmpeg/examples
+ }

@@ -2,11 +2,7 @@
 
 COREELEC20=29c066e
 COREELEC21=214df67
-
-# 16.06: kodi: bump package to 70517e63
 COREELEC22=25d0f3b
 LIBREELEC12=d3bd05e
-
-# 21.08: Merge pull request #11700 from heitbaum/pkg
 LIBREELEC13=27ce188
 RELEASESHA=29efcf6

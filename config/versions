@@ -2,7 +2,7 @@
 
 COREELEC20=29c066e
 COREELEC21=214df67
-COREELEC22=1e78521e      # 21.08: sidedata: bump package to 1.6.0
+COREELEC22=1e78521e
 LIBREELEC12=d3bd05e
-LIBREELEC13=b8bdd70      # 21.08: Merge pull request #11699 from chewitt/amlogic-upstream
+LIBREELEC13=b8bdd70
 RELEASESHA=29efcf6

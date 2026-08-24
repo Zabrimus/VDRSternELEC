@@ -1,0 +1,437 @@
+name: Build Artifacts Fast
+
+on:
+  workflow_call:
+    inputs:
+      config:
+        description: "Configuration to build"
+        default: CoreELEC-22-no
+        type: string
+
+      releasetag:
+        description: "Release Tag"
+        required: true
+        type: string
+
+      addons:
+        description: "addons"
+        type: string
+
+      extras:
+        description: "extras"
+        type: string
+
+      extraparameter:
+        description: "extra parameter"
+        type: string
+
+      runner:
+        description: "Runner"
+        default: ubuntu-22.04
+        required: true
+        type: string
+
+      remote:
+        description: "Use a remote runner"
+        type: boolean
+        required: true
+
+      buildbranch:
+        description: "Build branch"
+        type: string
+        default: "build-test"
+        required: true
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-22.04
+    outputs:
+      runner: ${{ steps.runner.outputs.runner }}
+    steps:
+      - name: Choose runner
+        id: runner
+        run: |
+          echo "runner=${{ inputs.runner }}" >> $GITHUB_OUTPUT
+
+  build:
+    needs: [ setup ]
+    runs-on: ${{ needs.setup.outputs.runner }}
+    name: ${{ inputs.config }}
+    steps:
+      - name: Install packages
+        if: ${{ inputs.remote != true }}
+        shell: bash
+        run: |
+          sudo apt update
+
+          sudo apt-get install -y \
+             bash bc bzip2 cpio curl diffutils elfutils file gawk git golang-1.23-go gperf gzip \
+             libc6-dev libelf-dev libglib2.0-0 libglib2.0-dev libjson-perl libncurses5-dev \
+             libparse-yapp-perl libxml-parser-perl lzop make openjdk-11-jdk openssh-client patch patchutils perl \
+             python3 python3-build python3-installer python3-setuptools python3-wheel python-is-python3 \
+             rdfind rsync sed libjson-parse-perl tar unzip upx-ucl wget \
+             xfonts-utils xsltproc xz-utils zip zstd parallel             
+
+          if [[ "${{ inputs.config }}" == CoreELEC-20* ]] || [[ "${{ inputs.config }}" == CoreELEC-21* ]] || [[ "${{ inputs.config }}" == LibreELEC-12* ]] ; then          
+              sudo apt-get install -y cpp-12 g++-12 gcc-12 || true
+          
+              sudo rm /usr/bin/gcc /usr/bin/cpp /usr/bin/g++ /usr/bin/gcov
+              sudo ln -s /usr/bin/gcc-12 /usr/bin/gcc
+              sudo ln -s /usr/bin/cpp-12 /usr/bin/cpp
+              sudo ln -s /usr/bin/g++-12 /usr/bin/g++
+              sudo ln -s /usr/bin/gcov-12 /usr/bin/gcov          
+          elif [[ "${{ inputs.config }}" == CoreELEC-22* ]] || [[ "${{ inputs.config }}" == LibreELEC-13* ]] ; then
+              sudo apt-get install -y cpp-14 g++-14 gcc-14 || true
+          
+              sudo rm /usr/bin/gcc /usr/bin/cpp /usr/bin/g++ /usr/bin/gcov
+              sudo ln -s /usr/bin/gcc-14 /usr/bin/gcc
+              sudo ln -s /usr/bin/cpp-14 /usr/bin/cpp
+              sudo ln -s /usr/bin/g++-14 /usr/bin/g++
+              sudo ln -s /usr/bin/gcov-14 /usr/bin/gcov                    
+          fi
+  
+          if [ "$(uname -m)" = "aarch64" ]; then
+            sudo apt-get install -y libc6-amd64-cross qemu-user-binfmt --no-install-recommends;
+          fi
+              
+          sudo snap remove $(snap list | awk '!/^Name|^core|^snapd/ {print $1}') || true
+          sudo apt -y --purge purge snapd openjdk-21-jre-headless || true
+          sudo apt -y --purge autoremove
+          sudo apt clean
+          
+          (cd / && sudo ln -s /usr/x86_64-linux-gnu/lib64 lib64)
+
+          # fix some links
+          if [ ! -f /usr/bin/cc ]; then 
+              sudo ln -s /usr/bin/gcc /usr/bin/cc
+          fi
+
+          if [ ! -f /usr/bin/c++ ]; then 
+              sudo ln -s /usr/bin/g++ /usr/bin/c++
+          fi
+          
+          if [ ! -f /usr/bin/c99-gcc ]; then
+              sudo ln /usr/bin/gcc /usr/bin/c99-gcc
+          fi
+          
+          if [ ! -f /usr/bin/c99 ]; then
+              sudo ln /usr/bin/c99-gcc /usr/bin/c99
+          fi
+
+          if [ ! -f /usr/bin/c89-gcc ]; then
+              sudo ln /usr/bin/gcc /usr/bin/c89-gcc
+          fi
+          
+          if [ ! -f /usr/bin/c89 ]; then
+              sudo ln /usr/bin/c89-gcc /usr/bin/c89
+          fi
+          
+
+      - uses: actions/checkout@v3
+        if: ${{ inputs.remote != true }}
+        with:
+          fetch-depth: 0
+
+      - name: Create dir and checkout
+        if: ${{ inputs.remote != true }}
+        shell: bash
+        id: checkout
+        run: |
+          echo "Clone submodules"
+          git submodule update --init -- CoreELEC
+          git submodule update --init -- LibreELEC.tv
+
+          echo "Pre-Create directories"
+          mkdir -p CoreELEC/sources
+          mkdir -p LibreELEC.tv/sources
+          
+          mkdir -p CoreELEC/target
+          mkdir -p LibreELEC.tv/target
+
+      - name: Determine source artifact
+        shell: bash
+        id: source_artifact
+        run: |                    
+          # get config values (hack)
+          branch=$(grep "^PATCHDIR" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          project=$(grep "^PROJECT" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          device=$(grep "^DEVICE" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          
+          echo "BRANCH=$branch" >> "$GITHUB_ENV"
+          echo "PROJECT=$project" >> "$GITHUB_ENV"
+          echo "DEVICE=$device" >> "$GITHUB_ENV"
+          
+          if [ "$branch" = "coreelec-20" ]; then
+              echo "ARTIFACT=cache-coreelec-20-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep "COREELEC20=" config/versions | awk -F= '{ print $2 }')
+          elif [ "$branch" = "coreelec-21" ]; then
+              echo "ARTIFACT=cache-coreelec-21-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep "COREELEC21=" config/versions | awk -F= '{ print $2 }')
+          elif [ "$branch" = "coreelec-22" ]; then
+              echo "ARTIFACT=cache-coreelec-22-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep "COREELEC22=" config/versions | awk -F= '{ print $2 }')          
+          elif [ "$branch" = "libreelec-12" ]; then
+              echo "ARTIFACT=cache-libreelec-12-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"
+              rev=$(grep "LIBREELEC12=" config/versions | awk -F= '{ print $2 }')
+          elif [ "$branch" = "libreelec-13" ]; then
+              echo "ARTIFACT=cache-libreelec-13-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"
+              rev=$(grep "LIBREELEC13=" config/versions | awk -F= '{ print $2 }')          
+          fi
+          
+          echo "REVISION=$rev" >> "$GITHUB_ENV"
+
+      - name: Prepare remote
+        if: ${{ inputs.remote == true }}
+        shell: bash
+        run: |
+          git pull --all
+          if [ -d ../sources ]; then 
+              rm -f sources  
+              ln -s ../sources sources
+          fi
+
+      - name: Build
+        shell: bash
+        run: |
+          # switch branch
+          git checkout ${{ inputs.buildbranch }}
+          
+          BUILD_FAILED="false"
+
+           if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
+              if [ ! "${{ inputs.addons }}" = "" ] && [ ! "${{ inputs.addons }}" = "-" ] && [ ! "${{ inputs.addons }}" = "'-'" ]; then
+                 ADDONS="-addon ${{ inputs.addons }}"
+              else
+                 ADDONS=""
+              fi
+          else
+              ADDONLIST=$(echo "${{ inputs.addons }}" | sed -e "s/,\?dvb-latest,\?//g")
+          
+              if [ ! "${ADDONLIST}" = "" ] && [ ! "${ADDONLIST}" = "-" ] && [ ! "${ADDONLIST}" = "'-'" ]; then
+                 ADDONS="-addon ${ADDONLIST}"
+              else
+                 ADDONS=""
+              fi
+          fi
+          
+          if [ ! "${{ inputs.extras }}" = "" ] && [ ! "${{ inputs.extras }}" = "-" ] && [ ! "${{ inputs.extras }}" = "'-'" ]; then
+             EXTRAS="-extra ${{ inputs.extras }}"
+          else
+             EXTRAS=""
+          fi
+
+          if [ ! "${{ inputs.extraparameter }}" = "" ] && [ ! "${{ inputs.extraparameter }}" = "-" ] && [ ! "${{ inputs.extraparameter }}" = "'-'" ]; then
+             EXTRA_PARAMETER="${{ inputs.extraparameter }}"
+          else
+             EXTRA_PARAMETER=""
+          fi
+          
+          if [ "${{ inputs.config }}" = "LibreELEC-12-x86_64-GenericLegacy" ] || [ "${{ inputs.config }}" = "LibreELEC-13-x86_64-GenericLegacy" ]; then
+               ./build.sh -config ${{ inputs.config }} -package glad:host || true
+          fi
+          
+          echo "==> Free space before downloading sources"
+          df -h
+          
+          # download at first all sources (fail fast if it's not poassible)                    
+          mproject=$(grep "^PROJECT" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          mdevice=$(grep "^DEVICE" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          march=$(grep "^ARCH" config/distro/${{ inputs.config }} | awk -F= '{ print $2 }')
+          
+          ./build.sh -config ${{ inputs.config }} ${EXTRAS} -patchonly
+          if [ "${{ env.DISTRO }}" == "CoreELEC" ]; then
+              (cd CoreELEC && unset DISTRO && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+          else
+              (cd LibreELEC.tv && unset DISTRO && cp ../CoreELEC/tools/download-tool tools && PROJECT=${mproject} DEVICE=${mdevice} ARCH=${march} tools/download-tool -a)
+          fi
+          
+          echo "==> Free space after downloading sources"
+          df -h
+          
+          BUILD_DATE="$(date +%m%d)"
+          if [[ "${{ inputs.config }}" == CoreELEC* ]]; then
+              . CoreELEC/distributions/CoreELEC/version              
+              MYCUSTOM_VERSION="${OS_VERSION}-VDR-${BUILD_DATE}"
+          else
+              MYCUSTOM_VERSION="VDR-${BUILD_DATE}"
+          fi
+                         
+          # build libtool first
+          ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package libtool:host
+
+          # build FFmepg (fail fast)
+          ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package ffmpeg
+
+          exit 1
+          
+          # build all                    
+          if ! AUTOREMOVE="yes" CUSTOM_VERSION="${MYCUSTOM_VERSION}" ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+              BUILD_FAILED="true"
+          fi                  
+          
+          echo "==> Free space after build"
+          df -h
+
+          echo "BUILD_FAILED=$BUILD_FAILED" >> "$GITHUB_ENV"
+
+          # create summary
+          function bool_emo() {
+              if [ $1 = 'false' ]; then
+                eval "$2=':white_check_mark:'"
+              else
+                eval "$2=':fire:'"
+              fi;
+          }
+          emo=''
+          
+          bool_emo "$BUILD_FAILED" emo                 
+          
+          if [ "${{ env.DISTRO }}" == "CoreELEC" ]; then
+              echo "| ${emo} | ${{ inputs.config }} | ${{ env.PROJECT }} | ${{ env.DEVICE }} | [${{ env.BRANCH }}@${{ env.REVISION }}](https://github.com/CoreELEC/CoreELEC/tree/${{ env.REVISION }}) |" > build-summary-${{ inputs.config }}
+          else
+              echo "| ${emo} | ${{ inputs.config }} | ${{ env.PROJECT }} | ${{ env.DEVICE }} | [${{ env.BRANCH }}@${{ env.REVISION }}](https://github.com/LibreELEC/LibreELEC.tv/tree/${{ env.REVISION }}) |" > build-summary-${{ inputs.config }}
+          fi
+          
+          if [ "$BUILD_FAILED" == "false" ]; then          
+              # rename target files
+              if [ "$DISTRO" == "CoreELEC" ]; then
+                  (
+                    cd CoreELEC/target
+              
+                    # release files
+                    echo "=> CoreELEC release files"
+                    ls -la || true
+          
+                    for i in $(ls *.{tar,img.gz,sha256}); do
+                      if [ -f $i ]; then
+                        NEWNAME=$(echo $i | perl -pe "s/^LibreELEC/LE/");
+                        NEWNAME=$(echo $NEWNAME | perl -pe "s/^CoreELEC/CE/");
+                        mv $i $NEWNAME || true
+                      fi
+                    done;          
+
+                    # addons
+                    echo "=> CoreELEC addons"
+                    
+                    if [ -d addons ]; then
+                      ls -la addons || true
+          
+                      for i in $(find addons -name "*zip" -o -name "*tar.gz"); do
+                        if [ -f $i ]; then
+                          NACE=(${i//\// })
+                          ADDONNAME=$(echo ${NACE[5]} | sed -e s/service.//)
+                          echo "mv $i addons/CE-${NACE[1]}-${NACE[5]}"
+                          cp $i addons/CE-${NACE[1]}-${{ env.DEVICE }}.${NACE[3]}-$ADDONNAME || true
+                        fi
+                      done
+                    fi
+                  )
+              fi
+          
+              if [ "$DISTRO" == "LibreELEC.tv" ]; then          
+                  (
+                    cd LibreELEC.tv/target
+                    ls -la || true
+          
+                    # release files
+                    echo "=> LibreELEC release files"
+                    for i in `ls *.{tar,img.gz,sha256,ova}`; do
+                      if [ -f $i ]; then
+                        NEWNAME=$(echo $i | perl -pe "s/^LibreELEC/LE/");
+                        NEWNAME=$(echo $NEWNAME | perl -pe "s/^CoreELEC/CE/");
+                        mv $i $NEWNAME || true
+                      fi
+                    done;
+              
+                    # addons
+                    echo "=> LibreELEC addons"
+                    if [ -d addons ]; then
+                      ls -la addons || true
+          
+                      for i in $(find addons -name "*zip" -o -name "*tar.gz"); do
+                        if [ -f $i ]; then
+                          NACE=(${i//\// })
+                          ADDONNAME=$(echo ${NACE[5]} | sed -e s/service.//)
+                          echo "mv $i addons/LE-${NACE[1]}-${NACE[5]}"
+                          cp $i addons/LE-${{ env.DEVICE }}.${NACE[3]}-$ADDONNAME || true                        
+                        fi
+                      done
+                    fi
+                  )
+              fi
+          fi
+
+      - name: Save summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-summary-${{ inputs.config }}"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            build-summary-${{ inputs.config }}
+
+      - name: Check build
+        shell: bash
+        run: |
+          if [ "${{ env.BUILD_FAILED }}" == "true" ]; then
+              # abort this build
+              false
+          fi
+
+      - name: Save release target files (part 1)
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-artifacts-${{ inputs.releasetag }}-${{ inputs.config }}-1"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            CoreELEC/target/CE*-VDR-????-[a-kA-K]*
+            LibreELEC.tv/target/LE*-VDR-????-[a-kA-K]*
+
+      - name: Save release target files (part 2)
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-artifacts-${{ inputs.releasetag }}-${{ inputs.config }}-2"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            CoreELEC/target/CE*-VDR-????-[l-zL-Z]*
+            LibreELEC.tv/target/LE*-VDR-????-[l-zL-Z]*
+
+      - name: Save release target files (part 3)
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-artifacts-${{ inputs.releasetag }}-${{ inputs.config }}-3"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            CoreELEC/target/CE*-VDR-????.*
+            LibreELEC.tv/target/LE*-VDR-????.*
+
+      - name: Save addon target files
+        uses: actions/upload-artifact@v4
+        with:
+          name: "build-addon-${{ inputs.config }}"
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+          if-no-files-found: ignore
+          path: |
+            CoreELEC/target/addons/CE*zip 
+            CoreELEC/target/addons/CE*tar.gz
+            LibreELEC.tv/target/addons/LE*zip
+            LibreELEC.tv/target/addons/LE*tar.gz

@@ -15,7 +15,7 @@ index 6626100802..dd03ff84bc 100644
 +    cat libavutil/ffversion.h || true
 +	make V=1 -j || true
 +	echo "==> cat nach dem Build"
-+	cat libavutil/ffversion.h || true
++	cat libavutil/ffversion.h || cat libavutil/libavutil.version || true
 +	exit 1
 +}
 +

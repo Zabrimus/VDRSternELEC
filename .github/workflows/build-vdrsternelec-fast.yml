@@ -1,4 +1,4 @@
-name: Build Artifacts
+name: Build Artifacts Fast
 
 on:
   workflow_call:
@@ -39,7 +39,7 @@ on:
       buildbranch:
         description: "Build branch"
         type: string
-        default: "master"
+        default: "build-test"
         required: true
 
 jobs:
@@ -59,10 +59,6 @@ jobs:
     runs-on: ${{ needs.setup.outputs.runner }}
     name: ${{ inputs.config }}
     steps:
-      - name: Maximize build space
-        if: ${{ inputs.remote != true }}
-        uses: Zabrimus/maximize-build-space@master
-
       - name: Install packages
         if: ${{ inputs.remote != true }}
         shell: bash
@@ -328,6 +324,8 @@ jobs:
           # build FFmepg (fail fast)
           ./build.sh -config ${{ inputs.config }} ${EXTRAS} -package ffmpeg
 
+          exit 1
+          
           # build all                    
           if ! AUTOREMOVE="yes" CUSTOM_VERSION="${MYCUSTOM_VERSION}" ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
               BUILD_FAILED="true"

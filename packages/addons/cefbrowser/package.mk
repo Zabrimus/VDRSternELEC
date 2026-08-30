@@ -10,7 +10,7 @@ PKG_SOURCE_DIR="cefbrowser-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain atk libxml2 cups cef-at-spi2-core \
                     cef-libXcomposite cef-libXdamage cef-libXfixes cef-libXrandr cef-libXi cef-libXft \
                     cef-libX11 cef-libXext cef-libxcb cef-libXrender \
-                    openssl _cef _thrift _mesa"
+                    openssl _cef _thrift _mesa curl"
 PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
 PKG_DEPENDS_UNPACK="_cef"
 PKG_DEPENDS_CONFIG="_cef"
@@ -18,7 +18,7 @@ PKG_LONGDESC="cefbrowser"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed -sysroot +strip"
 
-PKG_REV="1"
+PKG_REV="2"
 PKG_IS_ADDON="yes"
 PKG_SECTION="addon"
 PKG_ADDON_NAME="cefbrowser"

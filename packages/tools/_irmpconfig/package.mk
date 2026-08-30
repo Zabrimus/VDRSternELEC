@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_irmpconfig"
-PKG_VERSION="3714ff6593a6b403a1422c0ae54e4d4acc6309cb"
-PKG_SHA256="8c36426defaace02a1ec1d786647fb2349b5cc068c1eb52746deb3f23c81819d"
+PKG_VERSION="4818efbbcd5d03638274d1959788a650947e33c4"
+PKG_SHA256="91392e726fb600c6c72a479a3cb6ef1bf9a01b6156cbc611fc1692095da3ca91"
 PKG_LICENSE="GPL 2"
 PKG_SITE="https://github.com/j1rie/IRMP_PICO"
 PKG_URL="https://github.com/j1rie/IRMP_PICO/archive/${PKG_VERSION}.zip"

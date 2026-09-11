@@ -1,7 +1,7 @@
 # Either a commit id, branch or tag (tags/....)
 
 COREELEC20=29c066e
-COREELEC21=214df67
+COREELEC21=976988a
 COREELEC22=c20b78f
 LIBREELEC12=d3bd05e
 LIBREELEC13=b8bdd70

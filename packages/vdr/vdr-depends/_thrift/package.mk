@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_thrift"
-PKG_VERSION="0.22.0"
-PKG_SHA256="0f5a1ace3700c89dd974a4ba7888e3de941de3e971edeebce80d25527c7b8cf9"
+PKG_VERSION="0.24.0"
+PKG_SHA256="fd77a4e69892af7c6df430f660e17f881e30ee95c341e02e49595c1ff03a1eef"
 PKG_LICENSE="Apache License 2.0"
 PKG_SITE="https://github.com/apache/thrift"
 PKG_URL="https://github.com/apache/thrift/archive/refs/tags/v${PKG_VERSION}.zip"
@@ -23,4 +23,5 @@ PKG_CMAKE_OPTS_TARGET="-DWITH_AS3=OFF \
                        -DWITH_OPENSSL=OFF \
                        -DBUILD_SHARED_LIBS=OFF \
                        -DBUILD_COMPILER=OFF \
-                       -DCMAKE_POSITION_INDEPENDENT_CODE=ON"
+                       -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+                       -DCMAKE_CXX_STANDARD=11"

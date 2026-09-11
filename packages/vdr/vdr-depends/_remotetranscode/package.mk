@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_remotetranscode"
-PKG_VERSION="73323e166c8cddceb50d6ffff6535782c3f0d72d"
-PKG_SHA256="d27c6589e30fb7cc5bf05869f5d2b63eeb0e6a23ad88b9e96b523b285f8468e9"
+PKG_VERSION="5efd56b813be6ee031f7308e3857dfeb391a5ed4"
+PKG_SHA256="12392c338f7abaae3939f3e7e2ffaec248488ffbbee54e8a7a1f9a053929f0da"
 PKG_LICENSE="unknown"
 PKG_SITE="https://github.com/Zabrimus/remotetranscode"
 PKG_URL="https://github.com/Zabrimus/remotetranscode/archive/${PKG_VERSION}.zip"
@@ -23,7 +23,8 @@ PKG_MESON_OPTS_TARGET="--prefix=${RT_PREFIX} \
                        --libdir=${RT_PREFIX}/lib \
                        --libexecdir=${RT_PREFIX}/lib \
                        --sbindir=${RT_PREFIX}/bin \
-                       --wrap-mode=default"
+                       --wrap-mode=default \
+                       -Dvdrsternelec=true"
 
 pre_configure_target() {
    export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system

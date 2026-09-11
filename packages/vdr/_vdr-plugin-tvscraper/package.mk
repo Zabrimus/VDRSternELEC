@@ -1,12 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-tvscraper"
-PKG_VERSION="2e63f40aff747f6dd8786aa8c2c7a4ef65cd5f08"
-PKG_SHA256="da32fb051eef088a58cf998dd872886f041895abc43509b642a812bd022811e7"
+PKG_VERSION="26e8c6866891b1ff7bd7b86d962ed2cf7d57eb0d"
+PKG_SHA256="ab28b7fe679d34a44ac85a4b838b887885278158fb943297c59441afa420af71"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/MarkusEh/vdr-plugin-tvscraper"
-PKG_URL="https://github.com/MarkusEh/vdr-plugin-tvscraper/archive/${PKG_VERSION}.zip"
-PKG_SOURCE_DIR="vdr-plugin-tvscraper-${PKG_VERSION}"
+PKG_SITE="https://codeberg.org/MarkusE/vdr-plugin-tvscraper"
+PKG_URL="https://codeberg.org/MarkusE/vdr-plugin-tvscraper/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain _vdr curl vdr-helper sqlite _gumbo"
 PKG_DEPENDS_CONFIG="_vdr _gumbo sqlite curl"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"

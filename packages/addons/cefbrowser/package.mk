@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="cefbrowser"
-PKG_VERSION="9c1ca16dc7dcbb2c0a96cb13afac8d1e45c3749f"
-PKG_SHA256="358f89d04a50554616507af47527f2bd24fdf7912200490d1072e7f76aa85936"
+PKG_VERSION="d14517be4a7aecfc3ba0b77831af237721ef48e9"
+PKG_SHA256="e08f56498729a0a5fcc1093d5667e91a2e95cc60536dcaba220931c7914fda47"
 PKG_LICENSE="LPGL"
 PKG_SITE="https://github.com/Zabrimus/cefbrowser"
 PKG_URL="https://github.com/Zabrimus/cefbrowser/archive/${PKG_VERSION}.zip"
@@ -10,7 +10,7 @@ PKG_SOURCE_DIR="cefbrowser-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain atk libxml2 cups cef-at-spi2-core \
                     cef-libXcomposite cef-libXdamage cef-libXfixes cef-libXrandr cef-libXi cef-libXft \
                     cef-libX11 cef-libXext cef-libxcb cef-libXrender \
-                    openssl _cef _thrift _mesa"
+                    openssl _cef _thrift _mesa curl"
 PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
 PKG_DEPENDS_UNPACK="_cef"
 PKG_DEPENDS_CONFIG="_cef"
@@ -18,7 +18,7 @@ PKG_LONGDESC="cefbrowser"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed -sysroot +strip"
 
-PKG_REV="1"
+PKG_REV="2"
 PKG_IS_ADDON="yes"
 PKG_SECTION="addon"
 PKG_ADDON_NAME="cefbrowser"

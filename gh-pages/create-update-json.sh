@@ -7,7 +7,7 @@ declare cmd
 # $3 = Arch
 # $4 = Addon
 function create_jq_command_addon_ce {
-    eval "cmd=\"[to_entries[] | select(.key | contains(\\\"$1\\\")) | .value.assets[] | select(.name | contains(\\\"$2-$3-$4\\\"))] | sort_by(.createdAt) | reverse | .[0]\""
+    eval "cmd=\"[to_entries[] | select(.key | contains(\\\"$1\\\")) | .value.assets[] | select(.name | contains(\\\"$2.$3-$4\\\"))] | sort_by(.createdAt) | reverse | .[0]\""
 }
 
 # $1 = Distro

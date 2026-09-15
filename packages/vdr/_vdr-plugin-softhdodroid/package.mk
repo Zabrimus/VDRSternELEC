@@ -22,6 +22,15 @@ elif [ "${DISTRO}" = CoreELEC  ]; then
 	PKG_DEPENDS_TARGET+=" opengl-meson"
 fi;
 
+# change version for CE 20 and 21
+if [ "${DISTRO}" = "CoreELEC" ] && [ "${OS_VERSION:0:2}" = "20" ]; then
+	PKG_VERSION="4cc060b0a089d9b55e6f977046620329c876d902"
+	PKG_SHA256="67e5db63a64ff6b38c1566e301dbc13e5e3eecebb0ccfd3fa81c59a63004faef"
+elif [ "${DISTRO}" = "CoreELEC" ] && [ "${OS_VERSION:0:2}" = "21" ]; then
+	PKG_VERSION="4cc060b0a089d9b55e6f977046620329c876d902"
+	PKG_SHA256="67e5db63a64ff6b38c1566e301dbc13e5e3eecebb0ccfd3fa81c59a63004faef"
+fi
+
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib -L${SYSROOT_PREFIX}/usr/lib"
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"

@@ -25,10 +25,10 @@ fi;
 # change version for CE 20 and 21
 if [ "${DISTRO}" = "CoreELEC" ] && [ "${OS_VERSION:0:2}" = "20" ]; then
 	PKG_VERSION="4cc060b0a089d9b55e6f977046620329c876d902"
-	PKG_SHA256="67e5db63a64ff6b38c1566e301dbc13e5e3eecebb0ccfd3fa81c59a63004faef"
+	PKG_SHA256="308d54db25d1b01c49ead7a2369aff93a1faa533c9f03d16b0c5dfbecb48b076"
 elif [ "${DISTRO}" = "CoreELEC" ] && [ "${OS_VERSION:0:2}" = "21" ]; then
 	PKG_VERSION="4cc060b0a089d9b55e6f977046620329c876d902"
-	PKG_SHA256="67e5db63a64ff6b38c1566e301dbc13e5e3eecebb0ccfd3fa81c59a63004faef"
+	PKG_SHA256="308d54db25d1b01c49ead7a2369aff93a1faa533c9f03d16b0c5dfbecb48b076"
 fi
 
 pre_make_target() {

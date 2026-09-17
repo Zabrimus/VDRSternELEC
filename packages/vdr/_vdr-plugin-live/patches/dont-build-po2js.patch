@@ -1,0 +1,44 @@
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2026-09-17 10:45:00.000000000 +0200
++++ b/Makefile	2026-09-17 13:36:56.346000000 +0200
+@@ -176,18 +176,19 @@
+ pages/%.cpp: pages/%.ecpp
+ 	$(call PRETTY_PRINT,"EC" $@)
+ 	$(Q)$(ECPPC) $(ECPPFLAGS) $(ECPPFLAGS_CPP) $(ECPPINCLUDES) -o $@ $<
+ 
+ %.o: %.cpp
+ 	$(call PRETTY_PRINT,"CC" $@)
+ 	$(Q)$(CXX) $(CXXFLAGS) $(TNTFLAGS) -c $(DEFINES) $(PLUGINFEATURES) $(INCLUDES) $(INCLUDES_PAGES) -o $@ $<
+ 
+-build/po2js: build/po2js.o
+-	$(CXX) -o build/po2js build/po2js.o -lgettextpo
++# VDR*ELEC build a native version
++# build/po2js: build/po2js.o
++#	$(CXX) -o build/po2js build/po2js.o -lgettextpo
+ 
+ ### Dependencies:
+ MAKEDEP := $(CXX) -MM -MG
+ .dependencies: Makefile $(PAGESRCS) $(EPAGESRCS)
+ 	@$(MAKEDEP) $(CXXFLAGS) $(DEFINES) $(PLUGINFEATURES) $(INCLUDES) $(PLUGINSRCS) $(PAGESRCS) > $@
+ 
+ ifneq ($(MAKECMDGOALS),clean)
+ -include .dependencies
+@@ -206,17 +207,17 @@
+ I18Njs: $(I18Njs)
+ 	@true
+ 
+ %.mo: %.po
+ 	$(if $(DISABLE_I18Nmo_txt),,@echo "Creating *.mo")
+ 	@msgfmt -c -o $@ $<
+ 	$(eval DISABLE_I18Nmo_txt := 1)
+ 
+-$(PODIR)/%.js: $(PODIR)/%.po build/po2js
++$(PODIR)/%.js: $(PODIR)/%.po
+ 	$(if $(DISABLE_I18Njs_txt),,@echo "Creating *.js")
+ 	./build/po2js $< $@
+ 	$(eval DISABLE_I18Njs_txt := 1)
+ 
+ %.po: $(I18Npot)
+ 	$(if $(DISABLE_I18Npo_txt),,@echo "Creating *.po")
+ 	@msgmerge -U --no-wrap --no-location --backup=none -q -N $@ $<
+ 	@touch $@

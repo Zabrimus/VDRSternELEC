@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-live"
-PKG_VERSION="e4ba3425dd02daba840ff1363dd10c772071c642"
-PKG_SHA256="0cd83698c0776f9c03d05496683cd5c242cf9bafa6ba804089cbac11d6ed5ccd"
+PKG_VERSION="2f95312a3220b7a09634d49c47e581a4e473a9ec"
+PKG_SHA256="07e919e9b1880a7a774b7dd89fe60d024c072bac8c1323aa96973ef9d7ccdfe1"
 PKG_LICENSE="GPL"
 PKG_SITE="https://codeberg.org/MarkusE/vdr-plugin-live"
 PKG_URL="https://codeberg.org/MarkusE/vdr-plugin-live/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain _vdr pcre2 libiconv vdr-helper tntnet cxxtools openssl"
+PKG_DEPENDS_TARGET="toolchain _vdr pcre2 libiconv vdr-helper tntnet cxxtools openssl gettext"
 PKG_DEPENDS_CONFIG="_vdr"
 PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
 PKG_DEPENDS_UNPACK="vdr-helper"
@@ -20,6 +20,11 @@ pre_make_target() {
   export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
   export PKG_CONFIG=${TOOLCHAIN}/bin/pkg-config
   export ECPPC=${TOOLCHAIN}/bin/ecppc
+
+  ##### dirty hack ################################
+  # Build at first po2js with host compiler
+  cd $(get_build_dir _vdr-plugin-live)
+  ${HOSTCC} -o build/po2js build/po2js.cpp -I$(get_build_dir _vdr-plugin-live) -lstdc++ -L${TOOLCHAIN}/lib -lgettextpo
 }
 
 post_makeinstall_target() {

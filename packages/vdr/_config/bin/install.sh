@@ -297,7 +297,7 @@ boot() {
       echo "START_PRG=vdr" >> /storage/.profile
 
       systemctl daemon-reload
-      systemctl enable setup_bl301.sh
+      systemctl enable setup_bl301
   else
       echo "Unknown Boot parameter"
       exit 1

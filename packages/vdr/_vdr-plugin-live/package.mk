@@ -20,11 +20,12 @@ pre_make_target() {
   export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
   export PKG_CONFIG=${TOOLCHAIN}/bin/pkg-config
   export ECPPC=${TOOLCHAIN}/bin/ecppc
+  export TOOLCHAIN=${TOOLCHAIN}
 
   ##### dirty hack ################################
   # Build at first po2js with host compiler
   cd $(get_build_dir _vdr-plugin-live)
-  ${HOSTCC} -o build/po2js build/po2js.cpp -I$(get_build_dir _vdr-plugin-live) -lstdc++ -L${TOOLCHAIN}/lib -lgettextpo
+  ${HOSTCC} -o build/po2js build/po2js.cpp -I$(get_build_dir _vdr-plugin-live) -I${TOOLCHAIN}/include -lstdc++ -L${TOOLCHAIN}/lib -lgettextpo
 }
 
 post_makeinstall_target() {

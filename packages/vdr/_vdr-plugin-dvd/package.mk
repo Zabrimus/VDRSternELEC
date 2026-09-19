@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-dvd"
-PKG_VERSION="66d30ed0411c2ce42bc965476a4024f86810defa"
-PKG_SHA256="c15b7aa9289a0773ba3bcffe75611e9e104c97357331fed74dae826176e32eef"
+PKG_VERSION="929e1ddc446def22c83c0557faf034d6ee255370"
+PKG_SHA256="412813e7f2d8f225ad6a36dbab932b3cb033e7eeab4d635d2bd17de10f980ef6"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-dvd"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-dvd/archive/${PKG_VERSION}.zip"

@@ -1,18 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-softhdodroid"
-
-if [ "${OS_MAJOR}" = "20" ]; then
-	PKG_VERSION="fca7b0ab640c77228a14fdf213b054b621e11645"
-	PKG_SHA256="4693d6feacfb8be8e65dc094015e79dfe3339db20c198633f21121f16c82cbbf"
-elif [ "${OS_MAJOR}" = "21" ]; then
-	PKG_VERSION="fca7b0ab640c77228a14fdf213b054b621e11645"
-	PKG_SHA256="4693d6feacfb8be8e65dc094015e79dfe3339db20c198633f21121f16c82cbbf"
-else
-	PKG_VERSION="48277807743a0f24a91c84e376fc7ffcbb2d0d7d"
-	PKG_SHA256="308d54db25d1b01c49ead7a2369aff93a1faa533c9f03d16b0c5dfbecb48b076"
-fi
-
+PKG_VERSION="0967326c8f8f8eb7e588ffe365e49f511c98bbaa"
+PKG_SHA256="247cbf1cab5a5e273c9868ad6b70ee128038a2af3e7084d4b5c14c99146f4156"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/jojo61/vdr-plugin-softhdodroid"
 PKG_URL="https://github.com/jojo61/vdr-plugin-softhdodroid/archive/${PKG_VERSION}.zip"
@@ -37,6 +27,10 @@ pre_make_target() {
   export PKG_CONFIG_DISABLE_SYSROOT_PREPEND="yes"
   export VDRDIR=$(get_install_dir _vdr)/usr/local/lib/pkgconfig
   export GIT_REV=${PKG_VERSION}
+
+  if [ "${DISTRO}" = "CoreELEC" ] && [ "${OS_VERSION:0:2}" -ge "22" ]; then
+  	export EXTRAFLAGS="-D_CE22_"
+  fi;
 }
 
 post_makeinstall_target() {

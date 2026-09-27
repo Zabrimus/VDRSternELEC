@@ -1,0 +1,22 @@
+diff -ru8bBwd c/Makefile d/Makefile
+--- c/Makefile	2026-05-15 09:13:53.000000000 +0200
++++ d/Makefile	2026-09-27 10:58:14.753000000 +0200
+@@ -10,17 +10,17 @@
+ # *****************************************************************************/
+ Q = @
+ 
+ CC  ?= gcc
+ CXX ?= g++
+ 
+           
+ PWD = $(shell pwd)
+-PLUGIN = $(shell basename $(PWD) | cut -d- -f1)
++PLUGIN = wirbelscan
+ CPPSRC = $(wildcard *.cpp)
+ OBJS   = $(CPPSRC:%.cpp=%.o)
+ LDFLAGS?=
+ 
+ #/******************************************************************************
+ # * dependencies, add variables here, and checks in target check_dependencies
+ # *****************************************************************************/
+ LIBREPFUNC=librepfunc

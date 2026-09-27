@@ -1,0 +1,2920 @@
+diff --git a/config.c b/config.c
+index 5e4e1d5e..ad3d0ac5 100644
+--- a/config.c
++++ b/config.c
+@@ -420,6 +420,12 @@ cSetup::cSetup(void)
+   strcpy(SVDRPDefaultHost, "");
+   ZapTimeout = 3;
+   ChannelEntryTimeout = 1000;
++  ZapcockpitEnabled = 0;
++  ZapcockpitUseGroups = 1;
++  ZapcockpitUseHints = 1;
++  ZapcockpitUseInfo = 1;
++  ZapcockpitHideLastGroup = 0;
++  ZapcockpitShowAllChannels = 0;
+   RcRepeatDelay = 300;
+   RcRepeatDelta = 100;
+   DeleteRetention = DEFRETENTIONTIME;
+@@ -651,6 +657,12 @@ bool cSetup::Parse(const char *Name, const char *Value)
+   else if (!strcasecmp(Name, "SVDRPDefaultHost"))    strn0cpy(SVDRPDefaultHost, Value, sizeof(SVDRPDefaultHost));
+   else if (!strcasecmp(Name, "ZapTimeout"))          ZapTimeout         = atoi(Value);
+   else if (!strcasecmp(Name, "ChannelEntryTimeout")) ChannelEntryTimeout= atoi(Value);
++  else if (!strcasecmp(Name, "ZapcockpitEnabled"))   ZapcockpitEnabled  = atoi(Value);
++  else if (!strcasecmp(Name, "ZapcockpitUseGroups")) ZapcockpitUseGroups= atoi(Value);
++  else if (!strcasecmp(Name, "ZapcockpitUseHints"))  ZapcockpitUseHints = atoi(Value);
++  else if (!strcasecmp(Name, "ZapcockpitUseInfo"))   ZapcockpitUseInfo  = atoi(Value);
++  else if (!strcasecmp(Name, "ZapcockpitHideLastGroup"))   ZapcockpitHideLastGroup   = atoi(Value);
++  else if (!strcasecmp(Name, "ZapcockpitShowAllChannels")) ZapcockpitShowAllChannels = atoi(Value);
+   else if (!strcasecmp(Name, "RcRepeatDelay"))       RcRepeatDelay      = atoi(Value);
+   else if (!strcasecmp(Name, "RcRepeatDelta"))       RcRepeatDelta      = atoi(Value);
+   else if (!strcasecmp(Name, "DeleteRetention"))     DeleteRetention    = atoi(Value);
+@@ -787,6 +799,12 @@ bool cSetup::Save(void)
+   Store("SVDRPDefaultHost",   SVDRPDefaultHost);
+   Store("ZapTimeout",         ZapTimeout);
+   Store("ChannelEntryTimeout",ChannelEntryTimeout);
++  Store("ZapcockpitEnabled",  ZapcockpitEnabled);
++  Store("ZapcockpitUseGroups",ZapcockpitUseGroups);
++  Store("ZapcockpitUseHints", ZapcockpitUseHints);
++  Store("ZapcockpitUseInfo",  ZapcockpitUseInfo);
++  Store("ZapcockpitHideLastGroup",   ZapcockpitHideLastGroup);
++  Store("ZapcockpitShowAllChannels", ZapcockpitShowAllChannels);
+   Store("RcRepeatDelay",      RcRepeatDelay);
+   Store("RcRepeatDelta",      RcRepeatDelta);
+   Store("DeleteRetention",    DeleteRetention);
+diff --git a/config.h b/config.h
+index d2989290..a0d35d0e 100644
+--- a/config.h
++++ b/config.h
+@@ -311,6 +311,12 @@ public:
+   char SVDRPDefaultHost[HOST_NAME_MAX];
+   int ZapTimeout;
+   int ChannelEntryTimeout;
++  int ZapcockpitEnabled;
++  int ZapcockpitUseGroups;
++  int ZapcockpitUseHints;
++  int ZapcockpitUseInfo;
++  int ZapcockpitHideLastGroup;
++  int ZapcockpitShowAllChannels;
+   int RcRepeatDelay;
+   int RcRepeatDelta;
+   int DeleteRetention;
+diff --git a/menu.c b/menu.c
+index e45429b1..de46ce5b 100644
+--- a/menu.c
++++ b/menu.c
+@@ -4533,6 +4533,12 @@ void cMenuSetupMisc::Set(void)
+      }
+   Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Zap timeout (s)"),            &data.ZapTimeout));
+   Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Channel entry timeout (ms)"), &data.ChannelEntryTimeout, 0));
++  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: enabled"), &data.ZapcockpitEnabled));
++  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: 2nd ok shows info"), &data.ZapcockpitUseInfo));
++  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: Use extended channel group display"), &data.ZapcockpitUseGroups));
++  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: Use channel hints"), &data.ZapcockpitUseHints));
++  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: Hide last channel group"), &data.ZapcockpitHideLastGroup));
++  Add(new cMenuEditBoolItem( tr("Setup.Miscellaneous$Zapcockpit: Show \"All Channels\" Item in Group List"), &data.ZapcockpitShowAllChannels));
+   Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Remote control repeat delay (ms)"), &data.RcRepeatDelay, 0, 2000));
+   Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Remote control repeat delta (ms)"), &data.RcRepeatDelta, 0, 2000));
+   Add(new cMenuEditIntItem( tr("Setup.Miscellaneous$Deleted recordings retention (d)"), &data.DeleteRetention, 0));
+@@ -5043,7 +5049,7 @@ cDisplayChannel::cDisplayChannel(int Number, bool Switched)
+   lastTime.Set();
+ }
+ 
+-cDisplayChannel::cDisplayChannel(eKeys FirstKey)
++cDisplayChannel::cDisplayChannel(eKeys FirstKey, bool processKey)
+ :cOsdObject(true)
+ {
+   currentDisplayChannel = this;
+@@ -5061,6 +5067,7 @@ cDisplayChannel::cDisplayChannel(eKeys FirstKey)
+     LOCK_CHANNELS_READ;
+     channel = Channels->GetByNumber(cDevice::CurrentChannel());
+   }
++  if (processKey)
+   ProcessKey(FirstKey);
+ }
+ 
+@@ -5311,6 +5318,799 @@ eOSState cDisplayChannel::ProcessKey(eKeys Key)
+   return osEnd;
+ }
+ 
++// --- cGroupListItem -------------------------------------------------------
++const char *cGroupListItem::GroupName(void) { 
++  if (channel)
++     return channel->Name();
++  return tr("Setup.Miscellaneous$All Channels"); 
++}
++
++// --- cDisplayChannelExtended -------------------------------------------------------
++cDisplayChannelExtended::cDisplayChannelExtended(int Number, bool Switched)
++:cDisplayChannel(Number, Switched)
++{
++  state = esDefault;
++  keyRightOpensChannellist = -1;
++  numItemsChannel = 0;
++  currentChannel = -1;
++  startChannel = -1;
++  numItemsGroup = 0;
++  currentGroup = -1;
++  startGroup = -1;
++}
++
++cDisplayChannelExtended::cDisplayChannelExtended(eKeys FirstKey)
++:cDisplayChannel(FirstKey, false)
++{
++  state = esInit;
++  keyRightOpensChannellist = -1;
++  numItemsChannel = 0;
++  currentChannel = -1;
++  startChannel = -1;
++  numItemsGroup = 0;
++  currentGroup = -1;
++  startGroup = -1;
++}
++
++cDisplayChannelExtended::~cDisplayChannelExtended()
++{
++}
++
++eOSState cDisplayChannelExtended::ProcessKey(eKeys Key)
++{
++  cSkinDisplayChannelExtended *displayChannelExtended = dynamic_cast<cSkinDisplayChannelExtended*>(displayChannel);
++  if (!displayChannelExtended)
++     return cDisplayChannel::ProcessKey(Key);
++
++  if (Key != kNone)
++     lastTime.Set();
++
++  bool keyHandeled = false;
++  //number keys are always handled by default state
++  if ((int)Key >= k0 && (int)Key <= k9) {
++     displayChannelExtended->SetViewType(dcDefault);
++     StateNumberKey((int)Key, displayChannelExtended);
++     state = esDefault;
++  } else if (number <= 0) {
++     switch (state) {
++       case esInit:
++            keyHandeled = StateInit((int)Key, displayChannelExtended);
++            break;
++       case esDefault:
++            keyHandeled = StateDefault((int)Key, displayChannelExtended);
++            break;
++       case esChannelInfo:
++            keyHandeled = StateChannelInfo((int)Key, displayChannelExtended);
++            break;
++       case esChannelList:
++       case esChannelListInfo:
++            keyHandeled = StateChannelList((int)Key, displayChannelExtended);
++            break;
++       case esGroupsList:
++            keyHandeled = StateGroupList((int)Key, displayChannelExtended);
++            break;
++       case esGroupsChannelList:
++       case esGroupsChannelListInfo:
++            keyHandeled = StateGroupChannelList((int)Key, displayChannelExtended);
++            break;
++       default:
++            break;
++     }
++    }
++  if (state == esClose)
++     return osEnd;
++  //in extended state, no timeout
++  if (state != esDefault) 
++     lastTime.Set();
++
++  //do own flush for all lists
++  if (keyHandeled || (Key == kNone && state > esChannelInfo)) {
++     SetNeedsFastResponse(false);
++     displayChannel->Flush();
++     return osContinue;
++     }
++
++  return cDisplayChannel::ProcessKey(Key);
++}
++
++void cDisplayChannelExtended::StateNumberKey(int key, cSkinDisplayChannelExtended *dcExt)
++{
++  if (!Setup.ZapcockpitUseHints)
++     return;
++  if (number < 0)
++     return;
++  LOCK_CHANNELS_READ;
++  int selectedChannel = number > Channels->MaxNumber() ? key - k0 : number * 10 + key - k0;
++  int candidateStartNumber = selectedChannel * 10;
++  channellist.Clear();
++  const cChannel *candidatesStart = Channels->GetByNumber(candidateStartNumber);
++  int numHints = 0;
++  for (const cChannel *candidate = candidatesStart; candidate; candidate = Channels->Next(candidate)) {
++      if (candidate->GroupSep())
++         continue;
++      numHints++;
++      if (candidate->Number() >= candidateStartNumber + 9)
++         break;
++      }
++  if (numHints == 0)
++     return;
++  dcExt->SetNumChannelHints(numHints);
++  for (const cChannel *candidate = candidatesStart; candidate; candidate = Channels->Next(candidate)) {
++      if (candidate->GroupSep())
++         continue;
++      dcExt->SetChannelHint(candidate);
++      if (candidate->Number() >= candidateStartNumber + 9)
++         break;
++      }
++}
++
++bool cDisplayChannelExtended::StateInit(int key, cSkinDisplayChannelExtended *dcExt)
++{
++  if (keyRightOpensChannellist == -1)
++    keyRightOpensChannellist = dcExt->KeyRightOpensChannellist() ? 1 : 0;
++
++  bool keyHandeled = false;
++  switch (key) {
++    case kLeft|k_Repeat:  case kLeft:
++    case kPrev|k_Repeat:  case kPrev: {
++         if (!Setup.ZapcockpitUseGroups)
++            return false;
++         cOsdProvider::OsdSizeChanged(osdState); // just to get the current state
++         {
++         LOCK_CHANNELS_READ;
++         DisplayChannel();
++         DisplayInfo();
++         }
++         if (keyRightOpensChannellist) {
++            InitGroupList(dcExt);
++            state = esGroupsList;
++         } else {
++            InitChannelList(dcExt);
++            state = esChannelList;
++            }
++         keyHandeled = true;
++         break;
++    }
++    case kRight|k_Repeat: case kRight:
++    case kNext|k_Repeat:  case kNext: {
++         if (!Setup.ZapcockpitUseGroups)
++            return false;
++         cOsdProvider::OsdSizeChanged(osdState); // just to get the current state
++         {
++         LOCK_CHANNELS_READ;
++         DisplayChannel();
++         DisplayInfo();
++         }
++         if (keyRightOpensChannellist) {
++            InitChannelList(dcExt);
++            state = esChannelList;
++         } else {
++            InitGroupList(dcExt);
++            state = esGroupsList;
++            }
++         keyHandeled = true;
++         break;
++         }
++    //other keys are handled by cDisplayChannel::ProcessKeys()
++    default:
++         dcExt->SetViewType(dcDefault);
++         state = esDefault;
++         break;
++    }
++  return keyHandeled;
++}
++
++bool cDisplayChannelExtended::StateDefault(int key, cSkinDisplayChannelExtended *dcExt)
++{
++  if (keyRightOpensChannellist == -1)
++    keyRightOpensChannellist = dcExt->KeyRightOpensChannellist() ? 1 : 0;
++  bool keyHandeled = false;
++  switch (key) {
++    //2nd ok opens extended info for current channel
++    case kOk: {
++         if (!Setup.ZapcockpitUseInfo)
++            return false;
++         dcExt->SetViewType(dcChannelInfo);
++         dcExt->SetChannelInfo(channel);
++         state = esChannelInfo;
++         keyHandeled = true;
++         break;
++         }
++    case kLeft|k_Repeat:  case kLeft:
++    case kPrev|k_Repeat:  case kPrev: {
++         if (!Setup.ZapcockpitUseGroups)
++            return false;
++         if (keyRightOpensChannellist) {
++            InitGroupList(dcExt);
++            state = esGroupsList;
++         } else {
++            InitChannelList(dcExt);
++            state = esChannelList;
++            }
++         keyHandeled = true;
++         break;
++         }
++    case kRight|k_Repeat: case kRight:
++    case kNext|k_Repeat:  case kNext: {
++         if (!Setup.ZapcockpitUseGroups)
++            return false;
++         if (keyRightOpensChannellist) {
++            InitChannelList(dcExt);
++            state = esChannelList;
++         } else {
++            InitGroupList(dcExt);
++            state = esGroupsList;
++            }
++         keyHandeled = true;
++         break;
++         }
++    //other keys are handled by cDisplayChannel::ProcessKeys()
++    default:  
++         break;
++    }
++  return keyHandeled;
++}
++
++bool cDisplayChannelExtended::StateChannelInfo(int key, cSkinDisplayChannelExtended *dcExt)
++{
++  bool keyHandeled = false;
++  switch (key) {
++    //ok closes here
++    case kOk:
++         state = esDefault;
++         break;
++    //channel switching is handled by default state
++    case kUp|k_Repeat:      case kUp:
++    case kDown|k_Repeat:    case kDown:
++    case kChanUp|k_Repeat:  case kChanUp:
++    case kChanDn|k_Repeat:  case kChanDn:
++         dcExt->SetViewType(dcDefault);
++         state = esDefault;
++         break;
++    case kUp|k_Release:     case kDown|k_Release:
++    case kChanUp|k_Release: case kChanDn|k_Release:
++    case kNext|k_Release:   case kPrev|k_Release:
++         dcExt->SetViewType(dcDefault);
++         state = esDefault;
++         break;
++    case kLeft|k_Repeat:  case kLeft:
++    case kPrev|k_Repeat:  case kPrev: {
++         if (!Setup.ZapcockpitUseGroups)
++            return false;
++         if (keyRightOpensChannellist) {
++            InitGroupList(dcExt);
++            state = esGroupsList;
++         } else {
++            InitChannelList(dcExt);
++            state = esChannelList;
++            }
++         keyHandeled = true;
++         break;
++         }
++    case kRight|k_Repeat: case kRight:
++    case kNext|k_Repeat:  case kNext: {
++         if (!Setup.ZapcockpitUseGroups)
++            return false;
++         if (keyRightOpensChannellist) {
++            InitChannelList(dcExt);
++            state = esChannelList;
++         } else {
++            InitGroupList(dcExt);
++            state = esGroupsList;
++            }
++         keyHandeled = true;
++         break;
++         }
++    default:
++         break;
++  }
++  return keyHandeled;
++}
++
++bool cDisplayChannelExtended::StateChannelList(int key, cSkinDisplayChannelExtended *dcExt)
++{
++  bool keyHandeled = false;
++  switch (key) {
++    //ok switches to the selected channel
++    case kOk: {
++         bool ok = SwitchChannel();
++         dcExt->SetViewType(dcDefault);
++         if (!ok)
++            keyHandeled = true;
++         state = esDefault;
++         break;
++         }
++    //scrolling up / down
++    case kUp|k_Repeat: case kUp:
++         state = esChannelList;
++         dcExt->SetViewType(dcChannelList);
++         CursorUp(dcExt);
++         keyHandeled = true;
++         break;
++    case kDown|k_Repeat: case kDown:
++         state = esChannelList;
++         dcExt->SetViewType(dcChannelList);
++         CursorDown(dcExt);
++         keyHandeled = true;
++         break;
++    case kLeft|k_Repeat: case kLeft: {
++         keyHandeled = true;
++         if (keyRightOpensChannellist) {
++           if (state == esChannelList) {
++              state = esClose;
++           } else if (state == esChannelListInfo) {
++              dcExt->SetViewType(dcChannelList);            
++              state = esChannelList;
++              }
++         } else
++            ShowChannellistInfo(dcExt, dcChannelListInfo);
++         break;
++         }
++    //right shows extended info of currently selected channel
++    case kRight|k_Repeat: case kRight: {
++         keyHandeled = true;
++         if (keyRightOpensChannellist)
++            ShowChannellistInfo(dcExt, dcChannelListInfo);
++         else {
++           if (state == esChannelList) {
++              state = esClose;
++           } else if (state == esChannelListInfo) {
++              dcExt->SetViewType(dcChannelList);            
++              state = esChannelList;
++              }
++           }
++         break;
++         }
++    default:
++         break;
++    }
++  return keyHandeled;
++}
++
++bool cDisplayChannelExtended::StateGroupList(int key, cSkinDisplayChannelExtended *dcExt)
++{
++  bool keyHandeled = false;
++  switch (key) {
++    //ok switches to first channel in group
++    case kOk: {
++         bool ok = SwitchChannel();
++         dcExt->SetViewType(dcDefault);
++         if (!ok)
++            keyHandeled = true;
++         state = esDefault;
++         break;
++         }
++    //scrolling up / down
++    case kUp|k_Repeat: case kUp:
++         state = esGroupsList;
++         CursorUp(dcExt);
++         dcExt->SetViewType(dcGroupsList);
++         keyHandeled = true;
++         break;
++    case kDown|k_Repeat: case kDown:
++         state = esGroupsList;
++         CursorDown(dcExt);
++         dcExt->SetViewType(dcGroupsList);
++         keyHandeled = true;
++         break;
++    case kLeft|k_Repeat: case kLeft:
++         keyHandeled = true;
++         if (keyRightOpensChannellist) {
++            state = esGroupsChannelList;
++            InitGroupChannelList(dcExt);
++         } else
++            state = esClose;
++         break;
++    case kRight|k_Repeat: case kRight:
++         keyHandeled = true;
++         if (keyRightOpensChannellist)
++            state = esClose;
++         else {
++            state = esGroupsChannelList;
++            InitGroupChannelList(dcExt);
++            }
++         break;
++    default:
++         break;
++    }
++  return keyHandeled;
++}
++
++bool cDisplayChannelExtended::StateGroupChannelList(int key, cSkinDisplayChannelExtended *dcExt)
++{
++  bool keyHandeled = false;
++  switch (key) {
++    //ok switches to the selected channel
++    case kOk: {
++         bool ok = SwitchChannel();
++         dcExt->SetViewType(dcDefault);
++         if (!ok)
++            keyHandeled = true;
++         state = esDefault;
++         break;
++         }
++    //scrolling up / down
++    case kUp|k_Repeat: case kUp:
++         state = esGroupsChannelList;
++         dcExt->SetViewType(dcGroupsChannelList);
++         CursorUp(dcExt);
++         keyHandeled = true;
++         break;
++    case kDown|k_Repeat: case kDown:
++         state = esGroupsChannelList;
++         dcExt->SetViewType(dcGroupsChannelList);
++         CursorDown(dcExt);
++         keyHandeled = true;
++         break;
++    case kLeft|k_Repeat: case kLeft: {
++         keyHandeled = true;
++         if (keyRightOpensChannellist)
++            ShowChannellistInfo(dcExt, dcGroupsChannelListInfo);
++         else {
++            if (state == esGroupsChannelList) {
++               state = esGroupsList;
++               dcExt->SetViewType(dcGroupsList);
++            } else if (state == esGroupsChannelListInfo) {
++               state = esGroupsChannelList;
++               dcExt->SetViewType(dcGroupsChannelList);            
++               }
++            }
++         break;
++         }
++    case kRight|k_Repeat: case kRight: {
++         keyHandeled = true;
++         if (keyRightOpensChannellist) {
++            if (state == esGroupsChannelList) {
++               state = esGroupsList;
++               dcExt->SetViewType(dcGroupsList);
++            } else if (state == esGroupsChannelListInfo) {
++               state = esGroupsChannelList;
++               dcExt->SetViewType(dcGroupsChannelList);
++               }
++         } else
++            ShowChannellistInfo(dcExt, dcGroupsChannelListInfo);
++         break;
++         }
++    default:
++         break;
++    }
++  return keyHandeled;
++}
++
++void cDisplayChannelExtended::ShowChannellistInfo(cSkinDisplayChannelExtended *dcExt, eDisplaychannelView newViewType) {
++  if (newViewType == dcChannelListInfo && state != esChannelList)
++     return;
++  if (newViewType == dcGroupsChannelListInfo && state != esGroupsChannelList)
++     return;
++
++  cChannelListItem *li = channellist.Get(currentChannel);
++  if (li) {
++     const cChannel *selected = li->Channel();
++     if (selected) {
++        dcExt->SetViewType(newViewType);
++        dcExt->SetChannelInfo(selected);
++        state = (newViewType == dcChannelListInfo) ? esChannelListInfo : esGroupsChannelListInfo;
++        }
++     }
++}
++
++void cDisplayChannelExtended::InitChannelList(cSkinDisplayChannelExtended *dcExt)
++{
++  dcExt->SetViewType(dcChannelList);
++  numItemsChannel = dcExt->MaxItems();
++  if (numItemsChannel < 1)
++     return;
++  SetChannelList();
++  currentChannel = GetIndexChannel(channel);
++  if (currentChannel < 0)
++     currentChannel = 0;
++  startChannel = max(0, currentChannel - numItemsChannel/2 + 1);
++  DisplayChannelList(dcExt);
++}
++
++void cDisplayChannelExtended::SetChannelList(void)
++{
++  channellist.Clear();
++  const cChannel *lastSep = NULL;
++  if (Setup.ZapcockpitHideLastGroup)
++     lastSep = LastChannelSep();
++  LOCK_CHANNELS_READ;
++  for (const cChannel *c = Channels->First(); c; c = Channels->Next(c)) {
++      if (c->GroupSep()) {
++         if (Setup.ZapcockpitHideLastGroup && c == lastSep)
++            break;
++         else
++            continue;
++         }
++      channellist.Add(new cChannelListItem(c));
++      }
++}
++
++int cDisplayChannelExtended::GetIndexChannel(const cChannel *c)
++{
++  int i=0;
++  for (cChannelListItem *li = channellist.First(); li; li = channellist.Next(li)) {
++      if (li->Channel() == c)
++         return i;
++      i++;
++      }
++  return -1;
++}
++
++void cDisplayChannelExtended::InitGroupList(cSkinDisplayChannelExtended *dcExt)
++{
++  dcExt->SetViewType(dcGroupsList);
++  numItemsGroup = dcExt->MaxItems();
++  if (numItemsGroup < 1)
++     return;
++  SetGroupList();
++  currentGroup = GetIndexGroup(channel);
++  if (currentGroup < 0)
++     currentGroup = 0;
++  startGroup = max(0, numItemsGroup >= grouplist.Count() ? 0 : currentGroup - numItemsGroup/2 + 1);
++  DisplayGroupList(dcExt);
++}
++
++void cDisplayChannelExtended::SetGroupList(void)
++{
++  grouplist.Clear();
++  if (Setup.ZapcockpitShowAllChannels) {
++     cGroupListItem *allChannels = new cGroupListItem(NULL);
++     int totalNumChannels = 0;
++     const cChannel *lastSep = NULL;
++     if (Setup.ZapcockpitHideLastGroup)
++        lastSep = LastChannelSep();
++     LOCK_CHANNELS_READ;
++     for (const cChannel *c = Channels->First(); c; c = Channels->Next(c)) {
++        if (c->GroupSep()) {
++           if (Setup.ZapcockpitHideLastGroup && c == lastSep)
++              break;
++           else
++              continue;
++         }
++         totalNumChannels++;
++      }
++     allChannels->SetNumChannels(totalNumChannels);
++     grouplist.Add(allChannels);
++     }
++
++  const cChannel *lastSep = NULL;
++  if (Setup.ZapcockpitHideLastGroup)
++     lastSep = LastChannelSep();
++  int numChannels = 0;
++  cGroupListItem *item = NULL;
++  LOCK_CHANNELS_READ;
++  for (const cChannel *c = Channels->First(); c; c = Channels->Next(c)) {
++      if (c->GroupSep()) {
++         if (item) {
++            item->SetNumChannels(numChannels);
++            numChannels = 0;  
++            }
++         if (Setup.ZapcockpitHideLastGroup && c == lastSep)
++            break;
++         item = new cGroupListItem(c);
++         grouplist.Add(item);
++      } else
++         numChannels++;
++      }
++  if (grouplist.Count() > 0 && numChannels)
++     grouplist.Last()->SetNumChannels(numChannels);
++}
++
++int cDisplayChannelExtended::GetIndexGroup(const cChannel *cur)
++{
++  const cChannel *group = NULL;
++  LOCK_CHANNELS_READ;
++  for (const cChannel *c = cur; c; c = Channels->Prev(c)) {
++      if (c->GroupSep()) {
++         group = c;
++         break;
++         }
++      }
++  if (!group)
++     return -1;
++  int i=0;
++  for (cGroupListItem *li = grouplist.First(); li; li = grouplist.Next(li)) {
++      if (li->Channel() == group)
++         return i;
++      i++;
++      }
++  return -1;
++}
++
++void cDisplayChannelExtended::InitGroupChannelList(cSkinDisplayChannelExtended *dcExt)
++{
++  dcExt->SetViewType(dcGroupsChannelList);
++  numItemsChannel = dcExt->MaxItems();
++  if (numItemsChannel < 1)
++     return;
++  SetGroupChannelList(dcExt);
++  currentChannel = 0;
++  startChannel = 0;
++  DisplayChannelList(dcExt);
++}
++
++void cDisplayChannelExtended::SetGroupChannelList(cSkinDisplayChannelExtended *dcExt)
++{
++  cGroupListItem *curGroup = grouplist.Get(currentGroup);
++  if (!curGroup)
++     return;
++  const cChannel *curChannel = curGroup->Channel();
++  if (!curChannel) {
++     if (Setup.ZapcockpitShowAllChannels)
++        SetChannelList();
++     return;    
++     }
++  channellist.Clear();
++  LOCK_CHANNELS_READ;
++  for (const cChannel *c = dynamic_cast<cChannel*>(curChannel->Next()); c; c = Channels->Next(c)) {
++      if (c->GroupSep())
++         break;
++      channellist.Add(new cChannelListItem(c));
++      }
++}
++
++void cDisplayChannelExtended::CursorUp(cSkinDisplayChannelExtended *dcExt)
++{
++  int *start, *current, *numItems;
++  if (state == esChannelList || state == esGroupsChannelList) {
++     start = &startChannel;
++     current = &currentChannel;
++     numItems = &numItemsChannel;
++  } else if (state == esGroupsList) {
++     start = &startGroup;
++     current = &currentGroup;
++     numItems = &numItemsGroup;
++  } else
++     return;
++  
++  if (*current == 0) {
++     dcExt->ClearList();
++     int itemsTotal = (state == esChannelList || state == esGroupsChannelList)?channellist.Count():((state == esGroupsList)?grouplist.Count():0); 
++     *current = itemsTotal-1;
++     *start = max(0, itemsTotal - *numItems);
++     if (state == esChannelList || state == esGroupsChannelList)
++        DisplayChannelList(dcExt);
++     else if (state == esGroupsList)
++        DisplayGroupList(dcExt);
++     return;
++     }
++  int curRel = *current - *start;
++  if (curRel > 0) {
++     if (state == esChannelList || state == esGroupsChannelList) {
++        const cChannel *prev = channellist.Get(*current-1)->Channel();
++        dcExt->SetChannelList(channellist.Get(*current)->Channel(), curRel, false);
++        dcExt->SetChannelList(prev, curRel-1, true);
++        (*current)--;
++        return;
++     } else if (state = esGroupsList) {
++        cGroupListItem *prev = grouplist.Get(*current-1);
++        cGroupListItem *old = grouplist.Get(*current);
++        dcExt->SetGroupList(old->GroupName(), old->NumChannels(), curRel, false);
++        dcExt->SetGroupList(prev->GroupName(), prev->NumChannels(), curRel-1, true);
++        (*current)--;
++        return;      
++        }
++     }
++  dcExt->ClearList();
++  (*current)--;
++  *start = max(0, *start-*numItems);
++
++  if (state == esChannelList || state == esGroupsChannelList)
++     DisplayChannelList(dcExt);
++  else if (state == esGroupsList)
++     DisplayGroupList(dcExt);
++}
++
++void cDisplayChannelExtended::CursorDown(cSkinDisplayChannelExtended *dcExt)
++{
++  int *start, *current, *numItems;
++  if (state == esChannelList || state == esGroupsChannelList) {
++     start = &startChannel;
++     current = &currentChannel;
++     numItems = &numItemsChannel;
++  } else if (state == esGroupsList) {
++     start = &startGroup;
++     current = &currentGroup;
++     numItems = &numItemsGroup;
++  } else
++     return;
++
++  int curRel = *current - *start;
++  if (curRel < *numItems - 1) {
++     if (state == esChannelList || state == esGroupsChannelList) {
++        cChannelListItem *next = channellist.Get(*current+1);
++        if (next) {
++           dcExt->SetChannelList(channellist.Get(*current)->Channel(), curRel, false);
++           dcExt->SetChannelList(next->Channel(), curRel+1, true);
++           (*current)++;      
++           return;
++           }
++     } else if (state == esGroupsList) {
++        cGroupListItem *next = grouplist.Get(*current+1);
++        if (next) {
++           cGroupListItem *old = grouplist.Get(*current);
++           dcExt->SetGroupList(old->GroupName(), old->NumChannels(), curRel, false);
++           dcExt->SetGroupList(next->GroupName(), next->NumChannels(), curRel+1, true);
++           (*current)++;      
++           return;
++           }
++        }
++     }
++  if (((state == esChannelList  || state == esGroupsChannelList) && *current+1 == channellist.Count()) || 
++      (state == esGroupsList && *current+1 == grouplist.Count()))
++     *start = *current = 0;
++  else
++     *start = *current = *current+1;
++  dcExt->ClearList();
++
++  if (state == esChannelList || state == esGroupsChannelList)
++     DisplayChannelList(dcExt);
++  else if (state == esGroupsList)
++     DisplayGroupList(dcExt);
++}
++
++void cDisplayChannelExtended::DisplayChannelList(cSkinDisplayChannelExtended *dcExt)
++{
++  int index = 0;
++  for (cChannelListItem *c = channellist.Get(startChannel); c; c = channellist.Next(c)) {
++      dcExt->SetChannelList(c->Channel(), index, (startChannel + index == currentChannel) ? true : false);
++      if (++index == numItemsChannel)
++         break;
++      }
++}
++
++void cDisplayChannelExtended::DisplayGroupList(cSkinDisplayChannelExtended *dcExt)
++{
++  int index = 0;
++  for (cGroupListItem *g = grouplist.Get(startGroup); g; g = grouplist.Next(g)) {
++      dcExt->SetGroupList(g->GroupName(), g->NumChannels(), index, (startGroup + index == currentGroup) ? true : false);
++      if (++index == numItemsGroup)
++         break;
++      }
++}
++
++bool cDisplayChannelExtended::SwitchChannel(void)
++{
++  const cChannel *newChannel = NULL;
++  if ( state == esChannelList || 
++       state == esChannelListInfo ||
++       state == esGroupsChannelList ||
++       state == esGroupsChannelListInfo ) {
++     cChannelListItem *li = channellist.Get(currentChannel);
++     if (li)
++        newChannel = li->Channel();    
++  } else if (state == esGroupsList) {
++     cGroupListItem *item = grouplist.Get(currentGroup);
++     if (!item)
++        return false;
++     const cChannel *cGroup = item->Channel();
++     LOCK_CHANNELS_READ;
++     for (const cChannel *c = cGroup; c; c = Channels->Next(c))
++         if (!c->GroupSep()) {
++            newChannel = c;
++            break;
++            }
++     }
++  if (!newChannel || newChannel == channel)
++     return false;
++  SetTrackDescriptions(newChannel->Number()); // to make them immediately visible in the channel display
++  LOCK_CHANNELS_READ;
++  Channels->SwitchTo(newChannel->Number());
++  SetTrackDescriptions(newChannel->Number()); // switching the channel has cleared them
++  channel = newChannel;
++  return true;
++}
++
++const cChannel *cDisplayChannelExtended::LastChannelSep(void)
++{
++  LOCK_CHANNELS_READ;
++  for (const cChannel *c = Channels->Last(); c; c = Channels->Prev(c))
++      if (c->GroupSep())
++         return c;
++  return NULL;
++}
++
+ // --- cDisplayVolume --------------------------------------------------------
+ 
+ #define VOLUMETIMEOUT 1000 //ms
+diff --git a/menu.h b/menu.h
+index b7470d10..51230067 100644
+--- a/menu.h
++++ b/menu.h
+@@ -126,30 +126,102 @@ public:
+ 
+ class cDisplayChannel : public cOsdObject {
+ private:
+-  cSkinDisplayChannel *displayChannel;
+   int group;
+   bool withInfo;
+-  cTimeMs lastTime;
+-  int number;
+   bool timeout;
+-  int osdState;
+   const cPositioner *positioner;
+-  const cChannel *channel;
+   const cEvent *lastPresent;
+   const cEvent *lastFollowing;
+   static cDisplayChannel *currentDisplayChannel;
+-  void DisplayChannel(void);
+-  void DisplayInfo(void);
+   void Refresh(void);
+   const cChannel *NextAvailableChannel(const cChannel *Channel, int Direction);
++protected:
++  cSkinDisplayChannel *displayChannel;
++  cTimeMs lastTime;
++  int number;
++  const cChannel *channel;
++  int osdState;
++  void DisplayChannel(void);
++  void DisplayInfo(void);
+ public:
+   cDisplayChannel(int Number, bool Switched);
+-  cDisplayChannel(eKeys FirstKey);
++  cDisplayChannel(eKeys FirstKey, bool processKey = true);
+   virtual ~cDisplayChannel() override;
+   virtual eOSState ProcessKey(eKeys Key) override;
+   static bool IsOpen(void) { return currentDisplayChannel != NULL; }
+   };
+ 
++enum eExtendedState {
++    esInit = 0,
++    esDefault,
++    esChannelInfo,
++    esChannelList,
++    esChannelListInfo,
++    esGroupsList,
++    esGroupsChannelList,
++    esGroupsChannelListInfo,
++    esClose
++    };
++
++class cChannelListItem : public cListObject {
++    private:
++      const cChannel *channel;
++    public:
++      cChannelListItem(const cChannel *Channel) { channel = Channel; };
++      virtual ~cChannelListItem(void) { };
++      const cChannel *Channel(void) { return channel; }
++      };
++
++class cGroupListItem : public cListObject {
++    private:
++      const cChannel *channel;
++      int numChannels;
++    public:
++      cGroupListItem(const cChannel *Channel) { channel = Channel; numChannels = 0; };
++      virtual ~cGroupListItem(void) { };
++      const char *GroupName(void);
++      void SetNumChannels(int NumChannels) { numChannels = NumChannels; };
++      int NumChannels(void) { return numChannels; };
++      const cChannel *Channel(void) { return channel; }
++      };
++
++class cDisplayChannelExtended : public cDisplayChannel {
++    private:
++      eExtendedState state;
++      int keyRightOpensChannellist;
++      int numItemsChannel, startChannel, currentChannel;
++      int numItemsGroup, startGroup, currentGroup;
++      cList<cChannelListItem> channellist;
++      cList<cGroupListItem> grouplist;
++      void StateNumberKey(int key, cSkinDisplayChannelExtended *dcExt);
++      bool StateInit(int key, cSkinDisplayChannelExtended *dcExt);
++      bool StateDefault(int key, cSkinDisplayChannelExtended *dcExt);
++      bool StateChannelInfo(int key, cSkinDisplayChannelExtended *dcExt);
++      bool StateChannelList(int key, cSkinDisplayChannelExtended *dcExt);
++      bool StateGroupList(int key, cSkinDisplayChannelExtended *dcExt);
++      bool StateGroupChannelList(int key, cSkinDisplayChannelExtended *dcExt);
++      void ShowChannellistInfo(cSkinDisplayChannelExtended *dcExt, eDisplaychannelView newViewType);
++      void InitChannelList(cSkinDisplayChannelExtended *dcExt);
++      void SetChannelList(void);
++      int GetIndexChannel(const cChannel *c);
++      void InitGroupList(cSkinDisplayChannelExtended *dcExt);
++      void SetGroupList(void);
++      int GetIndexGroup(const cChannel *c);
++      void InitGroupChannelList(cSkinDisplayChannelExtended *dcExt);
++      void SetGroupChannelList(cSkinDisplayChannelExtended *dcExt);
++      void CursorUp(cSkinDisplayChannelExtended *dcExt);
++      void CursorDown(cSkinDisplayChannelExtended *dcExt);
++      void DisplayChannelList(cSkinDisplayChannelExtended *dcExt);
++      void DisplayGroupList(cSkinDisplayChannelExtended *dcExt);
++      bool SwitchChannel(void);
++      const cChannel *LastChannelSep(void);
++    public:
++      cDisplayChannelExtended(int Number, bool Switched);
++      cDisplayChannelExtended(eKeys FirstKey);
++      virtual ~cDisplayChannelExtended();
++      virtual eOSState ProcessKey(eKeys Key);
++      };
++
+ class cDisplayVolume : public cOsdObject {
+ private:
+   cSkinDisplayVolume *displayVolume;
+diff --git a/po/de_DE.po b/po/de_DE.po
+index 842ee4ff..39859f99 100644
+--- a/po/de_DE.po
++++ b/po/de_DE.po
+@@ -1457,6 +1457,24 @@ msgstr "Mindestzeit f
+ msgid "Setup.Miscellaneous$Channel entry timeout (ms)"
+ msgstr "Zeitlimit für Kanaleingabe (ms)"
+ 
++msgid "Setup.Miscellaneous$Zapcockpit: enabled"
++msgstr "Zapcockpit: aktiviert"
++
++msgid "Setup.Miscellaneous$Zapcockpit: 2nd ok shows info"
++msgstr "Zapcockpit: zweites OK zeigt Info"
++
++msgid "Setup.Miscellaneous$Zapcockpit: Use extended channel group display"
++msgstr "Zapcockpit: Erweiterte Kanalgruppen Anzeige benutzen"
++
++msgid "Setup.Miscellaneous$Zapcockpit: Use channel hints"
++msgstr "Zapcockpit: Kanalhinweise benutzen"
++
++msgid "Setup.Miscellaneous$Zapcockpit: Hide last channel group"
++msgstr "Zapcockpit: letzte Kanalgruppe ausblenden"
++
++msgid "Setup.Miscellaneous$Zapcockpit: Show \"All Channels\" Item in Group List"
++msgstr "Zapcockpit: Zeige \"Alle Kanäle\" in Kanalgruppen Liste"
++
+ msgid "Setup.Miscellaneous$Remote control repeat delay (ms)"
+ msgstr "Fernbedienung Wiederholverzögerung (ms)"
+ 
+@@ -1539,6 +1557,9 @@ msgstr "Aufzeichnung beenden?"
+ msgid "Cancel editing?"
+ msgstr "Bearbeitung abbrechen?"
+ 
++msgid "Setup.Miscellaneous$All Channels"
++msgstr "Alle Kanäle"
++
+ msgid "No audio available!"
+ msgstr "Kein Audio verfügbar!"
+ 
+diff --git a/po/de_DE.po.orig b/po/de_DE.po.orig
+new file mode 100644
+index 00000000..842ee4ff
+--- /dev/null
++++ b/po/de_DE.po.orig
+@@ -0,0 +1,1756 @@
++# VDR language source file.
++# Copyright (C) 2026 Klaus Schmidinger <vdr@tvdr.de>
++# This file is distributed under the same license as the VDR package.
++# Klaus Schmidinger <vdr@tvdr.de>, 2000-2015
++# Albert Danis <a.danis@gmx.de>, 2015
++# Johann Friedrichs <johann.friedrichs@web.de>, 2022
++# Stefan Hofmann <stefan.hofmann@t-online.de>, 2025-2026
++#
++msgid ""
++msgstr ""
++"Project-Id-Version: VDR 2.8.2\n"
++"Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
++"POT-Creation-Date: 2026-08-17 13:07+0200\n"
++"PO-Revision-Date: 2015-02-10 13:45+0100\n"
++"Last-Translator: Stefan Hofmann <stefan.hofmann@t-online.de>\n"
++"Language-Team: German <vdr@linuxtv.org>\n"
++"Language: de\n"
++"MIME-Version: 1.0\n"
++"Content-Type: text/plain; charset=ISO-8859-15\n"
++"Content-Transfer-Encoding: 8bit\n"
++
++msgid "*** Invalid Channel ***"
++msgstr "*** Ungültiger Kanal ***"
++
++msgid "CAM activated!"
++msgstr "CAM aktiviert!"
++
++msgid "Channel not available!"
++msgstr "Kanal nicht verfügbar!"
++
++msgid "Can't start Transfer Mode!"
++msgstr "Transfer-Mode kann nicht gestartet werden!"
++
++msgid "off"
++msgstr "aus"
++
++msgid "on"
++msgstr "ein"
++
++msgid "auto"
++msgstr "auto"
++
++msgid "none"
++msgstr "keine"
++
++msgid "Polarization"
++msgstr "Polarisation"
++
++msgid "System"
++msgstr "System"
++
++msgid "Srate"
++msgstr "Srate"
++
++msgid "Inversion"
++msgstr "Inversion"
++
++msgid "CoderateH"
++msgstr "CoderateH"
++
++msgid "CoderateL"
++msgstr "CoderateL"
++
++msgid "Modulation"
++msgstr "Modulation"
++
++msgid "Bandwidth"
++msgstr "Bandbreite"
++
++msgid "Transmission"
++msgstr "Transmission"
++
++msgid "Guard"
++msgstr "Guard"
++
++msgid "Hierarchy"
++msgstr "Hierarchie"
++
++msgid "Rolloff"
++msgstr "Roll-off"
++
++msgid "StreamId"
++msgstr "Stream-ID"
++
++msgid "Pilot"
++msgstr "Pilot"
++
++msgid "T2SystemId"
++msgstr "T2-System-ID"
++
++msgid "SISO/MISO"
++msgstr "SISO/MISO"
++
++msgid "Starting EPG scan"
++msgstr "Aktualisiere EPG-Daten"
++
++msgid "Content$Movie/Drama"
++msgstr "Film/Drama"
++
++msgid "Content$Detective/Thriller"
++msgstr "Detektiv/Thriller"
++
++msgid "Content$Adventure/Western/War"
++msgstr "Abenteuer/Western/Krieg"
++
++msgid "Content$Science Fiction/Fantasy/Horror"
++msgstr "Science-Fiction/Fantasy/Horror"
++
++msgid "Content$Comedy"
++msgstr "Komödie"
++
++msgid "Content$Soap/Melodrama/Folkloric"
++msgstr "Seife/Melodram/Folklore"
++
++msgid "Content$Romance"
++msgstr "Romanze"
++
++msgid "Content$Serious/Classical/Religious/Historical Movie/Drama"
++msgstr "Ernst/Klassik/Religion/Historischer Film/Drama"
++
++msgid "Content$Adult Movie/Drama"
++msgstr "Erwachsenen-Film/Drama"
++
++msgid "Content$News/Current Affairs"
++msgstr "Aktuelle Angelegenheiten"
++
++msgid "Content$News/Weather Report"
++msgstr "Wetterbericht"
++
++msgid "Content$News Magazine"
++msgstr "Nachrichtenmagazin"
++
++msgid "Content$Documentary"
++msgstr "Dokumentation"
++
++msgid "Content$Discussion/Interview/Debate"
++msgstr "Diskussion/Interview/Debatte"
++
++msgid "Content$Show/Game Show"
++msgstr "Show/Spielshow"
++
++msgid "Content$Game Show/Quiz/Contest"
++msgstr "Spielshow/Quiz/Wettbewerb"
++
++msgid "Content$Variety Show"
++msgstr "Varieté-Show"
++
++msgid "Content$Talk Show"
++msgstr "Talkshow"
++
++msgid "Content$Sports"
++msgstr "Sport"
++
++msgid "Content$Special Event"
++msgstr "Besonderes Ereignis"
++
++msgid "Content$Sport Magazine"
++msgstr "Sportmagazin"
++
++msgid "Content$Football/Soccer"
++msgstr "Football/Fußball"
++
++msgid "Content$Tennis/Squash"
++msgstr "Tennis/Squash"
++
++msgid "Content$Team Sports"
++msgstr "Mannschaftssport"
++
++msgid "Content$Athletics"
++msgstr "Athletik"
++
++msgid "Content$Motor Sport"
++msgstr "Motorsport"
++
++msgid "Content$Water Sport"
++msgstr "Wassersport"
++
++msgid "Content$Winter Sports"
++msgstr "Wintersport"
++
++msgid "Content$Equestrian"
++msgstr "Reitsport"
++
++msgid "Content$Martial Sports"
++msgstr "Kampfsport"
++
++msgid "Content$Children's/Youth Programme"
++msgstr "Kinder/Jugendprogramm"
++
++msgid "Content$Pre-school Children's Programme"
++msgstr "Programm für Vorschulkinder"
++
++msgid "Content$Entertainment Programme for 6 to 14"
++msgstr "Unterhaltungsprogramm für 6 bis 14"
++
++msgid "Content$Entertainment Programme for 10 to 16"
++msgstr "Unterhaltungsprogramm für 10 bis 16"
++
++msgid "Content$Informational/Educational/School Programme"
++msgstr "Informations/Lehr/Schul-Programm"
++
++msgid "Content$Cartoons/Puppets"
++msgstr "Zeichentrick/Puppen"
++
++msgid "Content$Music/Ballet/Dance"
++msgstr "Musik/Ballett/Tanz"
++
++msgid "Content$Rock/Pop"
++msgstr "Rock/Pop"
++
++msgid "Content$Serious/Classical Music"
++msgstr "Ernste/Klassische Musik"
++
++msgid "Content$Folk/Traditional Music"
++msgstr "Volks/Traditionelle Musik"
++
++msgid "Content$Jazz"
++msgstr "Jazz"
++
++msgid "Content$Musical/Opera"
++msgstr "Musical/Oper"
++
++msgid "Content$Ballet"
++msgstr "Ballett"
++
++msgid "Content$Arts/Culture"
++msgstr "Kunst/Kultur"
++
++msgid "Content$Performing Arts"
++msgstr "Darstellende Künste"
++
++msgid "Content$Fine Arts"
++msgstr "Bildende Künste"
++
++msgid "Content$Religion"
++msgstr "Religion"
++
++msgid "Content$Popular Culture/Traditional Arts"
++msgstr "Pop-Kultur/Traditionelle Künste"
++
++msgid "Content$Literature"
++msgstr "Literatur"
++
++msgid "Content$Film/Cinema"
++msgstr "Film/Kino"
++
++msgid "Content$Experimental Film/Video"
++msgstr "Experimentalfilm/Video"
++
++msgid "Content$Broadcasting/Press"
++msgstr "Rundfunk/Presse"
++
++msgid "Content$New Media"
++msgstr "Neue Medien"
++
++msgid "Content$Arts/Culture Magazine"
++msgstr "Kunst/Kulturmagazin"
++
++msgid "Content$Fashion"
++msgstr "Mode"
++
++msgid "Content$Social/Political/Economics"
++msgstr "Gesellschaft/Politik/Wirtschaft"
++
++msgid "Content$Magazine/Report/Documentary"
++msgstr "Magazin/Bericht/Dokumentation"
++
++msgid "Content$Economics/Social Advisory"
++msgstr "Wirtschafts/Gesellschaftsberatung"
++
++msgid "Content$Remarkable People"
++msgstr "Bemerkenswerte Leute"
++
++msgid "Content$Education/Science/Factual"
++msgstr "Ausbildung/Wissenschaft/Sachlich"
++
++msgid "Content$Nature/Animals/Environment"
++msgstr "Natur/Tiere/Umwelt"
++
++msgid "Content$Technology/Natural Sciences"
++msgstr "Technik/Naturwissenschaften"
++
++msgid "Content$Medicine/Physiology/Psychology"
++msgstr "Medizin/Physiologie/Psychologie"
++
++msgid "Content$Foreign Countries/Expeditions"
++msgstr "Ausland/Expeditionen"
++
++msgid "Content$Social/Spiritual Sciences"
++msgstr "Sozial/Geisteswissenschaften"
++
++msgid "Content$Further Education"
++msgstr "Weiterbildung"
++
++msgid "Content$Languages"
++msgstr "Sprachen"
++
++msgid "Content$Leisure/Hobbies"
++msgstr "Freizeit/Hobbies"
++
++msgid "Content$Tourism/Travel"
++msgstr "Tourismus/Reisen"
++
++msgid "Content$Handicraft"
++msgstr "Handwerk"
++
++msgid "Content$Motoring"
++msgstr "Autofahren"
++
++msgid "Content$Fitness & Health"
++msgstr "Fitness & Gesundheit"
++
++msgid "Content$Cooking"
++msgstr "Kochen"
++
++msgid "Content$Advertisement/Shopping"
++msgstr "Werbung/Einkaufen"
++
++msgid "Content$Gardening"
++msgstr "Gartenbau"
++
++msgid "Content$Original Language"
++msgstr "Originalsprache"
++
++msgid "Content$Black & White"
++msgstr "Schwarz-weiß"
++
++msgid "Content$Unpublished"
++msgstr "Unveröffentlicht"
++
++msgid "Content$Live Broadcast"
++msgstr "Live-Sendung"
++
++#, c-format
++msgid "ParentalRating$from %d"
++msgstr "ab %d"
++
++msgid "No title"
++msgstr "Kein Titel"
++
++#. TRANSLATORS: The name of the language, as written natively
++msgid "LanguageName$English"
++msgstr "Deutsch"
++
++#. TRANSLATORS: The 3-letter code of the language
++msgid "LanguageCode$eng"
++msgstr "deu"
++
++msgid "LanguageName$original language (qaa)"
++msgstr "Originalton (qaa)"
++
++msgid "LanguageName$audio description (qad)"
++msgstr "Audiodeskription (qad)"
++
++msgid "LanguageName$clear speech (qks)"
++msgstr "klare Sprache"
++
++msgid "LanguageName$uncoded languages (mis)"
++msgstr "einzelne andere Sprachen (mis)"
++
++msgid "LanguageName$multiple languages (mul)"
++msgstr "mehrere Sprachen (mul)"
++
++msgid "LanguageName$narrative (nar)"
++msgstr "Audiodeskription (nar)"
++
++msgid "LanguageName$undetermined (und)"
++msgstr "unbestimmt (und)"
++
++msgid "LanguageName$no linguistic content (zxx)"
++msgstr "kein sprachlicher Inhalt (zxx)"
++
++msgid "Phase 1: Detecting RC code type"
++msgstr "Phase 1: System der Fernbedienung ermitteln"
++
++msgid "Press any key on the RC unit"
++msgstr "Eine Taste auf der Fernbedienung drücken"
++
++msgid "RC code detected!"
++msgstr "System der Fernbedienung erkannt!"
++
++msgid "Do not press any key..."
++msgstr "Keine Taste drücken..."
++
++msgid "Phase 2: Learning specific key codes"
++msgstr "Phase 2: Tastenbelegung anlernen"
++
++#, c-format
++msgid "Press key for '%s'"
++msgstr "Taste für '%s' drücken"
++
++msgid "Press 'Up' to confirm"
++msgstr "'Auf' drücken zum Bestätigen"
++
++msgid "Press 'Down' to continue"
++msgstr "'Ab' drücken zum Weitermachen"
++
++msgid "(press 'Up' to go back)"
++msgstr "('Auf' drücken, um zurückzugehen)"
++
++msgid "(press 'Down' to end key definition)"
++msgstr "('Ab' drücken zum Beenden)"
++
++msgid "(press 'Menu' to skip this key)"
++msgstr "('Menü' drücken zum Überspringen)"
++
++msgid "Learning Remote Control Keys"
++msgstr "Fernbedienung anlernen"
++
++msgid "Phase 3: Saving key codes"
++msgstr "Phase 3: Tastenbelegung abspeichern"
++
++msgid "Press 'Up' to save, 'Down' to cancel"
++msgstr "'Auf' speichert, 'Ab' bricht ab"
++
++msgid "Key$Up"
++msgstr "Auf"
++
++msgid "Key$Down"
++msgstr "Ab"
++
++msgid "Key$Menu"
++msgstr "Menü"
++
++msgid "Key$Ok"
++msgstr "Ok"
++
++msgid "Key$Back"
++msgstr "Zurück"
++
++msgid "Key$Left"
++msgstr "Links"
++
++msgid "Key$Right"
++msgstr "Rechts"
++
++msgid "Key$Red"
++msgstr "Rot"
++
++msgid "Key$Green"
++msgstr "Grün"
++
++msgid "Key$Yellow"
++msgstr "Gelb"
++
++msgid "Key$Blue"
++msgstr "Blau"
++
++msgid "Key$Info"
++msgstr "Info"
++
++msgid "Key$Play/Pause"
++msgstr "Wiedergabe/Pause"
++
++msgid "Key$Play"
++msgstr "Wiedergabe"
++
++msgid "Key$Pause"
++msgstr "Pause"
++
++msgid "Key$Stop"
++msgstr "Stopp"
++
++msgid "Key$Record"
++msgstr "Aufnehmen"
++
++msgid "Key$FastFwd"
++msgstr "Vorlauf"
++
++msgid "Key$FastRew"
++msgstr "Rücklauf"
++
++msgid "Key$Next"
++msgstr "Vorwärts"
++
++msgid "Key$Prev"
++msgstr "Zurück"
++
++msgid "Key$Power"
++msgstr "Ausschalten"
++
++msgid "Key$Channel+"
++msgstr "Kanal+"
++
++msgid "Key$Channel-"
++msgstr "Kanal-"
++
++msgid "Key$PrevChannel"
++msgstr "Vorheriger Kanal"
++
++msgid "Key$Volume+"
++msgstr "Lautstärke+"
++
++msgid "Key$Volume-"
++msgstr "Lautstärke-"
++
++msgid "Key$Mute"
++msgstr "Stumm"
++
++msgid "Key$Audio"
++msgstr "Audio"
++
++msgid "Key$Subtitles"
++msgstr "Untertitel"
++
++msgid "Key$Schedule"
++msgstr "Programm"
++
++msgid "Key$Channels"
++msgstr "Kanäle"
++
++msgid "Key$Timers"
++msgstr "Timer"
++
++msgid "Key$Recordings"
++msgstr "Aufzeichnungen"
++
++msgid "Key$Setup"
++msgstr "Einstellungen"
++
++msgid "Key$Commands"
++msgstr "Befehle"
++
++msgid "Key$User0"
++msgstr "Benutzer0"
++
++msgid "Key$User1"
++msgstr "Benutzer1"
++
++msgid "Key$User2"
++msgstr "Benutzer2"
++
++msgid "Key$User3"
++msgstr "Benutzer3"
++
++msgid "Key$User4"
++msgstr "Benutzer4"
++
++msgid "Key$User5"
++msgstr "Benutzer5"
++
++msgid "Key$User6"
++msgstr "Benutzer6"
++
++msgid "Key$User7"
++msgstr "Benutzer7"
++
++msgid "Key$User8"
++msgstr "Benutzer8"
++
++msgid "Key$User9"
++msgstr "Benutzer9"
++
++msgid "Free To Air"
++msgstr "frei empfangbar"
++
++msgid "encrypted"
++msgstr "verschlüsselt"
++
++msgid "Edit channel"
++msgstr "Kanal bearbeiten"
++
++msgid "Name"
++msgstr "Name"
++
++msgid "Source"
++msgstr "Quelle"
++
++msgid "Frequency"
++msgstr "Frequenz"
++
++msgid "Vpid"
++msgstr "Vpid"
++
++msgid "Ppid"
++msgstr "Ppid"
++
++msgid "Apid1"
++msgstr "Apid1"
++
++msgid "Apid2"
++msgstr "Apid2"
++
++msgid "Dpid1"
++msgstr "Dpid1"
++
++msgid "Dpid2"
++msgstr "Dpid2"
++
++msgid "Spid1"
++msgstr "Spid1"
++
++msgid "Spid2"
++msgstr "Spid2"
++
++msgid "Tpid"
++msgstr "Tpid"
++
++msgid "CA"
++msgstr "CA"
++
++msgid "Sid"
++msgstr "Sid"
++
++msgid "Nid"
++msgstr "Nid"
++
++msgid "Tid"
++msgstr "Tid"
++
++msgid "Channel settings are not unique!"
++msgstr "Kanaleinstellungen sind nicht eindeutig!"
++
++msgid "Channels"
++msgstr "Kanäle"
++
++msgid "Button$Edit"
++msgstr "Bearbeiten"
++
++msgid "Button$New"
++msgstr "Neu"
++
++msgid "Button$Delete"
++msgstr "Löschen"
++
++msgid "Button$Mark"
++msgstr "Markieren"
++
++msgid "Channel is being used by a timer!"
++msgstr "Kanal wird von einem Timer benutzt!"
++
++msgid "Delete channel?"
++msgstr "Kanal löschen?"
++
++msgid "Edit folder"
++msgstr "Ordner bearbeiten"
++
++msgid "New folder"
++msgstr "Neuer Ordner"
++
++msgid "Folder name already exists!"
++msgstr "Ordnername existiert bereits!"
++
++#, c-format
++msgid "Folder name must not contain '%c'!"
++msgstr "Ordnername darf kein '%c' enthalten!"
++
++msgid "Button$Open"
++msgstr "Öffnen"
++
++msgid "Delete folder and all sub folders?"
++msgstr "Ordner und alle Unterordner löschen?"
++
++msgid "Delete folder?"
++msgstr "Ordner löschen?"
++
++msgid "Edit timer"
++msgstr "Timer bearbeiten"
++
++msgid "Active"
++msgstr "Aktiv"
++
++msgid "Channel"
++msgstr "Kanal"
++
++msgid "Day"
++msgstr "Tag"
++
++msgid "Start"
++msgstr "Anfang"
++
++msgid "Stop"
++msgstr "Ende"
++
++msgid "VPS"
++msgstr "VPS"
++
++msgid "Priority"
++msgstr "Priorität"
++
++msgid "Lifetime"
++msgstr "Lebensdauer"
++
++msgid "File"
++msgstr "Datei"
++
++msgid "Record on"
++msgstr "Aufnehmen auf"
++
++msgid "Button$Folder"
++msgstr "Ordnerauswahl"
++
++msgid "Button$Single"
++msgstr "Einmalig"
++
++msgid "Button$Repeating"
++msgstr "Wiederholend"
++
++msgid "Button$Regular"
++msgstr "Normal"
++
++msgid "Button$Pattern"
++msgstr "Muster"
++
++msgid "First day"
++msgstr "Erster Tag"
++
++msgid "Timer is recording!"
++msgstr "Timer nimmt auf!"
++
++msgid "Pattern"
++msgstr "Muster"
++
++msgid "Error while accessing remote timer"
++msgstr "Fehler beim Ansprechen des fernen Timers"
++
++msgid "Timer has been deleted!"
++msgstr "Timer wurde gelöscht!"
++
++msgid "Select folder"
++msgstr "Ordner wählen"
++
++msgid "Timers"
++msgstr "Timer"
++
++msgid "Button$On/Off"
++msgstr "Ein/Aus"
++
++msgid "Button$Info"
++msgstr "Info"
++
++msgid "Delete timer?"
++msgstr "Timer löschen?"
++
++msgid "Timer still recording - really delete?"
++msgstr "Timer zeichnet auf - trotzdem löschen?"
++
++msgid "Event"
++msgstr "Sendung"
++
++msgid "Button$Timer"
++msgstr "Timer"
++
++msgid "Button$Record"
++msgstr "Aufnehmen"
++
++msgid "Button$Switch"
++msgstr "Umschalten"
++
++msgid "What's on now?"
++msgstr "Was läuft jetzt?"
++
++msgid "What's on next?"
++msgstr "Was läuft als Nächstes?"
++
++msgid "Button$Next"
++msgstr "Nächste"
++
++msgid "Button$Now"
++msgstr "Jetzt"
++
++msgid "Button$Schedule"
++msgstr "Programm"
++
++msgid "Can't switch channel!"
++msgstr "Kanal kann nicht umgeschaltet werden!"
++
++msgid "Schedule"
++msgstr "Programm"
++
++#, c-format
++msgid "Schedule - %s"
++msgstr "Programm - %s"
++
++#, c-format
++msgid "This event - %s"
++msgstr "Diese Sendung - %s"
++
++msgid "This event - all channels"
++msgstr "Diese Sendung - alle Kanäle"
++
++msgid "All events - all channels"
++msgstr "Alle Sendungen - alle Kanäle"
++
++#, c-format
++msgid "Please enter %d digits!"
++msgstr "Bitte geben Sie %d Ziffern ein!"
++
++msgid "CAM not responding!"
++msgstr "CAM antwortet nicht!"
++
++msgid "Edit path"
++msgstr "Pfad bearbeiten"
++
++msgid "Folder"
++msgstr "Ordner"
++
++msgid "Size"
++msgstr "Größe"
++
++msgid "This folder is currently in use - no changes are possible!"
++msgstr "Dieser Ordner ist zur Zeit in Verwendung - keine Änderungen möglich!"
++
++#, c-format
++msgid "Move entire folder containing %d recordings?"
++msgstr "Ganzen Ordner mit %d Aufzeichnungen verschieben?"
++
++msgid "Error while moving folder!"
++msgstr "Fehler beim Verschieben des Ordners!"
++
++msgid "Edit recording"
++msgstr "Aufzeichnung bearbeiten"
++
++msgid "Parental rating"
++msgstr "Altersfreigabe"
++
++msgid "This recording is currently in use - no changes are possible!"
++msgstr "Diese Aufzeichnung ist zur Zeit in Verwendung - keine Änderungen möglich!"
++
++msgid "Button$Cancel cutting"
++msgstr "Schnitt abbrechen"
++
++msgid "Button$Stop cutting"
++msgstr "Schnitt beenden"
++
++msgid "Button$Cancel moving"
++msgstr "Verschieben abbrechen"
++
++msgid "Button$Stop moving"
++msgstr "Verschieben beenden"
++
++msgid "Button$Cancel copying"
++msgstr "Kopieren abbrechen"
++
++msgid "Button$Stop copying"
++msgstr "Kopieren beenden"
++
++msgid "Button$Cut"
++msgstr "Schneiden"
++
++msgid "Button$Delete marks"
++msgstr "Marken löschen"
++
++msgid "Recording vanished!"
++msgstr "Aufzeichnung verschwunden!"
++
++msgid "Edited version already exists - overwrite?"
++msgstr "Geschnittene Version existiert bereits - überschreiben?"
++
++msgid "Not enough free disk space to start editing process!"
++msgstr "Nicht genug freier Plattenplatz zum Schneiden!"
++
++msgid "Error while queueing recording for cutting!"
++msgstr "Fehler beim Hinzufügen der Aufzeichnung zur Schnittwarteschlange"
++
++msgid "Rename recording to folder name?"
++msgstr "Aufzeichnung in Ordnername umbenennen?"
++
++msgid "Delete editing marks for this recording?"
++msgstr "Schnittmarken für diese Aufzeichnung löschen?"
++
++msgid "Error while deleting editing marks!"
++msgstr "Fehler beim Löschen der Schnittmarken!"
++
++msgid "Error while changing priority/lifetime!"
++msgstr "Fehler beim Ändern der Priorität bzw. Lebensdauer!"
++
++msgid "Error while changing parental rating!"
++msgstr "Fehler bem Ändern der Altersfreigabe"
++
++msgid "Error while changing folder/name!"
++msgstr "Fehler beim Ändern des Ordners bzw. Namens!"
++
++msgid "Recording info"
++msgstr "Aufzeichnung"
++
++msgid "Button$Recordings"
++msgstr "Aufzeichnungen"
++
++msgid "Button$Restore"
++msgstr "Wiederherstellen"
++
++msgid "Button$Permanently delete"
++msgstr "Endgültig löschen"
++
++msgid "Button$Play"
++msgstr "Wiedergabe"
++
++msgid "Button$Rewind"
++msgstr "Anfang"
++
++#, c-format
++msgid "Deleted recording (%d days left)"
++msgstr "Gelöschte Aufzeichnung (%d Tage verbleibend)"
++
++#, c-format
++msgid "Deleted recording (%d hours left)"
++msgstr "Gelöschte Aufzeichnung (%d Stunden verbleibend)"
++
++#, c-format
++msgid "Deleted recording (%d minutes left)"
++msgstr "Gelöschte Aufzeichnung (%d Minuten verbleibend"
++
++msgid "Deleted recording (expired)"
++msgstr "Gelöschte Aufzeichnung (abgelaufen)"
++
++msgid "Deleted in"
++msgstr "Gelöscht in"
++
++msgid "Deleted recordings"
++msgstr "Gelöschte Aufzeichnungen"
++
++msgid "Recordings"
++msgstr "Aufzeichnungen"
++
++msgid "Button$Deleted recordings"
++msgstr "Gelöschte Aufz."
++
++msgid "Button$Commands"
++msgstr "Befehle"
++
++msgid "No deleted recordings"
++msgstr "Keine gelöschten Aufzeichnungen"
++
++msgid "No recordings"
++msgstr "Keine Aufzeichnungen"
++
++msgid "Delete recording?"
++msgstr "Aufzeichnung löschen?"
++
++msgid "Recording is being edited - really delete?"
++msgstr "Aufzeichnung wird bearbeitet - trotzdem löschen?"
++
++msgid "Error while deleting recording!"
++msgstr "Fehler beim Löschen der Aufzeichnung!"
++
++msgid "Restore recording?"
++msgstr "Aufzeichnung wiederherstellen?"
++
++msgid "Error while restoring recording!"
++msgstr "Fehler beim Wiederherstellen der Aufzeichnung!"
++
++msgid "Permanently delete recording?"
++msgstr "Aufzeichnung endgültig löschen?"
++
++msgid "Are you sure? This can't be undone!"
++msgstr "Sind Sie sicher? Das lässt sich nicht rückgängig machen!"
++
++msgid "Error while permanently deleting recording!"
++msgstr "Fehler beim endgültigen Löschen der Aufzeichnung!"
++
++msgid "Recording commands"
++msgstr "Befehle für Aufzeichnungen"
++
++msgid "never"
++msgstr "nie"
++
++msgid "skin dependent"
++msgstr "je nach Oberfläche"
++
++msgid "always"
++msgstr "immer"
++
++msgid "by name"
++msgstr "nach Namen"
++
++msgid "by time"
++msgstr "nach Zeit"
++
++msgid "ascending"
++msgstr "aufsteigend"
++
++msgid "descending"
++msgstr "absteigend"
++
++msgid "OSD"
++msgstr "OSD"
++
++msgid "Setup.OSD$Language"
++msgstr "Sprache"
++
++msgid "Setup.OSD$Skin"
++msgstr "Oberfläche"
++
++msgid "Setup.OSD$Theme"
++msgstr "Thema"
++
++msgid "Setup.OSD$Left (%)"
++msgstr "Links (%)"
++
++msgid "Setup.OSD$Top (%)"
++msgstr "Oben (%)"
++
++msgid "Setup.OSD$Width (%)"
++msgstr "Breite (%)"
++
++msgid "Setup.OSD$Height (%)"
++msgstr "Höhe (%)"
++
++msgid "Setup.OSD$Message time (s)"
++msgstr "Anzeigedauer für Nachrichten (s)"
++
++msgid "Setup.OSD$Use small font"
++msgstr "Kleine Schrift verwenden"
++
++msgid "Setup.OSD$Anti-alias"
++msgstr "Kantenglättung"
++
++msgid "Setup.OSD$Default font"
++msgstr "Standard-Schriftart"
++
++msgid "Setup.OSD$Small font"
++msgstr "Kleine Schriftart"
++
++msgid "Setup.OSD$Fixed font"
++msgstr "Festbreiten-Schriftart"
++
++msgid "Setup.OSD$Default font size (%)"
++msgstr "Standard-Schriftgröße (%)"
++
++msgid "Setup.OSD$Small font size (%)"
++msgstr "Kleine Schriftgröße (%)"
++
++msgid "Setup.OSD$Fixed font size (%)"
++msgstr "Festbreiten-Schriftgröße (%)"
++
++msgid "Setup.OSD$Channel info position"
++msgstr "Position der Kanalinformationen"
++
++msgid "bottom"
++msgstr "unten"
++
++msgid "top"
++msgstr "oben"
++
++msgid "Setup.OSD$Channel info time (s)"
++msgstr "Anzeigedauer für Kanalinformationen (s)"
++
++msgid "Setup.OSD$Info on channel switch"
++msgstr "Informationen beim Kanalwechsel"
++
++msgid "Setup.OSD$Timeout requested channel info"
++msgstr "Angeforderte Kanalinformationen schließen"
++
++msgid "Setup.OSD$Scroll pages"
++msgstr "Seitenweise scrollen"
++
++msgid "Setup.OSD$Scroll wraps"
++msgstr "Rundum scrollen"
++
++msgid "Setup.OSD$Menu key closes"
++msgstr "Menü-Taste schließt"
++
++msgid "Setup.OSD$Recording directories"
++msgstr "Ordner mit Aufnahmen"
++
++msgid "Setup.OSD$Folders in timer menu"
++msgstr "Ordner im Timer-Menü"
++
++msgid "Setup.OSD$Always sort folders first"
++msgstr "Ordner immer zuerst einsortieren"
++
++msgid "Setup.OSD$Default sort mode for recordings"
++msgstr "Standard-Sortierung für Aufzeichnungen"
++
++msgid "Setup.OSD$Sorting direction for recordings"
++msgstr "Sortierreihenfolge für Aufzeichnungen"
++
++msgid "Setup.OSD$Number keys for characters"
++msgstr "Zifferntasten für Zeichen"
++
++msgid "Setup.OSD$Color key 0"
++msgstr "Farbtaste 0"
++
++msgid "Setup.OSD$Color key 1"
++msgstr "Farbtaste 1"
++
++msgid "Setup.OSD$Color key 2"
++msgstr "Farbtaste 2"
++
++msgid "Setup.OSD$Color key 3"
++msgstr "Farbtaste 3"
++
++msgid "EPG"
++msgstr "EPG"
++
++msgid "Button$Scan"
++msgstr "Scan"
++
++msgid "Setup.EPG$EPG scan timeout (h)"
++msgstr "Zeit bis zur EPG-Aktualisierung (h)"
++
++msgid "Setup.EPG$EPG scan max. channel number (0=all)"
++msgstr "Max. Kanal für EPG-Aktualisierung (0 = alle)"
++
++msgid "Setup.EPG$EPG pause after scan"
++msgstr "Pause nach EPG-Aktualisierung"
++
++msgid "Setup.EPG$EPG bugfix level"
++msgstr "EPG-Fehlerbereinigungsstufe"
++
++msgid "Setup.EPG$EPG linger time (min)"
++msgstr "Alte EPG-Daten anzeigen (min)"
++
++msgid "Setup.EPG$Set system time"
++msgstr "Systemzeit stellen"
++
++msgid "Setup.EPG$Use time from transponder"
++msgstr "Transponder für Systemzeit"
++
++#. TRANSLATORS: note the plural!
++msgid "Setup.EPG$Preferred languages"
++msgstr "Bevorzugte Sprachen"
++
++#. TRANSLATORS: note the singular!
++msgid "Setup.EPG$Preferred language"
++msgstr "Bevorzugte Sprache"
++
++msgid "pan&scan"
++msgstr "Pan & Scan"
++
++msgid "letterbox"
++msgstr "Letterbox"
++
++msgid "center cut out"
++msgstr "Center cut-out"
++
++msgid "no"
++msgstr "nein"
++
++msgid "names only"
++msgstr "nur Namen"
++
++msgid "PIDs only"
++msgstr "nur PIDs"
++
++msgid "names and PIDs"
++msgstr "Namen und PIDs"
++
++msgid "add new channels"
++msgstr "neue Kanäle hinzufügen"
++
++msgid "add new transponders"
++msgstr "neue Transponder hinzufügen"
++
++msgid "after rewind"
++msgstr "nach Rücklauf"
++
++msgid "DVB"
++msgstr "DVB"
++
++msgid "Button$Audio"
++msgstr "Audio"
++
++msgid "Button$Subtitles"
++msgstr "Untertitel"
++
++msgid "Setup.DVB$Primary DVB interface"
++msgstr "Primäres DVB-Interface"
++
++msgid "Setup.DVB$Standard compliance"
++msgstr "Standardkonformität"
++
++msgid "Setup.DVB$Video format"
++msgstr "Videoformat"
++
++msgid "Setup.DVB$Video display format"
++msgstr "Video-Anzeigeformat"
++
++msgid "Setup.DVB$Update channels"
++msgstr "Kanäle aktualisieren"
++
++msgid "Setup.DVB$Audio languages"
++msgstr "Audio-Sprachen"
++
++msgid "Setup.DVB$Audio language"
++msgstr "Audio-Sprache"
++
++msgid "Setup.DVB$Display subtitles"
++msgstr "Untertitel anzeigen"
++
++msgid "Setup.DVB$Subtitle languages"
++msgstr "Untertitel-Sprachen"
++
++msgid "Setup.DVB$Subtitle language"
++msgstr "Untertitel-Sprache"
++
++msgid "Setup.DVB$Subtitle offset"
++msgstr "Untertitel-Offset"
++
++msgid "Setup.DVB$Subtitle foreground transparency"
++msgstr "Untertitel-Transparenz Vordergrund"
++
++msgid "Setup.DVB$Subtitle background transparency"
++msgstr "Untertitel-Transparenz Hintergrund"
++
++msgid "LNB"
++msgstr "LNB"
++
++msgid "Setup.LNB$Use DiSEqC"
++msgstr "DiSEqC verwenden"
++
++msgid "Setup.LNB$SLOF (MHz)"
++msgstr "SLOF (MHz)"
++
++msgid "Setup.LNB$Low LNB frequency (MHz)"
++msgstr "Untere LNB-Frequenz (MHz)"
++
++msgid "Setup.LNB$High LNB frequency (MHz)"
++msgstr "Obere LNB-Frequenz (MHz)"
++
++#, c-format
++msgid "Setup.LNB$Device %d connected to sat cable"
++msgstr "Device %d angeschlossen an Sat-Kabel"
++
++msgid "Setup.LNB$own"
++msgstr "eigenes"
++
++msgid "Setup.LNB$Use dish positioner"
++msgstr "Antennen-Positionierer benutzen"
++
++msgid "Setup.LNB$Site latitude (degrees)"
++msgstr "Standort Breitengrad"
++
++msgid "South"
++msgstr "Süd"
++
++msgid "North"
++msgstr "Nord"
++
++msgid "Setup.LNB$Site longitude (degrees)"
++msgstr "Standort Längengrad"
++
++msgid "West"
++msgstr "West"
++
++msgid "East"
++msgstr "Ost"
++
++msgid "Setup.LNB$Max. positioner swing (degrees)"
++msgstr "Maximaler Positionierwinkel (Grad)"
++
++msgid "Setup.LNB$Positioner speed (degrees/s)"
++msgstr "Maximale Positioniergeschwindigkeit (Grad/s)"
++
++msgid "CAM reset"
++msgstr "CAM zurückgesetzt"
++
++msgid "CAM present"
++msgstr "CAM vorhanden"
++
++msgid "CAM ready"
++msgstr "CAM bereit"
++
++#. TRANSLATORS: note the leading blank!
++msgid " (activating)"
++msgstr " (wird aktiviert)"
++
++msgid "@ device"
++msgstr "@ Empfänger"
++
++msgid "CAM"
++msgstr "CAM"
++
++msgid "Button$Cancel activation"
++msgstr "Aktivierung abbrechen"
++
++msgid "Button$Activate"
++msgstr "Aktivieren"
++
++msgid "Button$Menu"
++msgstr "Menü"
++
++msgid "Button$Reset"
++msgstr "Rücksetzen"
++
++msgid "Opening CAM menu..."
++msgstr "CAM-Menü wird geöffnet..."
++
++msgid "Can't open CAM menu!"
++msgstr "CAM-Menü kann nicht geöffnet werden!"
++
++msgid "Can't activate CAM!"
++msgstr "CAM kann nicht aktiviert werden!"
++
++msgid "CAM is in use - really reset?"
++msgstr "CAM wird benutzt - wirklich zurücksetzen?"
++
++msgid "Can't reset CAM!"
++msgstr "Zurücksetzen des CAM fehlgeschlagen!"
++
++msgid "no instant recording"
++msgstr "keine Sofortaufnahme"
++
++msgid "confirm instant recording"
++msgstr "Sofortaufnahme bestätigen"
++
++msgid "record instantly"
++msgstr "sofort aufnehmen"
++
++msgid "do not pause live video"
++msgstr "Live-Signal nicht anhalten"
++
++msgid "confirm pause live video"
++msgstr "Anhalten des Live-Signals bestätigen"
++
++msgid "pause live video"
++msgstr "Live-Signal anhalten"
++
++msgid "confirm"
++msgstr "bestätigen"
++
++msgid "yes"
++msgstr "ja"
++
++msgid "Recording"
++msgstr "Aufnahme"
++
++msgid "Setup.Recording$Margin at start (min)"
++msgstr "Vorlauf zum Timer-Beginn (min)"
++
++msgid "Setup.Recording$Margin at stop (min)"
++msgstr "Nachlauf am Timer-Ende (min)"
++
++msgid "Setup.Recording$Default priority"
++msgstr "Standard-Priorität"
++
++msgid "Setup.Recording$Default lifetime (d)"
++msgstr "Standard-Lebensdauer (Tage)"
++
++msgid "Setup.Recording$Record key handling"
++msgstr "Funktion der Aufnehmen-Taste"
++
++msgid "Setup.Recording$Pause key handling"
++msgstr "Funktion der Pause-Taste"
++
++msgid "Setup.Recording$Pause priority"
++msgstr "Pause-Priorität"
++
++msgid "Setup.Recording$Pause lifetime (d)"
++msgstr "Pause-Lebensdauer (Tage)"
++
++msgid "Setup.Recording$Use episode name"
++msgstr "Episodenname verwenden"
++
++msgid "Setup.Recording$Use VPS"
++msgstr "VPS verwenden"
++
++msgid "Setup.Recording$VPS margin (s)"
++msgstr "Zeitvorlauf bei VPS (s)"
++
++msgid "Setup.Recording$Mark instant recording"
++msgstr "Direktaufzeichnung markieren"
++
++msgid "Setup.Recording$Name instant recording"
++msgstr "Direktaufzeichnung benennen"
++
++msgid "Setup.Recording$Instant rec. time (min)"
++msgstr "Dauer der Direktaufzeichnung (min)"
++
++msgid "Setup.Recording$present event"
++msgstr "laufende Sendung"
++
++msgid "Setup.Recording$Max. video file size (MB)"
++msgstr "Maximale Videodateigröße (MB)"
++
++msgid "Setup.Recording$Split edited files"
++msgstr "Bearbeitete Dateien aufteilen"
++
++msgid "Setup.Recording$Delete timeshift recording"
++msgstr "Zeitversetzte Aufzeichnung löschen"
++
++msgid "Replay"
++msgstr "Wiedergabe"
++
++msgid "Setup.Replay$Multi speed mode"
++msgstr "Mehrstufiger Vor-/Rücklauf"
++
++msgid "Setup.Replay$Show replay mode"
++msgstr "Wiedergabestatus anzeigen"
++
++msgid "Setup.Replay$Show remaining time"
++msgstr "Verbleibende Zeit anzeigen"
++
++msgid "Setup.Replay$Progress display time (s)"
++msgstr "Anzeigedauer für Fortschrittsanzeige (s)"
++
++msgid "Setup.Replay$Pause replay when setting mark"
++msgstr "Pause beim Setzen einer Schnittmarke"
++
++msgid "Setup.Replay$Pause replay when jumping to a mark"
++msgstr "Pause beim Sprung auf eine Schnittmarke"
++
++msgid "Setup.Replay$Skip edited parts"
++msgstr "Herausgeschnittene Teile überspringen"
++
++msgid "Setup.Replay$Pause replay at last mark"
++msgstr "Pause an der letzten Schnittmarke"
++
++msgid "Setup.Replay$Initial duration for adaptive skipping (s)"
++msgstr "Anfangswert beim adaptiven Springen (s)"
++
++msgid "Setup.Replay$Reset timeout for adaptive skipping (s)"
++msgstr "Zeitlimit beim adaptiven Springen (s)"
++
++msgid "Setup.Replay$Alternate behavior for adaptive skipping"
++msgstr "Alternatives Verhalten beim adapt. Springen"
++
++msgid "Setup.Replay$Use Prev/Next keys for adaptive skipping"
++msgstr "Adapt. Springen mit Zurück/Vorwärts-Tasten"
++
++msgid "Setup.Replay$Skip distance with Green/Yellow keys (s)"
++msgstr "Sprungweite mit Taste Grün/Gelb (s)"
++
++msgid "Setup.Replay$Skip distance with Green/Yellow keys in repeat (s)"
++msgstr "Sprungweite mit Grün/Gelb bei Wiederh. (s)"
++
++msgid "Setup.Replay$Resume ID"
++msgstr "Wiedergabe-ID"
++
++msgid "any hosts"
++msgstr "mit jeder Maschine"
++
++msgid "only default host"
++msgstr "nur mit der Standardmaschine"
++
++msgid "type"
++msgstr "Typ"
++
++msgid "full"
++msgstr "Alles"
++
++msgid "Miscellaneous"
++msgstr "Sonstiges"
++
++msgid "Setup.Miscellaneous$Min. event timeout (min)"
++msgstr "Brückenzeit zwischen Timern (min)"
++
++msgid "Setup.Miscellaneous$Min. user inactivity (min)"
++msgstr "VDR ausschalten bei Inaktivität (min)"
++
++msgid "Setup.Miscellaneous$SVDRP timeout (s)"
++msgstr "SVDRP trennen bei Inaktivität (s)"
++
++msgid "Setup.Miscellaneous$SVDRP peering"
++msgstr "SVDRP-Verbindung"
++
++msgid "Setup.Miscellaneous$SVDRP host name"
++msgstr "SVDRP-Maschinenname"
++
++msgid "Setup.Miscellaneous$SVDRP default host"
++msgstr "SVDRP-Standardmaschine"
++
++msgid "Setup.Miscellaneous$Zap timeout (s)"
++msgstr "Mindestzeit für vorherigen Kanal (s)"
++
++msgid "Setup.Miscellaneous$Channel entry timeout (ms)"
++msgstr "Zeitlimit für Kanaleingabe (ms)"
++
++msgid "Setup.Miscellaneous$Remote control repeat delay (ms)"
++msgstr "Fernbedienung Wiederholverzögerung (ms)"
++
++msgid "Setup.Miscellaneous$Remote control repeat delta (ms)"
++msgstr "Fernbedienung Wiederholintervall (ms)"
++
++msgid "Setup.Miscellaneous$Deleted recordings retention (d)"
++msgstr "Aufbewahrung gelöschter Aufzeichnungen (d)"
++
++msgid "Setup.Miscellaneous$Initial channel"
++msgstr "Kanal beim Einschalten"
++
++msgid "Setup.Miscellaneous$as before"
++msgstr "wie vorher"
++
++msgid "Setup.Miscellaneous$Initial volume"
++msgstr "Lautstärke beim Einschalten"
++
++msgid "Setup.Miscellaneous$Volume steps"
++msgstr "Anzahl Lautstärke-Schritte"
++
++msgid "Setup.Miscellaneous$Volume linearize"
++msgstr "Lautstärke-Kurve korrigieren"
++
++msgid "Setup.Miscellaneous$Channels wrap"
++msgstr "Rundum zappen"
++
++msgid "Setup.Miscellaneous$Show channel names with source"
++msgstr "Kanalnamen mit Quelle anzeigen"
++
++msgid "Setup.Miscellaneous$Open Recordings menu at last replayed"
++msgstr "Menü bei letzter Wiedergabe öffnen"
++
++msgid "Setup.Miscellaneous$Emergency exit"
++msgstr "Notausstieg"
++
++msgid "Plugins"
++msgstr "Plugins"
++
++msgid "This plugin has no setup parameters!"
++msgstr "Dieses Plugin hat keine Parameter!"
++
++msgid "Setup"
++msgstr "Einstellungen"
++
++msgid "Restart"
++msgstr "Neustart"
++
++msgid "Really restart?"
++msgstr "Wirklich neu starten?"
++
++#. TRANSLATORS: note the leading and trailing blanks!
++msgid " Stop recording "
++msgstr " Aufzeichnung beenden "
++
++#. TRANSLATORS: note the leading blank!
++msgid " Deleted recordings"
++msgstr " Gelöschte Aufzeichnungen"
++
++#. TRANSLATORS: note the leading blank!
++msgid " Stop replaying"
++msgstr " Wiedergabe beenden"
++
++msgid "Button$Pause"
++msgstr "Pause"
++
++msgid "Button$Stop"
++msgstr "Beenden"
++
++msgid "Button$Resume"
++msgstr "Weiter"
++
++#. TRANSLATORS: note the leading blank!
++msgid " Cancel editing"
++msgstr " Bearbeitung abbrechen"
++
++msgid "Stop recording?"
++msgstr "Aufzeichnung beenden?"
++
++msgid "Cancel editing?"
++msgstr "Bearbeitung abbrechen?"
++
++msgid "No audio available!"
++msgstr "Kein Audio verfügbar!"
++
++msgid "No subtitles"
++msgstr "Keine Untertitel"
++
++msgid "No subtitles available!"
++msgstr "Keine Untertitel verfügbar!"
++
++msgid "Not enough disk space to start recording!"
++msgstr "Nicht genügend Plattenplatz für Aufnahme!"
++
++msgid "No free DVB device to record!"
++msgstr "Keine freie DVB-Karte zum Aufnehmen!"
++
++msgid "Pausing live video..."
++msgstr "Live-Signal wird angehalten..."
++
++msgid "Delete timeshift recording?"
++msgstr "Zeitversetzte Aufzeichnung löschen?"
++
++#. TRANSLATORS: note the trailing blank!
++msgid "Jump: "
++msgstr "Springen: "
++
++msgid "No editing marks defined!"
++msgstr "Keine Schnittmarken gesetzt!"
++
++msgid "No editing sequences defined!"
++msgstr "Keine Schnittsequenzen definiert!"
++
++msgid "Can't start editing process!"
++msgstr "Schnitt kann nicht gestartet werden!"
++
++msgid "Editing process started"
++msgstr "Schnitt gestartet"
++
++msgid "Editing process already active!"
++msgstr "Schnitt bereits aktiv!"
++
++msgid "FileNameChars$ abcdefghijklmnopqrstuvwxyz0123456789-.,#~\\^$[]|()*+?{}/:%@&"
++msgstr " aäbcdefghijklmnoöpqrsßtuüvwxyz0123456789-.,#~\\^$[]|()*+?{}/:%@&"
++
++msgid "CharMap$ 0\t-.,1#~\\^$[]|()*+?{}/:%@&\tabc2\tdef3\tghi4\tjkl5\tmno6\tpqrs7\ttuv8\twxyz9"
++msgstr " 0\t-.,1#~\\^$[]|()*+?{}/:%@&\tabcä2\tdef3\tghi4\tjkl5\tmnoö6\tpqrsß7\ttuvü8\twxyz9"
++
++msgid "Button$ABC/abc"
++msgstr "ABC/abc"
++
++msgid "Button$Overwrite"
++msgstr "Überschreiben"
++
++msgid "Button$Insert"
++msgstr "Einfügen"
++
++msgid "Button$Macro"
++msgstr "Makro"
++
++msgid "Plugin"
++msgstr "Plugin"
++
++msgid "Up/Dn for new location - OK to move"
++msgstr "Auf/Ab für neue Position - dann OK"
++
++msgid "Primary device has no MPEG decoder, can't attach player!"
++msgstr "Das primäre Gerät hat keinen MPEG-Dekoder. Wiedergabe nicht möglich!"
++
++msgid "Low disk space!"
++msgstr "Platte beinahe voll!"
++
++msgid "Regenerating index file"
++msgstr "Index-Datei wird regeneriert"
++
++msgid "Index file regeneration complete"
++msgstr "Regenerierung der Index-Datei abgeschlossen"
++
++msgid "Index file regeneration failed!"
++msgstr "Regenerierung der Index-Datei fehlgeschlagen!"
++
++msgid "Can't shutdown - option '-s' not given!"
++msgstr "Ausschalten unmöglich - Option '-s' fehlt!"
++
++msgid "Editing - shut down anyway?"
++msgstr "Bearbeitung läuft - trotzdem ausschalten?"
++
++msgid "Recording - shut down anyway?"
++msgstr "Aufnahme läuft - trotzdem ausschalten?"
++
++#, c-format
++msgid "Recording in %jd minutes, shut down anyway?"
++msgstr "Aufnahme in %jd Minuten - trotzdem ausschalten?"
++
++msgid "shut down anyway?"
++msgstr "trotzdem ausschalten?"
++
++#, c-format
++msgid "Plugin %s wakes up in %jd min, continue?"
++msgstr "Plugin %s wacht in %jd Min auf, weiter?"
++
++msgid "Editing - restart anyway?"
++msgstr "Bearbeitung läuft - trotzdem neu starten?"
++
++msgid "Recording - restart anyway?"
++msgstr "Aufnahme läuft - trotzdem neu starten?"
++
++msgid "restart anyway?"
++msgstr "trotzdem neu starten?"
++
++#. TRANSLATORS: note the plural/singular!
++msgid "errors"
++msgstr "Fehler"
++
++msgid "error"
++msgstr "Fehler"
++
++#. TRANSLATORS: note the trailing blank!
++msgid "Volume "
++msgstr "Lautstärke "
++
++msgid "Classic VDR"
++msgstr "Klassischer VDR"
++
++msgid "DISK"
++msgstr "PLATTE"
++
++msgid "LOAD"
++msgstr "LAST"
++
++msgid "TIMERS"
++msgstr "TIMER"
++
++msgid "DEVICES"
++msgstr "EMPFÄNGER"
++
++msgid "LIVE"
++msgstr "LIVE"
++
++msgid "PLAY"
++msgstr "WIEDERGABE"
++
++#, c-format
++msgid "Moving dish to %.1f..."
++msgstr "Antenne wird auf %.1f gedreht..."
++
++msgid "ST:TNG Panels"
++msgstr "ST:TNG-Konsolen"
++
++#. TRANSLATORS: the first character of each weekday, beginning with monday
++msgid "MTWTFSS"
++msgstr "MDMDFSS"
++
++#. TRANSLATORS: abbreviated weekdays, beginning with monday (must all be 3 letters!)
++msgid "MonTueWedThuFriSatSun"
++msgstr "Mo.Di.Mi.Do.Fr.Sa.So."
++
++msgid "Monday"
++msgstr "Montag"
++
++msgid "Tuesday"
++msgstr "Dienstag"
++
++msgid "Wednesday"
++msgstr "Mittwoch"
++
++msgid "Thursday"
++msgstr "Donnerstag"
++
++msgid "Friday"
++msgstr "Freitag"
++
++msgid "Saturday"
++msgstr "Samstag"
++
++msgid "Sunday"
++msgstr "Sonntag"
++
++msgid "Upcoming recording!"
++msgstr "Aufnahme beginnt in Kürze!"
++
++msgid "Pause live video?"
++msgstr "Live-Signal anhalten?"
++
++msgid "Start recording?"
++msgstr "Aufnahme starten?"
++
++msgid "Recording started"
++msgstr "Aufzeichnung gestartet"
++
++msgid "VDR will shut down later - press Power to force"
++msgstr "VDR schaltet später aus - Power zum Erzwingen"
++
++msgid "Press any key to cancel shutdown"
++msgstr "Taste drücken, um Ausschalten abzubrechen"
++
++msgid "Editing process failed!"
++msgstr "Bearbeitung gescheitert!"
++
++msgid "Editing process finished"
++msgstr "Bearbeitung beendet"
++
++msgid "Switching primary DVB..."
++msgstr "Primäres Interface wird umgeschaltet..."
++
++msgid "Press any key to cancel restart"
++msgstr "Taste drücken, um Neustart abzubrechen"
++
++#, c-format
++msgid "VDR will shut down in %s minutes"
++msgstr "VDR wird in %s Minuten abgeschaltet"
++
++msgid "Disk"
++msgstr "Disk"
++
++msgid "free"
++msgstr "frei"
+diff --git a/skins.c b/skins.c
+index 18b2adc5..4c89d2f9 100644
+--- a/skins.c
++++ b/skins.c
+@@ -79,6 +79,13 @@ void cSkinDisplayChannel::SetPositioner(const cPositioner *Positioner)
+      SetMessage(mtInfo, cString::sprintf(tr("Moving dish to %.1f..."), double(positioner->TargetLongitude()) / 10));
+ }
+ 
++cSkinDisplayChannelExtended::cSkinDisplayChannelExtended(void)
++: cSkinDisplayChannel()
++{
++
++}
++
++
+ // --- cSkinDisplayMenu ------------------------------------------------------
+ 
+ cSkinDisplayMenu::cSkinDisplayMenu(void)
+diff --git a/skins.h b/skins.h
+index 7db1699e..3b8568df 100644
+--- a/skins.h
++++ b/skins.h
+@@ -101,6 +101,34 @@ public:
+   */
+   };
+ 
++#define USE_ZAPCOCKPIT 1
++
++enum eDisplaychannelView {
++  dcDefault = 0,
++  dcChannelInfo,
++  dcChannelList,
++  dcChannelListInfo,
++  dcGroupsList,
++  dcGroupsChannelList,
++  dcGroupsChannelListInfo  
++  };
++  
++class cSkinDisplayChannelExtended : public cSkinDisplayChannel {
++private:
++public:
++  cSkinDisplayChannelExtended(void);
++  virtual void SetViewType(eDisplaychannelView ViewType) = 0;
++  virtual int MaxItems(void) = 0;
++  virtual bool KeyRightOpensChannellist(void) = 0;
++  virtual void SetChannelInfo(const cChannel *Channel) = 0;
++  virtual void SetChannelList(const cChannel *Channel, int Index, bool Current) = 0;
++  virtual void SetGroupList(const char *Group, int NumChannels, int Index, bool Current) = 0;
++  virtual void SetGroupChannelList(const cChannel *Channel, int Index, bool Current) = 0;
++  virtual void ClearList(void) = 0;
++  virtual void SetNumChannelHints(int Num) = 0;
++  virtual void SetChannelHint(const cChannel *Channel) = 0;
++};
++
+ enum eMenuCategory {
+   mcUndefined = -1,
+   mcUnknown = 0,
+diff --git a/vdr.c b/vdr.c
+index e183f104..aae0b104 100644
+--- a/vdr.c
++++ b/vdr.c
+@@ -1140,11 +1140,17 @@ int main(int argc, char *argv[])
+              ChannelsStateKey.Reset();
+              TimersStateKey.Reset();
+              }
++
+         }
+         // Channel display:
+         if (!EITScanner.Active() && cDevice::CurrentChannel() != LastChannel) {
+-           if (!Menu)
+-              Menu = new cDisplayChannel(cDevice::CurrentChannel(), LastChannel >= 0);
++           if (!Menu) {
++               if (Setup.ZapcockpitEnabled) {
++                   Menu = new cDisplayChannelExtended(cDevice::CurrentChannel(), LastChannel >= 0);
++               } else {
++                   Menu = new cDisplayChannel(cDevice::CurrentChannel(), LastChannel >= 0);
++               }
++           }
+            LastChannel = cDevice::CurrentChannel();
+            LastChannelChanged = Now;
+            }
+@@ -1374,7 +1380,12 @@ int main(int argc, char *argv[])
+           case kChanDn|k_Repeat:
+           case kChanDn:
+                if (!Interact) {
++                   if (Setup.ZapcockpitEnabled) {
++                       Menu = new cDisplayChannelExtended(NORMALKEY(key));
++                       Menu->ProcessKey(NORMALKEY(key));
++                   } else {
+                   Menu = new cDisplayChannel(NORMALKEY(key));
++                   }
+                   continue;
+                   }
+                else if (cDisplayChannel::IsOpen() || Control) {
+@@ -1573,7 +1584,12 @@ int main(int argc, char *argv[])
+              case kUp:
+              case kDown|k_Repeat:
+              case kDown:
++                  if (Setup.ZapcockpitEnabled) {
++                      Menu = new cDisplayChannelExtended(NORMALKEY(key));
++                      Menu->ProcessKey(NORMALKEY(key));
++                  } else {
+                   Menu = new cDisplayChannel(NORMALKEY(key));
++                  }
+                   break;
+              // Viewing Control:
+              case kOk:   LastChannel = -1; break; // forces channel display
+-- 
+2.47.3
+

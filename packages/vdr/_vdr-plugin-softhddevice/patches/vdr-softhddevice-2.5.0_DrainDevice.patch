@@ -1,0 +1,71 @@
+--- softhddev.c.orig	2026-07-22 16:00:32.000000000 +0200
++++ softhddev.c	2026-09-27 18:18:08.792504205 +0200
+@@ -3320,6 +3320,15 @@
+     return 1;
+ }
+ 
++/**
++**	Drain the device output buffers.
++*/
++int SoftDrainDevice(void)
++{
++	Debug(3, "[softhddev]%s: filled=%u\n", __FUNCTION__, atomic_read(&MyVideoStream->PacketsFilled))
++	return !atomic_read(&MyVideoStream->PacketsFilled);
++}
++
+ //////////////////////////////////////////////////////////////////////////////
+ //	OSD
+ //////////////////////////////////////////////////////////////////////////////
+--- softhddev.h.orig	2026-07-22 16:00:32.000000000 +0200
++++ softhddev.h	2026-09-27 14:14:24.112934657 +0200
+@@ -75,6 +75,8 @@
+     extern int Poll(int);
+     /// C plugin flush output buffers
+     extern int Flush(int);
++    /// C plugin flush output buffers
++    extern int SoftDrainDevice(void);
+ 
+     /// C plugin command line help
+     extern const char *CommandLineHelp(void);
+--- softhddevice.cpp.orig	2026-09-27 18:45:42.324751278 +0200
++++ softhddevice.cpp	2026-09-27 18:18:36.785472362 +0200
+@@ -2811,7 +2811,11 @@
+     virtual void Mute(void);
+     virtual void StillPicture(const uchar *, int);
+     virtual bool Poll(cPoller &, int = 0);
++#if APIVERSNUM < 30014
+     virtual bool Flush(int = 0);
++#else
++    virtual bool DrainDevice(void);
++#endif
+     virtual int64_t GetSTC(void);
+ #if APIVERSNUM >= 10733
+     virtual cRect CanScaleVideo(const cRect &, int = taCenter);
+@@ -3107,6 +3111,7 @@
+     return::Poll(timeout_ms);
+ }
+ 
++#if APIVERSNUM < 30014
+ /**
+ **	Flush the device output buffers.
+ **
+@@ -3116,7 +3121,18 @@
+ {
+     Debug(3, "[softhddev]%s: %d ms\n", __FUNCTION__, timeout_ms);
+ 
+-    return::Flush(timeout_ms);
++    return ::Flush(timeout_ms);
++}
++#else
++/**
++**	Flush the device output buffers.
++*/
++bool cSoftHdDevice::DrainDevice(void)
++{
++    Debug(3, "[softhddev]%s\n", __FUNCTION__);
++
++    return cDevice::IsPlayingVideo() && (SoftDrainDevice() > 0);
++#endif
+ }
+ 
+ // ----------------------------------------------------------------------------

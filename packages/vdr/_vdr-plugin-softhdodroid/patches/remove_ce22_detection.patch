@@ -1,0 +1,24 @@
+diff -ru8bBwd a/openglosd.cpp b/openglosd.cpp
+--- a/openglosd.cpp	2026-09-27 15:40:00.000000000 +0200
++++ b/openglosd.cpp	2026-09-27 18:04:13.180000000 +0200
+@@ -28,20 +28,16 @@
+ //#include <GL/glew.h>
+ #define EGL_EGLEXT_PROTOTYPES
+ #define MESA_EGL_NO_X11_HEADERS
+ #include <EGL/egl.h>
+ #include <EGL/eglplatform.h>
+ #include <libdrm/drm_fourcc.h>
+ #include <EGL/eglext.h>
+ 
+-#if not defined _CE22_ and not defined _MALI_FBDEV_TYPES_H_ 
+-#define _CE22_
+-#endif
+-
+ #ifdef _CE22_
+ #include <gbm.h>
+ #endif
+ #include <xf86drm.h>
+ #include <xf86drmMode.h>
+ 
+ #include "ge2d.h"
+ #include "ge2d_cmd.h"

@@ -1,0 +1,71 @@
+From: Dirk Nehring <dnehring@gmx.net>
+Subject: [PATCH] device: attach the transfer player at the channel switch,
+ let the TS buffer consumer re-check every 10 ms
+
+Two delays sit between a live channel switch and the first packet that
+reaches the output device, both in device.c:
+
+1. cDevice::SetChannel() launches the transfer control, but only the main
+loop attaches it (cControl::Attach() at the top of every iteration).
+Until then cTransfer::Receive() drops every TS packet. How long that
+takes depends on what the main loop is doing: after a key press it first
+draws the channel display (skins with signal bars query the frontend,
+300-400 ms right after a retune); after SVDRP CHAN it is usually asleep
+in cRemote::Get(). Measured: 300-900 ms.
+
+The late attach can also switch the channel twice: SVDRP CHAN runs
+SetChannel() in the SVDRP thread under mutexChannel. A main loop that
+reaches the "visible programme" check meanwhile waits in HasProgramme()
+and then finds the launched but unattached control - no player, no PIDs
+on the primary device - so it calls Channels->SwitchTo() for the same
+channel again.
+
+SetChannel() now attaches the control right after launching it. The
+launch already happens after the track state is set up, and Launch()
+and Attach() both take the control mutex, so that ordering stays intact.
+Attach() is a no-op for an attached control: the main loop's call, and
+plugins that attach from cStatus::ChannelSwitch() as a workaround, are
+unaffected.
+
+2. cTSBuffer's ring signals its consumer only once it is 10% full, which
+live traffic rarely reaches, so cDevice::Action() waits for the 100 ms
+get timeout: the first packets of a new channel reach the receivers in
+100 ms steps, and a receiver that was told to stop notices it up to
+100 ms late. The consumer now re-checks every 10 ms; the extra wake-ups
+cost no measurable CPU time.
+
+Same-transponder zaps via SVDRP CHAN, 39 per build, time to the first
+video PES at the output device: 816 -> 256 ms with the attach, and
+239 -> 155 ms more with the TS buffer timeout (key zaps 230 -> 145 ms).
+Key zaps that retune or need the CAM gain little, the tuner or CAM is
+slower than the main loop there.
+
+---
+--- a/device.c
++++ b/device.c
+@@ -976,9 +976,14 @@
+      // Launch() makes the control visible to the main loop, which attaches it and
+      // starts feeding TS data into the primary device - if that happens while this
+      // function is still setting up the track state above, the two threads race
+-     // on availableTracks et al. (SwitchChannel() may run in the SVDRP thread):
+-     if (NeedsTransferMode)
++     // on availableTracks et al. (SwitchChannel() may run in the SVDRP thread).
++     // Attach it right here instead of waiting for the main loop: until then
++     // cTransfer drops all TS data, and HasProgramme() reports no programme, which
++     // can make the main loop switch to the channel a second time:
++     if (NeedsTransferMode) {
+         cControl::Launch(new cTransferControl(Device, Channel));
++        cControl::Attach();
++        }
+      cStatus::MsgChannelSwitch(this, Channel->Number(), LiveView); // only report status if channel switch successful
+      }
+ 
+@@ -2021,7 +2026,7 @@
+   deviceNumber = DeviceNumber;
+   delivered = 0;
+   ringBuffer = new cRingBufferLinear(Size, TS_SIZE, true, "TS");
+-  ringBuffer->SetTimeouts(100, 100);
++  ringBuffer->SetTimeouts(100, 10); // the ring signals Get() only above 10% fill, too late for live TV
+   ringBuffer->SetIoThrottle();
+   Start();
+ }

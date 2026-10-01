@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-osdteletext"
-PKG_VERSION="cae4629f84886015b0619af6fdb1084853b80f93"
-PKG_SHA256="4e1a7a8c64fa68a4cd71aace4cdfa195ae4dedd7f2be7c34191982c752ed2207"
+PKG_VERSION="0454171c8c046f61fc8c86e15e7fdf19011cd642"
+PKG_SHA256="8425c6ed237907edfcce13c81365541938f3dbc7594819c598c383375ecf63b9"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/vdr-projects/vdr-plugin-osdteletext"
 PKG_URL="https://github.com/vdr-projects/vdr-plugin-osdteletext/archive/${PKG_VERSION}.zip"

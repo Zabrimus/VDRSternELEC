@@ -1,0 +1,68 @@
+--- a/MANUAL	2026/09/26 19:14:38	5.29
++++ b/MANUAL	2026/09/30 20:02:10
+@@ -831,8 +831,6 @@
+                          When recordings are sorted "by time", they appear in ascending
+                          order (i.e. "oldest" to "newest"). If this parameter is set to
+                          "descending", they will be presented "newest" to "oldest.
+-                         Note that in the latter case, if "Always sort folders first"
+-                         is "yes", folders will appear in reverse alphabetical order.
+ 
+   Number keys for characters = yes
+                          Controls whether the number keys can be used to enter
+--- a/menu.c	2026/09/07 18:48:24	5.68
++++ b/menu.c	2026/09/30 20:02:10
+@@ -3259,7 +3259,16 @@
+                }
+             if (*Item->Text() && !LastDir) {
+                autoRefresh |= Item->Usage();
+-               Add(Item);
++               if (Setup.RecSortingDirection == rsdDescending && RecordingsSortMode == rsmTime) {
++                  if (!Setup.RecordingDirs)
++                     Ins(Item, false, First());
++                  else if (!Item->IsDirectory() && LastItem && !LastItem->IsDirectory())
++                     Ins(Item, false, LastItem);
++                  else
++                     Add(Item);
++                  }
++               else
++                  Add(Item);
+                LastItem = Item;
+                if (Item->IsDirectory())
+                   LastDir = Item;
+--- a/recording.c	2026/09/07 18:48:24	5.64
++++ b/recording.c	2026/09/30 20:02:10
+@@ -1135,8 +1135,8 @@
+      // To have folders sorted before plain recordings, the '/' s1 points to
+      // is replaced by the character '1'. All other slashes will be replaced
+      // by '0' in SortName() (see below), which will result in the desired
+-     // sequence ('0' and '1' are reversed in case of rsdDescending):
+-     *s1 = (Setup.RecSortingDirection == rsdAscending) ? '1' : '0';
++     // sequence.
++     *s1 = '1';
+      if (Strip) {
+         s1++;
+         memmove(s1, s2, t - s2 + 1);
+@@ -1157,9 +1157,9 @@
+         }
+      else {
+         char *s = strdup(FileName() + strlen(cVideoDirectory::Name()));
+-        if (RecordingsSortMode != rsmName || Setup.AlwaysSortFoldersFirst)
++        if (RecordingsSortMode != rsmName || Setup.RecordingDirs && Setup.AlwaysSortFoldersFirst)
+            s = StripEpisodeName(s, RecordingsSortMode != rsmName);
+-        strreplace(s, '/', (Setup.RecSortingDirection == rsdAscending) ? '0' : '1'); // some locales ignore '/' when sorting
++        strreplace(s, '/', '0'); // some locales ignore '/' when sorting
+         int l = strxfrm(NULL, s, 0) + 1;
+         *sb = MALLOC(char, l);
+         strxfrm(*sb, s, l);
+@@ -1208,10 +1208,7 @@
+ int cRecording::Compare(const cListObject &ListObject) const
+ {
+   cRecording *r = (cRecording *)&ListObject;
+-  if (Setup.RecSortingDirection == rsdAscending)
+-     return strcmp(SortName(), r->SortName());
+-  else
+-     return strcmp(r->SortName(), SortName());
++  return strcmp(SortName(), r->SortName());
+ }
+ 
+ bool cRecording::IsInPath(const char *Path) const

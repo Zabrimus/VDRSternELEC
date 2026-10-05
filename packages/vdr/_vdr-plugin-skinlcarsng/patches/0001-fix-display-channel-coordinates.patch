@@ -1,0 +1,37 @@
+From af3b88a244a599188297028898a54f9d3c6ec9c0 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Sat, 6 Jun 2026 17:08:30 +0200
+Subject: [PATCH] fix display channel coordinates
+
+---
+ displaychannel.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/displaychannel.c b/displaychannel.c
+index c97debd..457d42e 100644
+--- a/displaychannel.c
++++ b/displaychannel.c
+@@ -781,7 +781,7 @@ void cLCARSNGDisplayChannel::Flush(void)
+ {
+   if (withInfo) {
+      if (!message) {
+-        DrawDate(osd, xc21 + Margin, yc00 + Margin, xc22 - textBorder - 2 * Margin, yc01 - 2 * Margin, Theme.Color(clrDateFg), Theme.Color(clrDateBg), osdFont, &lastDate);
++        DrawDate(osd, xc21 + Margin, yc00 + Margin, xc22 - textBorder - Margin, yc01 - Margin, Theme.Color(clrDateFg), Theme.Color(clrDateBg), osdFont, &lastDate);
+         DrawDevice();
+         DrawSignal();
+         DrawTimer();
+@@ -794,9 +794,9 @@ void cLCARSNGDisplayChannel::Flush(void)
+            Total = present->Duration();
+            }
+         DrawSeen(Current, Total);
+-        DrawTrack(osd, xc14 + Margin, yc15 + Margin, xc18 - textBorder - 2 * Margin, yc16 - 2 * Margin,  Theme.Color(clrTrackName), frameColorBg, (zoom) ? smlFont : osdFont, &lastTrackId);
++        DrawTrack(osd, xc14 + Margin, yc15 + Margin, xc18 - textBorder - Margin, yc16 - Margin, Theme.Color(clrTrackName), frameColorBg, (zoom) ? smlFont : osdFont, &lastTrackId);
+         int x = leftIcons - SymbolSpacing;
+-        DrawScreenResolution(osd, xc19 + Margin, yc15 + Margin, x - xc19 - 2 * Margin, yc16 - yc15 - 2 * Margin, Theme.Color(clrChannelSymbolOn), frameColorBr, (zoom) ? smlFont : osdFont, &oldResolution);
++        DrawScreenResolution(osd, xc19 + Margin, yc15 + Margin, x - Margin, yc16 - Margin, Theme.Color(clrChannelSymbolOn), frameColorBr, (zoom) ? smlFont : osdFont, &oldResolution);
+ 	DrawEventRec(present, following);
+         DrawBlinkingRec();
+         }
+-- 
+2.47.3
+

@@ -7,7 +7,7 @@ VARIANT=
 
 # Build settings
 PROJECT=Amlogic
-DEVICE=AMLGX
+DEVICE=Amlogic
 ARCH=aarch64
 
 # VDR settings
@@ -15,5 +15,5 @@ VDR_OUTPUTDEVICE=softhddevice-drm-gles
 VDR_INPUTDEVICE=satip
 
 # Updates
-STERN_RELEASE=https://zabrimus.github.io/VDRSternELEC/updates/release.LibreELEC-13.AMLGX.json
+STERN_RELEASE=https://zabrimus.github.io/VDRSternELEC/updates/release.LibreELEC-13.Amlogic.json
 STERN_ADDON=https://zabrimus.github.io/VDRSternELEC/updates/addons.LibreELEC-13-aarch64.json

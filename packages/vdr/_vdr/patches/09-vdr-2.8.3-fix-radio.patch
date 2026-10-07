@@ -1,0 +1,15 @@
+ dvbplayer.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/dvbplayer.c b/dvbplayer.c
+index fd00a87e..975a67f4 100644
+--- a/dvbplayer.c
++++ b/dvbplayer.c
+@@ -639,6 +639,7 @@ void cDvbPlayer::Action(void)
+
+           if (playFrame) {
+              eof = false;
++             StuckAtEof = 0;
+              if (!p) {
+                 p = playFrame->Data();
+                 pc = playFrame->Count();

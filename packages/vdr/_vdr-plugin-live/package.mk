@@ -12,7 +12,7 @@ PKG_NEED_UNPACK="$(get_pkg_directory _vdr) $(get_pkg_directory vdr-helper)"
 PKG_DEPENDS_UNPACK="vdr-helper"
 PKG_SOURCE_DIR="vdr-plugin-live"
 PKG_LONGDESC="Allows a comfortable operation of VDR and some of its plugins trough a web interface."
-PKG_BUILD_FLAGS="+pic -parallel +speed"
+PKG_BUILD_FLAGS="+pic +speed"
 
 pre_make_target() {
   export LDFLAGS="$(echo ${LDFLAGS} | sed -e "s|-Wl,--as-needed||") -L${SYSROOT_PREFIX}/usr/local/lib -lssl -lcrypto"

@@ -13,8 +13,8 @@ PKG_DEPENDS_TARGET+=" _config _vdr"
 
 if [ "${VDR_OUTPUTDEVICE}" = "softhdodroid" ]; then
    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdodroid"
-elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ] || [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm-gles" ]; then
-   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm _vdr-plugin-softhddevice-drm-gles"
+elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ] || [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm-gles" ] || [ "${VDR_OUTPUTDEVICE}" = "drmdevice" ]; then
+   PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm _vdr-plugin-softhddevice-drm-gles _vdr-plugin-drmdevice"
 fi
 
 if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && ([ "${DEVICE}" = "x11" ] || [ "${DEVICE}" = "Generic-legacy" ]); then
@@ -34,6 +34,7 @@ if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && [ "${DEVICE}" = "
 
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
+	PKG_DEPENDS_TARGET+=" _vdr-plugin-drmdevice"
 fi
 
 if [ "${DISTRO}" = "LibreELEC" ] && [ "${OS_VERSION:0:2}" = "13" ] && [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && [ "${DEVICE}" = "Generic" ]; then

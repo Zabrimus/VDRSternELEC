@@ -11,7 +11,7 @@ DEVICE=R40
 ARCH=arm
 
 # VDR settings
-VDR_OUTPUTDEVICE=softhddevice-drm-gles
+VDR_OUTPUTDEVICE=drmdevice
 VDR_INPUTDEVICE=streamdev-client
 
 # Updates

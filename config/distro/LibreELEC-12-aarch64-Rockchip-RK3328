@@ -11,7 +11,7 @@ DEVICE=RK3328
 ARCH=aarch64
 
 # VDR settings
-VDR_OUTPUTDEVICE=softhddevice-drm-gles
+VDR_OUTPUTDEVICE=drmdevice
 VDR_INPUTDEVICE=streamdev-client
 
 # Updates

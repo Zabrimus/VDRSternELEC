@@ -1,13 +1,15 @@
 diff --git a/packages/addons/addon-depends/libmad/package.mk b/packages/addons/addon-depends/libmad/package.mk
-index 1576efa35a..815362fe31 100644
+index a72591337d..0be3ab9915 100644
 --- a/packages/addons/addon-depends/libmad/package.mk
 +++ b/packages/addons/addon-depends/libmad/package.mk
-@@ -11,7 +11,7 @@ PKG_URL="https://codeberg.org/tenacityteam/libmad/archive/${PKG_VERSION}.tar.gz"
+@@ -10,9 +10,8 @@ PKG_SITE="http://www.mars.org/home/rob/proj/mpeg/"
+ PKG_URL="https://codeberg.org/tenacityteam/libmad/archive/${PKG_VERSION}.tar.gz"
  PKG_DEPENDS_TARGET="toolchain"
  PKG_LONGDESC="A high-quality MPEG audio decoder."
+-PKG_BUILD_FLAGS="-sysroot"
  
--PKG_CMAKE_OPTS_TARGET="-DBUILD_SHARED_LIBS=OFF"
-+PKG_CMAKE_OPTS_TARGET="-DBUILD_SHARED_LIBS=ON"
+-PKG_CMAKE_OPTS_TARGET="-DBUILD_SHARED_LIBS=OFF \
++PKG_CMAKE_OPTS_TARGET="-DBUILD_SHARED_LIBS=ON \
+                        -DEXAMPLE=OFF"
+ 
  if [ "${TARGET_ARCH}" = "x86_64" ]; then
-   PKG_CMAKE_OPTS_TARGET+=" -DOPTIMIZE=ACCURACY"
- fi

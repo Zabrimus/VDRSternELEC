@@ -1,0 +1,41 @@
+From 18a7981a225abd2e601c5fb9d05b1615afe98b40 Mon Sep 17 00:00:00 2001
+From: Andreas Baierl <ichgeh@imkreisrum.de>
+Date: Wed, 21 Oct 2026 13:09:23 +0200
+Subject: [PATCH] add build time to os-release
+
+---
+ scripts/image | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/image b/scripts/image
+index be77bd695e..bb710c6c55 100755
+--- a/scripts/image
++++ b/scripts/image
+@@ -163,6 +163,7 @@ if [ "${TARGET_ARCH}" = "x86_64" ]; then
+ fi
+ 
+ echo "${TARGET_VERSION}" >${INSTALL}/etc/release
++BUILD_DATE_TIME=$(date '+%Y-%m-%d_%H:%M')
+ 
+ # Create /etc/os-release
+ cat <<EOF >${INSTALL}/etc/os-release
+@@ -181,6 +182,7 @@ EOF
+ [ -n "${DEVICE}" ] && echo "DISTRO_DEVICE=\"${DEVICE}\"" >>${INSTALL}/etc/os-release
+ [ -n "${BUILDER_NAME}" ] && echo "BUILDER_NAME=\"${BUILDER_NAME}\"" >>${INSTALL}/etc/os-release
+ [ -n "${BUILDER_VERSION}" ] && echo "BUILDER_VERSION=\"${BUILDER_VERSION}\"" >>${INSTALL}/etc/os-release
++[ -n "${BUILD_DATE_TIME}" ] && echo "BUILD_DATE_TIME=\"${BUILD_DATE_TIME}\"" >>${INSTALL}/etc/os-release
+ 
+ # Create /etc/issue
+ cat <<EOF >${INSTALL}/etc/issue
+@@ -189,7 +191,7 @@ ${GREETING1}
+ ${GREETING2}
+ ${GREETING3}
+ ${GREETING4}
+-${DISTRONAME} (${DISTRO_BUILD}): ${DISTRO_VERSION} (${DISTRO_ARCH})
++${DISTRONAME} (${DISTRO_BUILD}): ${DISTRO_VERSION} (${DISTRO_ARCH}) (${BUILD_DATE_TIME})
+ EOF
+ 
+ ln -sf /etc/issue ${INSTALL}/etc/motd
+-- 
+2.47.3
+

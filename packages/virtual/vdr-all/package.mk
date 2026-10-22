@@ -111,6 +111,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-pvrinput"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-bgprocess"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-usbkbd"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-vtsatip"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-vdrsternelec"
 
 # disabled because repository is not available
 #PKG_DEPENDS_TARGET+=" _vdr-plugin-vompserver"

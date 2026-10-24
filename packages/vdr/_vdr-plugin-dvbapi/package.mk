@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-dvbapi"
-PKG_VERSION="47a80f7c37d0d19a50c41941aec4d7ef7bdb3c0f"
-PKG_SHA256="f30d69d18224175110354572979c9e68b2b47889fc1b15de6f949779ec0b7936"
+PKG_VERSION="7e8d5ad2df531676d1860058ae022e605ae40d4e"
+PKG_SHA256="1ab0f474ef7d7b635e9b62198f338fcf27bc6f8f361b153de89bb92eaa8a0679"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/manio/vdr-plugin-dvbapi"
 PKG_URL="https://github.com/manio/vdr-plugin-dvbapi/archive/${PKG_VERSION}.tar.gz"

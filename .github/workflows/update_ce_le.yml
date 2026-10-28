@@ -28,11 +28,11 @@ jobs:
           le13_old=$(cat config/versions | grep "LIBREELEC13=" | awk -F"=" '{ print $2 }')
           
           # Get latest version
-          ce20=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-20 | awk '{ print substr($1, 0, 7) }')
-          ce21=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-21 | awk '{ print substr($1, 0, 7) }')
-          ce22=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-22 | awk '{ print substr($1, 0, 7) }')
-          le12=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git libreelec-12.0 | awk '{ print substr($1, 0, 7) }')
-          le13=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git master | awk '{ print substr($1, 0, 7) }')
+          ce20=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-20 | awk '{ print substr($1, 0, 8) }')
+          ce21=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-21 | awk '{ print substr($1, 0, 8) }')
+          ce22=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-22 | awk '{ print substr($1, 0, 8) }')
+          le12=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git libreelec-12.2 | awk '{ print substr($1, 0, 8) }')
+          le13=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git master | awk '{ print substr($1, 0, 8) }')
         
           echo "Update CoreELEC/LibreELEC to version:" > commit.body
           if [ ! "${ce20_old}" = "${ce20}" ]; then 

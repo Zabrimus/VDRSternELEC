@@ -1,6 +1,6 @@
-diff -ru8 a/Makefile b/Makefile
---- a/Makefile	2026-10-25 14:38:26.000000000 +0100
-+++ b/Makefile	2026-10-26 07:48:27.657000000 +0100
+diff -ru8bBwd a/Makefile b/Makefile
+--- a/Makefile	2026-10-28 06:36:51.000000000 +0100
++++ b/Makefile	2026-10-29 18:08:47.560000000 +0100
 @@ -176,18 +176,19 @@
  pages/%.cpp: pages/%.ecpp
  	$(call PRETTY_PRINT,"EC" $@)
@@ -29,9 +29,9 @@ diff -ru8 a/Makefile b/Makefile
  	@msgfmt -c -o $@ $<
  	$(eval DISABLE_I18Nmo_txt := 1)
  
- live/js/po/%.js: $(PODIR)/%.po build/po2js
+ resources/js/po/%.js: $(PODIR)/%.po build/po2js
  	$(if $(DISABLE_I18Njs_txt),,@echo "Creating *.js")
- 	@mkdir -p live/js/po
+ 	@mkdir -p resources/js/po
 -	@./build/po2js $< $@
 +	@LD_LIBRARY_PATH=$(TOOLCHAIN)/lib ./build/po2js $< $@
  	$(eval DISABLE_I18Njs_txt := 1)

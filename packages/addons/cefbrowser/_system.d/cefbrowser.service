@@ -13,6 +13,7 @@ Restart=always
 RestartSec=3
 Environment=LD_LIBRARY_PATH="/storage/browser/addon.cefbrowser/cef/lib/private/:/storage/browser/addon.cefbrowser/cef/lib/"
 Environment=BROWSER_DB_PATH="/storage/browser/database"
+Environment=FONTCONFIG_FILE="/storage/browser/addon.cefbrowser/etc/fonts.conf"
 StartLimitInterval=0
 TimeoutStartSec=30
 TimeoutStopSec=30

@@ -94,6 +94,7 @@ addon() {
 		cp -Pr ${RELEASE}/$i ${ADDON_BUILD}/${PKG_ADDON_ID}/data
 	done
 	cp -P  ${PKG_BUILD}/config/sockets.ini ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/
+	cp -P  ${PKG_DIR}/config/fonts.conf ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/
 	cp -P  ${PKG_DIR}/_system.d/* ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
 
 	# The cefbrowser runs only with the cefruntime of the same CEF version.

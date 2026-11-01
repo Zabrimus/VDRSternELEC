@@ -24,7 +24,8 @@ PKG_MESON_OPTS_TARGET="--prefix=${RT_PREFIX} \
                        --libexecdir=${RT_PREFIX}/lib \
                        --sbindir=${RT_PREFIX}/bin \
                        --wrap-mode=default \
-                       -Dvdrsternelec=true"
+                       -Dvdrsternelec=true \
+                       -Drelease_dir=false"
 
 pre_configure_target() {
    export SSL_CERT_FILE=$(get_install_dir openssl)/etc/ssl/cacert.pem.system
@@ -36,6 +37,9 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
+  # older remotetranscode.service files in /storage use the old path
+  ln -sfn share/remotetranscode/movie ${INSTALL}/usr/local/movie
+
   # prepare sample archive
   # mkdir -p ${INSTALL}/storage/remotetranscode-sample
   # mv ${INSTALL}/usr/local/movie ${INSTALL}/storage/remotetranscode-sample

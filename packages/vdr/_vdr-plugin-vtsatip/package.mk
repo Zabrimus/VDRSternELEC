@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-vtsatip"
-PKG_VERSION="4c259fbcd35921fe18641eb3093b8779b197ecb5"
-PKG_SHA256="8b9036f3034fb16b00264ac9e89761b1c904fd0cfb1783e5a9908fbcb399e295"
+PKG_VERSION="a3361a95bcede0ddba8ff0903e9351bc1f9b7f4d"
+PKG_SHA256="9682907dd1906e2770457fc02cc2cd2c84c7cd245ac4083d433b6bf65780a43c"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/rellla/vdr-plugin-vtsatip"
 PKG_URL="https://github.com/rellla/vdr-plugin-vtsatip/archive/${PKG_VERSION}.zip"

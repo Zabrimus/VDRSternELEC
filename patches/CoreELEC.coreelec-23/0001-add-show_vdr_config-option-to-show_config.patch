@@ -1,0 +1,24 @@
+diff --git a/config/show_config b/config/show_config
+index e0725316da..1de75b075a 100644
+--- a/config/show_config
++++ b/config/show_config
+@@ -168,6 +168,19 @@ show_config() {
+     show_distro_config
+   fi
+ 
++   # Distribution specific VDR configuration
++   # show_vdr_distro_config() should be included in one of:
++   #   $DISTRO/show_config
++
++   if [ "${VDR}" != "no" ] && [ -f distributions/${DISTRO}/show_vdr_config ]; then
++     . distributions/${DISTRO}/show_vdr_config
++   fi
++   if [ "${VDR}" != "no" ] && [ "$(type -t show_vdr_distro_config)" = "function" ]; then
++     show_vdr_distro_config
++   fi
++
++
++
+   config_message+="\n\n ${dashes}${dashes}${dashes}"
+   config_message+="\n End Configuration for ${DISTRONAME}"
+   config_message+="\n ${dashes}${dashes}${dashes}"

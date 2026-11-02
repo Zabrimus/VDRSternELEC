@@ -1,0 +1,12 @@
+diff --git a/packages/security/nss/package.mk b/packages/security/nss/package.mk
+index 1f86f82e32..6489b7f256 100644
+--- a/packages/security/nss/package.mk
++++ b/packages/security/nss/package.mk
+@@ -29,6 +29,7 @@ make_host() {
+     PREFIX=${TOOLCHAIN} \
+     NSPR_INCLUDE_DIR=${TOOLCHAIN}/include/nspr \
+     USE_SYSTEM_ZLIB=1 ZLIB_LIBS="-lz -L${TOOLCHAIN}/lib" \
++    NSS_ENABLE_WERROR=0 \
+     SKIP_SHLIBSIGN=1 \
+     NSS_TESTS="dummy" \
+     CC=${CC} LDFLAGS="${LDFLAGS} -L${TOOLCHAIN}/lib" \

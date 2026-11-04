@@ -10,7 +10,7 @@ PKG_SOURCE_DIR="cefbrowser-${PKG_VERSION}"
 PKG_DEPENDS_TARGET="toolchain atk libxml2 cups cef-at-spi2-core \
                     cef-libXcomposite cef-libXdamage cef-libXfixes cef-libXrandr cef-libXi cef-libXft \
                     cef-libX11 cef-libXext cef-libxcb cef-libXrender \
-                    openssl _cef _thrift _mesa curl"
+                    openssl _cef _thrift curl"
 PKG_NEED_UNPACK="$(get_pkg_directory _cef)"
 PKG_DEPENDS_UNPACK="_cef"
 PKG_DEPENDS_CONFIG="_cef"
@@ -18,11 +18,20 @@ PKG_LONGDESC="cefbrowser"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed -sysroot +strip"
 
-PKG_REV="2"
+PKG_REV="3"
 PKG_IS_ADDON="yes"
 PKG_SECTION="addon"
 PKG_ADDON_NAME="cefbrowser"
 PKG_ADDON_TYPE="xbmc.service"
+
+# libcef needs libgbm. Use the mesa of the image if it has one (LibreELEC),
+# otherwise an own copy in the addon (e.g. CoreELEC with the vendor GPU driver).
+if [ "${OPENGLES}" = "mesa" ] || [ "${OPENGL}" = "mesa" ]; then
+  CEF_MESA="mesa"
+else
+  CEF_MESA="_mesa"
+fi
+PKG_DEPENDS_TARGET+=" ${CEF_MESA}"
 
 # CoreELEC <= 20 (TODO: is this really necessary?)
 #if [ "${DISTRONAME}" = "CoreELEC" ] && [ "${OS_MAJOR}" -le "20" ]; then
@@ -81,7 +90,6 @@ addon() {
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/dri
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/data
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/etc
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
@@ -112,9 +120,12 @@ addon() {
 		rm ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/*.symbols || true
 	fi
 
-  	# copy mesa
-  	cp -Pr $(get_install_dir _mesa)/usr/lib/*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-  	cp -Pr $(get_install_dir _mesa)/usr/\$ORIGIN/dri/*.so ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/dri
+  	# copy mesa, only the own copy. The mesa of the image is used directly.
+  	if [ "${CEF_MESA}" = "_mesa" ]; then
+  		mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/dri
+  		cp -Pr $(get_install_dir _mesa)/usr/lib/*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
+  		cp -Pr $(get_install_dir _mesa)/usr/\$ORIGIN/dri/*.so ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/dri
+  	fi
 
   	# copy atk
   	cp -PL $(get_install_dir atk)/usr/lib/libatk-1.0.so.0 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private

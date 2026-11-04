@@ -18,7 +18,7 @@ elif [ "${VDR_OUTPUTDEVICE}" = "softhddevice-drm" ] || [ "${VDR_OUTPUTDEVICE}" =
 fi
 
 if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && ([ "${DEVICE}" = "x11" ] || [ "${DEVICE}" = "Generic-legacy" ]); then
-    PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
+    #PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdcuvid"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhdvaapi"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice"
@@ -30,7 +30,7 @@ if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && ([ "${DEVICE}" = 
 fi
 
 if [ "${ARCH}" = "x86_64" ] && [ "${PROJECT}" = "Generic" ] && [ "${DEVICE}" = "Generic" ]; then
-	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
+	#PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddrm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-softhddevice-drm-gles"
 	PKG_DEPENDS_TARGET+=" _vdr-plugin-drmdevice"

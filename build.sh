@@ -9,7 +9,9 @@ RESET='\033[0m'
 
 PROGNAME=$0
 
-ROOTDIR=`pwd`
+# all paths are relative to the directory of this script
+cd "$(dirname "$0")"
+ROOTDIR=$(pwd)
 
 # path to https://github.com/LibreELEC.tv/release-scripts
 RELEASESCRIPTDIR="release-scripts"
@@ -29,12 +31,15 @@ Options:
 -subdevice         : Build only images for the desired subdevice. This speeds up building images.
 -addononly         : Build only the desired addons
 -patchonly         : Only apply patches and build nothing
--package <name>    : Build <name> as a single package
+-package <name,name> : Build only the given packages (comma-separated list)
 -release <server>  : Create release for update, accessible at <server>
 -releaseonly       : Build only the release tar and not all images
 -cef               : Include cef binaries into release, otherwise deploy it as an external package
 -cebootlabel       : Change CoreELEC bootlabel to value of "-config"
 -verbose           : Enable verbose outputs while building LE/CE packages
+-nocheckout        : Use the LE/CE directory as it is (no reset, checkout and patches),
+                     it must have been prepared before with the same config
+-log               : Write all output additionally to logs/<config>-<date>.log
 -help              : Show this help
 EOF
   echo
@@ -51,117 +56,114 @@ EOF
 
   echo
 
-  exit 1
+  exit ${1:-1}
+}
+
+# Run a command of LE/CE without our DISTRO (directory name), LE/CE
+# use DISTRO for the name of the distribution. If it's exported (e.g.
+# in the Github workflows) it would be inherited.
+distro_run() {
+  (unset DISTRO; "$@")
+}
+
+# Reset submodule $1 and check out $2 (commit, branch or tags/<tag>).
+# Fetch only if needed, so known commits can be built offline.
+checkout_submodule() {
+  local dir=$1 ref=$2
+
+  cd $ROOTDIR
+  if [ ! -e $dir/.git ]; then
+      git submodule update --init -- $dir
+  fi
+
+  cd $dir
+  git clean -fd
+  git reset --hard
+
+  # branches and tags can move, commits are fetched only if missing
+  if [[ ! "$ref" =~ ^[0-9a-f]{7,40}$ ]] || ! git rev-parse -q --verify "${ref}^{commit}" >/dev/null; then
+      echo "Fetch $dir"
+      git fetch --tags origin
+  fi
+
+  if git rev-parse -q --verify "refs/remotes/origin/${ref}" >/dev/null; then
+      git checkout --detach "origin/${ref}"
+  else
+      git checkout --detach "$ref"
+  fi
+  cd $ROOTDIR
 }
 
 checkout() {
-  cd $ROOTDIR
-
-
-  if [ ! -f $DISTRO/.git ]; then
-      git submodule update --init -- $DISTRO
-  fi
-
-  cd $DISTRO
-  git clean -fd
-  git reset --hard
-
-  cd ..
-  git submodule update --recursive --remote $DISTRO
-  BUILD_SUFFIX=
-
-  cd $DISTRO
-  # Checkout defined commit
-  if [ ! "x$SHA" = "x" ]; then
-    git checkout $SHA
-  else
-    echo -e "${RED}ERROR: ${DISTRO} SHA not found${RESET}"
-    exit 1;
-  fi
-
-  if [ ! "x$VARIANT" = "x" ]; then
-    BUILD_SUFFIX="$VARIANT"
-  fi
+  checkout_submodule $DISTRO $SHA
 }
 
 checkout_release_script() {
-  cd $ROOTDIR
-
-  if [ ! -f $RELEASESCRIPTDIR/.git ]; then
-      git submodule update --init -- $RELEASESCRIPTDIR
-  fi
-
-  cd $RELEASESCRIPTDIR
-  git clean -fd
-  git reset --hard
-
-  cd ..
-  git submodule update --recursive --remote $RELEASESCRIPTDIR
-
-  cd $RELEASESCRIPTDIR
-  # Checkout defined commit
-  if [ ! "x$RELEASESHA" = "x" ]; then
-    git checkout $RELEASESHA
-  else
+  if [ -z "$RELEASESHA" ]; then
     echo -e "${RED}ERROR: release-scripts SHA not found${RESET}"
-    exit 1;
+    exit 1
   fi
-  cd ..
+  checkout_submodule $RELEASESCRIPTDIR $RELEASESHA
+}
+
+# marker in the LE/CE directory, which config was used to patch it
+PATCHED_MARKER=.vdrsternelec-config
+
+# directories with patches and scripts, from generic to specific
+patch_dirs() {
+    local base
+    echo "../patches"
+    for base in "../patches/${DISTRO}" "../patches/${DISTRO}.${PATCHDIR}"; do
+        echo "${base}"
+        echo "${base}/projects/${PROJECT}"
+        echo "${base}/projects/${PROJECT}/devices/${DEVICE}"
+        echo "${base}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT}"
+    done
+}
+
+# files matching $2 in directory $1, in a defined order
+list_sorted() {
+    find "$1" -maxdepth 1 -name "$2" 2>/dev/null | sort -V
 }
 
 apply_patches() {
     cd $ROOTDIR
     cd $DISTRO
 
-    rm -f ../patches/${DISTRO}/01-build-debug.patch
-    if [ $VERBOSEBUILD ]; then
-      cp ../patches/01-build-debug.patch.disabled ../patches/${DISTRO}/01-build-debug.patch
+    if [ "$VERBOSEBUILD" = "true" ]; then
+      echo "Apply patch ../patches/01-build-debug.patch.disabled"
+      patch -p1 < ../patches/01-build-debug.patch.disabled
     fi
 
     # Apply patches and sed scripts in ./patches
-    for i in `find ../patches -maxdepth 1 -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO} -maxdepth 1 -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT} -maxdepth 1 -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}.${PATCHDIR} -maxdepth 1 -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT} -maxdepth 1 -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.patch' 2>/dev/null` \
-             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.patch' 2>/dev/null`; do
-        echo "Apply patch $i"
-        patch -p1 < $i
+    for dir in $(patch_dirs); do
+        for i in $(list_sorted "$dir" '*.patch'); do
+            echo "Apply patch $i"
+            patch -p1 < $i
+        done
     done
 
-    for i in `find ../patches -maxdepth 1 -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO} -maxdepth 1 -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT} -maxdepth 1 -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}.${PATCHDIR} -maxdepth 1 -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT} -maxdepth 1 -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE} -maxdepth 1 -name '*.sh' 2>/dev/null` \
-             `find ../patches/${DISTRO}.${PATCHDIR}/projects/${PROJECT}/devices/${DEVICE}/variants/${VARIANT} -maxdepth 1 -name '*.sh' 2>/dev/null`; do
-        echo "Apply script $i"
-        bash $i
+    for dir in $(patch_dirs); do
+        for i in $(list_sorted "$dir" '*.sh'); do
+            echo "Apply script $i"
+            bash $i
+        done
     done
-
-    # delete patch after it was applied to not accidently push it
-    rm -f ../patches/${DISTRO}/01-build-debug.patch
 
     # Copy package patches to LE/CE directory structure
     cd $ROOTDIR
-    for i in $(find package_patches/${DISTRO} -type f 2>/dev/null) \
-             $(find package_patches/${DISTRO}.${PATCHDIR} -type f 2>/dev/null); do
-
-        PDIR=${i//$DISTRO.$PATCHDIR/$DISTRO}
-        if [ ! -d $(echo $PDIR | sed -e s/^"package_patches\/"// -e s/$(basename $PDIR)$//) ]; then
-            mkdir -p $(echo $PDIR | sed -e s/^"package_patches\/"// -e s/$(basename $PDIR)$//)
-            echo "Create directory $(echo $PDIR | sed -e s/^"package_patches\/"// -e s/$(basename $PDIR)$//)"
+    for i in $(find package_patches/${DISTRO} package_patches/${DISTRO}.${PATCHDIR} -type f 2>/dev/null); do
+        # package_patches/<distro>[.<patchdir>]/<path> -> <distro>/<path>
+        DEST=${i#package_patches/}
+        DEST=${DISTRO}/${DEST#*/}
+        if [ ! -d "$(dirname "$DEST")" ]; then
+            mkdir -p "$(dirname "$DEST")"
+            echo "Create directory $(dirname "$DEST")/"
         fi
-        if cp -r $i $(echo $PDIR | sed -e s/^"package_patches\/"//); then
-            echo "Copy $(basename $i) to $(echo $PDIR | sed -e s/^"package_patches\/"//)"
+        if cp "$i" "$DEST"; then
+            echo "Copy $(basename "$i") to $DEST"
         else
-            echo "ERROR copying $(basename $i) to $(echo $PDIR | sed -e s/^"package_patches\/"//)"
+            echo "ERROR copying $(basename "$i") to $DEST"
         fi
     done
 
@@ -171,6 +173,23 @@ apply_patches() {
             sed -i -e "s/setenv bootlabel \"CoreELEC\"/setenv bootlabel \"$CONFIG\"/" $i
         done
     fi
+
+    echo "$CONFIG" > $DISTRO/$PATCHED_MARKER
+}
+
+# -nocheckout: the tree must have been patched for the same config
+check_patched() {
+  local patched
+
+  patched=$(cat $ROOTDIR/$DISTRO/$PATCHED_MARKER 2>/dev/null || true)
+  if [ -z "$patched" ]; then
+    echo -e "${RED}ERROR: $DISTRO was not prepared by build.sh, run it once without -nocheckout${RESET}"
+    exit 1
+  elif [ "$patched" != "$CONFIG" ]; then
+    echo -e "${RED}ERROR: $DISTRO was prepared for config '$patched', not '$CONFIG'${RESET}"
+    exit 1
+  fi
+  echo "Use $DISTRO as it is (prepared for $patched)"
 }
 
 prepare_sources() {
@@ -198,39 +217,33 @@ build_addons() {
   rm -Rf target/*
 
   # addons must be build before the final build is started
-  for i in $(env | grep ^ADDON_); do
-    TMP=$(echo $i | cut -d "=" -f 1)
-    if [ $(grep $TMP$ ../config/addons.list) ]; then
-
-      # save DISTRO before starting the build (name clash, LE/CE uses also DISTRO, but the problem exists currently only with Github Workflows)
-      OLD_DISTRO=$DISTRO
-      unset DISTRO
-
+  for TMP in $(compgen -e | grep '^ADDON_'); do
+    if grep -q ":${TMP}$" ../config/addons.list; then
       echo "Start building addon ${!TMP} ..."
 
       PROJECT="$PROJECT" \
         DEVICE="$DEVICE" \
         ARCH="$ARCH" \
         BUILD_SUFFIX="$BUILD_SUFFIX" \
-        scripts/create_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
+        distro_run scripts/create_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
 
       PROJECT="$PROJECT" \
         DEVICE="$DEVICE" \
         ARCH="$ARCH" \
         BUILD_SUFFIX="$BUILD_SUFFIX" \
-        scripts/install_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
-
-      DISTRO=$OLD_DISTRO
-      unset OLD_DISTRO
+        distro_run scripts/install_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
     fi
   done
 }
 
 build() {
-  # build
+  cd $ROOTDIR/$DISTRO
+
   if [ ! "${PACKAGE_ONLY}" = "" ]; then
-    echo "Build ${PACKAGE_ONLY}"
-    scripts/build ${PACKAGE_ONLY}
+    for pkg in ${PACKAGE_ONLY//,/ }; do
+      echo "Build ${pkg}"
+      distro_run scripts/build ${pkg}
+    done
   else
     RELEASE_STRING="Start make image"
     if [ "$DORELEASE" = "true" ]; then
@@ -238,31 +251,25 @@ build() {
     fi
     echo "${RELEASE_STRING}"
 
-    # save DISTRO before starting the build (name clash, LE/CE uses also DISTRO, but the problem exists currently only with Github Workflows)
-    OLD_DISTRO=$DISTRO
-    unset DISTRO
-
     if [ "$RELEASE_ONLY" = "true" ]; then
-        make release
+        distro_run make release
     else
-        make image
+        distro_run make image
     fi
-
-    DISTRO=$OLD_DISTRO
-    unset OLD_DISTRO
   fi
 }
 
 set_env() {
   # export project variables
   cd $ROOTDIR/$DISTRO
+  BUILD_SUFFIX="$VARIANT"
   echo "Build environment variables:"
   echo "   PROJECT=$PROJECT"
   echo "   DEVICE=$DEVICE"
   echo "   ARCH=$ARCH"
   if [ "${DISTRO}" = "CoreELEC" ] && [ ! -z $SUB_DEVICE ]; then
     # patch option to build only the desired subdevice
-    sed -i -e "s#SUBDEVICES=.*\$#SUBDEVICES=\"$SUB_DEVICE\"#" projects/Amlogic-ce/devices/Amlogic-ng/options
+    sed -i -e "s#SUBDEVICES=.*\$#SUBDEVICES=\"$SUB_DEVICE\"#" projects/${PROJECT}/devices/${DEVICE}/options
     echo "   SUBDEVICES=${SUB_DEVICE}"
   elif [ "${DISTRO}" = "LibreELEC.tv" ] && [ ! -z $SUB_DEVICE ]; then
     export UBOOT_SYSTEM="${SUB_DEVICE}"
@@ -288,10 +295,10 @@ set_env() {
   export CEF_BINARIES="$CEF_BINARIES"
   if [ "${DISTRO}" = "CoreELEC" ] && [ ! "${CEF_BINARIES}" = "" ]; then
     sed -i -e "s#SYSTEM_SIZE=.*\$#SYSTEM_SIZE=1024#" distributions/CoreELEC/options
-    echo "   SYSTEM_SIZE=768"
+    echo "   SYSTEM_SIZE=1024"
   elif [ "${DISTRO}" = "LibreELEC.tv" ] && [ ! "${CEF_BINARIES}" = "" ]; then
     sed -i -e "s#SYSTEM_SIZE=.*\$#SYSTEM_SIZE=1024#" distributions/LibreELEC/options
-    echo "   SYSTEM_SIZE=768"
+    echo "   SYSTEM_SIZE=1024"
   fi
 }
 
@@ -332,8 +339,8 @@ read_addon() {
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -config) shift; CONFIG=$1 ;;
-        -extra) shift; read_extra $1 ;;
-        -addon) shift; read_addon $1 ;;
+        -extra) shift; LIST_EXTRAS="${LIST_EXTRAS:+$LIST_EXTRAS,}$1" ;;
+        -addon) shift; LIST_ADDONS="${LIST_ADDONS:+$LIST_ADDONS,}$1" ;;
         -subdevice) shift; SUB_DEVICE=$1 ;;
         -addononly) ADDON_ONLY=true ;;
         -patchonly) PATCH_ONLY=true ;;
@@ -343,7 +350,9 @@ while [[ "$#" -gt 0 ]]; do
         -cef) CEF_BINARIES=true ;;
         -cebootlabel) CEBOOTLABEL=true ;;
         -verbose) VERBOSEBUILD=true ;;
-        -help) usage ;;
+        -nocheckout) NO_CHECKOUT=true ;;
+        -log) LOG=true ;;
+        -help) usage 0 ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac
     shift || continue
@@ -364,6 +373,10 @@ fi
 echo "Read config $CONFIG"
 . config/distro/$CONFIG
 
+# read extras and addons after the config, read_addon needs ARCH
+read_extra "$LIST_EXTRAS"
+read_addon "$LIST_ADDONS"
+
 if [ ! -d $DISTRO ]; then
   echo -e "${RED}ERROR: Distribution '$DISTRO' cannot be found.${RESET}"
   exit 1
@@ -374,20 +387,49 @@ if [ "$DORELEASE" = "true" ] && [ -z "${RELEASE_SERVER}" ]; then
   exit 1
 fi
 
-echo "Build $SHA on $DISTRO"
-checkout
-apply_patches
+# check everything possible before the LE/CE directory is reset
+if [ -z "$SHA" ]; then
+  echo -e "${RED}ERROR: ${DISTRO} SHA not found${RESET}"
+  exit 1
+fi
+
+if [ "$DORELEASE" = "true" ] && [ -z "$RELEASESHA" ]; then
+  echo -e "${RED}ERROR: release-scripts SHA not found${RESET}"
+  exit 1
+fi
+
+if [ ! "${PATCH_ONLY}" = "true" ] && [ "$(id -u)" = "0" ]; then
+  echo -e "${RED}ERROR: LE/CE can't be built as root, use a regular user account${RESET}"
+  exit 1
+fi
+
+if [ "$NO_CHECKOUT" = "true" ] && [ "$PATCH_ONLY" = "true" ]; then
+  echo -e "${RED}ERROR: -nocheckout and -patchonly together do nothing${RESET}"
+  exit 1
+fi
+
+if [ "$LOG" = "true" ]; then
+  mkdir -p logs
+  LOGFILE="logs/${CONFIG}-$(date +%Y%m%d-%H%M%S).log"
+  echo "Write log to $LOGFILE"
+  exec > >(tee -a "$LOGFILE") 2>&1
+fi
+
+if [ "$NO_CHECKOUT" = "true" ]; then
+  check_patched
+else
+  echo "Build $SHA on $DISTRO"
+  checkout
+  apply_patches
+fi
 prepare_sources
 set_env
 
 if [ ! "${PATCH_ONLY}" = "true" ]; then
-    OLD_DISTRO=$DISTRO
-    unset DISTRO
     if [ "${AUTOREMOVE}" = "yes" ]; then
-      ../prepare-autoremove
+      cd $ROOTDIR/$DISTRO
+      distro_run ../prepare-autoremove
     fi
-    DISTRO=$OLD_DISTRO
-    unset OLD_DISTRO
 
     build_addons
 
@@ -397,6 +439,7 @@ if [ ! "${PATCH_ONLY}" = "true" ]; then
 
     if [ "$DORELEASE" = "true" ]; then
        checkout_release_script
+       cd $ROOTDIR
        if [ -e "$RELEASESCRIPTDIR/releases.py" ]; then
           echo "Prepare Release for $RELEASE_SERVER in $RELEASEDIR"
           mkdir -p $RELEASEDIR

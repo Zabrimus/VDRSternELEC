@@ -164,15 +164,15 @@ index cd2309c632..38541ea675 100644
 +evdev:input:b0005v0508p0110*
 + KEYBOARD_KEY_c0041=enter
 diff --git a/packages/sysutils/systemd/package.mk b/packages/sysutils/systemd/package.mk
-index e08c363f7d..adae57ef3b 100644
+index cdc72d8fff..adae57ef3b 100644
 --- a/packages/sysutils/systemd/package.mk
 +++ b/packages/sysutils/systemd/package.mk
 @@ -3,9 +3,9 @@
  # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
  
  PKG_NAME="systemd"
--PKG_VERSION="262.1"
--PKG_SHA256="100fc873b848b9b0297d8a705e8e2ed326256c8483d9960ee1ffe264c8a5c3e3"
+-PKG_VERSION="262.2"
+-PKG_SHA256="116432ee9dce9bfef4c7da7963c6de41899ab44197f2876ee99545707a5c7c1f"
 -PKG_LICENSE="LGPL-2.1-or-later"
 +PKG_VERSION="259.5"
 +PKG_SHA256="80ed55a8a69c4bd1fb12a36659303372b37baf9ee224ef4f032db4b748be0f76"

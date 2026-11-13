@@ -1,0 +1,41 @@
+diff -ru8bBwd a/vdr-plugin-irmp/irmp.c b/vdr-plugin-irmp/irmp.c
+--- a/vdr-plugin-irmp/irmp.c	2026-11-11 21:33:16.000000000 +0100
++++ b/vdr-plugin-irmp/irmp.c	2026-11-13 08:20:25.045000000 +0100
+@@ -128,17 +128,17 @@
+             }
+             if (LastTime.Elapsed() < (uint)Setup.RcRepeatDelta) {
+                 if (DEBUG)  printf("continue Delta\n\n");
+                 continue; // skip same keys coming in too fast
+             }
+             repeat = true;
+         }
+ 
+-        if (!(irmp_flags & IRMP_FLAG_RELEASE))) { // new or repeat
++        if (!(irmp_flags & IRMP_FLAG_RELEASE)) { // new or repeat
+             /* send key */
+             if(DEBUG) printf("delta send: %ld\n", LastTime.Elapsed());
+             LastTime.Set();
+             if (DEBUG) printf("put %s %s\n", (const char*)key, repeat ? "Repeat" : "");
+             Put(key, repeat);
+         } else { // release
+             if (repeat) {
+                 /* send release */
+@@ -207,17 +207,17 @@
+ {
+   if(DEBUG) printf("ReadIR action!\n");
+ 
+   while(Running()){
+ 
+     bool ready = fd >= 0 && cFile::FileReady(fd, -1); // implizit mindestens 100 ms!!! bei timeout 0, wenn was angekommen ist > 0
+     int ret = ready ? safe_read(fd, buf, sizeof(buf)) : -1; //  bei timeout, error -1, bei 0 bytes 0, sonst > 0
+ 
+-    if (fd < 0 || ready && ret <= 0) { // kein fd oder error oder 0 bytes
++    if (fd < 0 || (ready && ret <= 0)) { // kein fd oder error oder 0 bytes
+         esyslog("ERROR: irmp connection broken, trying to reconnect every %.1f seconds", float(RECONNECTDELAY) / 1000);
+         if (fd >= 0)
+             close(fd);
+         fd = -1;
+         while (Running() && fd < 0) {
+             cCondWait::SleepMs(RECONNECTDELAY);
+             if (Connect()) {
+                 isyslog("reconnected to irmp");

@@ -1,7 +1,7 @@
 diff -ru8bBwd a/Makefile b/Makefile
---- a/Makefile	2026-10-28 06:36:51.000000000 +0100
-+++ b/Makefile	2026-10-29 18:08:47.560000000 +0100
-@@ -176,18 +176,19 @@
+--- a/Makefile	2026-11-12 12:10:15.000000000 +0100
++++ b/Makefile	2026-11-13 08:11:17.074000000 +0100
+@@ -175,18 +175,19 @@
  pages/%.cpp: pages/%.ecpp
  	$(call PRETTY_PRINT,"EC" $@)
  	$(Q)$(ECPPC) $(ECPPFLAGS) $(ECPPFLAGS_CPP) $(ECPPINCLUDES) -o $@ $<
@@ -23,7 +23,7 @@ diff -ru8bBwd a/Makefile b/Makefile
  
  ifneq ($(MAKECMDGOALS),clean)
  -include .dependencies
-@@ -209,17 +210,17 @@
+@@ -208,17 +209,17 @@
  %.mo: %.po
  	$(if $(DISABLE_I18Nmo_txt),,@echo "Creating *.mo")
  	@msgfmt -c -o $@ $<
@@ -39,6 +39,6 @@ diff -ru8bBwd a/Makefile b/Makefile
  %.po: $(I18Npot)
  	$(if $(DISABLE_I18Npo_txt),,@echo "Creating *.po")
  	@msgmerge -U --no-wrap --no-location --backup=none -q -N $@ $<
+ 	@sed -i 's/"Project-Id-Version: .*\\n"/"Project-Id-Version: VDR-LIVE '"$(VERSION)"'\\n"/' $@
  	@touch $@
  	$(eval DISABLE_I18Npo_txt := 1)
- 

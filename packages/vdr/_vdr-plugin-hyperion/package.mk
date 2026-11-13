@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-hyperion"
-PKG_VERSION="14d081f9d180418f48c796e005e3ccff00e0ee51"
-PKG_SHA256="44c92da29d990364af2a936bdf40d3ade0f4aaa3a31a3e914e3142ab294ef955"
+PKG_VERSION="61ad43066e23cfd48ed49d8a7eb466289771f66d"
+PKG_SHA256="70ea7bb60788685039073a10334c9d9c72dd8151a07779db497f118696ae78a9"
 PKG_LICENSE="AGPL"
 PKG_SITE="https://github.com/rellla/vdr-plugin-hyperion"
 PKG_URL="https://github.com/rellla/vdr-plugin-hyperion/archive/${PKG_VERSION}.zip"

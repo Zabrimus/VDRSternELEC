@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-systeminfo"
-PKG_VERSION="f8374628e2fb3af964e15f58b5a3dc2b8483fe51"
-PKG_SHA256="5e0bb18eb11995c346907e53937042cf32e17723d0fa64efb03bf3951bd99e67"
+PKG_VERSION="0250efa1584476a7e6a8ef6b14ca7e487d3a41b6"
+PKG_SHA256="33e57ca65efbe0b86589b55f8caa069e3c2b8a5121dc956bd0ae7e18046d0376"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/FireFlyVDR/vdr-plugin-systeminfo"
 PKG_URL="https://github.com/FireFlyVDR/vdr-plugin-systeminfo/archive/${PKG_VERSION}.zip"

@@ -2,8 +2,8 @@
 
 PKG_NAME="_vdr-plugin-drmdevice"
 
-PKG_VERSION="722ea788165f73423d966b24cb0de6a314d8d431"
-PKG_SHA256="a45e3fac97f308e6e44a980c8bf8f8c2f54d887dd087153a09c9aaa0e638a693"
+PKG_VERSION="bdec9ca3a04159e09c586a3567c20206a6ec58c0"
+PKG_SHA256="53029805cadf25d2cb239bc8e05024868f3bf455ab70f109a2ef52a47323c6e4"
 PKG_SITE="https://github.com/rellla/vdr-plugin-drmdevice"
 PKG_URL="https://github.com/rellla/vdr-plugin-drmdevice/archive/${PKG_VERSION}.zip"
 PKG_BRANCH="main"

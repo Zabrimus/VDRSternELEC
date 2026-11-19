@@ -453,6 +453,7 @@ The order of ```-R``` and ```-c``` doesn't matter, ```-w``` checks that the CEF 
 ### remotetranscode
 remotetranscode is used to stream transcoded videos to VDR. It can also run on another, faster system or a system with a hardware encoder,
 the repository can be found at https://github.com/Zabrimus/remotetranscode.
+Downloads of videos from the Mediathek are saved in ```/storage/downloads/mediathek```.
 
 ## Skindesigner repository
 Skindesigner uses a git repository to install custom skins. To be able to use this feature installing git is necessary.

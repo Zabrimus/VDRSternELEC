@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-osd2web"
-PKG_VERSION="ac75526d1093fbc666481dcc69d6e696ba48ec8b"
-PKG_SHA256="d33c6f5764903be27f4260abd0a9726dce22658c01117218cd95fa3b6ca2836d"
+PKG_VERSION="d5e85320134cfdf4b2e99a48b2165a14ac1301cf"
+PKG_SHA256="2d59611319e49071b04bb14aa37338fa4b046d8c8170c601d430c2e6dd3749e6"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/horchi/vdr-plugin-osd2web"
 PKG_URL="https://github.com/horchi/vdr-plugin-osd2web/archive/${PKG_VERSION}.zip"

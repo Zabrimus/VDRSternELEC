@@ -25,7 +25,7 @@ import pwd
 import sys
 from argparse import ArgumentParser
 
-sys.path.append(r'/usr/lib/python')
+sys.path.append(r'/storage/lib/python')
 
 from evdev import UInput, InputDevice, ecodes, categorize
 
@@ -67,6 +67,9 @@ class EventTranslator():
         try:
             async for raw_event in self.inputdevice.async_read_loop():
                 if raw_event.type == ecodes.EV_KEY:
+                    # HIER EINGEBAUT: Ignoriere vom Input-Device generierte Repeats (Wert 2)
+                    if raw_event.value == 2:
+                        continue
                     event = categorize(raw_event)
                     async with self.lock:
                         if event.keystate == event.key_down:
@@ -132,9 +135,11 @@ def get_or_create_eventloop():
             return asyncio.get_event_loop()
         else:
           raise ex
-    
+
+
 def main():
     options = parse_args()
+    #loop = asyncio.get_event_loop()
     loop = get_or_create_eventloop()
     event_translator = EventTranslator(loop, options)
     drop_privileges(options.user, options.group)

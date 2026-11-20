@@ -130,6 +130,7 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-statusleds2irmp"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-irmp4kbd"
 
 PKG_DEPENDS_TARGET+=" _vdr-plugin-neutrinoepg"
+PKG_DEPENDS_TARGET+=" _vdr-plugin-actionmenu"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-text2skin"
 PKG_DEPENDS_TARGET+=" _vdr-skin-pearlhd"
 # PKG_DEPENDS_TARGET+=" _vdr-skin-anthra-fst"

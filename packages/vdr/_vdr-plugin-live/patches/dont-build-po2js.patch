@@ -1,14 +1,14 @@
 diff -ru8bBwd a/Makefile b/Makefile
---- a/Makefile	2026-11-12 12:10:15.000000000 +0100
-+++ b/Makefile	2026-11-13 08:11:17.074000000 +0100
-@@ -175,18 +175,19 @@
+--- a/Makefile	2026-11-20 16:04:59.000000000 +0100
++++ b/Makefile	2026-11-20 20:47:35.633000000 +0100
+@@ -179,18 +179,19 @@
  pages/%.cpp: pages/%.ecpp
  	$(call PRETTY_PRINT,"EC" $@)
  	$(Q)$(ECPPC) $(ECPPFLAGS) $(ECPPFLAGS_CPP) $(ECPPINCLUDES) -o $@ $<
  
  %.o: %.cpp
  	$(call PRETTY_PRINT,"CC" $@)
- 	$(Q)$(CXX) $(CXXFLAGS) $(TNTFLAGS) -c $(DEFINES) $(PLUGINFEATURES) $(INCLUDES) $(INCLUDES_PAGES) -o $@ $<
+ 	$(Q)$(CXX) $(CXXFLAGS) $(TNTFLAGS) -c $(DEFINES) $(PLUGINFEATURES) $(INCLUDES) -o $@ $<
  
 -build/po2js: build/po2js.o
 -	$(CXX) -o build/po2js build/po2js.o -lgettextpo
@@ -17,13 +17,13 @@ diff -ru8bBwd a/Makefile b/Makefile
 +#	$(CXX) -o build/po2js build/po2js.o -lgettextpo
  
  ### Dependencies:
- MAKEDEP := $(CXX) -MM -MG
- .dependencies: Makefile $(PAGESRCS) $(EPAGESRCS)
- 	@$(MAKEDEP) $(CXXFLAGS) $(DEFINES) $(PLUGINFEATURES) $(INCLUDES) $(PLUGINSRCS) $(PAGESRCS) > $@
- 
- ifneq ($(MAKECMDGOALS),clean)
- -include .dependencies
-@@ -208,17 +209,17 @@
+ #MAKEDEP := $(CXX) -MM -MG
+ %.d: %.cpp
+ 	$(call PRETTY_PRINT,"CD" $@)
+ 	$(Q)DIR="$$(dirname $*)"; if [ "$$DIR" = "." ] ; \
+ 			then $(CXX) -MM -MG $(CXXFLAGS) $(INCLUDES) $< | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $@; \
+ 			else $(CXX) -MM -MG $(CXXFLAGS) $(INCLUDES) $< | sed -e "s@^\(.*\)\.o:@$$DIR/\1.d $$DIR/\1.o:@" > $@; \
+@@ -219,17 +220,17 @@
  %.mo: %.po
  	$(if $(DISABLE_I18Nmo_txt),,@echo "Creating *.mo")
  	@msgfmt -c -o $@ $<

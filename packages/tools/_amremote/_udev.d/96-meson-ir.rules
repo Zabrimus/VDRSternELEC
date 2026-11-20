@@ -1,0 +1,2 @@
+KERNEL=="event?", ATTRS{name}=="meson-ir", \
+SYMLINK="input/meson-ir" , ENV{eventlircd_enable}="false"

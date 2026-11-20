@@ -1,0 +1,2 @@
+KERNEL=="event?", ATTRS{name}=="PS3 Remote", \
+SYMLINK="input/ps3remote" , ENV{eventlircd_enable}="true"

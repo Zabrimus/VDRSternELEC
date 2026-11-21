@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-actionmenu"
-PKG_VERSION="d642c039c79cd4e83b6b2bbb7c80cbc37c4b3026"
-PKG_SHA256="59e445e13c7d51485e216224d7a50fec739cfdfff766decf82a86ff638df0165"
+PKG_VERSION=""
+PKG_SHA256="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 PKG_LICENSE="GPL2"
 PKG_SITE="https://github.com/unf/vdr-plugin-actionmenu"
 PKG_URL="https://github.com/rellla/vdr-plugin-actionmenu/archive/${PKG_VERSION}.zip"

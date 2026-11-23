@@ -162,6 +162,7 @@ tsduck
 
 Available addons:
 cefbrowser
+cefruntime
 channellogos
 crazycat
 digital-devices
@@ -202,7 +203,7 @@ Now it would be a good time to install the KODI addons of your choice. E.g. ```s
 Now it's time to run the install script ```/usr/local/bin/install.sh``` from within the console (e.g. via ssh):
 ```
 # /usr/local/bin/install.sh
-Usage: /usr/local/bin/install.sh [-i] [-b kodi|vdr] [-T] [-w] [-c (url)] [-p (url)]
+Usage: /usr/local/bin/install.sh [-i] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-R (url)] [-p (url)]
 
 -i       : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
 -C       : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
@@ -210,8 +211,11 @@ Usage: /usr/local/bin/install.sh [-i] [-b kodi|vdr] [-T] [-w] [-c (url)] [-p (ur
 -b vdr   : VDR will be started after booting
 -T       : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
 -w       : install/update web components (remotetranscode, cefbrowser)
--c (url) : install/update cefbrowser addon (located at url or within /storage/.update)
+-v       : install vtuner-ng (change /storage/.config/start_vtuner.sh accordingly, otherwise is will not start)
+-c (url) : install/update cefbrowser binary (located at url or in /storage/.update/addon-cefbrowser.zip)
+-R (url) : install/update CEF runtime for cefbrowser (located at url or in /storage/.update/addon-cefruntime.zip)
 -p (url) : install/update private configs (located at url or within /storage/.update)
+-l (url) : install/update channel logos (located at url or in /storage/.update/channellogos.tar.gz)
 ```
 If you are at the first boot, the minimum you have to do is running the script with the ```-i``` option, which will copy the default configuration to the right place. If you also want, that VDR will start as default, these are the commands of your choice:
 ```
@@ -406,16 +410,49 @@ There exists several other cron workflows, which cannot be used outside the repo
 
 # Several notes and additional hints (to be updated)
 ## vdr-plugin-web / HbbTV
-To be able to use this plugin several manual tasks are necessary.
-- Install cefbrowser
+The plugin vdr-plugin-web is already part of VDR*ELEC, remotetranscode is part of the image if it has been built with the extra ```remotetranscode```.
+The browser consists of two addons, which are available in the [releases](https://github.com/Zabrimus/VDRSternELEC/releases) section:
+- ```addon-cefbrowser.zip```: the browser cefbrowser and its data. It changes with every new version of cefbrowser.
+- ```addon-cefruntime.zip```: the runtime of the Chromium Embedded Framework (CEF), which cefbrowser needs. It is large and changes only with a new CEF version.
 
-  A sample installation/configuration are described in the repository https://github.com/Zabrimus/cefbrowser in section 
-```VDR*ELEC, CoreELEC-19 (sample installation/configuration)```
-- Install remotetranscoder 
+cefbrowser runs only with the CEF runtime it has been built with. Its version is in ```/storage/browser/addon.cefbrowser/etc/cef-version```.
+Each CEF runtime is installed in its own directory ```/storage/browser/addon.cefruntime/<version>```,
+the link ```/storage/browser/addon.cefbrowser/cef``` points to the one used.
 
-  The remotetranscoder is used to stream transcoded videos to VDR. Installation on a fast system or a system with a hardware encoder is desired.
-  The repository can be found at https://github.com/Zabrimus/remotetranscode
-- The plugin vdr-plugin-web is already part of VDR*ELEC.
+### New installation
+Copy both zip files to ```/storage/.update``` (or give their URLs to the script) and run
+```
+/usr/local/bin/install.sh -R
+/usr/local/bin/install.sh -c
+/usr/local/bin/install.sh -w
+```
+```-w``` installs and enables the services of cefbrowser and remotetranscode. Start them with
+```
+systemctl start remotetranscode cefbrowser
+```
+The order of ```-R``` and ```-c``` doesn't matter, ```-w``` checks that the CEF runtime of cefbrowser is installed.
+
+### Update
+- A new cefbrowser with the same CEF version needs only
+  ```
+  /usr/local/bin/install.sh -c
+  systemctl restart cefbrowser
+  ```
+- If the new cefbrowser needs another CEF version, install the CEF runtime as well:
+  ```
+  /usr/local/bin/install.sh -R
+  /usr/local/bin/install.sh -c
+  systemctl restart cefbrowser
+  ```
+  ```install.sh -c``` tells if the CEF runtime is missing, the service doesn't start without it (```journalctl -u cefbrowser``` shows the version).
+  The directory of the old CEF runtime in ```/storage/browser/addon.cefruntime``` can be deleted afterwards.
+- Coming from an older cefbrowser with the CEF runtime included, run ```install.sh -w``` once after the update.
+  It replaces ```/storage/.config/system.d/cefbrowser.service```, which still uses the old directories, and also ```remotetranscode.service```.
+  Own changes in these files must be done again.
+
+### remotetranscode
+remotetranscode is used to stream transcoded videos to VDR. It can also run on another, faster system or a system with a hardware encoder,
+the repository can be found at https://github.com/Zabrimus/remotetranscode.
 
 ## Skindesigner repository
 Skindesigner uses a git repository to install custom skins. To be able to use this feature installing git is necessary.

@@ -8,7 +8,7 @@ BIN_DIR="${PREFIX}/bin"
 
 usage() {
   cat << EOF >&2
-Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-p (url)]
+Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-R (url)] [-p (url)]
 
 -i       : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
 -C       : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.
@@ -18,6 +18,7 @@ Usage: $PROGNAME [-i] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-p (url)]
 -w       : install/update web components (remotetranscode, cefbrowser)
 -v       : install vtuner-ng (change /storage/.config/start_vtuner.sh accordingly, otherwise is will not start)
 -c (url) : install/update cefbrowser binary (located at url or in /storage/.update/addon-cefbrowser.zip)
+-R (url) : install/update CEF runtime for cefbrowser (located at url or in /storage/.update/addon-cefruntime.zip)
 -p (url) : install/update private configs (located at url or within /storage/.update)
 -l (url) : install/update channel logos (located at url or in /storage/.update/channellogos.tar.gz)
 EOF
@@ -119,6 +120,8 @@ install_web() {
     exit 1
   fi
 
+  check_cefruntime || exit 1
+
   # copy data directory
   if [ ! -d /storage/browser/database ]; then
       mkdir -p /storage/browser/database
@@ -163,6 +166,60 @@ install_vtuner() {
   echo "  Otherwise vtuner-ng will not work as expected."
 }
 
+# cefbrowser needs the CEF runtime of the version it has been built with.
+# The link addon.cefbrowser/cef points to it, the service uses only the link.
+check_cefruntime() {
+  if [ ! -f /storage/browser/addon.cefbrowser/etc/cef-version ]; then
+    # no cefbrowser yet, or an older one with included runtime
+    return 0
+  fi
+
+  CEF_VERSION="$(cat /storage/browser/addon.cefbrowser/etc/cef-version)"
+  ln -sfn "../addon.cefruntime/${CEF_VERSION}" /storage/browser/addon.cefbrowser/cef
+
+  if [ ! -f "/storage/browser/addon.cefruntime/${CEF_VERSION}/lib/libcef.so" ]; then
+    echo "CEF runtime ${CEF_VERSION} is missing, install it first!"
+    echo "   -> install.sh -R [url]"
+    return 1
+  fi
+
+  return 0
+}
+
+install_cefruntime() {
+  rm -Rf /storage/tmp
+  mkdir /storage/tmp
+  mkdir -p /storage/browser
+  cd /storage/tmp
+
+  # Get zip file
+  # 1. try downloading
+  if [ -n "$1" ]; then
+    echo "Download cefruntime from $1"
+    if wget -q "$1" -O addon-cefruntime.zip; then
+      sync
+      echo "$1 saved to /storage/tmp"
+    else
+      echo "Error downloading $1"
+      exit 1
+    fi
+  # 2. read from /storage/.update/addon-cefruntime.zip
+  elif [ -e "/storage/.update/addon-cefruntime.zip" ]; then
+    echo "Move /storage/.update/addon-cefruntime.zip"
+    mv "/storage/.update/addon-cefruntime.zip" "/storage/tmp/addon-cefruntime.zip"
+  else
+    echo "No addon-cefruntime file found, exiting"
+    exit 1
+  fi
+
+  # unzip addon-cefruntime.zip, each CEF version has its own directory
+  cd /storage/browser
+  echo "Unzip addon-cefruntime.zip"
+  unzip -o "/storage/tmp/addon-cefruntime.zip"
+
+  check_cefruntime
+}
+
 install_cefbrowser() {
   rm -Rf /storage/tmp
   mkdir /storage/tmp
@@ -198,6 +255,13 @@ install_cefbrowser() {
     echo "No addon-cefbrowser zip found, exiting"
     exit 1
   fi
+
+  # the old runtime inside the addon is not used anymore
+  if [ -f /storage/browser/addon.cefbrowser/etc/cef-version ]; then
+    rm -Rf /storage/browser/addon.cefbrowser/lib
+  fi
+
+  check_cefruntime
 }
 
 install_channellogos() {
@@ -308,7 +372,7 @@ if [ "$#" = "0" ]; then
     usage
 fi
 
-while getopts b:iTCwvclp: o; do
+while getopts b:iTCwvclRp: o; do
   case $o in
     (i) install;;
     (C) install_copy;;
@@ -321,6 +385,13 @@ while getopts b:iTCwvclp: o; do
           install_cefbrowser "$url"
         else
           install_cefbrowser
+        fi
+        ;;
+    (R) eval url=\${$(( $OPTIND ))}
+        if [ -n $url ]; then
+          install_cefruntime "$url"
+        else
+          install_cefruntime
         fi
         ;;
     (p) eval url=\${$(( $OPTIND -1 ))}

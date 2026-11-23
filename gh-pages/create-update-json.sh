@@ -40,6 +40,7 @@ ALLRELEASES=$(./get_releases.sh)
 
 # CoreELEC-20-ng
 create_jq_command_addon_ce CoreELEC-20 ng arm addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
+create_jq_command_addon_ce CoreELEC-20 ng arm addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-20 ng arm yt-dlp && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-20 ng arm channellogos && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-20 ng arm driver.dvb.dvb-latest && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
@@ -47,6 +48,7 @@ jq -s '.' updates/tmp > updates/addons.CoreELEC-20-ng.json && rm updates/tmp
 
 # CoreELEC-20-ne
 create_jq_command_addon_ce CoreELEC-20 ne aarch64 addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
+create_jq_command_addon_ce CoreELEC-20 ne aarch64 addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-20 ne aarch64 yt-dlp && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-20 ne aarch64 channellogos && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 #create_jq_command_addon_ce CoreELEC-20 ne aarch64 driver.dvb.dvb-latest && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
@@ -54,6 +56,7 @@ jq -s '.' updates/tmp > updates/addons.CoreELEC-20-ne.json && rm updates/tmp
 
 # CoreELEC-21-ng
 create_jq_command_addon_ce CoreELEC-21 ng arm addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
+create_jq_command_addon_ce CoreELEC-21 ng arm addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-21 ng arm yt-dlp && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-21 ng arm channellogos && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-21 ng arm driver.dvb.dvb-latest && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
@@ -61,6 +64,7 @@ jq -s '.' updates/tmp > updates/addons.CoreELEC-21-ng.json && rm updates/tmp
 
 # CoreELEC-21-ne
 create_jq_command_addon_ce CoreELEC-21 ne aarch64 addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
+create_jq_command_addon_ce CoreELEC-21 ne aarch64 addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-21 ne aarch64 yt-dlp && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-21 ne aarch64 channellogos && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 #create_jq_command_addon_ce CoreELEC-21 ne aarch64 driver.dvb.dvb-latest && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
@@ -68,6 +72,7 @@ jq -s '.' updates/tmp > updates/addons.CoreELEC-21-ne.json && rm updates/tmp
 
 # CoreELEC-22-no
 create_jq_command_addon_ce CoreELEC-22 no aarch64 addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
+create_jq_command_addon_ce CoreELEC-22 no aarch64 addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-22 no aarch64 yt-dlp && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_ce CoreELEC-22 no aarch64 channellogos && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 #create_jq_command_addon_ce CoreELEC-22 no aarch64 driver.dvb.dvb-latest && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
@@ -75,6 +80,7 @@ jq -s '.' updates/tmp > updates/addons.CoreELEC-22-no.json && rm updates/tmp
 
 # LibreELEC 12 arm
 create_jq_command_addon_le LibreELEC-12 arm addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
+create_jq_command_addon_le LibreELEC-12 arm addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_le LibreELEC-12 arm yt-dlp && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_le LibreELEC-12 arm channellogos && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 #create_jq_command_addon_le LibreELEC-12 arm driver.dvb.dvb-latest && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
@@ -82,6 +88,7 @@ jq -s '.' updates/tmp > updates/addons.LibreELEC-12-arm.json && rm updates/tmp
 
 # LibreELEC 12 aarch64
 create_jq_command_addon_le LibreELEC-12 aarch64 addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
+create_jq_command_addon_le LibreELEC-12 aarch64 addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_le LibreELEC-12 aarch64 yt-dlp && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_le LibreELEC-12 aarch64 channellogos && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 #create_jq_command_addon_le LibreELEC-12 aarch64 driver.dvb.dvb-latest && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
@@ -89,6 +96,7 @@ jq -s '.' updates/tmp > updates/addons.LibreELEC-12-aarch64.json && rm updates/t
 
 # LibreELEC 13 arm
 create_jq_command_addon_le LibreELEC-13 arm addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
+create_jq_command_addon_le LibreELEC-13 arm addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_le LibreELEC-13 arm yt-dlp && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_le LibreELEC-13 arm channellogos && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 #create_jq_command_addon_le LibreELEC-13 arm driver.dvb.dvb-latest && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
@@ -96,6 +104,7 @@ jq -s '.' updates/tmp > updates/addons.LibreELEC-13-arm.json && rm updates/tmp
 
 # LibreELEC 13 aarch64
 create_jq_command_addon_le LibreELEC-13 aarch64 addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
+create_jq_command_addon_le LibreELEC-13 aarch64 addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_le LibreELEC-13 aarch64 yt-dlp && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 create_jq_command_addon_le LibreELEC-13 aarch64 channellogos && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 #create_jq_command_addon_le LibreELEC-13 aarch64 driver.dvb.dvb-latest && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp

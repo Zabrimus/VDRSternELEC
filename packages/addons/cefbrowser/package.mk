@@ -50,12 +50,10 @@ case "${ARCH}" in
   x86_64)  DSUBARCH="x86-64";;
 esac
 
+# cefbrowser goes only into the addon: meson installs it with its static
+# content into Release of the build folder, next to the CEF files.
 PKG_MESON_OPTS_TARGET="-Darch=${DARCH} -Dsubarch=${DSUBARCH} -Dvdrsternelec=true \
-                       --prefix=/usr/local \
-                       --bindir=/usr/local/bin \
-                       --libdir=/usr/local/lib \
-                       --libexecdir=/usr/local/lib \
-                       --sbindir=/usr/local/bin \
+                       -Drelease_dir=true \
                        --wrap-mode=default"
 
 pre_configure_target() {
@@ -74,15 +72,9 @@ pre_make_target() {
 }
 
 makeinstall_target() {
-	mkdir -p ${INSTALL}/usr/local/lib
-	mkdir -p ${INSTALL}/usr/local/bin
-	mkdir -p ${INSTALL}/usr/local/etc
-	mkdir -p ${INSTALL}/usr/local/data
-
-	cp -Pr ${PKG_BUILD}/.${TARGET_NAME}/Release/* ${INSTALL}/usr/local/lib/
-	cp -Pr ${PKG_BUILD}/.${TARGET_NAME}/cefbrowser ${INSTALL}/usr/local/bin
-    cp -Pr ${PKG_BUILD}/static-content/* ${INSTALL}/usr/local/data
-    cp -P  ${PKG_BUILD}/config/sockets.ini ${INSTALL}/usr/local/etc/
+	# only cefbrowser, the subprojects (e.g. cpr) would install into the prefix.
+	# It is not in INSTALL, so +strip of the package does not reach it.
+	DESTDIR= meson install -C ${PKG_BUILD}/.${TARGET_NAME} --no-rebuild --skip-subprojects --strip
 }
 
 addon() {
@@ -94,11 +86,20 @@ addon() {
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/etc
   	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
 
-  	# copy cefbrowser
-  	cp -Pr $(get_install_dir cefbrowser)/usr/local/lib/* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/
-  	cp -Pr $(get_install_dir cefbrowser)/usr/local/bin/cefbrowser ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
-	cp -Pr $(get_install_dir cefbrowser)/usr/local/data/* ${ADDON_BUILD}/${PKG_ADDON_ID}/data
-	cp -P  $(get_install_dir cefbrowser)/usr/local/etc/sockets.ini ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/
+	# copy cefbrowser: Release holds cefbrowser, its static content and the CEF files
+	RELEASE="${PKG_BUILD}/.${TARGET_NAME}/Release"
+	STATIC="js css database application fonts"
+	cp -P  ${RELEASE}/cefbrowser ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+	for i in ${STATIC}; do
+		cp -Pr ${RELEASE}/$i ${ADDON_BUILD}/${PKG_ADDON_ID}/data
+	done
+	for i in ${RELEASE}/*; do
+		case " cefbrowser ${STATIC} " in
+			*" $(basename $i) "*) ;;
+			*) cp -Pr $i ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/;;
+		esac
+	done
+	cp -P  ${PKG_BUILD}/config/sockets.ini ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/
   	cp -P  ${PKG_DIR}/_system.d/* ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
 
   	# copy cef-at-spi2-core

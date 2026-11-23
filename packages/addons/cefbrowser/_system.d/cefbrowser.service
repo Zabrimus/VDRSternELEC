@@ -7,10 +7,11 @@ StartLimitBurst=10
 
 [Service]
 WorkingDirectory=/storage/browser
-ExecStart=/storage/browser/addon.cefbrowser/bin/cefbrowser --zoom=1920 --config /storage/.config/vdropt/sockets.ini --ozone-platform=headless --locales-dir-path=/storage/browser/addon.cefbrowser/lib/locales --log-file=/storage/.cache/cefbrowser/cefbrowser.log --cachePath=/storage/.cache/cefbrowser --profilePath=/storage/.cache/cefbrowser --staticPath=/storage/browser/addon.cefbrowser/data --use-angle=gl-egl
+ExecStartPre=/bin/sh -c 'test -f /storage/browser/addon.cefbrowser/cef/lib/libcef.so || { echo "CEF runtime $$(cat /storage/browser/addon.cefbrowser/etc/cef-version) is missing, install it with install.sh -R"; exit 1; }'
+ExecStart=/storage/browser/addon.cefbrowser/bin/cefbrowser --zoom=1920 --config /storage/.config/vdropt/sockets.ini --ozone-platform=headless --resources-dir-path=/storage/browser/addon.cefbrowser/cef/lib --locales-dir-path=/storage/browser/addon.cefbrowser/cef/lib/locales --log-file=/storage/.cache/cefbrowser/cefbrowser.log --cachePath=/storage/.cache/cefbrowser --profilePath=/storage/.cache/cefbrowser --staticPath=/storage/browser/addon.cefbrowser/data --use-angle=gl-egl
 Restart=always
 RestartSec=3
-Environment=LD_LIBRARY_PATH="/storage/browser/addon.cefbrowser/lib/private/:/storage/browser/addon.cefbrowser/lib/"
+Environment=LD_LIBRARY_PATH="/storage/browser/addon.cefbrowser/cef/lib/private/:/storage/browser/addon.cefbrowser/cef/lib/"
 Environment=BROWSER_DB_PATH="/storage/browser/database"
 StartLimitInterval=0
 TimeoutStartSec=30

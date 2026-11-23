@@ -18,7 +18,7 @@ PKG_LONGDESC="cefbrowser"
 PKG_TOOLCHAIN="meson"
 PKG_BUILD_FLAGS="+speed -sysroot +strip"
 
-PKG_REV="3"
+PKG_REV="4"
 PKG_IS_ADDON="yes"
 PKG_SECTION="addon"
 PKG_ADDON_NAME="cefbrowser"
@@ -78,91 +78,25 @@ makeinstall_target() {
 }
 
 addon() {
-	# create directories
-  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
-  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
-  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/data
-  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/etc
-  	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
+	CEF_VERSION="$(get_pkg_variable _cef PKG_VERSION)"
 
-	# copy cefbrowser: Release holds cefbrowser, its static content and the CEF files
+	# create directories
+	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/data
+	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/etc
+	mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
+
+	# copy cefbrowser: Release holds cefbrowser and its static content,
+	# its CEF files are part of the addon cefruntime
 	RELEASE="${PKG_BUILD}/.${TARGET_NAME}/Release"
-	STATIC="js css database application fonts"
 	cp -P  ${RELEASE}/cefbrowser ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
-	for i in ${STATIC}; do
+	for i in js css database application fonts; do
 		cp -Pr ${RELEASE}/$i ${ADDON_BUILD}/${PKG_ADDON_ID}/data
 	done
-	for i in ${RELEASE}/*; do
-		case " cefbrowser ${STATIC} " in
-			*" $(basename $i) "*) ;;
-			*) cp -Pr $i ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/;;
-		esac
-	done
 	cp -P  ${PKG_BUILD}/config/sockets.ini ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/
-  	cp -P  ${PKG_DIR}/_system.d/* ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
+	cp -P  ${PKG_DIR}/_system.d/* ${ADDON_BUILD}/${PKG_ADDON_ID}/system.d
 
-  	# copy cef-at-spi2-core
-  	for i in $(find $(get_install_dir cef-at-spi2-core)/usr/lib -name *.so*) ]; do
-		if [ -f $i ]; then
-			cp -P $i ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-		fi
-	done
-
-	# TODO: prüfen, ob das richtig ist
-	# copy cef-at-spi2-atk
-	A=$(get_install_dir cef-at-spi2-atk) || ""
-	if [ "$A" != "" ]; then
-		for i in $(find $(get_install_dir cef-at-spi2-atk)/usr/lib -name *.so*) ]; do
-			if [ -f $i ]; then
-				cp -P $i ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-			fi
-		done
-		rm ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/*.symbols || true
-	fi
-
-  	# copy mesa, only the own copy. The mesa of the image is used directly.
-  	if [ "${CEF_MESA}" = "_mesa" ]; then
-  		mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/dri
-  		cp -Pr $(get_install_dir _mesa)/usr/lib/*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-  		cp -Pr $(get_install_dir _mesa)/usr/\$ORIGIN/dri/*.so ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private/dri
-  	fi
-
-  	# copy atk
-  	cp -PL $(get_install_dir atk)/usr/lib/libatk-1.0.so.0 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy cups
-	cp -PL $(get_install_dir cups)/usr/lib/libcups.so.2 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy libXft
-	cp -PL $(get_install_dir cef-libXft)/usr/lib/libXft.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy libXrandr
-	cp -PL $(get_install_dir cef-libXrandr)/usr/lib/libXrandr.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy libXcomposite
-	cp -PL $(get_install_dir cef-libXcomposite)/usr/lib/libXcomposite.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy libXcomposite
-	cp -PL $(get_install_dir cef-libXdamage)/usr/lib/libXdamage.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy libXfixes
-	cp -PL $(get_install_dir cef-libXfixes)/usr/lib/libXfixes.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy libXi
-	cp -PL $(get_install_dir cef-libXi)/usr/lib/libXi.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy libX11
-	cp -PL $(get_install_dir cef-libX11)/usr/lib/libX11*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy libXext
-	cp -PL $(get_install_dir cef-libXext)/usr/lib/libXext.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy libxcb
-	cp -PL $(get_install_dir cef-libxcb)/usr/lib/libxcb*.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	# copy libXrender
-	cp -PL $(get_install_dir cef-libXrender)/usr/lib/libXrender.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/private
-
-	rm -f ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/*.symbols || true
+	# The cefbrowser runs only with the cefruntime of the same CEF version.
+	# install.sh links /storage/browser/addon.cefbrowser/cef to it.
+	echo "${CEF_VERSION}" > ${ADDON_BUILD}/${PKG_ADDON_ID}/etc/cef-version
 }

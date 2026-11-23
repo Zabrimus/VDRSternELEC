@@ -9,9 +9,9 @@ PKG_URL=""
 PKG_DEPENDS_UNPACK+=" libXrender"
 PKG_BUILD_FLAGS="-sysroot +speed"
 
-PKG_CONFIGURE_OPTS_TARGET="${PKG_CONFIGURE_OPTS_TARGET} \
-                           --disable-static \
-                           --enable-shared"
+#PKG_CONFIGURE_OPTS_TARGET="${PKG_CONFIGURE_OPTS_TARGET} \
+#                           --disable-static \
+#                           --enable-shared"
 
 unpack() {
   mkdir -p ${PKG_BUILD}

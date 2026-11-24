@@ -85,7 +85,7 @@ jobs:
               sudo ln -s /usr/bin/cpp-12 /usr/bin/cpp
               sudo ln -s /usr/bin/g++-12 /usr/bin/g++
               sudo ln -s /usr/bin/gcov-12 /usr/bin/gcov          
-          elif [[ "${{ inputs.config }}" == CoreELEC-22* ]] || [[ "${{ inputs.config }}" == LibreELEC-13* ]] ; then
+          elif [[ "${{ inputs.config }}" == CoreELEC-2[23]* ]] || [[ "${{ inputs.config }}" == LibreELEC-13* ]] ; then
               sudo apt-get install -y cpp-14 g++-14 gcc-14 || true
           
               sudo rm /usr/bin/gcc /usr/bin/cpp /usr/bin/g++ /usr/bin/gcov
@@ -178,6 +178,10 @@ jobs:
               echo "ARTIFACT=cache-coreelec-22-sources" >> "$GITHUB_ENV"
               echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
               rev=$(grep "COREELEC22=" config/versions | awk -F= '{ print $2 }')          
+          elif [ "$branch" = "coreelec-23" ]; then
+              echo "ARTIFACT=cache-coreelec-23-sources" >> "$GITHUB_ENV"
+              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
+              rev=$(grep "COREELEC23=" config/versions | awk -F= '{ print $2 }')
           elif [ "$branch" = "libreelec-12" ]; then
               echo "ARTIFACT=cache-libreelec-12-sources" >> "$GITHUB_ENV"
               echo "DISTRO=LibreELEC.tv" >> "$GITHUB_ENV"

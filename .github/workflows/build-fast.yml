@@ -42,6 +42,7 @@ on:
           - CoreELEC-20
           - CoreELEC-21
           - CoreELEC-22
+          - CoreELEC-23
           - LibreELEC-12
           - LibreELEC-13
           - CoreELEC-20-ng
@@ -49,6 +50,7 @@ on:
           - CoreELEC-21-ng
           - CoreELEC-21-ne
           - CoreELEC-22-no
+          - CoreELEC-23-no
           - LibreELEC-12-aarch64-AMLGX
           - LibreELEC-12-aarch64-Allwinner-H6
           - LibreELEC-12-aarch64-Allwinner-A64
@@ -185,7 +187,7 @@ jobs:
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == CoreELEC-20* ]] || [[ "$i" == CoreELEC-21* ]]; then
                       BUILDX8622="$BUILDX8622 $i"
-                  elif [[ "$i" == CoreELEC-22* ]]; then
+                  elif [[ "$i" == CoreELEC-2[23]* ]]; then
                       BUILDX8624="$BUILDX8624 $i"
                   elif [[ "$i" == LibreELEC-13* ]]; then
                       BUILDX8624="$BUILDX8624 $i"
@@ -199,7 +201,7 @@ jobs:
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == CoreELEC-20* ]] || [[ "$i" == CoreELEC-21* ]]; then
                       BUILDX8622="$BUILDX8622 $i"
-                  elif [[ "$i" == CoreELEC-22* ]]; then
+                  elif [[ "$i" == CoreELEC-2[23]* ]]; then
                       BUILDX8624="$BUILDX8624 $i"
                   fi
               done
@@ -233,6 +235,12 @@ jobs:
                       BUILDX8624="$BUILDX8624 $i"
                   fi
               done
+          elif [[ "${{ inputs.target }}" == "CoreELEC-23" ]]; then
+              for i in $ALL_DEFAULT; do
+                  if [[ "$i" == CoreELEC-23* ]]; then
+                      BUILDX8624="$BUILDX8624 $i"
+                  fi
+              done
           elif [[ "${{ inputs.target }}" == "LibreELEC-12" ]]; then
               for i in $ALL_DEFAULT; do
                   if [[ "$i" == LibreELEC-12* ]]; then
@@ -262,7 +270,7 @@ jobs:
           else
               if [[ "${{ inputs.target }}" == CoreELEC-20* ]] || [[ "${{ inputs.target }}" == CoreELEC-21* ]]; then
                   BUILDX8622="$BUILDX8622 ${{ inputs.target }}"
-              elif [[ "${{ inputs.target }}" == CoreELEC-22* ]]; then
+              elif [[ "${{ inputs.target }}" == CoreELEC-2[23]* ]]; then
                   BUILDX8624="$BUILDX8624 ${{ inputs.target }}"
               elif [[ "${{ inputs.target }}" == LibreELEC-13* ]]; then
                   BUILDX8624="$BUILDX8624 ${{ inputs.target }}"

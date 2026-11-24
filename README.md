@@ -144,7 +144,7 @@ CoreELEC-21-ne
 CoreELEC-21-ng
 CoreELEC-22-no
 CoreELEC-23-no
-LibreELEC-{12,13}-aarch64-AMLGX
+LibreELEC-12-aarch64-AMLGX
 LibreELEC-{12,13}-aarch64-Allwinner-A64
 LibreELEC-{12,13}-aarch64-Allwinner-H5
 LibreELEC-{12,13}-aarch64-Allwinner-H6

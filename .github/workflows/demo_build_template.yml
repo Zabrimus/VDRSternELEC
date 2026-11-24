@@ -4,8 +4,8 @@
 # The workflow contains the following configuration
 # target: "all default"
 #     Build all default targets
-# defaulttarget: "LibreELEC-13-x86_64-x11 LibreELEC-13-aarch64-AMLGX"
-#    Set the default target to LibreELEC-13-x86_64-x11 and LibreELEC-13-aarch64-AMLGX
+# defaulttarget: "LibreELEC-13-x86_64-x11 LibreELEC-13-aarch64-Amlogic"
+#    Set the default target to LibreELEC-13-x86_64-x11 and LibreELEC-13-aarch64-Amlogic
 # addons: ""
 #    Don't build any addons
 # extras: ""
@@ -26,7 +26,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       target: "all default"
-      defaulttarget: "LibreELEC-13-x86_64-x11 LibreELEC-13-aarch64-AMLGX"
+      defaulttarget: "LibreELEC-13-x86_64-x11 LibreELEC-13-aarch64-Amlogic"
       addons: "-"
       extras: "-"
       extraparameter: "-"

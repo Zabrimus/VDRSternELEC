@@ -432,12 +432,20 @@ systemctl start remotetranscode cefbrowser
 ```
 The order of ```-R``` and ```-c``` doesn't matter, ```-w``` checks that the CEF runtime of cefbrowser is installed.
 
+Own changes of the services belong into a drop-in, e.g. ```/storage/.config/system.d/cefbrowser.service.d/override.conf```:
+```
+[Service]
+Environment=...
+```
+```install.sh``` updates ```cefbrowser.service``` and ```remotetranscode.service``` in ```/storage/.config/system.d```, a changed file is saved as ```.bak``` before. The drop-ins are kept.
+
 ### Update
 - A new cefbrowser with the same CEF version needs only
   ```
   /usr/local/bin/install.sh -c
   systemctl restart cefbrowser
   ```
+  If ```cefbrowser.service``` is installed, ```-c``` updates it as well.
 - If the new cefbrowser needs another CEF version, install the CEF runtime as well:
   ```
   /usr/local/bin/install.sh -R
@@ -448,7 +456,7 @@ The order of ```-R``` and ```-c``` doesn't matter, ```-w``` checks that the CEF 
   The directory of the old CEF runtime in ```/storage/browser/addon.cefruntime``` can be deleted afterwards.
 - Coming from an older cefbrowser with the CEF runtime included, run ```install.sh -w``` once after the update.
   It replaces ```/storage/.config/system.d/cefbrowser.service```, which still uses the old directories, and also ```remotetranscode.service```.
-  Own changes in these files must be done again.
+  The previous files are saved as ```.bak```, own changes should be moved into a drop-in (see above).
 
 ### remotetranscode
 remotetranscode is used to stream transcoded videos to VDR. It can also run on another, faster system or a system with a hardware encoder,

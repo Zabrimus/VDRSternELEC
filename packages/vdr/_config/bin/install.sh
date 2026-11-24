@@ -113,6 +113,21 @@ install_triggerhappy() {
   systemctl start triggerhappy.service
 }
 
+# Install the systemd unit $1 into /storage/.config/system.d. A different
+# existing unit is saved as <unit>.bak before. Own changes belong into a
+# drop-in /storage/.config/system.d/<unit>.d/*.conf, which is never touched.
+install_unit() {
+  dest="/storage/.config/system.d/$(basename "$1")"
+
+  mkdir -p /storage/.config/system.d
+  if [ -f "$dest" ] && ! cmp -s "$1" "$dest"; then
+    cp -a "$dest" "$dest.bak"
+    echo "$dest has been updated, the previous version is saved as $dest.bak"
+    echo "   Own changes are kept on updates in $dest.d/override.conf"
+  fi
+  cp "$1" "$dest"
+}
+
 install_web() {
   if [ ! -f "/storage/browser/addon.cefbrowser/bin/cefbrowser" ]; then
     echo "cefbrowser is missing, install cefbrowser first!"
@@ -133,12 +148,9 @@ install_web() {
       fi
   fi
 
-  # copy system.d files
-  mkdir -p /storage/.config/system.d
-
-  # copy system.d units
-  cp /storage/browser/addon.cefbrowser/system.d/cefbrowser.service /storage/.config/system.d/cefbrowser.service
-  cp /usr/local/system.d/remotetranscode.service /storage/.config/system.d
+  # install system.d units
+  install_unit /storage/browser/addon.cefbrowser/system.d/cefbrowser.service
+  install_unit /usr/local/system.d/remotetranscode.service
 
   systemctl daemon-reload
   systemctl enable cefbrowser.service
@@ -260,6 +272,12 @@ install_cefbrowser() {
   # the old runtime inside the addon is not used anymore
   if [ -f /storage/browser/addon.cefbrowser/etc/cef-version ]; then
     rm -Rf /storage/browser/addon.cefbrowser/lib
+  fi
+
+  # keep an installed service up to date with the new cefbrowser
+  if [ -f /storage/.config/system.d/cefbrowser.service ]; then
+    install_unit /storage/browser/addon.cefbrowser/system.d/cefbrowser.service
+    systemctl daemon-reload
   fi
 
   check_cefruntime

@@ -203,7 +203,7 @@ Now it would be a good time to install the KODI addons of your choice. E.g. ```s
 Now it's time to run the install script ```/usr/local/bin/install.sh``` from within the console (e.g. via ssh):
 ```
 # /usr/local/bin/install.sh
-Usage: /usr/local/bin/install.sh [-i] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-R (url)] [-p (url)]
+Usage: /usr/local/bin/install.sh [-i] [-C] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-R (url)] [-p (url)] [-l (url)]
 
 -i       : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
 -C       : Use with care! All configuration entries of vdropt will be copied to vdropt-sample. And then all entries of vdropt-sample will be copied to vdropt.

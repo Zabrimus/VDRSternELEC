@@ -6,6 +6,7 @@ if [[ "$#" -eq 0 ]]; then
       cat << EOF >&2
 Usage: $0 <file>
 EOF
+      exit 1
 fi
 
 tar -xf $1

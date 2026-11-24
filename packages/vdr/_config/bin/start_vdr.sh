@@ -41,15 +41,13 @@ fi
 
 arg="vdr $PLUGIN_ARG $(read_vdr_configuration)"
 
-# read VDR plugin start parameters
-file=$(cat ${CONF_DIR}/enabled_plugins)
-
-for line in $file; do
-  if [[ ! $line = \#* ]] ; then
-    pluginarg="$(read_plugin_configuration $line)"
-    arg="$arg $pluginarg"
-  fi
-done
+# read VDR plugin start parameters, one plugin per line, # starts a comment
+while read -r line || [ -n "$line" ]; do
+  set -- ${line%%#*}
+  [ -n "$1" ] || continue
+  pluginarg="$(read_plugin_configuration $1)"
+  arg="$arg $pluginarg"
+done < ${CONF_DIR}/enabled_plugins
 
 
 # kill splash image (CoreELEC)

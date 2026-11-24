@@ -23,14 +23,14 @@ if [ "${START_PRG}" = "vdr" ]; then
       systemctl stop kodi
       /usr/local/bin/ClearOSD.sh || true
    fi
-   if [ ! -z ${SWITCH_VDR_SCRIPT} ] && /usr/bin/pgrep "vdr" > /dev/null ; then
+   if [ ! -z ${SWITCH_VDR_SCRIPT} ] && /usr/bin/pgrep -x "vdr" > /dev/null ; then
       eval ${SWITCH_VDR_SCRIPT} attach
    else
       systemctl start vdropt
    fi
 elif [ "${START_PRG}" = "kodi" ]; then
    #check if vdr is running
-   if /usr/bin/pgrep "vdr" > /dev/null ; then
+   if /usr/bin/pgrep -x "vdr" > /dev/null ; then
       if [ ! -z ${SWITCH_VDR_SCRIPT} ]; then
          eval ${SWITCH_VDR_SCRIPT} detach
          /usr/local/bin/ClearOSD.sh || true

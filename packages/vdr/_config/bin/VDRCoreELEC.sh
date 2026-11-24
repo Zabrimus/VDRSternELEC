@@ -14,8 +14,11 @@ if [ -f /usr/lib/libcec.so.7.0.0 ] && [ ! -f /var/lib/libcec.so.7 ]; then
    (cd /var/lib && ln -s /usr/lib/libcec.so.7.0.0 libcec.so.7)
 fi
 
-# Start either Kodi or VDR after boot
-. /storage/.profile
+# Start either Kodi or VDR after boot (default: Kodi)
+START_PRG=kodi
+if [ -f /storage/.profile ]; then
+  . /storage/.profile
+fi
 
 # delete existing file which will be watched to switch between Kodi and VDR
 # (the new one will be created by echo command)

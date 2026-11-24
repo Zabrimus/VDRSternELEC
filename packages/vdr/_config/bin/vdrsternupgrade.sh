@@ -27,10 +27,6 @@ upgrade() {
       unzip -o $i
     done
 
-    for i in `ls ${CONF_DIR}/*-sample.zip`; do
-      unzip -o $i
-    done
-
   # upgrade epg2vdr
   if [ -f /storage/.config/vdropt/plugins/epg2vdr/epg.dat ]; then
     cp /storage/.config/vdropt-sample/plugins/epg2vdr/epg.dat /storage/.config/vdropt/plugins/epg2vdr/epg.dat
@@ -41,9 +37,18 @@ upgrade() {
     cp /storage/.config/vdropt-sample/plugins/scraper2vdr/epg.dat /storage/.config/vdropt/plugins/scraper2vdr/epg.dat
   fi
 
-  # upgrade live
-  if [ -d /storage/.config/vdropt/plugins/live ]; then
-    cp -a /storage/.config/vdropt-sample/plugins/live/* /storage/.config/vdropt/plugins/live/
+  # upgrade live, its web files have to fit the plugin version.
+  # siteprefs.css and ffmpeg.conf are meant for own changes, keep them.
+  LIVE=/storage/.config/vdropt/plugins/live
+  LIVE_SAMPLE=/storage/.config/vdropt-sample/plugins/live
+  if [ -d ${LIVE} ] && [ -d ${LIVE_SAMPLE} ]; then
+    (cd ${LIVE_SAMPLE} && find . ! -type d) | while read -r f; do
+      case "$f" in
+        ./css/siteprefs.css|./ffmpeg.conf) [ -e "${LIVE}/$f" ] && continue;;
+      esac
+      mkdir -p "${LIVE}/${f%/*}"
+      cp -a "${LIVE_SAMPLE}/$f" "${LIVE}/$f"
+    done
   fi
 
   # change /storage/.config/autostart.sh if it exists

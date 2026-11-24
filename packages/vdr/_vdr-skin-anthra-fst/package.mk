@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-skin-anthra-fst"
-PKG_VERSION="7aee1603acef815e4dd16325751e6ea4d5637dd81"
+PKG_VERSION="7aee1603acef815e4dd16325751e6ea4d5637dd8"
 PKG_SHA256="6a08f0bba5114a44fc74b6b8a442be7b71b05f44d48d67d15b1daf8baf07ce54"
 PKG_LICENSE="GPL2"
 PKG_SITE="https://github.com/unf/vdr-skin-anthra-fst"

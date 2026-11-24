@@ -23,9 +23,9 @@ unpack() {
   SRC_PART="${SOURCES}/_MP_Logos/_MP_Logos-${PKG_VERSION}"
 
   if [ -f "${SRC_PART}.tar.xz" ]; then
-	tar --strip-components=1 -xf ${SOURCES}/_MP_Logos/_MP_Logos-${PKG_VERSION}.xz -C ${PKG_BUILD}
+	tar --strip-components=1 -xf ${SRC_PART}.tar.xz -C ${PKG_BUILD}
   elif [ -f "${SRC_PART}.tar.gz" ]; then
-	tar --strip-components=1 -xf ${SOURCES}/_MP_Logos/_MP_Logos-${PKG_VERSION}.gz -C ${PKG_BUILD}
+	tar --strip-components=1 -xf ${SRC_PART}.tar.gz -C ${PKG_BUILD}
   elif [ -f "${SRC_PART}.zip" ]; then
   	unzip ${SRC_PART}.zip -d ${PKG_BUILD}
 

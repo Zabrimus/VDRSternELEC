@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 killall -q -HUP satip
 sleep 1

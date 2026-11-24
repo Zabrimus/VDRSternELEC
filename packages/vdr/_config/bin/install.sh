@@ -373,44 +373,35 @@ if [ "$#" = "0" ]; then
     usage
 fi
 
-while getopts b:iTCwvclRp: o; do
-  case $o in
-    (i) install;;
-    (C) install_copy;;
-    (b) boot "$OPTARG";;
-    (T) install_triggerhappy;;
-    (w) install_web;;
-    (v) install_vtuner;;
-    (c) eval url=\${$(( $OPTIND ))}
-        if [ -n $url ]; then
-          install_cefbrowser "$url"
-        else
-          install_cefbrowser
-        fi
+# Options are handled in the given order. The url of -c, -R, -p and -l is
+# optional, an argument starting with "-" is the next option.
+while [ "$#" -gt 0 ]; do
+  case $1 in
+    -i) install;;
+    -C) install_copy;;
+    -b) shift
+        boot "$1";;
+    -T) install_triggerhappy;;
+    -w) install_web;;
+    -v) install_vtuner;;
+    -c|-R|-p|-l)
+        opt=$1
+        url=""
+        case $2 in
+          ""|-*) ;;
+          *) url=$2
+             shift;;
+        esac
+        case $opt in
+          -c) install_cefbrowser "$url";;
+          -R) install_cefruntime "$url";;
+          -p) install_private "$url";;
+          -l) install_channellogos "$url";;
+        esac
         ;;
-    (R) eval url=\${$(( $OPTIND ))}
-        if [ -n $url ]; then
-          install_cefruntime "$url"
-        else
-          install_cefruntime
-        fi
-        ;;
-    (p) eval url=\${$(( $OPTIND -1 ))}
-        if [ -n $url ]; then
-          install_private "$url"
-        else
-          install_private
-        fi
-        ;;
-    (l) eval url=\${$(( $OPTIND ))}
-        if [ -n $url ]; then
-          install_channellogos "$url"
-        else
-          install_channellogos
-        fi
-        ;;
-    (*) usage
+    *) usage;;
   esac
+  shift
 done
 
 # create default directories

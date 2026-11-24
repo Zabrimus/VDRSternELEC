@@ -18,10 +18,10 @@ Usage: $PROGNAME [-i] [-C] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-R (url)] [-
 -b vdr   : VDR will be started after booting
 -T       : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
 -w       : install/update web components (remotetranscode, cefbrowser)
--v       : install vtuner-ng (change /storage/.config/start_vtuner.sh accordingly, otherwise is will not start)
+-v       : install vtuner-ng (change /storage/.config/start_vtuner.sh accordingly, otherwise it will not start)
 -c (url) : install/update cefbrowser binary (located at url or in /storage/.update/addon-cefbrowser.zip)
 -R (url) : install/update CEF runtime for cefbrowser (located at url or in /storage/.update/addon-cefruntime.zip)
--p (url) : install/update private configs (located at url or within /storage/.update)
+-p (url) : install/update private configs (located at url or in /storage/.update/ve-private-conf.zip)
 -l (url) : install/update channel logos (located at url or in /storage/.update/channellogos.tar.gz)
 EOF
   exit 1

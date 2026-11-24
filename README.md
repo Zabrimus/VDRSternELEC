@@ -209,8 +209,8 @@ Now it would be a good time to install the KODI addons of your choice. E.g. ```s
 ## Directory structure
 - ```/usr/local/lib```  
   contains libraries which are usually not part of CoreELEC/ LibreELEC
-- ```/usr/local/vdr```  
-  contains VDR and all plugins
+- ```/usr/local/bin```, ```/usr/local/lib/vdr```  
+  contain VDR and all plugins
 - ```/storage/.config/vdropt/```  
   contains the default configuration files  
 - ```/storage/.config/vdropt-sample```  
@@ -230,10 +230,10 @@ Usage: /usr/local/bin/install.sh [-i] [-C] [-b kodi|vdr] [-T] [-w] [-v] [-c (url
 -b vdr   : VDR will be started after booting
 -T       : install all necessary files and samples for triggerhappy (A lightweight hotkey daemon)
 -w       : install/update web components (remotetranscode, cefbrowser)
--v       : install vtuner-ng (change /storage/.config/start_vtuner.sh accordingly, otherwise is will not start)
+-v       : install vtuner-ng (change /storage/.config/start_vtuner.sh accordingly, otherwise it will not start)
 -c (url) : install/update cefbrowser binary (located at url or in /storage/.update/addon-cefbrowser.zip)
 -R (url) : install/update CEF runtime for cefbrowser (located at url or in /storage/.update/addon-cefruntime.zip)
--p (url) : install/update private configs (located at url or within /storage/.update)
+-p (url) : install/update private configs (located at url or in /storage/.update/ve-private-conf.zip)
 -l (url) : install/update channel logos (located at url or in /storage/.update/channellogos.tar.gz)
 ```
 If you are at the first boot, the minimum you have to do is running the script with the ```-i``` option, which will copy the default configuration to the right place. If you also want, that VDR will start as default, these are the commands of your choice:
@@ -264,7 +264,7 @@ SWITCH_VDR_SCRIPT=/usr/local/bin/switch_vdr_softhdodroid.sh
 The script takes one parameter 'attach' or 'detach' which can be used to distinguish between the desired actions.
 A attach/detach of the VDR frontend is much faster than starting/stopping VDR. VDR itself will run still in the background.
 
-:exclamation: If you update from a previous version of VDR*ELEC you have to modify a systemd script:
+:exclamation: Only if you update from a very old version of VDR*ELEC, which still has ```Conflicts``` in ```vdropt.service```, you have to modify the systemd script:
 ```
 sed -i "/Conflicts/d" /storage/.config/system.d/vdropt.service
 systemctl daemon-reload
@@ -282,7 +282,7 @@ Thanks to Dr. Seltsam @ vdr-portal.de
 ```/storage/.config/vdropt/enabled_plugins``` contains a list of the plugins to autostart with VDR. Simply edit the file and add other plugins of your choice to the already pre-activated ones. 
 
 ### Channel logos
-```/storage/channellogos/logos(Light|Dark)``` contain the channel logos. The channellogos can be built with ```-addon channellogps``` 
+```/storage/channellogos/logos(Light|Dark)``` contain the channel logos. The channellogos can be built with ```-addon channellogos``` and installed with ```install.sh -l```.
 
 ### VDR specific configuration
 After basic configuration is done you probably need to adapt VDR's conf files.  
@@ -290,7 +290,7 @@ VDR configuration is located in ```/storage/.config/vdropt```. The ```channels.c
 
 ### CoreELEC 20 and above: Wakeup via remote
 Since CoreELEC 20 it could be necessary to enable the systemd script ```/storage/.config/system.d/setup_bl301.service``` if the system boots directly VDR.
-If you observe problems starting your system via remote and you are using CoreELEC 20 or above, then try to enable the systemd script via
+```install.sh -i``` copies it and ```install.sh -b vdr``` enables it. If you observe problems starting your system via remote and set up the boot otherwise, enable the systemd script via
 ```
 cp /usr/local/system.d/setup_bl301.service /storage/.config/system.d
 systemctl daemon-reload
@@ -454,8 +454,12 @@ The order of ```-R``` and ```-c``` doesn't matter, ```-w``` checks that the CEF 
 Own changes of the services belong into a drop-in, e.g. ```/storage/.config/system.d/cefbrowser.service.d/override.conf```:
 ```
 [Service]
-Environment=...
+RestartSec=10
+Environment=BROWSER_DB_PATH="/storage/mydatabase"
 ```
+Single values replace the ones of the service, lists like ```Environment``` or ```ExecStart``` are extended
+(an empty ```ExecStart=``` clears it before). Run ```systemctl daemon-reload``` and restart the service afterwards,
+```systemctl cat cefbrowser``` shows the result.
 ```install.sh``` updates ```cefbrowser.service``` and ```remotetranscode.service``` in ```/storage/.config/system.d```, a changed file is saved as ```.bak``` before. The drop-ins are kept.
 
 ### Update
@@ -486,7 +490,7 @@ Downloads of videos from the Mediathek are saved in ```/storage/downloads/mediat
 Skindesigner uses a git repository to install custom skins. To be able to use this feature installing git is necessary.
 - Install entware (see https://wiki.coreelec.org/coreelec:entware)
 - Install git and git-http
-  ```opgk install git git-http```
+  ```opkg install git git-http```
 
 ## Use FLIRC
 Configuration of FLIRC, VDR remote.conf and KODI keymapping is up to the user. 
@@ -527,7 +531,7 @@ echo -e -n '\x00' > /tmp/openvfd_service
 
 ## Starting VDR
 ### \<bindir\>/start_vdr.sh 
-Reads the file ```/storage/.config/vdropt/enabled-plugins``` which contains a plugin name on each line and starts VDR 
+Reads the file ```/storage/.config/vdropt/enabled_plugins``` which contains a plugin name on each line and starts VDR 
 with all enabled plugins. The plugin configuration are read from ```/storage/.config/vdropt/*.conf```.
 ### \<bindir\>/start_vdr_easy.sh
 Uses the plugin vdr-plugin-easyvdr (see https://www.gen2vdr.de/wirbel/easyvdr/index2.html) to start VDR. 
@@ -543,9 +547,9 @@ If another skin is used, the entry needs to be done manually.
     <onclick>System.Exec("/usr/local/bin/switch_to_vdr.sh")</onclick>
 </item>
 ```
-A whole sample can be found in ```<vdrdir>/config/DialogButtonMenu.xml```
+```install.sh -i``` adds it, if the skin hasn't been copied to ```/storage/.kodi/addons``` before. A whole sample can be found in ```/usr/local/config/DialogButtonMenu.xml```
 ### /storage/.config/vdropt/commands.conf
-A new entry is needed, like e.g.
+The sample configuration already contains an entry to switch to Kodi:
 ```
 Start Kodi       : echo "START_PRG=kodi" > /storage/.cache/switch_kodi_vdr
 ```

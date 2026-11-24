@@ -5,7 +5,7 @@ PROGNAME=$0
 usage() {
   cat << EOF >&2
 
-Usage: $PROGNAME [-t] [-a|-p|-s PKG_NAME] [-j JOBS] [-c] | -r PKG_NAME
+Usage: $PROGNAME [-t] [-a|-p|-s PKG_NAME] [-j JOBS] [-c] [-u] | -r PKG_NAME
 
 Options
 -a          : Check and update all packages
@@ -14,6 +14,7 @@ Options
 -t          : Dry run, only show available updates (alone: for all packages)
 -j JOBS     : Number of packages checked in parallel (default: 8)
 -c          : Show the commits between old and new version
+-u          : Update release tags automatically, if only the last number changes
 -r PKG_NAME : reset package PKG_NAME to HEAD
 --help      : Show this help
 EOF
@@ -100,9 +101,9 @@ check_commit() {
   print_changelog "$PKG_SITE" "$PKG_VERSION" "$latest"
 }
 
-# Check a release tag based package for a newer tag. Only the last number
-# is updated automatically (e.g. 1.2.3 -> 1.2.4), newer major/minor
-# versions are reported for a manual update.
+# Check a release tag based package for a newer tag. With -u only the last
+# number is updated automatically (e.g. 1.2.3 -> 1.2.4), everything else is
+# reported for a manual update.
 check_tag() {
   local tags t prefix="" found="" escaped patch_re any_re newest newest_any
 
@@ -145,6 +146,10 @@ check_tag() {
 
   # a single number is a major version, don't update it automatically
   if [[ $(grep -oE '[0-9]+' <<< "$PKG_VERSION" | wc -l) -lt 2 ]]; then
+      newest=$PKG_VERSION
+  fi
+
+  if [[ -z "$UPDATETAGS" ]]; then
       newest=$PKG_VERSION
   fi
 
@@ -253,7 +258,7 @@ update() {
 
   xargs_pid=""
   if [ ${#list[@]} -gt 0 ]; then
-    printf '%s\n' "${list[@]}" | CHANGELOG=$CHANGELOG xargs -n 2 -P "$JOBS" sh -c '"$0" --check-package "$3" "$1/$2"' "$SELF" "$tmp" &
+    printf '%s\n' "${list[@]}" | CHANGELOG=$CHANGELOG UPDATETAGS=$UPDATETAGS xargs -n 2 -P "$JOBS" sh -c '"$0" --check-package "$3" "$1/$2"' "$SELF" "$tmp" &
     xargs_pid=$!
   fi
 
@@ -350,6 +355,7 @@ ACTION=""
 PACKAGE=""
 PLUGINSONLY=""
 CHANGELOG=""
+UPDATETAGS=""
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -368,6 +374,7 @@ while [[ "$#" -gt 0 ]]; do
               usage
             fi ;;
         -c) CHANGELOG="1" ;;
+        -u) UPDATETAGS="1" ;;
         --help) usage 0 ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac

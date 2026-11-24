@@ -12,12 +12,13 @@ An overview can be found at [here](https://zabrimus.github.io/VDRSternELEC/), fo
 ## Directory structure of this repository
 
 :file_folder: **CoreELEC** - CoreELEC's build directory included as git submodule  
-:file_folder: **LibreELEC** - LibreELEC's build directory included as git submodule  
+:file_folder: **LibreELEC.tv** - LibreELEC's build directory included as git submodule  
 :file_folder: **config**  
     + :file_folder: **distro** - includes predefined build configurations  
     + **addons.list** - lists all available pre-buildable KODI addons  
     + **extras.list** - lists all available extras (patches, plugins)  
     + **versions** - sets the commit/branch/tag to use for LibreELEC/CoreELEC  
+:file_folder: **gh-pages** - scripts to create the release overview and the update channels  
 :file_folder: **package_patches** - these patches are copied to LE/CE packages folders before build  
 :file_folder: **packages** - packages, that will be added to upstream CE/LE  
 :file_folder: **patches** - these patches are applied to CE/LE directory itself before build  
@@ -25,6 +26,8 @@ An overview can be found at [here](https://zabrimus.github.io/VDRSternELEC/), fo
 + **build.sh** - main build script  
 + **clean-package.sh** - helper script to clean single packages  
 + **convert_ova_to_qcow2.sh** - helper script to convert ova image to qcow2 format  
++ **create-ce22-systemd-patch.sh**, **create-le13-systemd-patch.sh** - helper scripts to create the systemd downgrade patches  
++ **prepare-autoremove** - keeps needed build directories, if build.sh runs with ```AUTOREMOVE=yes``` (GitHub workflows, saves disk space)  
 + **update.sh** - helper script to update packages  
 
 ## Current status of VDR and plugins
@@ -35,15 +38,16 @@ An overview can be found at [here](https://zabrimus.github.io/VDRSternELEC/), fo
 You can choose between downloading a prebuilt image like you do it with official CE/LE images or building a customized image on your own.
 
 ## Prebuilt images
-The eaysiest way is to use a prebuilt image. These images are periodically available in the [releases](https://github.com/Zabrimus/VDRSternELEC/releases) section of this repository. Choose the image matching your hardware and write it to SD-Card or USB. You can also use these images as an update image for your existing CE/LE installation.
+The easiest way is to use a prebuilt image. These images are periodically available in the [releases](https://github.com/Zabrimus/VDRSternELEC/releases) section of this repository. Choose the image matching your hardware and write it to SD-Card or USB. You can also use these images as an update image for your existing CE/LE installation.
 
 ## Manual build
 *Refer to [LibreELEC](https://wiki.libreelec.tv/development/build-basics) or [CoreELEC](https://wiki.coreelec.org/coreelec:build_ce) building dependencies.  
 The following description is based on Debian or Ubuntu as the host system.*
 ### Install all dependencies
 ```
-apt-get install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc openjdk-11-jre-headless curl cpio
+apt-get install gcc make git unzip wget xz-utils bc gperf zip g++ xfonts-utils xsltproc default-jre-headless curl cpio
 ```
+Missing tools are reported by LibreELEC/CoreELEC at the first build (```scripts/checkdeps```), which offers to install them.
 ### Checkout VDR*ELEC
 ```
 git clone https://github.com/Zabrimus/VDRSternELEC
@@ -56,26 +60,30 @@ Several configurations are already provided in [config/distro](config/distro). I
 A sample configuration file looks like this:
 ```
 DISTRO=CoreELEC
-SHA=${COREELEC20}
-PATCHDIR=coreelec-20
+SHA=${COREELEC22}
+PATCHDIR=coreelec-22
 
 # Use project variant
 VARIANT=
 
 # Build settings
 PROJECT=Amlogic-ce
-DEVICE=Amlogic-ng
-ARCH=arm
+DEVICE=Amlogic-no
+ARCH=aarch64
 
 # VDR settings
 VDR_OUTPUTDEVICE=softhdodroid
 VDR_INPUTDEVICE=satip
+
+# Updates
+STERN_RELEASE=https://zabrimus.github.io/VDRSternELEC/updates/release.CoreELEC-22-no.json
+STERN_ADDON=https://zabrimus.github.io/VDRSternELEC/updates/addons.CoreELEC-22-no.json
 ```
 
 **Environment variables:**
-- DISTRO: can be either ```CoreELEC``` or ```LibreELEC```
+- DISTRO: the build directory, either ```CoreELEC``` or ```LibreELEC.tv```
 - SHA: The commit/branch/tag from CoreELEC/LibreELEC to use (see [config/versions](config/versions))
-- PATCHDIR: This is used for additional patches (located patches/$DISTRO/$PATCHDIR)
+- PATCHDIR: This is used for additional patches (located in patches/$DISTRO.$PATCHDIR and package_patches/$DISTRO.$PATCHDIR)
 - VARIANT: specify some variant of the project, e.g. for choosing different patches
 - PROJECT: 
   - CoreELEC: ```Amlogic-ce``` or any of [CoreELEC/projects](https://github.com/CoreELEC/CoreELEC/tree/master/projects)
@@ -88,11 +96,12 @@ VDR_INPUTDEVICE=satip
   - LibreELEC: ```arm``` or another supported ARCH for LibreELEC
 - VDR_OUTPUTDEVICE: VDR output device, which is enabled by default, e.g. ```softhdodroid```, ```softhddevice-drm```, ```softhddevice-drm-gles``` or another one from the [available packages](packages/vdr)
 - VDR_INPUTDEVICE: VDR input device, which is enabled by default, e.g. ```satip``` or ```streamdev-client```
+- STERN_RELEASE, STERN_ADDON: URLs of the update channels for the image and the addons (optional)
 
 #### Addons
 It's possible to build some KODI addons. All available addons are listed in [addons.list](config/addons.list).  
 Building the addons with ```build.sh``` can be triggered by adding them with the ```-addon``` option and a comma separated list.
-The built addons can be found in CoreELEC/target/addons or LibreELEC/target/addons and can be installed in Kodi.
+The built addons can be found in CoreELEC/target/addons or LibreELEC.tv/target/addons and can be installed in Kodi.
 
 *Probably not all addons can be compiled for every LibreELEC/CoreELEC version. Mainly dvb-latest and crazycat are candidates to fail, because of the frequently updated linux kernel.*
 
@@ -102,7 +111,7 @@ Building the extras with ```build.sh``` can be triggered by adding them with the
 
 #### Release/ Update
 If you want to create a "real" release, which can be used to update from kodi GUI, use the ```-release <RELEASE_SERVER>``` option.  
-Set up a webserver which is available at ```$RELEASE_SERVER``` and let it point to ```RELEASEDIR``` (sse build.sh).  
+Set up a webserver which is available at ```$RELEASE_SERVER``` and let it point to the directory ```releases``` (```RELEASEDIR``` in build.sh).  
 Go to kodi settings and add the server as an update channel.
 
 ### Building the image
@@ -124,32 +133,39 @@ Options:
 -release <server>  : Create release for update, accessible at <server>
 -releaseonly       : Build only the release tar and not all images
 -cef               : Include cef binaries into release, otherwise deploy it as an external package
+-cebootlabel       : Change CoreELEC bootlabel to value of "-config"
 -verbose           : Enable verbose outputs while building LE/CE packages
 -help              : Show this help
 
 Available configs:
-CoreELEC-19
-CoreELEC-19.4-Matrix
 CoreELEC-20-ne
 CoreELEC-20-ng
 CoreELEC-21-ne
 CoreELEC-21-ng
 CoreELEC-22-no
-LibreELEC-10.0-arm-AMLGX
-LibreELEC-10.0-x86_64
-LibreELEC-11-arm-AMLGX
+CoreELEC-23-no
+LibreELEC-{12,13}-aarch64-AMLGX
 LibreELEC-{12,13}-aarch64-Allwinner-A64
-LibreELEC-{12,13}-arm-Allwinner-H3
 LibreELEC-{12,13}-aarch64-Allwinner-H5
 LibreELEC-{12,13}-aarch64-Allwinner-H6
-LibreELEC-{12,13}-arm-Allwinner-R40
-LibreELEC-{12,13}-aarch64-AMLGX
-LibreELEC-{12,13}-arm-Rockchip-RK3288
+LibreELEC-{12,13}-aarch64-RPi-RPi4
+LibreELEC-{12,13}-aarch64-RPi-RPi5
 LibreELEC-{12,13}-aarch64-Rockchip-RK3328
 LibreELEC-{12,13}-aarch64-Rockchip-RK3399
-LibreELEC-{12,13}-aarch64-RPi-RPi4
+LibreELEC-{12,13}-arm-Allwinner-H3
+LibreELEC-{12,13}-arm-Allwinner-R40
+LibreELEC-{12,13}-arm-RPi-RPi2-3
+LibreELEC-{12,13}-arm-Rockchip-RK3288
+LibreELEC-{12,13}-x86_64-Generic
+LibreELEC-{12,13}-x86_64-Generic-qemu
+LibreELEC-{12,13}-x86_64-GenericLegacy
+LibreELEC-{12,13}-x86_64-GenericLegacy-qemu
 LibreELEC-{12,13}-x86_64-x11
 LibreELEC-{12,13}-x86_64-x11-qemu
+LibreELEC-13-aarch64-Amlogic
+LibreELEC-13-aarch64-Rockchip-RK356x
+LibreELEC-13-aarch64-Rockchip-RK3576
+LibreELEC-13-aarch64-Rockchip-RK3588
 
 Available extras:
 directfb
@@ -158,7 +174,6 @@ dynamite
 easyvdr
 permashift
 remotetranscode
-tsduck
 
 Available addons:
 cefbrowser
@@ -169,13 +184,17 @@ digital-devices
 dvb-latest
 dvb-tools
 ffmpeg-tools
+incus
+locale
 network-tools
 sundtek-mediatv
 system-tools
+tsduck
+yt-dlp
 ```
 Example call:  ```./build.sh -config CoreELEC-22-no -extra easyvdr```  
 
-If everything worked fine, the desired images can be found in either  ```CoreELEC/target```, ```LibreELEC/target``` or ```releases```.
+If everything worked fine, the desired images can be found in either  ```CoreELEC/target```, ```LibreELEC.tv/target``` or ```releases```.
 
 # Creating bootable media
 Write your image file to an SD-Card like you are used to do it with [LibreELEC](https://wiki.libreelec.tv/installation/create-media) or [CoreELEC](https://wiki.coreelec.org/coreelec:bootmedia#step_2) and boot your device.
@@ -300,12 +319,12 @@ the VDRSternELEC packages.
 
 > Remember to NOT modify the LibreELEC or CoreELEC subdirectory itself, because changes in there
 > will be swept out during the next build. When starting the build process, these directories will be
-> reset to the sha from [config/versions](https://github.com/Zabrimus/VDRSternELEC/config/versions).
+> reset to the sha from [config/versions](config/versions).
 > Whenever you want to modify some package, you need to do this in the following 3 directories.
 > As long as you don't clear the build directory, only packages that have been modified will be built again.
 > LE/CE should know, if something has been modified or if a new or modified patch was placed somewhere.
 
-Besides [config/versions](https://github.com/Zabrimus/VDRSternELEC/config/versions), where you
+Besides [config/versions](config/versions), where you
 can change the upstream sha of LE/CE for your needs, you can add patches or bash scripts, to be
 applied or executed:
 + **somescript.sh** - scripts, which will be executed on the submodule directory (mainly simple sed-oneliners)  
@@ -325,20 +344,20 @@ They will be applied at first.
 |__ :file_folder: **CoreELEC** (will be executed/ applied to every CoreELEC build)  
 |&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
 |&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
-|__ :file_folder: **coreelec-(version)** (will be executed/ applied to the CoreELEC-version build)  
+|__ :file_folder: **CoreELEC.coreelec-(version)** (will be executed/ applied to the CoreELEC-version build)  
 |&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
 |&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
-|__ :file_folder: **LibreELEC** (will be executed/ applied to every LibreELEC build)  
+|__ :file_folder: **LibreELEC.tv** (will be executed/ applied to every LibreELEC build)  
 |&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
 |&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
-|__ :file_folder: **libreelec-(version)** (will be executed/ applied to the LibreELEC-version build)  
+|__ :file_folder: **LibreELEC.tv.libreelec-(version)** (will be executed/ applied to the LibreELEC-version build)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somescript.sh**  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__ **somepatch.patch**  
 
 You can add a subdirectory to the above directories in the following logic:  
-:file_folder: **../project/YOUR_PROJECT/** (will only be executed/ applied to all devices in YOUR_PROJECT)  
-:file_folder: **../project/YOUR_PROJECT/devices/YOUR_DEVICE/** (will be executed/ applied to YOUR_DEVICE in YOUR_PROJECT)  
-:file_folder: **../project/YOUR_PROJECT/devices/YOUR_DEVICE/variant/YOUR_VARIANT/** (will be executed/ applied to YOUR_VARIANT of YOUR_DEVICE in YOUR_PROJECT)  
+:file_folder: **../projects/YOUR_PROJECT/** (will only be executed/ applied to all devices in YOUR_PROJECT)  
+:file_folder: **../projects/YOUR_PROJECT/devices/YOUR_DEVICE/** (will be executed/ applied to YOUR_DEVICE in YOUR_PROJECT)  
+:file_folder: **../projects/YOUR_PROJECT/devices/YOUR_DEVICE/variants/YOUR_VARIANT/** (will be executed/ applied to YOUR_VARIANT of YOUR_DEVICE in YOUR_PROJECT)  
 
 ---
 
@@ -350,8 +369,8 @@ as if it would have been part of the original LE/CE.
 :file_folder: **package_patches**  
 |__ :file_folder: **CoreELEC** (will be applied to every CoreELEC build)  
 |__ :file_folder: **CoreELEC.coreelec-version** (will be applied to the CoreELEC-version build)  
-|__ :file_folder: **LibreELEC** (will be executed/ applied to every LibreELEC build)  
-|__ :file_folder: **LibreELEC.libreelec-version** (will be applied to the LibreELEC-version build)  
+|__ :file_folder: **LibreELEC.tv** (will be applied to every LibreELEC build)  
+|__ :file_folder: **LibreELEC.tv.libreelec-version** (will be applied to the LibreELEC-version build)  
 
 The structure within the directories follows the LE/CE logic, e.g. a patch for the package ```kodi``` has to be placed in
 ```packages/mediacenter/kodi/patches``` like it's done in LE/CE. Platform-specific patches should be placed in the ```projects/PLATFORM/patches```

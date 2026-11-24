@@ -20,7 +20,26 @@ read_vdr_configuration () {
 # start upgrade
 ${BIN_DIR}/vdrsternupgrade.sh || true
 
-arg="vdr $(read_vdr_configuration)"
+# settings, e.g. VDR_LD_PRELOAD and VDR_DEVLIBS
+if [ -f /storage/.profile ]; then
+  . /storage/.profile
+fi
+
+# optionally load the plugins via links in /storage, see vdrlib.sh
+PLUGIN_ARG=""
+DEVLIB_PATH=""
+VDR_DIR="${BIN_DIR}"
+if [ "$VDR_DEVLIBS" = "yes" ]; then
+  ${BIN_DIR}/vdrlib.sh sync
+  PLUGIN_ARG="-L /storage/.config/vdrlibs"
+  DEVLIB_PATH="/storage/.config/vdrlibs/lib:"
+  # own build of VDR itself (vdrlib.sh set vdr)
+  if [ -x /storage/.config/vdrlibs/vdr ]; then
+    VDR_DIR="/storage/.config/vdrlibs"
+  fi
+fi
+
+arg="vdr $PLUGIN_ARG $(read_vdr_configuration)"
 
 # read VDR plugin start parameters
 file=$(cat ${CONF_DIR}/enabled_plugins)
@@ -38,7 +57,6 @@ killall splash-image || true
 /usr/local/bin/ClearOSD.sh || true
 
 # needed for locale / OSD language
-. /storage/.profile
 export LOCPATH=/storage/.kodi/addons/service.locale/locpath
 
 # VFD: show clock
@@ -48,7 +66,7 @@ fi
 
 # really start VDR
 if [ -z "$VDR_LD_PRELOAD" ]; then
-   sh -c "LD_PRELOAD=$LD_PRELOAD_MALI LD_LIBRARY_PATH=$LIB_DIR:$LIB_DIR/vdr:$LD_LIBRARY_PATH ${BIN_DIR}/$arg"
+   sh -c "LD_PRELOAD=$LD_PRELOAD_MALI LD_LIBRARY_PATH=$DEVLIB_PATH$LIB_DIR:$LIB_DIR/vdr:$LD_LIBRARY_PATH ${VDR_DIR}/$arg"
 else
-   sh -c "LD_PRELOAD=\"$LD_PRELOAD_MALI:$VDR_LD_PRELOAD\" LD_LIBRARY_PATH=$LIB_DIR:$LIB_DIR/vdr:$LD_LIBRARY_PATH ${BIN_DIR}/$arg"
+   sh -c "LD_PRELOAD=\"$LD_PRELOAD_MALI:$VDR_LD_PRELOAD\" LD_LIBRARY_PATH=$DEVLIB_PATH$LIB_DIR:$LIB_DIR/vdr:$LD_LIBRARY_PATH ${VDR_DIR}/$arg"
 fi

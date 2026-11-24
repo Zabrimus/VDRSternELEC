@@ -21,11 +21,6 @@ upgrade() {
   rm -Rf /storage/.config/vdropt-sample
   rm -Rf /storage/.config/cefbrowser-sample
   rm -Rf /storage/.config/remotetranscode-sample
-  # delete existing development links and files and reset them to default
-  # manual changes on the links are erased
-  # TODO: find a better solution
-  rm -Rf /storage/.config/vdrlibs/save/*
-  rm -Rf /storage/.config/vdrlibs/bin/*
 
   cd /
     for i in `ls ${CONF_DIR}/*-sample-config.zip`; do

@@ -388,22 +388,42 @@ You also have the possibility to modify and add patches and files to the existin
 
 ## VDR*ELEC as a developing platform
 
-There is a special package [vdr-helper](packages/virtual/vdr-helper) with the [zip_config.sh](packages/virtual/vdr-helper/zip_config.sh) bash script.
-This script is used to package the VDR-Plugin libraries and is executed in nearly every plugin creation ([example](packages/vdr/_vdr-plugin-web/package.mk)) at the end.
-You can add a ```"true"``` as a fourth parameter like ```$(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN} "true"```.  
-In this case, the build process creates a new directory ```/storage/.config/vdrlibs/save``` in the image where the binary will be copied to.  
-Next, a ```/storage/.config/vdrlibs/bin``` directory is created, where a symlink to the binary in ```save``` is created. At last, the ```/usr/local/lib/vdr/libvdr.*.so.5``` is created
-as a symlink to ```bin```.  
-With this setup, you can simply place your new binary somewhere in ```/storage``` and let the symlink in ```/storage/.config/vdrlibs/bin``` point to the new file.
+The VDR plugins of the image are located in the read-only directory ```/usr/local/lib/vdr```.
+To test own builds of plugins, VDR can load its plugins via links in ```/storage``` instead (opt-in):
+```
+vdrlib.sh enable
+systemctl restart vdropt
+```
+This sets ```VDR_DEVLIBS=yes``` in ```/storage/.profile```. On every start, ```start_vdr.sh``` creates a link for every
+plugin of the image in ```/storage/.config/vdrlibs``` and starts VDR with ```-L /storage/.config/vdrlibs```.
+By default all links point to the image. Let a link point to your own build:
+```
+vdrlib.sh set web /storage/build/libvdr-web.so.8
+vdrlib.sh list                  # plugin, API version and target of every link
+vdrlib.sh reset web             # use the plugin of the image again (or: reset all)
+vdrlib.sh disable               # load the plugins from /usr/local/lib/vdr again
+```
+Changed links are kept on updates. The file names contain the API version of VDR, so a link to an own build
+for an old API version isn't used anymore after an update of VDR (```vdrlib.sh list``` shows it), VDR loads
+the plugin of the image instead.
 
-If you have a build host, where you can mount directories from, you can get it more comfortable. Simply create a new directory, e.g. ```/storage/.config/vdrlibs/server```
-and use a nfs systemd service to mount your VDR*ELEC or build directory in.
-Let your ```bin```-symlink point to the binary within the mounted build directory and now you simply need to restart VDR to see the effect of a new build on a host machine.
+VDR itself can be replaced the same way:
+```
+vdrlib.sh set vdr /storage/build/vdr
+vdrlib.sh reset vdr
+```
+VDR loads plugins with its own API version only. If your build of VDR has another API version than the image
+(```vdrlib.sh set``` warns), all enabled plugins have to be replaced by own builds for this version.
 
-You can do this for many packages by adding the linking logic shown in the [zip_config.sh](packages/virtual/vdr-helper/zip_config.sh) script to your ```package.mk```.
-You probably have to check, what files are needed to be linked at all. You will find them in the ```install_pkg``` directory in LE/CE build directory.
+Other libraries in ```/storage/.config/vdrlibs/lib``` are preferred to the ones of the image (```LD_LIBRARY_PATH```),
+e.g. an own build of FFmpeg. The links need the name of the soname (e.g. ```libavcodec.so.61```), and the
+library has to be compatible with the one the plugins are built against. Replace all FFmpeg libraries together.
+This affects VDR only, Kodi and the other services keep using the libraries of the image.
 
-[zip_config.sh](packages/virtual/vdr-helper/zip_config.sh) only works for VDR plugins out of the box. All other packages need manual changes.
+If you have a build host, you can mount its build directory, e.g. via a nfs systemd service, and let the links point
+into it. Then you simply need to restart VDR to test a new build.
+
+Don't set ```-L``` in ```/storage/.config/vdropt/conf.d/vdr.conf```, it overrides the directory of ```vdrlib.sh```.
 
 ## Github Build
 In directory ```.github/workflows``` exists several workflows which can be used to build an own image with own configuration.
@@ -559,6 +579,8 @@ It is possible to add libraries to be preloaded if needed by setting a variable 
 ```
 VDR_LD_PRELOAD=/path/to/lib1.so:/path/to/lib2.so
 ```
+
+Own builds of VDR plugins and libraries can be used with ```vdrlib.sh```, see [VDR*ELEC as a developing platform](#vdrelec-as-a-developing-platform).
 
 ## Start LibreELEC in incus (fork of lxd) (x86_64)
 It is possible to start a local virtual machine in [incus](https://linuxcontainers.org/incus/) for LibreELEC/x86_64.

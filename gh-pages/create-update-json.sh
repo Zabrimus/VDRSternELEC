@@ -78,6 +78,13 @@ create_jq_command_addon_ce CoreELEC-22 no aarch64 channellogos && echo $ALLRELEA
 #create_jq_command_addon_ce CoreELEC-22 no aarch64 driver.dvb.dvb-latest && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
 jq -s '.' updates/tmp > updates/addons.CoreELEC-22-no.json && rm updates/tmp
 
+# CoreELEC-23-no
+create_jq_command_addon_ce CoreELEC-23 no aarch64 addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
+create_jq_command_addon_ce CoreELEC-23 no aarch64 addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
+create_jq_command_addon_ce CoreELEC-23 no aarch64 yt-dlp && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
+create_jq_command_addon_ce CoreELEC-23 no aarch64 channellogos && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
+jq -s '.' updates/tmp > updates/addons.CoreELEC-23-no.json && rm updates/tmp
+
 # LibreELEC 12 arm
 create_jq_command_addon_le LibreELEC-12 arm addon.cefbrowser && echo $ALLRELEASES | jq "${cmd}" > updates/tmp
 create_jq_command_addon_le LibreELEC-12 arm addon.cefruntime && echo $ALLRELEASES | jq "${cmd}" >> updates/tmp
@@ -139,8 +146,10 @@ for v in 20 21; do
     echo $ALLRELEASES | jq "${cmd}" > updates/release.CoreELEC-$v-ne.json
 done
 
-create_jq_command_release_ce "CoreELEC-22" Amlogic-no
-echo $ALLRELEASES | jq "${cmd}" > updates/release.CoreELEC-22-no.json
+for v in 22 23; do
+    create_jq_command_release_ce "CoreELEC-$v" Amlogic-no
+    echo $ALLRELEASES | jq "${cmd}" > updates/release.CoreELEC-$v-no.json
+done
 
 cat template-header.html > all-updates.html
 

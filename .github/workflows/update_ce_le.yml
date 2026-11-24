@@ -24,6 +24,7 @@ jobs:
           ce20_old=$(cat config/versions | grep "COREELEC20=" | awk -F"=" '{ print $2 }')
           ce21_old=$(cat config/versions | grep "COREELEC21=" | awk -F"=" '{ print $2 }')
           ce22_old=$(cat config/versions | grep "COREELEC22=" | awk -F"=" '{ print $2 }')
+          ce23_old=$(cat config/versions | grep "COREELEC23=" | awk -F"=" '{ print $2 }')
           le12_old=$(cat config/versions | grep "LIBREELEC12=" | awk -F"=" '{ print $2 }')
           le13_old=$(cat config/versions | grep "LIBREELEC13=" | awk -F"=" '{ print $2 }')
           
@@ -31,8 +32,17 @@ jobs:
           ce20=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-20 | awk '{ print substr($1, 0, 8) }')
           ce21=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-21 | awk '{ print substr($1, 0, 8) }')
           ce22=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-22 | awk '{ print substr($1, 0, 8) }')
+          ce23=$(git ls-remote https://github.com/CoreELEC/CoreELEC.git coreelec-23 | awk '{ print substr($1, 0, 8) }')
           le12=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git libreelec-12.2 | awk '{ print substr($1, 0, 8) }')
           le13=$(git ls-remote https://github.com/LibreELEC/LibreELEC.tv.git master | awk '{ print substr($1, 0, 8) }')
+
+          # never write an empty version, if git ls-remote failed
+          for v in ce20 ce21 ce22 ce23 le12 le13; do
+              if [ -z "${!v}" ]; then
+                  echo "ERROR: could not get the latest version for $v"
+                  exit 1
+              fi
+          done
         
           echo "Update CoreELEC/LibreELEC to version:" > commit.body
           if [ ! "${ce20_old}" = "${ce20}" ]; then 
@@ -47,6 +57,10 @@ jobs:
               echo "  CoreELEC 22 from [${ce22_old}](https://github.com/CoreELEC/CoreELEC/tree/${ce22_old}) to [${ce22}](https://github.com/CoreELEC/CoreELEC/tree/${ce22})" >> commit.body                    
           fi
 
+          if [ ! "${ce23_old}" = "${ce23}" ]; then 
+              echo "  CoreELEC 23 from [${ce23_old}](https://github.com/CoreELEC/CoreELEC/tree/${ce23_old}) to [${ce23}](https://github.com/CoreELEC/CoreELEC/tree/${ce23})" >> commit.body                    
+          fi
+
           if [ ! "${le12_old}" = "${le12}" ]; then
               echo "  LibreELEC.tv 12 from [${le12_old}](https://github.com/LibreELEC/LibreELEC.tv/tree/${le12_old}) to [${le12}](https://github.com/LibreELEC/LibreELEC.tv/tree/${le12})" >> commit.body
           fi
@@ -59,6 +73,7 @@ jobs:
           cat config/versions | sed -e "s/^COREELEC20=.*$/COREELEC20=${ce20}/" \
                               | sed -e "s/^COREELEC21=.*$/COREELEC21=${ce21}/" \
                               | sed -e "s/^COREELEC22=.*$/COREELEC22=${ce22}/" \
+                              | sed -e "s/^COREELEC23=.*$/COREELEC23=${ce23}/" \
                               | sed -e "s/^LIBREELEC12=.*$/LIBREELEC12=${le12}/" \
                               | sed -e "s/^LIBREELEC13=.*$/LIBREELEC13=${le13}/" > config/versions.new
           

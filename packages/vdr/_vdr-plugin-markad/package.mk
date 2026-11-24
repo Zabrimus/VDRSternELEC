@@ -21,5 +21,5 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
-  $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN} markad
+  $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} markad
 }

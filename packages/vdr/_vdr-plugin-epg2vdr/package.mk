@@ -30,7 +30,7 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
-  $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} ${PLUGIN} epg2vdr
+  $(get_build_dir vdr-helper)/zip_config.sh ${INSTALL} ${PKG_DIR} epg2vdr
 
   rm -f ${PKG_DIR}/patches/uint64_t.patch
 }

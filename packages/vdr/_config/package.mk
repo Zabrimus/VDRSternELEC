@@ -38,6 +38,7 @@ makeinstall_target() {
     cp ${PKG_DIR}/bin/setup_bl301.sh ${INSTALL}/usr/local/bin/setup_bl301.sh
     cp ${PKG_DIR}/bin/ClearOSD.sh ${INSTALL}/usr/local/bin/ClearOSD.sh
     cp ${PKG_DIR}/bin/VDRCoreELEC.sh ${INSTALL}/usr/local/bin/VDRCoreELEC.sh
+    cp ${PKG_DIR}/bin/vdrlib.sh ${INSTALL}/usr/local/bin/vdrlib.sh
 
 	# copy system.d folder
     mkdir -p ${INSTALL}/usr/local/system.d

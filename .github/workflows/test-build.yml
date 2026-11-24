@@ -65,7 +65,7 @@ on:
           - LibreELEC-12-aarch64-RPi-RPi5
           - LibreELEC-12-x86_64-Generic
           - LibreELEC-12-x86_64-GenericLegacy
-          - LibreELEC-13-aarch64-AMLGX
+          - LibreELEC-13-aarch64-Amlogic
           - LibreELEC-13-aarch64-Allwinner-H6
           - LibreELEC-13-aarch64-Allwinner-A64
           - LibreELEC-13-arm-Allwinner-R40
@@ -84,7 +84,7 @@ on:
           - LibreELEC-13-aarch64-Rockchip-RK3588
       defaulttarget:
         description: "Default targets (used by target: all)"
-        default: "CoreELEC-20-ng CoreELEC-21-ng CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-13-aarch64-AMLGX"
+        default: "CoreELEC-20-ng CoreELEC-21-ng CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-13-aarch64-Amlogic"
         type: string
       addons:
         description: "addons. Use '-' if no addon shall be build"

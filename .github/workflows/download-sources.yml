@@ -73,7 +73,7 @@ jobs:
               echo "CACHE_PATH=LibreELEC.tv/sources" >> "$GITHUB_OUTPUT"
           
               ( cd LibreELEC.tv && git checkout master )
-              ./build.sh -config LibreELEC-13-aarch64-AMLGX -patchonly
+              ./build.sh -config LibreELEC-13-aarch64-Amlogic -patchonly
           fi
           
           # use download-tool from CoreELEC, because it's much faster for our purposes

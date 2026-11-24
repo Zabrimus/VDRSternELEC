@@ -78,7 +78,7 @@ checkout_submodule() {
 
   cd $dir
   git clean -fd
-  git reset --hard
+  git reset -q --hard
 
   # branches and tags can move, commits are fetched only if missing
   if [[ ! "$ref" =~ ^[0-9a-f]{7,40}$ ]] || ! git rev-parse -q --verify "${ref}^{commit}" >/dev/null; then
@@ -87,10 +87,11 @@ checkout_submodule() {
   fi
 
   if git rev-parse -q --verify "refs/remotes/origin/${ref}" >/dev/null; then
-      git checkout --detach "origin/${ref}"
+      git checkout -q --detach "origin/${ref}"
   else
-      git checkout --detach "$ref"
+      git checkout -q --detach "$ref"
   fi
+  echo "$dir is at $(git log -1 --format='%h %s')"
   cd $ROOTDIR
 }
 
@@ -221,17 +222,13 @@ build_addons() {
     if grep -q ":${TMP}$" ../config/addons.list; then
       echo "Start building addon ${!TMP} ..."
 
-      PROJECT="$PROJECT" \
-        DEVICE="$DEVICE" \
-        ARCH="$ARCH" \
-        BUILD_SUFFIX="$BUILD_SUFFIX" \
-        distro_run scripts/create_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
+      # create_addon also packs the addon (scripts/pkgbuild calls install_addon)
 
       PROJECT="$PROJECT" \
         DEVICE="$DEVICE" \
         ARCH="$ARCH" \
         BUILD_SUFFIX="$BUILD_SUFFIX" \
-        distro_run scripts/install_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
+        distro_run scripts/create_addon ${!TMP} || echo -e "${RED}Addon ${!TMP} failed to build!${RESET}"
     fi
   done
 }
@@ -267,6 +264,10 @@ set_env() {
   echo "   PROJECT=$PROJECT"
   echo "   DEVICE=$DEVICE"
   echo "   ARCH=$ARCH"
+  if [ "${DISTRO}" = "CoreELEC" ]; then
+    # -nocheckout: forget the subdevice of a previous call
+    git checkout -q -- projects/${PROJECT}/devices/${DEVICE}/options
+  fi
   if [ "${DISTRO}" = "CoreELEC" ] && [ ! -z $SUB_DEVICE ]; then
     # patch option to build only the desired subdevice
     sed -i -e "s#SUBDEVICES=.*\$#SUBDEVICES=\"$SUB_DEVICE\"#" projects/${PROJECT}/devices/${DEVICE}/options

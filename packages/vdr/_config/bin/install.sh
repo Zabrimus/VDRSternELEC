@@ -154,12 +154,13 @@ install_vtuner() {
       cp -a /usr/local/bin/stop_vtuner.sh /storage/.config/stop_vtuner.sh
   fi
 
+  # -i copies the unit already, so enable it in any case
   if [ ! -f /storage/.config/system.d/vtuner-ng.service ]; then
       cp -a /usr/local/system.d/vtuner-ng.service /storage/.config/system.d/vtuner-ng.service
-
-      systemctl daemon-reload
-      systemctl enable vtuner-ng.service
   fi
+
+  systemctl daemon-reload
+  systemctl enable vtuner-ng.service
 
   echo "Info:"
   echo "  Please check and adapt the script /storage/.config/start_vtuner.sh accordingly."

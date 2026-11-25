@@ -219,9 +219,9 @@ Now it would be a good time to install the KODI addons of your choice. E.g. ```s
   is the default video directory
 
 ## Install script
-Now it's time to run the install script ```/usr/local/bin/install.sh``` from within the console (e.g. via ssh):
+Now it's time to run the install script ```install.sh``` from within the console (e.g. via ssh):
 ```
-# /usr/local/bin/install.sh
+# install.sh
 Usage: /usr/local/bin/install.sh [-i] [-C] [-b kodi|vdr] [-T] [-w] [-v] [-c (url)] [-R (url)] [-p (url)] [-l (url)]
 
 -i       : Extracts the default configuration into directory /storage/.config/vdropt-sample and copy the sample folder to /storage/.config/vdropt if it does not exists.
@@ -238,8 +238,8 @@ Usage: /usr/local/bin/install.sh [-i] [-C] [-b kodi|vdr] [-T] [-w] [-v] [-c (url
 ```
 If you are at the first boot, the minimum you have to do is running the script with the ```-i``` option, which will copy the default configuration to the right place. If you also want, that VDR will start as default, these are the commands of your choice:
 ```
-/usr/local/bin/install.sh -i
-/usr/local/bin/install.sh -b vdr
+install.sh -i
+install.sh -b vdr
 ```
 
 ## Configuration
@@ -461,9 +461,9 @@ the link ```/storage/browser/addon.cefbrowser/cef``` points to the one used.
 ### New installation
 Copy both zip files to ```/storage/.update``` (or give their URLs to the script) and run
 ```
-/usr/local/bin/install.sh -R
-/usr/local/bin/install.sh -c
-/usr/local/bin/install.sh -w
+install.sh -R
+install.sh -c
+install.sh -w
 ```
 ```-w``` installs and enables the services of cefbrowser and remotetranscode. Start them with
 ```
@@ -485,14 +485,14 @@ Single values replace the ones of the service, lists like ```Environment``` or `
 ### Update
 - A new cefbrowser with the same CEF version needs only
   ```
-  /usr/local/bin/install.sh -c
+  install.sh -c
   systemctl restart cefbrowser
   ```
   If ```cefbrowser.service``` is installed, ```-c``` updates it as well.
 - If the new cefbrowser needs another CEF version, install the CEF runtime as well:
   ```
-  /usr/local/bin/install.sh -R
-  /usr/local/bin/install.sh -c
+  install.sh -R
+  install.sh -c
   systemctl restart cefbrowser
   ```
   ```install.sh -c``` tells if the CEF runtime is missing, the service doesn't start without it (```journalctl -u cefbrowser``` shows the version).
@@ -534,7 +534,7 @@ I personally use this daemon to shutdown my box by pressing a specific key on th
 
 To enable triggerhappy use the install script
 ```
-/usr/local/bin/install.sh -T
+install.sh -T
 ```
 
 ## VFD

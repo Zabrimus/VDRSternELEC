@@ -93,7 +93,11 @@ PKG_DEPENDS_TARGET+=" _vdr-plugin-dvd"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-mp3"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-cecremote"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-remote"
-PKG_DEPENDS_TARGET+=" _vdr-plugin-menuorg"
+
+# does not compile without patch and the
+# patch is obselete because of VDR enhancements
+# PKG_DEPENDS_TARGET+=" _vdr-plugin-menuorg"
+
 PKG_DEPENDS_TARGET+=" _vdr-plugin-dbus2vdr"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-suspendoutput"
 PKG_DEPENDS_TARGET+=" _vdr-plugin-favorites"

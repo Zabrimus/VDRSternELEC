@@ -1,0 +1,1196 @@
+--- a/config.c	2026/10/21 19:44:58	5.7
++++ b/config.c	2026/11/23 15:25:05
+@@ -270,8 +270,9 @@
+   return result;
+ }
+ 
+-// --- Folders and Commands --------------------------------------------------
++// --- Menu, Folders and Commands --------------------------------------------
+ 
++cNestedItemList MainMenu;
+ cNestedItemList Folders;
+ cNestedItemList Commands;
+ cNestedItemList RecordingCommands;
+--- a/config.h	2026/10/27 19:56:06	5.49
++++ b/config.h	2026/11/23 15:25:05
+@@ -207,7 +207,7 @@
+   virtual ~cNestedItem() override;
+   virtual int Compare(const cListObject &ListObject) const override;
+   const char *Text(void) const { return text; }
+-  cList<cNestedItem> *SubItems(void) { return subItems; }
++  cList<cNestedItem> *SubItems(void) const { return subItems; }
+   void AddSubItem(cNestedItem *Item);
+   void SetText(const char *Text);
+   void SetSubItems(bool On);
+@@ -232,6 +232,7 @@
+   bool Acceptable(in_addr_t Address);
+   };
+ 
++extern cNestedItemList MainMenu;
+ extern cNestedItemList Folders;
+ extern cNestedItemList Commands;
+ extern cNestedItemList RecordingCommands;
+--- a/menu.c	2026/10/26 19:35:08	5.72
++++ b/menu.c	2026/11/25 10:20:05
+@@ -2240,34 +2240,38 @@
+   return state;
+ }
+ 
+-// --- cMenuCommands ---------------------------------------------------------
++// --- cCommand --------------------------------------------------------------
+ 
+-cMenuCommands::cMenuCommands(const char *Title, cList<cNestedItem> *Commands, const char *Parameters)
+-:cOsdMenu(Title)
++class cCommand {
++private:
++  cString title;
++  cString command;
++  char *result;
++  bool confirm;
++public:
++  cCommand(void);
++  ~cCommand();
++  const char *Title(void) { return title; }
++  const char *Command(void) { return command; }
++  const char *Result(void) { return result; }
++  bool Confirm(void) { return confirm; }
++  bool Parse(const char *s);
++  bool Execute(const char *Parameters = NULL);
++  };
++
++cCommand::cCommand(void)
+ {
+-  SetMenuCategory(mcCommand);
+   result = NULL;
+-  SetHasHotkeys();
+-  commands = Commands;
+-  parameters = Parameters;
+-  for (cNestedItem *Command = commands->First(); Command; Command = commands->Next(Command)) {
+-      const char *s = Command->Text();
+-      if (Command->SubItems())
+-         Add(new cOsdItem(hk(cString::sprintf("%s...", s))));
+-      else if (Parse(s))
+-         Add(new cOsdItem(hk(title)));
+-      }
+ }
+ 
+-cMenuCommands::~cMenuCommands()
++cCommand::~cCommand()
+ {
+   free(result);
+ }
+ 
+-bool cMenuCommands::Parse(const char *s)
++bool cCommand::Parse(const char *s)
+ {
+-  const char *p = strchr(s, ':');
+-  if (p) {
++  if (const char *p = strchr(s, ':')) {
+      int l = p - s;
+      if (l > 0) {
+         char t[l + 1];
+@@ -2284,49 +2288,83 @@
+         return true;
+         }
+      }
++  esyslog("ERROR: missing ':' in command '%s'", s);
+   return false;
+ }
+ 
++bool cCommand::Execute(const char *Parameters)
++{
++  bool Return = true;
++  if (!confirm || Interface->Confirm(cString::sprintf("%s?", *title))) {
++     Skins.Message(mtStatus, cString::sprintf("%s...", *title));
++     free(result);
++     result = NULL;
++     cString cmdbuf;
++     if (!isempty(Parameters))
++        cmdbuf = cString::sprintf("%s %s", *command, Parameters);
++     const char *cmd = *cmdbuf ? *cmdbuf : *command;
++     dsyslog("executing command '%s'", cmd);
++     cPipe p;
++     if (p.Open(cmd, "r")) {
++        int l = 0;
++        int c;
++        while ((c = fgetc(p)) != EOF) {
++              if (l % 20 == 0) {
++                 if (char *NewBuffer = (char *)realloc(result, l + 21))
++                    result = NewBuffer;
++                 else {
++                    esyslog("ERROR: out of memory");
++                    Return = false;
++                    break;
++                    }
++                 }
++              result[l++] = char(c);
++              }
++        if (result)
++           result[l] = 0;
++        p.Close();
++        }
++     else {
++        esyslog("ERROR: can't open pipe for command '%s'", cmd);
++        Return = false;
++        }
++     Skins.Message(mtStatus, NULL);
++     }
++  return Return;
++}
++
++// --- cMenuCommands ---------------------------------------------------------
++
++cMenuCommands::cMenuCommands(const char *Title, cList<cNestedItem> *Commands, const char *Parameters)
++:cOsdMenu(Title)
++{
++  SetMenuCategory(mcCommand);
++  SetHasHotkeys();
++  commands = Commands;
++  parameters = Parameters;
++  for (cNestedItem *Command = commands->First(); Command; Command = commands->Next(Command)) {
++      const char *s = Command->Text();
++      if (Command->SubItems())
++         Add(new cOsdItem(hk(cString::sprintf("%s...", s))));
++      else {
++         cCommand Cmd;
++         if (Cmd.Parse(s))
++            Add(new cOsdItem(hk(Cmd.Title())));
++         }
++      }
++}
++
+ eOSState cMenuCommands::Execute(void)
+ {
+   cNestedItem *Command = commands->Get(Current());
+   if (Command) {
+      if (Command->SubItems())
+         return AddSubMenu(new cMenuCommands(Title(), Command->SubItems(), parameters));
+-     if (Parse(Command->Text())) {
+-        if (!confirm || Interface->Confirm(cString::sprintf("%s?", *title))) {
+-           Skins.Message(mtStatus, cString::sprintf("%s...", *title));
+-           free(result);
+-           result = NULL;
+-           cString cmdbuf;
+-           if (!isempty(parameters))
+-              cmdbuf = cString::sprintf("%s %s", *command, *parameters);
+-           const char *cmd = *cmdbuf ? *cmdbuf : *command;
+-           dsyslog("executing command '%s'", cmd);
+-           cPipe p;
+-           if (p.Open(cmd, "r")) {
+-              int l = 0;
+-              int c;
+-              while ((c = fgetc(p)) != EOF) {
+-                    if (l % 20 == 0) {
+-                       if (char *NewBuffer = (char *)realloc(result, l + 21))
+-                          result = NewBuffer;
+-                       else {
+-                          esyslog("ERROR: out of memory");
+-                          break;
+-                          }
+-                       }
+-                    result[l++] = char(c);
+-                    }
+-              if (result)
+-                 result[l] = 0;
+-              p.Close();
+-              }
+-           else
+-              esyslog("ERROR: can't open pipe for command '%s'", cmd);
+-           Skins.Message(mtStatus, NULL);
+-           if (result)
+-              return AddSubMenu(new cMenuText(title, result, fontFix));
++     cCommand Cmd;
++     if (Cmd.Parse(Command->Text())) {
++        if (Cmd.Execute(parameters)) {
++           if (Cmd.Result())
++              return AddSubMenu(new cMenuText(Cmd.Title(), Cmd.Result(), fontFix));
+            return osEnd;
+            }
+         }
+@@ -4726,6 +4764,38 @@
+   return state;
+ }
+ 
++// --- cMenuSubItem ----------------------------------------------------------
++
++class cMenuSubItem : public cOsdItem {
++private:
++  const cNestedItem *item;
++public:
++  cMenuSubItem(const char *Name, const cNestedItem *Item);
++  const cNestedItem *Item(void) const { return item; }
++  };
++
++cMenuSubItem::cMenuSubItem(const char *Name, const cNestedItem *Item)
++:cOsdItem(Name, osSubMenu)
++{
++  item = Item;
++}
++
++// --- cMenuCommandItem ------------------------------------------------------
++
++class cMenuCommandItem : public cOsdItem {
++private:
++  cString command;
++public:
++  cMenuCommandItem(const char *Name, const char *Command);
++  const char *Command(void) const { return command; }
++  };
++
++cMenuCommandItem::cMenuCommandItem(const char *Name, const char *Command)
++:cOsdItem(Name, osCommand)
++{
++  command = Command;
++}
++
+ // --- cMenuPluginItem -------------------------------------------------------
+ 
+ class cMenuPluginItem : public cOsdItem {
+@@ -4744,6 +4814,24 @@
+ 
+ // --- cMenuMain -------------------------------------------------------------
+ 
++static bool PluginInMenu(const cList<cNestedItem> *Items, const char *Name)
++{
++  for (const cNestedItem *Item = Items->First(); Item; Item = Items->Next(Item)) {
++      if (Item->SubItems() && PluginInMenu(Item->SubItems(), Name))
++         return true;
++      if (const char *s = Item->Text()) {
++         if (*s == '@') {
++            s++;
++            const char *p = strchr(s, ':');
++            size_t l = p ? p - s : strlen(s);
++            if (strncmp(s, Name, l) == 0 && strlen(Name) == l)
++               return true;
++            }
++         }
++      }
++  return false;
++}
++
+ // TRANSLATORS: note the leading and trailing blanks!
+ #define STOP_RECORDING trNOOP(" Stop recording ")
+ 
+@@ -4753,6 +4841,7 @@
+ :cOsdMenu("")
+ {
+   SetMenuCategory(mcMain);
++  currentSubMenu = NULL;
+   replaying = false;
+   deletedRecordingsItem = NULL;
+   stopReplayItem = NULL;
+@@ -4783,36 +4872,92 @@
+ 
+ void cMenuMain::Set(void)
+ {
++  deletedRecordingsItem = NULL;
++  stopReplayItem = NULL;
++  cancelEditingItem = NULL;
++  stopRecordingItem = NULL;
+   Clear();
+   SetTitle("VDR");
+   SetHasHotkeys();
+ 
+-  // Basic menu items:
+-
+-  Add(new cOsdItem(hk(tr("Schedule")),   osSchedule));
+-  Add(new cOsdItem(hk(tr("Channels")),   osChannels));
+-  Add(new cOsdItem(hk(tr("Timers")),     osTimers));
+-  Add(new cOsdItem(hk(tr("Recordings")), osRecordings));
+-
+-  // Plugins:
+-
+-  for (int i = 0; ; i++) {
+-      cPlugin *p = cPluginManager::GetPlugin(i);
+-      if (p) {
+-         const char *item = p->MainMenuEntry();
+-         if (item)
+-            Add(new cMenuPluginItem(hk(item), i));
++  if (MainMenu.Count() == 0) {
++     // Default menu:
++     MainMenu.Add(new cNestedItem("=Schedule"));
++     MainMenu.Add(new cNestedItem("=Channels"));
++     MainMenu.Add(new cNestedItem("=Timers"));
++     MainMenu.Add(new cNestedItem("=Recordings"));
++     MainMenu.Add(new cNestedItem("=Plugins"));
++     MainMenu.Add(new cNestedItem("=Setup"));
++     MainMenu.Add(new cNestedItem("=Commands"));
++     }
++
++  if (items.Size())
++     Add(new cOsdItem(items[items.Size() - 1]->Text(), osUnknown, false));
++  const cList<cNestedItem> *Items = items.Size() ? items[items.Size() - 1]->SubItems() : &MainMenu;
++  for (const cNestedItem *Item = Items->First(); Item; Item = Items->Next(Item)) {
++      if (const char *s = Item->Text()) {
++         if (Item->SubItems())
++            Add(new cMenuSubItem(hk(s), Item), Item == currentSubMenu);
++         else if (*s == '=') {
++            s++;
++            if      (!strcmp(s, "Schedule"))   Add(new cOsdItem(hk(tr("Schedule")),   osSchedule));
++            else if (!strcmp(s, "Channels"))   Add(new cOsdItem(hk(tr("Channels")),   osChannels));
++            else if (!strcmp(s, "Timers"))     Add(new cOsdItem(hk(tr("Timers")),     osTimers));
++            else if (!strcmp(s, "Recordings")) Add(new cOsdItem(hk(tr("Recordings")), osRecordings));
++            else if (!strcmp(s, "Setup"))      Add(new cOsdItem(hk(tr("Setup")),      osSetup));
++            else if (!strcmp(s, "Plugins")) {
++               for (int i = 0; ; i++) {
++                   if (cPlugin *p = cPluginManager::GetPlugin(i)) {
++                      if (!PluginInMenu(&MainMenu, p->Name())) {
++                         if (const char *entry = p->MainMenuEntry())
++                            Add(new cMenuPluginItem(hk(entry), i));
++                         }
++                      }
++                   else
++                      break;
++                   }
++               }
++            else if (!strcmp(s, "Commands")) {
++               if (Commands.Count())
++                  Add(new cOsdItem(hk(tr("Commands")), osCommands));
++               }
++            else
++               esyslog("ERROR: unknown menu item '=%s' in menu.conf", s);
++            }
++         else if (*s == '@') {
++            bool Found = false;
++            const char *Title = strchr(s, ':');
++            cString Name(s + 1, Title);
++            if (Title)
++               Title++;
++            for (int i = 0; ; i++) {
++                if (cPlugin *p = cPluginManager::GetPlugin(i)) {
++                   if (!strcmp(Name, p->Name())) {
++                      Found = true;
++                      if (const char *entry = p->MainMenuEntry())
++                         Add(new cMenuPluginItem(hk(Title ? Title : entry), i));
++                      else
++                         esyslog("ERROR: plugin '@%s' has no main menu entry in menu.conf", *Name);
++                      break;
++                      }
++                   }
++                else
++                   break;
++                }
++            if (!Found)
++               esyslog("ERROR: plugin '@%s' not found in menu.conf", *Name);
++            }
++         else if (*s == '>') {
++            s++;
++            cCommand Command;
++            if (Command.Parse(s))
++               Add(new cMenuCommandItem(hk(Command.Title()), s));
++            }
++         else
++            Add(new cOsdItem(s, osUnknown, false));
+          }
+-      else
+-         break;
+       }
+-
+-  // More basic menu items:
+-
+-  Add(new cOsdItem(hk(tr("Setup")),      osSetup));
+-  if (Commands.Count())
+-     Add(new cOsdItem(hk(tr("Button$Commands")),  osCommands));
+-
++  currentSubMenu = NULL;
+   Update(true);
+ 
+   Display();
+@@ -4822,6 +4967,9 @@
+ {
+   bool result = false;
+ 
++  if (items.Size())
++     return result;
++
+   // Deleted recordings:
+   {
+     LOCK_DELETEDRECORDINGS_READ;
+@@ -4873,7 +5021,7 @@
+      }
+ 
+   // Record control:
+-  if (cRecordControls::StateChanged(recordControlsState)) {
++  if (Force || cRecordControls::StateChanged(recordControlsState)) {
+      while (stopRecordingItem) {
+            cOsdItem *it = Next(stopRecordingItem);
+            Del(stopRecordingItem->Index());
+@@ -4922,8 +5070,7 @@
+                           }
+                        break;
+     case osPlugin:     {
+-                         cMenuPluginItem *item = (cMenuPluginItem *)Get(Current());
+-                         if (item) {
++                         if (cMenuPluginItem *item = (cMenuPluginItem *)Get(Current())) {
+                             cPlugin *p = cPluginManager::GetPlugin(item->PluginIndex());
+                             if (p) {
+                                cOsdObject *menu = p->MainMenuAction();
+@@ -4940,6 +5087,32 @@
+                          state = osEnd;
+                        }
+                        break;
++    case osCommand:    {
++                         if (cMenuCommandItem *item = (cMenuCommandItem *)Get(Current())) {
++                            cCommand Command;
++                            if (Command.Parse(item->Command())) {
++                               if (Command.Execute()) {
++                                  if (Command.Result())
++                                     return AddSubMenu(new cMenuText(Command.Title(), Command.Result(), fontFix));
++                                  return osEnd;
++                                  }
++                               }
++                            }
++                       }
++                       break;
++    case osSubMenu:    if (cMenuSubItem *item = (cMenuSubItem *)Get(Current())) {
++                          items.Append(item->Item());
++                          Set();
++                          state = osContinue;
++                          }
++                       break;
++    case osBack:       if (items.Size()) {
++                          currentSubMenu = items[items.Size() - 1];
++                          items.Remove(items.Size() - 1);
++                          Set();
++                          state = osContinue;
++                          }
++                       break;
+     default: switch (Key) {
+                case kRecord:
+                case kRed:    if (!HadSubMenu)
+--- a/menu.h	2026/09/07 18:48:24	5.15
++++ b/menu.h	2026/11/24 10:56:11
+@@ -58,15 +58,9 @@
+ private:
+   cList<cNestedItem> *commands;
+   cString parameters;
+-  cString title;
+-  cString command;
+-  bool confirm;
+-  char *result;
+-  bool Parse(const char *s);
+   eOSState Execute(void);
+ public:
+   cMenuCommands(const char *Title, cList<cNestedItem> *Commands, const char *Parameters = NULL);
+-  virtual ~cMenuCommands() override;
+   virtual eOSState ProcessKey(eKeys Key) override;
+   };
+ 
+@@ -109,6 +103,8 @@
+ 
+ class cMenuMain : public cOsdMenu {
+ private:
++  cVector<const cNestedItem *> items;
++  const cNestedItem *currentSubMenu;
+   bool replaying;
+   cOsdItem *deletedRecordingsItem;
+   cOsdItem *stopReplayItem;
+--- a/osdbase.h	2026/05/30 12:27:12	5.8
++++ b/osdbase.h	2026/11/24 10:21:03
+@@ -32,6 +32,8 @@
+                 osStopRecord,
+                 osStopReplay,
+                 osCancelEdit,
++                osSubMenu,
++                osCommand,
+                 osBack,
+                 osEnd,
+                 os_User, // the following values can be used locally
+--- a/po/ar.po	2026/10/27 19:57:27	5.27
++++ b/po/ar.po	2026/11/23 15:25:05
+@@ -7,7 +7,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2008-10-16 11:16-0400\n"
+ "Last-Translator: Osama Alrawab <alrawab@hotmail.com>\n"
+ "Language-Team: Arabic <ar@li.org>\n"
+@@ -1513,6 +1513,9 @@
+ msgid " Stop recording "
+ msgstr " ايقاف التسجيل "
+ 
++msgid "Commands"
++msgstr "الاوامر"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/ca_ES.po	2026/10/27 19:57:27	5.27
++++ b/po/ca_ES.po	2026/11/23 15:25:05
+@@ -10,7 +10,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2008-03-02 19:02+0100\n"
+ "Last-Translator: Luca Olivetti <luca@ventoso.org>\n"
+ "Language-Team: Catalan <vdr@linuxtv.org>\n"
+@@ -1512,6 +1512,9 @@
+ msgid " Stop recording "
+ msgstr " Aturar la gravaci� "
+ 
++msgid "Commands"
++msgstr "Ordres"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/cs_CZ.po	2026/10/27 19:57:27	5.28
++++ b/po/cs_CZ.po	2026/11/23 15:25:05
+@@ -10,7 +10,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2010-05-06 11:00+0200\n"
+ "Last-Translator: Aleš Juřík <ajurik@quick.cz>\n"
+ "Language-Team: Czech <vdr@linuxtv.org>\n"
+@@ -1512,6 +1512,9 @@
+ msgid " Stop recording "
+ msgstr " Zastavit nahrávání "
+ 
++msgid "Commands"
++msgstr "Příkazy"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/da_DK.po	2026/10/27 19:57:27	5.27
++++ b/po/da_DK.po	2026/11/23 15:25:05
+@@ -7,7 +7,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2007-08-12 14:17+0200\n"
+ "Last-Translator: Mogens Elneff <mogens@elneff.dk>\n"
+ "Language-Team: Danish <vdr@linuxtv.org>\n"
+@@ -1509,6 +1509,9 @@
+ msgid " Stop recording "
+ msgstr " Stop optagelse "
+ 
++msgid "Commands"
++msgstr "Kommandoer"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/de_DE.po	2026/10/27 19:57:27	5.31
++++ b/po/de_DE.po	2026/11/23 15:25:05
+@@ -10,7 +10,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2015-02-10 13:45+0100\n"
+ "Last-Translator: Stefan Hofmann <stefan.hofmann@t-online.de>\n"
+ "Language-Team: German <vdr@linuxtv.org>\n"
+@@ -1512,6 +1512,9 @@
+ msgid " Stop recording "
+ msgstr " Aufzeichnung beenden "
+ 
++msgid "Commands"
++msgstr "Befehle"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr " Gel�schte Aufzeichnungen"
+--- a/po/el_GR.po	2026/10/27 19:57:27	5.27
++++ b/po/el_GR.po	2026/11/23 15:25:05
+@@ -7,7 +7,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2007-08-12 14:17+0200\n"
+ "Last-Translator: Dimitrios Dimitrakos <mail@dimitrios.de>\n"
+ "Language-Team: Greek <vdr@linuxtv.org>\n"
+@@ -1509,6 +1509,9 @@
+ msgid " Stop recording "
+ msgstr " ����� ������� "
+ 
++msgid "Commands"
++msgstr "�������"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/es_ES.po	2026/10/27 19:57:27	5.27
++++ b/po/es_ES.po	2026/11/23 15:25:05
+@@ -8,7 +8,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2015-02-19 23:00+0100\n"
+ "Last-Translator: Gabriel Bonich <gbonich@gmail.com>\n"
+ "Language-Team: Spanish <vdr@linuxtv.org>\n"
+@@ -1510,6 +1510,9 @@
+ msgid " Stop recording "
+ msgstr " Parar grabaci�n "
+ 
++msgid "Commands"
++msgstr "�rdenes"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/et_EE.po	2026/10/27 19:57:27	5.27
++++ b/po/et_EE.po	2026/11/23 15:25:05
+@@ -7,7 +7,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2007-08-12 14:17+0200\n"
+ "Last-Translator: Arthur Konovalov <artlov@gmail.com>\n"
+ "Language-Team: Estonian <vdr@linuxtv.org>\n"
+@@ -1509,6 +1509,9 @@
+ msgid " Stop recording "
+ msgstr " Lõpeta salvestamine "
+ 
++msgid "Commands"
++msgstr "Käsud"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/fi_FI.po	2026/10/27 19:57:27	5.30
++++ b/po/fi_FI.po	2026/11/23 15:25:05
+@@ -12,7 +12,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2007-08-15 15:52+0200\n"
+ "Last-Translator: Marko Mäkelä <marko.makela@iki.fi>\n"
+ "Language-Team: Finnish <vdr@linuxtv.org>\n"
+@@ -1514,6 +1514,9 @@
+ msgid " Stop recording "
+ msgstr " Lopeta tallennus "
+ 
++msgid "Commands"
++msgstr "Komennot"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr " Poistetut tallenteet"
+--- a/po/fr_FR.po	2026/10/27 19:57:27	5.27
++++ b/po/fr_FR.po	2026/11/23 15:25:05
+@@ -18,7 +18,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2018-04-14 10:16+0100\n"
+ "Last-Translator: Bernard Jaulin <bernard.jaulin@gmail.com>\n"
+ "Language-Team: French <vdr@linuxtv.org>\n"
+@@ -1520,6 +1520,9 @@
+ msgid " Stop recording "
+ msgstr " Arrêter l'enregistrement "
+ 
++msgid "Commands"
++msgstr "Commandes"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/hr_HR.po	2026/10/27 19:57:27	5.27
++++ b/po/hr_HR.po	2026/11/23 15:25:05
+@@ -9,7 +9,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2008-03-17 19:00+0100\n"
+ "Last-Translator: Adrian Caval <anrxc@sysphere.org>\n"
+ "Language-Team: Croatian <vdr@linuxtv.org>\n"
+@@ -1511,6 +1511,9 @@
+ msgid " Stop recording "
+ msgstr " Prekini snimanje "
+ 
++msgid "Commands"
++msgstr "Naredbe"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/hu_HU.po	2026/10/27 19:57:27	5.30
++++ b/po/hu_HU.po	2026/11/23 15:25:05
+@@ -11,7 +11,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2024-02-09 06:29+0000\n"
+ "Last-Translator: István Füley <ifuley@tigercomp.ro>\n"
+ "Language-Team: Hungarian\n"
+@@ -1517,6 +1517,9 @@
+ msgid " Stop recording "
+ msgstr " Felvételt befejezni "
+ 
++msgid "Commands"
++msgstr "Parancsok"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr " Törölt felvételek"
+--- a/po/it_IT.po	2026/10/27 19:57:27	5.36
++++ b/po/it_IT.po	2026/11/23 15:25:05
+@@ -11,7 +11,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2026-03-21 18:00+0100\n"
+ "Last-Translator: Diego Pierotto <vdr-italian@tiscali.it>\n"
+ "Language-Team: Italian <vdr@linuxtv.org>\n"
+@@ -1515,6 +1515,9 @@
+ msgid " Stop recording "
+ msgstr " Ferma registrazione "
+ 
++msgid "Commands"
++msgstr "Comandi"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr " Registrazioni eliminate"
+--- a/po/lt_LT.po	2026/10/27 19:57:27	5.27
++++ b/po/lt_LT.po	2026/11/23 15:25:05
+@@ -7,7 +7,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2015-02-11 14:02+0200\n"
+ "Last-Translator: Valdemaras Pipiras <varas@ambernet.lt>\n"
+ "Language-Team: Lithuanian <vdr@linuxtv.org>\n"
+@@ -1509,6 +1509,9 @@
+ msgid " Stop recording "
+ msgstr " Sustabdyti įrašinėjimą "
+ 
++msgid "Commands"
++msgstr "Komandos"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/mk_MK.po	2026/10/27 19:57:27	5.27
++++ b/po/mk_MK.po	2026/11/23 15:25:05
+@@ -7,7 +7,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2018-03-31 21:47+0100\n"
+ "Last-Translator: Dimitar Petrovski <dimeptr@gmail.com>\n"
+ "Language-Team: Macedonian <kde-i18n-doc@kde.org>\n"
+@@ -1511,6 +1511,9 @@
+ msgid " Stop recording "
+ msgstr " Запри снимање "
+ 
++msgid "Commands"
++msgstr "Наредби"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/nl_NL.po	2026/10/27 19:57:27	5.29
++++ b/po/nl_NL.po	2026/11/23 15:25:05
+@@ -13,7 +13,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2026-07-22 11:43+0100\n"
+ "Last-Translator: Carel Willemse <carel@nekanali.nl>\n"
+ "Language-Team: Dutch <vdr@linuxtv.org>\n"
+@@ -1515,6 +1515,9 @@
+ msgid " Stop recording "
+ msgstr " Stop opnemen "
+ 
++msgid "Commands"
++msgstr "Commando's"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr " Verwijderde opnamen"
+--- a/po/nn_NO.po	2026/10/27 19:57:27	5.27
++++ b/po/nn_NO.po	2026/11/23 15:25:05
+@@ -8,7 +8,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2007-08-12 14:17+0200\n"
+ "Last-Translator: Truls Slevigen <truls@slevigen.no>\n"
+ "Language-Team: Norwegian Nynorsk <vdr@linuxtv.org>\n"
+@@ -1510,6 +1510,9 @@
+ msgid " Stop recording "
+ msgstr " Stopp opptak fra "
+ 
++msgid "Commands"
++msgstr "Kommandoer"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/pl_PL.po	2026/10/27 19:57:27	5.30
++++ b/po/pl_PL.po	2026/11/23 15:25:05
+@@ -10,7 +10,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2026-01-15 23:47+0100\n"
+ "Last-Translator: Tomasz Maciej Nowak <tmn505@gmail.com>\n"
+ "Language-Team: Polish <vdr@linuxtv.org>\n"
+@@ -1512,6 +1512,9 @@
+ msgid " Stop recording "
+ msgstr " Zatrzymaj nagrywanie "
+ 
++msgid "Commands"
++msgstr "Polecenia"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr " Skasowane nagrania"
+--- a/po/pt_PT.po	2026/10/27 19:57:27	5.27
++++ b/po/pt_PT.po	2026/11/23 15:25:05
+@@ -8,7 +8,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2010-03-28 22:49+0100\n"
+ "Last-Translator: Cris Silva <hudokkow@gmail.com>\n"
+ "Language-Team: Portuguese <vdr@linuxtv.org>\n"
+@@ -1510,6 +1510,9 @@
+ msgid " Stop recording "
+ msgstr " Parar grava��o "
+ 
++msgid "Commands"
++msgstr "Comandos"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/ro_RO.po	2026/10/27 19:57:27	5.28
++++ b/po/ro_RO.po	2026/11/23 15:25:05
+@@ -8,7 +8,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2015-02-11 22:26+0100\n"
+ "Last-Translator: Lucian Muresan <lucianm@users.sourceforge.net>\n"
+ "Language-Team: Romanian <vdr@linuxtv.org>\n"
+@@ -1511,6 +1511,9 @@
+ msgid " Stop recording "
+ msgstr " Opreşte înregistrarea "
+ 
++msgid "Commands"
++msgstr "Comenzi"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/ru_RU.po	2026/10/27 19:57:27	5.27
++++ b/po/ru_RU.po	2026/11/23 15:25:05
+@@ -8,7 +8,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2016-12-27 17:13+0100\n"
+ "Last-Translator: Pridvorov Andrey <ua0lnj@bk.ru>\n"
+ "Language-Team: Russian <vdr@linuxtv.org>\n"
+@@ -1510,6 +1510,9 @@
+ msgid " Stop recording "
+ msgstr " Прекратить запись "
+ 
++msgid "Commands"
++msgstr "Команды"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/sk_SK.po	2026/10/27 19:57:27	5.27
++++ b/po/sk_SK.po	2026/11/23 15:25:05
+@@ -7,7 +7,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2015-02-17 18:59+0100\n"
+ "Last-Translator: Milan Hrala <hrala.milan@gmail.com>\n"
+ "Language-Team: Slovak <vdr@linuxtv.org>\n"
+@@ -1510,6 +1510,9 @@
+ msgid " Stop recording "
+ msgstr " Zastavi� nahr�vanie "
+ 
++msgid "Commands"
++msgstr "Pr�kazy"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/sl_SI.po	2026/10/27 19:57:27	5.27
++++ b/po/sl_SI.po	2026/11/23 15:25:05
+@@ -8,7 +8,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2013-03-04 12:46+0100\n"
+ "Last-Translator: Matjaz Thaler <matjaz.thaler@guest.arnes.si>\n"
+ "Language-Team: Slovenian <vdr@linuxtv.org>\n"
+@@ -1510,6 +1510,9 @@
+ msgid " Stop recording "
+ msgstr " Prekini snemanje "
+ 
++msgid "Commands"
++msgstr "Ukazi"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/sr_RS.po	2026/10/27 19:57:27	5.27
++++ b/po/sr_RS.po	2026/11/23 15:25:05
+@@ -8,7 +8,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2013-03-16 15:05+0100\n"
+ "Last-Translator: Zoran Turalija <zoran.turalija@gmail.com>\n"
+ "Language-Team: Serbian <vdr@linuxtv.org>\n"
+@@ -1510,6 +1510,9 @@
+ msgid " Stop recording "
+ msgstr " Zaustavi snimanje "
+ 
++msgid "Commands"
++msgstr "Komande"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/sv_SE.po	2026/10/27 19:57:27	5.27
++++ b/po/sv_SE.po	2026/11/23 15:25:05
+@@ -12,7 +12,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2015-02-12 21:58+0100\n"
+ "Last-Translator: Magnus Sirvi� <sirwio@hotmail.com>\n"
+ "Language-Team: Swedish <vdr@linuxtv.org>\n"
+@@ -1514,6 +1514,9 @@
+ msgid " Stop recording "
+ msgstr " Avsluta inspelning "
+ 
++msgid "Commands"
++msgstr "Kommandon"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/tr_TR.po	2026/10/27 19:57:27	5.27
++++ b/po/tr_TR.po	2026/11/23 15:25:05
+@@ -7,7 +7,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2008-02-28 00:33+0100\n"
+ "Last-Translator: Oktay Yolge�en <oktay_73@yahoo.de>\n"
+ "Language-Team: Turkish <vdr@linuxtv.org>\n"
+@@ -1509,6 +1509,9 @@
+ msgid " Stop recording "
+ msgstr " �ekimi bitir "
+ 
++msgid "Commands"
++msgstr "Komutlar"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/uk_UA.po	2026/10/27 19:57:27	5.27
++++ b/po/uk_UA.po	2026/11/23 15:25:05
+@@ -7,7 +7,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2018-03-18 20:00+0100\n"
+ "Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>\n"
+ "Language-Team: Ukrainian <vdr@linuxtv.org>\n"
+@@ -1510,6 +1510,9 @@
+ msgid " Stop recording "
+ msgstr " Зупинити запис "
+ 
++msgid "Commands"
++msgstr "Команди"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/po/zh_CN.po	2026/10/27 19:57:27	5.27
++++ b/po/zh_CN.po	2026/11/23 15:25:05
+@@ -7,7 +7,7 @@
+ msgstr ""
+ "Project-Id-Version: VDR 2.8.4\n"
+ "Report-Msgid-Bugs-To: <vdr-bugs@tvdr.de>\n"
+-"POT-Creation-Date: 2026-09-25 10:59+0200\n"
++"POT-Creation-Date: 2026-11-22 15:25+0100\n"
+ "PO-Revision-Date: 2013-03-04 14:52+0800\n"
+ "Last-Translator: NFVDR <nfvdr@live.com>\n"
+ "Language-Team: Chinese (simplified) <nfvdr@live.com>\n"
+@@ -1511,6 +1511,9 @@
+ msgid " Stop recording "
+ msgstr " 是否停止录像? "
+ 
++msgid "Commands"
++msgstr "常用操作命令"
++
+ #. TRANSLATORS: note the leading blank!
+ msgid " Deleted recordings"
+ msgstr ""
+--- a/vdr.5	2026/10/27 19:57:39	5.21
++++ b/vdr.5	2026/11/25 10:26:57
+@@ -616,6 +616,97 @@
+ in "normal viewing" mode (i.e. when no other menu or player is active). The
+ \fIUser1\fR...\fIUser9\fR keys will always execute their macro function.
+ There may be up to 15 keys in such a key sequence.
++.SS MENU
++The file \fImenu.conf\fR can be used to override the default main menu.
++Each line contains one menu item definition. Leading whitespace
++and everything after and including a '#' is ignored.
++
++The default menu items can be referenced by these keywords:
++.PP
++.EX
++=Schedule
++=Channels
++=Timers
++=Recordings
++=Plugins
++=Setup
++=Commands
++.EE
++.PP
++Note that these keywords need to be given exactly as listed here (with the leading '=').
++The actual text shown in the menu will be translated to your selected language (if any).
++
++A line ending with '{' defines a sub menu (i.e. a menu that contains other items),
++and a line consisting of only '}' ends the definition of a sub menu:
++.PP
++.EX
++My special menu {
++  =Setup
++  =Commands
++  }
++.EE
++.PP
++Sub menus can be nested to any depth.
++
++You can also create menu items that call the main menu action of a plugin.
++This is done by writing the name of the plugin with a leading '@', as in
++.PP
++.EX
++@myplugin
++.EE
++.PP
++This will create a menu item that shows the string returned by the plugin's
++MainMenuEntry() function and, when selected, calls the plugin's MainMenuAction()
++function.
++If you want the menu item to show a different text than the one given by the
++plugin's MainMenuEntry() function, you can override this by adding your own
++text, separated by a ':', as in
++.PP
++.EX
++@myplugin:My item text
++.EE
++.PP
++Note that there may be no blanks surrounding the ':'.
++.br
++Any plugin that has been explicitly inserted with '@' will be excluded from =Plugins.
++
++If you want to define a menu item that executes a shell command, you can do so
++by writing
++.PP
++.EX
++>Title:command
++.EE
++.PP
++See COMMANDS for details about the syntax.
++
++Any lines that don't start with '=', '@' or '>' are added to the menu as
++non-selectable items.
++
++Here's what a fancy main menu might look like:
++.PP
++.EX
++# My fancy main menu
++@tvguide:Programm
++=Recordings
++@web:HbbTV
++@drmdevice:Mediaplayer
++@hyperion:Ambilight
++@actionmenu
++>Directory:ls
++------------------
++Plugins {
++  =Plugins
++  }
++VDR {
++  =Timers
++  =Schedule
++  =Channels
++  =Recordings
++  =Commands
++  }
++=Setup
++.EE
++.PP
+ .SS FOLDERS
+ The file \fIfolders.conf\fR contains the definitions of folders that can be used
+ in the "Edit timer" menu. Each line contains one folder definition. Leading whitespace
+--- a/vdr.c	2026/10/20 19:19:24	5.33
++++ b/vdr.c	2026/11/23 15:25:05
+@@ -825,6 +825,7 @@
+ 
+   // Configuration data:
+ 
++  MainMenu.Load(AddDirectory(ConfigDirectory, "menu.conf"));
+   Setup.Load(AddDirectory(ConfigDirectory, "setup.conf"));
+   Sources.Load(AddDirectory(ConfigDirectory, "sources.conf"), true, true);
+   Diseqcs.Load(AddDirectory(ConfigDirectory, "diseqc.conf"), true, Setup.DiSEqC);

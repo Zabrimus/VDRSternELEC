@@ -121,6 +121,8 @@ case "$1" in
       echo "$3 doesn't exist" >&2
       exit 1
     fi
+    # the link has to point to an absolute path
+    set -- "$1" "$2" "$(readlink -f "$3")"
     if [ "$2" = "vdr" ]; then
       mkdir -p ${PLUGIN_DIR}
       ln -sfn "$3" "${PLUGIN_DIR}/vdr"

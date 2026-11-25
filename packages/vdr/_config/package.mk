@@ -40,6 +40,10 @@ makeinstall_target() {
     cp ${PKG_DIR}/bin/VDRCoreELEC.sh ${INSTALL}/usr/local/bin/VDRCoreELEC.sh
     cp ${PKG_DIR}/bin/vdrlib.sh ${INSTALL}/usr/local/bin/vdrlib.sh
 
+    # add /usr/local/bin to PATH of the shell
+    mkdir -p ${INSTALL}/etc/profile.d
+    cp ${PKG_DIR}/profile.d/* ${INSTALL}/etc/profile.d
+
 	# copy system.d folder
     mkdir -p ${INSTALL}/usr/local/system.d
     cp ${PKG_DIR}/_system.d/* ${INSTALL}/usr/local/system.d

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="_vdr-plugin-vdrsternelec"
-PKG_VERSION="65088db571121bf01e0ecdb8f8a0eb39d4ae353e"
-PKG_SHA256="ba093588dd344615156dc85b718b720231e519113311d7662eff4b5f6909c412"
+PKG_VERSION="f3c2feb5baf0cf340ad396b8c6d2bbe57a46881d"
+PKG_SHA256="d4ed808add9d6e329d4475d21fd8cd2ab9f1fcbb300e7ae393883c234e881e6f"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/rellla/vdr-plugin-vdrsternelec"
 PKG_URL="https://github.com/rellla/vdr-plugin-vdrsternelec/archive/${PKG_VERSION}.zip"

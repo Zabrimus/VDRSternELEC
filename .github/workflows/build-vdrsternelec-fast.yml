@@ -73,7 +73,7 @@ jobs:
              rdfind rsync sed libjson-parse-perl tar unzip upx-ucl wget \
              xfonts-utils xsltproc xz-utils zip zstd parallel             
 
-          if [[ "${{ inputs.config }}" == CoreELEC-20* ]] || [[ "${{ inputs.config }}" == CoreELEC-21* ]] || [[ "${{ inputs.config }}" == LibreELEC-12* ]] ; then          
+          if [[ "${{ inputs.config }}" == CoreELEC-21* ]] || [[ "${{ inputs.config }}" == LibreELEC-12* ]] ; then          
               sudo apt-get install -y cpp-12 g++-12 gcc-12 || true
           
               sudo rm /usr/bin/gcc /usr/bin/cpp /usr/bin/g++ /usr/bin/gcov
@@ -162,11 +162,7 @@ jobs:
           echo "PROJECT=$project" >> "$GITHUB_ENV"
           echo "DEVICE=$device" >> "$GITHUB_ENV"
           
-          if [ "$branch" = "coreelec-20" ]; then
-              echo "ARTIFACT=cache-coreelec-20-sources" >> "$GITHUB_ENV"
-              echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
-              rev=$(grep "COREELEC20=" config/versions | awk -F= '{ print $2 }')
-          elif [ "$branch" = "coreelec-21" ]; then
+          if [ "$branch" = "coreelec-21" ]; then
               echo "ARTIFACT=cache-coreelec-21-sources" >> "$GITHUB_ENV"
               echo "DISTRO=CoreELEC" >> "$GITHUB_ENV"
               rev=$(grep "COREELEC21=" config/versions | awk -F= '{ print $2 }')

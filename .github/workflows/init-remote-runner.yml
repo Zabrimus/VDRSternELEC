@@ -28,32 +28,6 @@ jobs:
           (cd CoreELEC && ln -s ../../sources sources)
           (cd LibreELEC.tv && ln -s ../../sources sources)
 
-      - name: Download artifact CE20-1
-        id: download-artifact-ce20-1
-        uses: dawidd6/action-download-artifact@v3
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: precache-sources.yml
-          if_no_artifact_found: ignore
-          check_artifacts: true
-          search_artifacts: true
-          name: cache-coreelec-20-sources-1
-          name_is_regexp: false
-          path: ../sources
-
-      - name: Download artifact CE20-2
-        id: download-artifact-ce20-2
-        uses: dawidd6/action-download-artifact@v3
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: precache-sources.yml
-          if_no_artifact_found: ignore
-          check_artifacts: true
-          search_artifacts: true
-          name: cache-coreelec-20-sources-2
-          name_is_regexp: false
-          path: ../sources
-
       - name: Download artifact CE21-1
         id: download-artifact-ce21-1
         uses: dawidd6/action-download-artifact@v3

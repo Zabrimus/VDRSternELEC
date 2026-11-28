@@ -27,14 +27,6 @@ jobs:
           
           git submodule update --init -- CoreELEC
           git submodule update --init -- LibreELEC.tv
-          
-          if [[ "${{ inputs.config }}" == "CoreELEC-20" ]]; then
-              echo "CACHE_NAME=cache-coreelec-20-sources" >> "$GITHUB_OUTPUT"
-              echo "CACHE_PATH=CoreELEC/sources" >> "$GITHUB_OUTPUT"
-          
-              ( cd CoreELEC && git checkout coreelec-20 )
-              ./build.sh -config CoreELEC-20-ng -patchonly
-          fi
 
           if [[ "${{ inputs.config }}" == "CoreELEC-21" ]]; then
               echo "CACHE_NAME=cache-coreelec-21-sources" >> "$GITHUB_OUTPUT"

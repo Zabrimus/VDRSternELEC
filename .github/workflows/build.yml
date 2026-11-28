@@ -39,14 +39,11 @@ on:
           - CoreELEC-all
           - LibreELEC-all
           - LibreELEC-Generic
-          - CoreELEC-20
           - CoreELEC-21
           - CoreELEC-22
           - CoreELEC-23
           - LibreELEC-12
           - LibreELEC-13
-          - CoreELEC-20-ng
-          - CoreELEC-20-ne
           - CoreELEC-21-ng
           - CoreELEC-21-ne
           - CoreELEC-22-no
@@ -84,7 +81,7 @@ on:
           - LibreELEC-13-aarch64-Rockchip-RK3588
       defaulttarget:
         description: "Default targets (used by target: all)"
-        default: "CoreELEC-20-ng CoreELEC-20-ne CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Allwinner-A64 LibreELEC-12-arm-Allwinner-R40 LibreELEC-12-arm-Allwinner-H3 LibreELEC-12-aarch64-Allwinner-H5 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-arm-Rockchip-RK3288 LibreELEC-12-aarch64-Rockchip-RK3328 LibreELEC-12-arm-RPi-RPi2-3 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5 LibreELEC-13-aarch64-Amlogic LibreELEC-13-aarch64-Allwinner-H6 LibreELEC-13-aarch64-Allwinner-A64 LibreELEC-13-arm-Allwinner-R40 LibreELEC-13-arm-Allwinner-H3 LibreELEC-13-aarch64-Allwinner-H5 LibreELEC-13-aarch64-Rockchip-RK3399 LibreELEC-13-arm-Rockchip-RK3288 LibreELEC-13-aarch64-Rockchip-RK3328 LibreELEC-13-arm-RPi-RPi2-3 LibreELEC-13-aarch64-RPi-RPi4 LibreELEC-13-aarch64-RPi-RPi5 LibreELEC-13-aarch64-Rockchip-RK356x LibreELEC-13-aarch64-Rockchip-RK3576 LibreELEC-13-aarch64-Rockchip-RK3588"
+        default: "CoreELEC-21-ng CoreELEC-21-ne CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-12-aarch64-Allwinner-H6 LibreELEC-12-aarch64-Allwinner-A64 LibreELEC-12-arm-Allwinner-R40 LibreELEC-12-arm-Allwinner-H3 LibreELEC-12-aarch64-Allwinner-H5 LibreELEC-12-aarch64-Rockchip-RK3399 LibreELEC-12-arm-Rockchip-RK3288 LibreELEC-12-aarch64-Rockchip-RK3328 LibreELEC-12-arm-RPi-RPi2-3 LibreELEC-12-aarch64-RPi-RPi4 LibreELEC-12-aarch64-RPi-RPi5 LibreELEC-13-aarch64-Amlogic LibreELEC-13-aarch64-Allwinner-H6 LibreELEC-13-aarch64-Allwinner-A64 LibreELEC-13-arm-Allwinner-R40 LibreELEC-13-arm-Allwinner-H3 LibreELEC-13-aarch64-Allwinner-H5 LibreELEC-13-aarch64-Rockchip-RK3399 LibreELEC-13-arm-Rockchip-RK3288 LibreELEC-13-aarch64-Rockchip-RK3328 LibreELEC-13-arm-RPi-RPi2-3 LibreELEC-13-aarch64-RPi-RPi4 LibreELEC-13-aarch64-RPi-RPi5 LibreELEC-13-aarch64-Rockchip-RK356x LibreELEC-13-aarch64-Rockchip-RK3576 LibreELEC-13-aarch64-Rockchip-RK3588"
         type: string
       addons:
         description: "addons. Use '-' if no addon shall be build"
@@ -185,7 +182,7 @@ jobs:
 
           if [[ "${{ inputs.target }}" == "all" ]] || [[ "${{ inputs.target }}" == "" ]]; then
               for i in $ALL_DEFAULT; do
-                  if [[ "$i" == CoreELEC-20* ]] || [[ "$i" == CoreELEC-21* ]]; then
+                  if [[ "$i" == CoreELEC-21* ]]; then
                       BUILDX8622="$BUILDX8622 $i"
                   elif [[ "$i" == CoreELEC-2[23]* ]]; then
                       BUILDX8624="$BUILDX8624 $i"
@@ -199,7 +196,7 @@ jobs:
               done
           elif [[ "${{ inputs.target }}" == "CoreELEC-all" ]]; then
               for i in $ALL_DEFAULT; do
-                  if [[ "$i" == CoreELEC-20* ]] || [[ "$i" == CoreELEC-21* ]]; then
+                  if [[ "$i" == CoreELEC-21* ]]; then
                       BUILDX8622="$BUILDX8622 $i"
                   elif [[ "$i" == CoreELEC-2[23]* ]]; then
                       BUILDX8624="$BUILDX8624 $i"
@@ -215,12 +212,6 @@ jobs:
                       else
                           BUILDARM22="$BUILDARM22 $i"
                       fi
-                  fi
-              done
-          elif [[ "${{ inputs.target }}" == "CoreELEC-20" ]]; then
-              for i in $ALL_DEFAULT; do
-                  if [[ "$i" == CoreELEC-20* ]]; then
-                      BUILDX8622="$BUILDX8622 $i"
                   fi
               done
           elif [[ "${{ inputs.target }}" == "CoreELEC-21" ]]; then
@@ -268,7 +259,7 @@ jobs:
                   BUILDREMOTE="$BUILDREMOTE $i"
               done                              
           else
-              if [[ "${{ inputs.target }}" == CoreELEC-20* ]] || [[ "${{ inputs.target }}" == CoreELEC-21* ]]; then
+              if [[ "${{ inputs.target }}" == CoreELEC-21* ]]; then
                   BUILDX8622="$BUILDX8622 ${{ inputs.target }}"
               elif [[ "${{ inputs.target }}" == CoreELEC-2[23]* ]]; then
                   BUILDX8624="$BUILDX8624 ${{ inputs.target }}"

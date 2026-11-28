@@ -81,7 +81,7 @@ on:
           - LibreELEC-13-aarch64-Rockchip-RK3588
       defaulttarget:
         description: "Default targets (used by target: all)"
-        default: "CoreELEC-22-no LibreELEC-12-aarch64-AMLGX LibreELEC-13-aarch64-Amlogic"
+        default: "CoreELEC-22-no CoreELEC-23-no LibreELEC-12-aarch64-AMLGX LibreELEC-13-aarch64-Amlogic"
         type: string
       addons:
         description: "addons. Use '-' if no addon shall be build"

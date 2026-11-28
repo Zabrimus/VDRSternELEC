@@ -330,7 +330,13 @@ jobs:
 
           # build all                    
           if ! AUTOREMOVE="yes" CUSTOM_VERSION="${MYCUSTOM_VERSION}" ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
-              BUILD_FAILED="true"
+              # build again (try to fix dependency problems
+              if ! AUTOREMOVE="yes" CUSTOM_VERSION="${MYCUSTOM_VERSION}" ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then
+                  # third try
+                  if ! AUTOREMOVE="yes" CUSTOM_VERSION="${MYCUSTOM_VERSION}" ./build.sh -config ${{ inputs.config }} ${EXTRAS} ${ADDONS} ${EXTRA_PARAMETER}; then                      
+                      BUILD_FAILED="true"
+                  fi
+              fi              
           fi                  
           
           echo "==> Free space after build"
